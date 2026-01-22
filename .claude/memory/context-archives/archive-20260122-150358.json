@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "archived_at": "2026-01-22T07:03:58.477668+00:00",
+  "session_id": "test-session-3",
+  "metadata": {
+    "message_count": 4,
+    "token_count": 180000,
+    "duration": 0
+  },
+  "knowledge": {
+    "errors": [],
+    "solutions": [],
+    "decisions": [
+      {
+        "decision": "已修复，使用了新的方法",
+        "timestamp": "2026-01-22T10:01:00Z"
+      },
+      {
+        "decision": "决定采用方案A，因为性能更好",
+        "timestamp": "2026-01-22T10:03:00Z"
+      }
+    ],
+    "patterns": []
+  },
+  "summary": "归档 0 个错误, 2 个决策, 0 个模式"
+}

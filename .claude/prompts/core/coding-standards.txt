@@ -1,0 +1,267 @@
+# 代码规范 (Coding Standards)
+
+## 通用原则
+
+### 代码质量
+- **简洁明了**: 代码应该是自解释的，复杂逻辑需要注释
+- **DRY原则**: 不要重复自己 (Don't Repeat Yourself)
+- **KISS原则**: 保持简单愚蠢 (Keep It Simple, Stupid)
+- **YAGNI原则**: 你不会需要它 (You Aren't Gonna Need It)
+
+### SOLID原则
+- **S**: 单一职责原则 (Single Responsibility)
+- **O**: 开放封闭原则 (Open/Closed)
+- **L**: 里氏替换原则 (Liskov Substitution)
+- **I**: 接口隔离原则 (Interface Segregation)
+- **D**: 依赖倒置原则 (Dependency Inversion)
+
+---
+
+## TypeScript 规范
+
+### 模块系统
+- 使用 ES modules (`import/export`)
+- 避免使用 `require()` 和 `module.exports`
+
+### 类型定义
+- 优先使用 `interface` 而非 `type` (用于对象结构)
+- 使用 `type` 用于联合类型、交叉类型、原始类型别名
+- 避免使用 `any`，使用 `unknown` 代替
+- 明确标注函数返回类型
+
+### 命名规范
+- 变量和函数: `camelCase`
+- 类和接口: `PascalCase`
+- 常量: `UPPER_SNAKE_CASE`
+- 私有成员: 前缀 `_` 或使用 `#` (ES私有字段)
+- 类型参数: 单个大写字母或 `T` 开头的名称
+
+### 示例
+```typescript
+// ✅ 推荐
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+function getUserById(id: string): User | null {
+  // ...
+}
+
+// ❌ 避免
+type User = {  // 应该用 interface
+  id: any;     // 应该明确类型
+  name;        // 缺少类型标注
+}
+```
+
+---
+
+## Python 规范
+
+### 代码风格
+- 遵循 PEP 8
+- 使用 4 个空格缩进
+- 最大行长度: 88 字符 (Black formatter)
+
+### 类型提示
+- 使用类型提示 (Type Hints)
+- 对公共API函数必须添加类型提示
+- 使用 `typing` 模块的类型
+
+### 命名规范
+- 变量和函数: `snake_case`
+- 类: `PascalCase`
+- 常量: `UPPER_SNAKE_CASE`
+- 私有成员: 前缀 `_`
+
+### 示例
+```python
+# ✅ 推荐
+from typing import Optional
+
+def get_user_by_id(user_id: str) -> Optional[User]:
+    """获取用户信息"""
+    # ...
+
+# ❌ 避免
+def GetUserById(userId):  # 命名不符合规范
+    # 缺少类型提示和文档字符串
+    pass
+```
+
+---
+
+## Rust 规范
+
+### 代码风格
+- 遵循官方 Rust 风格指南
+- 使用 `rustfmt` 格式化代码
+- 使用 `clippy` 进行 lint 检查
+
+### 命名规范
+- 变量和函数: `snake_case`
+- 类型和 trait: `PascalCase`
+- 常量: `UPPER_SNAKE_CASE`
+- 生命周期参数: `'a`, `'b` 等
+
+### 错误处理
+- 使用 `Result<T, E>` 处理可恢复错误
+- 使用 `Option<T>` 表示可能缺失的值
+- 避免使用 `unwrap()` 和 `expect()` (除非在测试中)
+
+### 示例
+```rust
+// ✅ 推荐
+fn get_user_by_id(id: &str) -> Result<User, Error> {
+    // ...
+}
+
+// ❌ 避免
+fn getUserById(id: &str) -> User {  // 命名不符合规范
+    // ...
+    user.unwrap()  // 可能 panic
+}
+```
+
+---
+
+## 测试规范
+
+### 测试组织
+- 测试文件与源文件同目录
+- 命名: `*.test.ts`, `*_test.py`, `*_test.rs`
+- 按功能模块组织测试
+
+### 测试覆盖率
+- 单元测试: 70%
+- 集成测试: 20%
+- 端到端测试: 10%
+
+### 测试原则
+- **TDD优先**: 先写测试，再写实现
+- **AAA模式**: Arrange-Act-Assert
+- **独立性**: 测试之间互不依赖
+- **可重复**: 测试结果可重复
+- **快速**: 单元测试应该快速执行
+
+### 示例
+```typescript
+describe('getUserById', () => {
+  it('should return user when id exists', () => {
+    // Arrange
+    const userId = '123';
+    const expectedUser = { id: '123', name: 'Alice' };
+
+    // Act
+    const result = getUserById(userId);
+
+    // Assert
+    expect(result).toEqual(expectedUser);
+  });
+
+  it('should return null when id does not exist', () => {
+    const result = getUserById('nonexistent');
+    expect(result).toBeNull();
+  });
+});
+```
+
+---
+
+## 文档规范
+
+### 代码注释
+- 复杂逻辑必须注释
+- 注释说明"为什么"，而非"是什么"
+- 使用文档注释 (JSDoc, docstring, rustdoc)
+
+### README.md
+- 项目概述
+- 快速开始
+- API文档
+- 贡献指南
+
+---
+
+## 版本控制
+
+### Git提交消息
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**类型**:
+- `feat`: 新功能
+- `fix`: 修复bug
+- `docs`: 文档更新
+- `style`: 代码格式
+- `refactor`: 重构
+- `test`: 测试
+- `chore`: 构建/工具
+
+### 分支策略
+- `main/master`: 稳定版本
+- `develop`: 开发分支
+- `feature/*`: 功能分支
+- `fix/*`: 修复分支
+- `release/*`: 发布分支
+
+---
+
+## 性能优化
+
+### 通用原则
+- 过早优化是万恶之源 (先保证正确性)
+- 测量后再优化 (使用性能分析工具)
+- 优化热点代码 (80/20原则)
+
+### 常见优化
+- 避免不必要的计算
+- 使用适当的数据结构
+- 减少内存分配
+- 批处理操作
+- 使用缓存
+
+---
+
+## 安全规范
+
+### 输入验证
+- 永远不信任用户输入
+- 使用白名单验证
+- 转义和净化输入
+
+### 敏感数据
+- 不在代码中硬编码密钥
+- 使用环境变量存储敏感信息
+- 加密存储敏感数据
+
+### 依赖管理
+- 定期更新依赖
+- 扫描已知漏洞
+- 使用可信来源
+
+---
+
+## 工具推荐
+
+### 格式化
+- TypeScript: Prettier
+- Python: Black
+- Rust: rustfmt
+
+### Lint
+- TypeScript: ESLint
+- Python: pylint, flake8
+- Rust: clippy
+
+### 测试
+- TypeScript: Jest, Vitest
+- Python: pytest
+- Rust: cargo test

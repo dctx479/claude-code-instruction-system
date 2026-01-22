@@ -1,0 +1,164 @@
+{
+  "Problem: TypeScript type error in agent orchestrator": {
+    "name": "Problem: TypeScript type error in agent orchestrator",
+    "type": "Problem",
+    "properties": {
+      "description": "TypeScript type error in agent orchestrator",
+      "severity": "medium",
+      "category": "bug"
+    },
+    "created_at": "2026-01-22T06:57:29.664732"
+  },
+  "Solution: Add interface definition for Agent type": {
+    "name": "Solution: Add interface definition for Agent type",
+    "type": "Solution",
+    "properties": {
+      "description": "Add interface definition for Agent type",
+      "steps": [],
+      "effectiveness": 0.95
+    },
+    "created_at": "2026-01-22T06:57:29.664749"
+  },
+  "src/agent-orchestrator.ts": {
+    "name": "src/agent-orchestrator.ts",
+    "type": "File",
+    "properties": {
+      "path": "src/agent-orchestrator.ts"
+    },
+    "created_at": "2026-01-22T06:57:29.670425"
+  },
+  "src/types.ts": {
+    "name": "src/types.ts",
+    "type": "File",
+    "properties": {
+      "path": "src/types.ts"
+    },
+    "created_at": "2026-01-22T07:01:07.882679"
+  },
+  "typescript": {
+    "name": "typescript",
+    "type": "Tag",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.882682"
+  },
+  "types": {
+    "name": "types",
+    "type": "Tag",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.670429"
+  },
+  "agent": {
+    "name": "agent",
+    "type": "Tag",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.890526"
+  },
+  "Problem: TypeScript generic type inference failure": {
+    "name": "Problem: TypeScript generic type inference failure",
+    "type": "Problem",
+    "properties": {
+      "description": "TypeScript generic type inference failure",
+      "severity": "low",
+      "category": "bug"
+    },
+    "created_at": "2026-01-22T06:57:29.670418"
+  },
+  "Solution: Explicitly specify generic type parameters": {
+    "name": "Solution: Explicitly specify generic type parameters",
+    "type": "Solution",
+    "properties": {
+      "description": "Explicitly specify generic type parameters",
+      "steps": [],
+      "effectiveness": 0.9
+    },
+    "created_at": "2026-01-22T06:57:29.670422"
+  },
+  "generics": {
+    "name": "generics",
+    "type": "Tag",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.670431"
+  },
+  "Problem: Agent orchestrator fails with undefined property": {
+    "name": "Problem: Agent orchestrator fails with undefined property",
+    "type": "Problem",
+    "properties": {
+      "description": "Agent orchestrator fails with undefined property",
+      "severity": "high",
+      "category": "bug"
+    },
+    "created_at": "2026-01-22T07:01:07.882648"
+  },
+  "Solution: Add null checks and type guards": {
+    "name": "Solution: Add null checks and type guards",
+    "type": "Solution",
+    "properties": {
+      "description": "Add null checks and type guards",
+      "steps": [],
+      "effectiveness": 0.92
+    },
+    "created_at": "2026-01-22T07:01:07.882671"
+  },
+  "src/orchestrator.ts": {
+    "name": "src/orchestrator.ts",
+    "type": "File",
+    "properties": {
+      "path": "src/orchestrator.ts"
+    },
+    "created_at": "2026-01-22T07:01:07.882676"
+  },
+  "null-safety": {
+    "name": "null-safety",
+    "type": "Tag",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.882685"
+  },
+  "Problem: Code review task completed": {
+    "name": "Problem: Code review task completed",
+    "type": "Problem",
+    "properties": {
+      "description": "Code review task completed",
+      "severity": "low",
+      "category": "task"
+    },
+    "created_at": "2026-01-22T07:01:07.890514"
+  },
+  "Solution: Used code-reviewer agent with parallel strategy": {
+    "name": "Solution: Used code-reviewer agent with parallel strategy",
+    "type": "Solution",
+    "properties": {
+      "description": "Used code-reviewer agent with parallel strategy",
+      "steps": [],
+      "effectiveness": 0.88
+    },
+    "created_at": "2026-01-22T07:01:07.890520"
+  },
+  "src/app.ts": {
+    "name": "src/app.ts",
+    "type": "File",
+    "properties": {
+      "path": "src/app.ts"
+    },
+    "created_at": "2026-01-22T07:01:07.890522"
+  },
+  "src/utils.ts": {
+    "name": "src/utils.ts",
+    "type": "File",
+    "properties": {
+      "path": "src/utils.ts"
+    },
+    "created_at": "2026-01-22T07:01:07.890524"
+  },
+  "code-review": {
+    "name": "code-review",
+    "type": "Tag",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.890528"
+  },
+  "performance": {
+    "name": "performance",
+    "type": "Tag",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.890529"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "description": "GitHub 集成 - Issues, PRs, 仓库操作"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "description": "文件系统操作"
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "description": "持久化记忆存储"
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+      },
+      "description": "Web 搜索"
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "description": "浏览器自动化和截图"
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "DATABASE_URL": "${DATABASE_URL}"
+      },
+      "description": "PostgreSQL 数据库操作"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "结构化思考和推理"
+    }
+  },
+  "notes": {
+    "installation": "使用 claude mcp add-json <name> '<config>' 添加服务器",
+    "scopes": {
+      "local": "当前目录，仅自己可用",
+      "project": ".mcp.json 文件，团队共享",
+      "user": "全局配置，所有项目可用"
+    },
+    "commands": {
+      "add": "claude mcp add <name> <command> [args...]",
+      "list": "claude mcp list",
+      "remove": "claude mcp remove <name>",
+      "test": "claude mcp get <name>"
+    }
+  }
+}

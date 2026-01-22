@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm *)",
+      "Bash(pnpm *)",
+      "Bash(yarn *)",
+      "Bash(git *)",
+      "Bash(python *)",
+      "Bash(pytest *)",
+      "Bash(pip *)",
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(sudo *)",
+      "Bash(curl * | bash)",
+      "Bash(wget * | bash)"
+    ]
+  },
+  "model": {
+    "default": "sonnet",
+    "thinking": true
+  },
+  "context": {
+    "maxTokens": 200000,
+    "summarization": true
+  },
+  "agents": {
+    "enabled": true,
+    "parallel": 5
+  },
+  "hooks": {
+    "enabled": true
+  },
+  "mcp": {
+    "enabled": true,
+    "timeout": 30000
+  }
+}

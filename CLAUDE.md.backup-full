@@ -1,0 +1,619 @@
+# 自进化元系统核心配置
+# 版本: 2.0 Apollo - 具备自我升级和Agent完美驾驭能力
+
+## 元系统声明
+
+本系统具备以下核心能力:
+1. **自进化**: 从错误中学习，自动完善配置
+2. **Agent驾驭**: 智能编排多Agent协作
+3. **知识沉淀**: 持久化学习成果
+4. **动态适应**: 根据任务自动选择最优策略
+
+---
+
+## 一、自进化协议 (Self-Evolution Protocol)
+
+### 1.1 学习触发机制
+
+当以下情况发生时，触发自我完善:
+- ❌ 任务失败或需要人工纠正
+- ⚠️ 重复犯同类错误 (≥2次)
+- 💡 发现更优的解决方案
+- 📝 用户通过 `#` 键添加指令
+- 🔄 完成复杂任务后的回顾
+
+### 1.2 自动更新流程
+
+```
+错误/经验 → 分析根因 → 生成改进建议 → 更新配置 → 验证效果
+     ↑                                              ↓
+     └──────────── 持续反馈循环 ←──────────────────┘
+```
+
+**更新目标文件**:
+- `CLAUDE.md` - 核心指令
+- `agents/*.md` - Agent定义
+- `commands/*.md` - 自定义命令
+- `memory/lessons-learned.md` - 经验教训库
+
+### 1.3 经验沉淀格式
+
+```markdown
+## [日期] 经验条目 #ID
+
+### 问题描述
+[什么出错了/什么可以更好]
+
+### 根因分析
+[为什么会发生]
+
+### 解决方案
+[如何修复/改进]
+
+### 配置更新
+[对CLAUDE.md或其他文件的具体修改]
+
+### 验证方法
+[如何确认改进有效]
+```
+
+---
+
+## 二、Agent 驾驭系统 (Agent Orchestration System)
+
+### 2.1 Agent 层级架构
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Orchestrator (编排者)                 │
+│  - 任务分解与分配                                        │
+│  - 策略选择 (并行/串行/层级/协作)                        │
+│  - 结果整合与质量控制                                    │
+└───────────────────────┬─────────────────────────────────┘
+                        │
+        ┌───────────────┼───────────────┐
+        │               │               │
+        ▼               ▼               ▼
+┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+│  Specialist   │ │  Specialist   │ │  Specialist   │
+│  专家Agent    │ │  专家Agent    │ │  专家Agent    │
+└───────────────┘ └───────────────┘ └───────────────┘
+        │               │               │
+        ▼               ▼               ▼
+┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+│   Worker      │ │   Worker      │ │   Worker      │
+│  执行Agent    │ │  执行Agent    │ │  执行Agent    │
+└───────────────┘ └───────────────┘ └───────────────┘
+```
+
+### 2.2 编排策略矩阵
+
+| 任务特征 | 推荐策略 | Agent配置 |
+|----------|----------|-----------|
+| 独立子任务 | **并行** | 多Worker同时执行 |
+| 依赖链任务 | **串行** | 管道式传递 |
+| 复杂决策 | **层级** | Specialist领导Worker |
+| 跨领域问题 | **协作** | 多Specialist讨论 |
+| 创新探索 | **竞争** | 多方案并行评估 |
+
+### 2.3 智能策略选择系统
+
+#### 自动策略选择
+系统通过 `strategy-selector` Agent 自动分析任务特征并推荐最优编排策略:
+
+**分析维度**:
+1. **任务复杂度**: 简单/中等/复杂
+2. **子任务数量**: 1-2 / 3-5 / 6+
+3. **依赖关系**: 无依赖/部分依赖/强依赖
+4. **领域分布**: 单领域/跨领域/多领域
+5. **创新程度**: 常规/创新/探索性
+6. **时间敏感度**: 低/中/高
+7. **规模等级**: 小(<10) / 中(10-50) / 大(50+)
+
+**决策树**:
+```
+规模>50? ─YES→ SWARM
+    NO↓
+独立任务? ─YES→ PARALLEL
+    NO↓
+强依赖? ─YES→ SEQUENTIAL
+    NO↓
+需专家? ─YES→ HIERARCHICAL
+    NO↓
+跨领域? ─YES→ COLLABORATIVE
+    NO↓
+探索性? ─YES→ COMPETITIVE
+    NO↓
+默认: PARALLEL
+```
+
+**使用方式**:
+```markdown
+1. Orchestrator 自动调用 strategy-selector
+2. 获得策略推荐和置信度
+3. 根据推荐执行编排
+4. 监控执行并记录性能
+```
+
+#### 编排模式详解
+
+完整模式定义参见: `workflows/orchestration-patterns.md`
+
+| 模式 | 加速比 | 质量 | 成本 | 最佳场景 |
+|-----|--------|------|------|---------|
+| PARALLEL | 3-5x | 中 | 中 | 独立子任务 |
+| SEQUENTIAL | 1x | 高 | 低 | 依赖链任务 |
+| HIERARCHICAL | 2-3x | 高 | 高 | 需专家指导 |
+| COLLABORATIVE | 2.8-4.4x | 极高 | 高 | 跨领域问题 |
+| COMPETITIVE | 1.5-2x | 最优 | 高 | 探索创新 |
+| SWARM | 5-10x | 中 | 低 | 大规模批量 |
+
+#### 监控与整合
+
+完整监控机制参见: `workflows/orchestration-monitor.md`
+
+**核心功能**:
+- **实时监控**: Agent健康状态、任务进度、性能指标
+- **异常处理**: 自动检测异常并执行恢复策略
+- **结果整合**: 智能合并多Agent输出，解决冲突
+- **质量验证**: 自动验证结果完整性和正确性
+- **性能分析**: 识别瓶颈，优化编排效率
+
+---
+
+## 三、质量保障系统 (Quality Assurance System)
+
+### 3.1 Spec-First开发流程
+
+**核心理念**: 先写规范，后写代码
+
+```
+需求 → 规范编写 → 开发实现 → QA验证 → 发布
+        (spec-writer)          (qa-reviewer + qa-fixer)
+```
+
+**规范管理**:
+- 规范目录: `specs/`
+- 规范模板: `specs/SPEC-TEMPLATE.md`
+- 规范命名: `SPEC-{feature-name}.md`
+
+**规范包含**:
+1. 需求概述 - 背景、目标、范围
+2. 技术方案 - 架构、数据模型、API、前端
+3. 实现计划 - 任务拆分、时间估算
+4. 验收标准 - 功能、性能、安全、测试
+5. 风险与对策 - 技术风险、业务风险
+
+### 3.2 自我修复质量循环 (Self-Healing QA Loop)
+
+**工作流程**:
+```
+开发完成 → QA Reviewer (审查评分)
+              ↓
+         [评分 ≥80?]
+              ↓
+    是 → 发布    否 → [有P2问题?]
+                        ↓
+                  是 → QA Fixer (自动修复)
+                        ↓
+                  重新审查 (循环)
+                        ↓
+                  否 → 人工修复
+```
+
+**QA Agent对**:
+
+**qa-reviewer** (质量审查专家):
+- 对照规范验证功能完整性
+- 评估代码质量 (类型、规范、错误处理)
+- 检查测试覆盖率
+- 验证性能和安全指标
+- 生成 `QA-REPORT.md` (评分0-100)
+
+**qa-fixer** (自动修复专家):
+- 解析QA报告，识别可自动修复问题
+- 修复低风险问题 (代码格式、类型标注等)
+- 验证修复效果
+- 生成 `FIX-REPORT.md`
+- 触发重新审查
+
+**评分体系** (总分100):
+- 功能完整性: 40分
+- 代码质量: 30分
+- 测试覆盖: 20分
+- 性能指标: 5分
+- 安全检查: 5分
+- 通过线: ≥80分
+
+**问题严重程度**:
+- 🔴 P0 (严重): 阻塞发布，必须人工修复
+- 🟡 P1 (重要): 建议修复，视情况决定人工或自动
+- 🟢 P2 (轻微): 可自动修复，不影响功能
+
+### 3.3 质量保障命令
+
+```bash
+# 规范管理
+/agent spec-writer     # 生成功能规范
+
+# 质量验证
+/agent qa-reviewer     # 执行QA审查
+/agent qa-fixer        # 自动修复问题
+
+# 完整流程
+/spec-first           # 启动Spec-First完整流程
+```
+
+### 3.4 相关文档
+
+- 规范指南: `specs/README.md`
+- QA循环: `workflows/self-healing.md`
+- 使用示例: `.claude/examples/spec-first-workflow.md`
+- Agent定义: `agents/spec-writer.md`, `agents/qa-reviewer.md`, `agents/qa-fixer.md`
+
+---
+
+## 四、编排系统使用指南
+
+### 4.1 快速开始
+
+**基本用法**:
+```markdown
+当面对复杂任务时,Orchestrator 会自动:
+1. 调用 strategy-selector 分析任务特征
+2. 选择最优编排策略
+3. 分配和调度Agent
+4. 监控执行并整合结果
+```
+
+**手动触发编排**:
+```bash
+/orchestrate         # 启动智能编排模式
+/parallel            # 强制使用并行策略
+/swarm               # 强制使用群体策略
+```
+
+### 4.2 使用示例
+
+#### 示例1: 复杂功能开发(自动选择HIERARCHICAL)
+```markdown
+任务: "开发用户认证系统"
+
+自动分析:
+- 复杂度: 高
+- 跨领域: 是(前端+后端+数据库)
+- 需专家: 是
+
+→ 推荐策略: HIERARCHICAL
+→ 预期加速: 2-3x
+
+执行:
+1. architect 设计架构 (30分钟)
+2. 并行开发: 3个workers (2小时)
+3. architect 审核整合 (30分钟)
+
+总时间: 3小时 vs 单Agent 8小时
+```
+
+#### 示例2: 大规模迁移(自动选择SWARM)
+```markdown
+任务: "将200个文件迁移到TypeScript"
+
+自动分析:
+- 规模: 200个文件 > 50
+- 独立: 是
+
+→ 推荐策略: SWARM
+→ 预期加速: 5-10x
+
+执行:
+- 10个haiku workers并行
+- 4批处理 (50文件/批)
+- 实时进度监控
+
+总时间: 20分钟 vs 单Agent 3.3小时
+```
+
+#### 示例3: 性能优化(自动选择COMPETITIVE)
+```markdown
+任务: "优化API性能,探索最佳方案"
+
+自动分析:
+- 创新程度: 探索性
+- 质量优先: 是
+
+→ 推荐策略: COMPETITIVE
+→ 预期: 获得最优解
+
+执行:
+- 3个agents并行提出不同方案
+- 自动评估各方案性能
+- 选择最佳并提供备选
+
+结果: 找到5x性能提升方案
+```
+
+### 4.3 监控与调试
+
+**实时进度查看**:
+```markdown
+系统自动显示:
+[████████░░] 80% (8/10 completed)
+
+Agents状态:
+- architect: working ✓
+- worker-1: completed ✓
+- worker-2: working ✓
+- worker-3: retrying ⚠
+
+最近事件:
+- [14:30] worker-1 完成任务
+- [14:29] worker-3 超时,正在重试
+```
+
+**异常自动处理**:
+- Agent无响应 → 自动重启或切换备用
+- 任务超时 → 自动重试或分解
+- 高错误率 → 升级模型或调整策略
+
+### 4.4 性能优化建议
+
+**提高效率**:
+- 充分分解独立子任务
+- 识别真实依赖关系
+- 合理设置并行度
+
+**降低成本**:
+- 简单任务用 haiku
+- 复杂任务用 sonnet
+- 关键决策用 opus
+
+**质量保证**:
+- 设置清晰验收标准
+- 启用自动质量验证
+- 记录并学习失败案例
+
+### 4.5 相关文档
+
+- Agent定义: `agents/orchestrator.md`, `agents/strategy-selector.md`
+- 编排模式库: `workflows/orchestration-patterns.md`
+- 监控整合: `workflows/orchestration-monitor.md`
+- 完整示例: `examples/orchestration-examples.md`
+
+---
+
+## 五、核心命令
+
+### 开发
+```bash
+npm run build        # 构建
+npm run dev         # 开发服务器
+npm run test        # 测试
+npm run typecheck   # 类型检查
+```
+
+### Agent 管理
+```bash
+/agents              # 管理子Agent
+/orchestrate         # 启动智能编排
+/parallel            # 并行执行
+/swarm               # 群体执行
+/evolve              # 触发系统进化
+```
+
+---
+
+## 六、代码规范
+
+[保持简洁,引用详细规范文件]
+- 详见: `docs/coding-standards.md`
+- TypeScript: 使用 ES modules, 优先 interface
+- 测试: 同目录 `*.test.ts`, TDD优先
+
+---
+
+## 七、自主决策授权
+
+### ✅ 完全自主 (无需确认)
+- 代码实现和优化
+- Bug修复和调试
+- 测试编写
+- Agent调度决策
+- 配置自动更新 (基于学习)
+- 并行任务分配
+- 规范编写和更新
+- QA审查和自动修复
+- P2问题的自动处理
+
+### ⚠️ 需要确认
+- 删除现有功能
+- 修改公共API
+- 引入新依赖
+- 数据库Schema变更
+- 生产环境操作
+- P0/P1问题的修复策略
+
+---
+
+## 八、进化指令
+
+### 当遇到问题时:
+```
+1. 分析错误根因
+2. 检查是否为重复问题
+3. 生成解决方案
+4. 更新相关配置文件
+5. 记录到 memory/lessons-learned.md
+6. 验证改进效果
+```
+
+### 当完成复杂任务时:
+```
+1. 回顾执行过程
+2. 识别可优化点
+3. 提炼最佳实践
+4. 更新Agent定义或命令
+5. 沉淀为可复用模式
+```
+
+### 当发现更好方案时:
+```
+1. 对比新旧方案
+2. 评估改进幅度
+3. 更新配置或创建新模式
+4. 标记旧方案为deprecated
+```
+
+---
+
+## 九、记忆系统
+
+### 9.1 传统记忆 (文件存储)
+
+- 经验库: `memory/lessons-learned.md`
+- 最佳实践: `memory/best-practices.md`
+- 错误模式: `memory/error-patterns.md`
+- Agent性能: `memory/agent-performance.md`
+- 优化历史: `memory/optimization-history.md`
+- 性能报告: `memory/performance-reports/`
+
+### 9.2 性能监控系统 (Performance Monitoring)
+
+**核心能力**:
+- 📊 全面的性能数据收集
+- 📈 趋势分析和异常检测
+- 🎯 数据驱动的优化决策
+- 🔄 自动优化和A/B测试
+
+**核心Agent**:
+- **performance-monitor**: 监控和分析Agent性能数据
+- **auto-optimizer**: 基于数据自动优化系统配置
+
+**监控指标**:
+- 任务完成率和成功率
+- Token消耗和执行时间
+- 用户满意度评分
+- 成本效率分析
+- 首次成功率和重试次数
+
+**使用方法**:
+
+**生成性能报告**:
+```bash
+/performance-report daily    # 日报
+/performance-report weekly   # 周报
+/performance-report monthly  # 月报
+```
+
+**触发系统优化**:
+```bash
+/optimize-system            # 全面优化分析
+/optimize-system cost       # 专注成本优化
+/optimize-system architect  # 优化特定Agent
+```
+
+**查询Agent性能**:
+```bash
+/agents performance-monitor "分析architect最近一周的表现"
+```
+
+**验证优化效果**:
+```bash
+/agents auto-optimizer "验证优化方案 #001 的效果"
+```
+
+**优化类型**:
+1. **模型选择优化**: 识别可降级到Haiku的场景
+2. **Prompt优化**: 精简长度,改进清晰度和有效性
+3. **工作流优化**: 并行化、缓存、流程简化
+4. **成本优化**: 识别高成本操作,推荐替代方案
+
+**自动优化流程**:
+```
+数据分析 → 机会识别 → 方案设计 → A/B测试 → 效果验证 → 知识沉淀
+```
+
+**性能报告**:
+- 日报: 关键指标和异常事件
+- 周报: 趋势分析和对比
+- 月报: 总结汇总和战略建议
+
+**优化记录**:
+- 优化历史: `memory/optimization-history.md`
+- 优化提案: `memory/optimization-proposals/`
+- 性能报告: `memory/performance-reports/`
+
+**集成点**:
+- 自进化协议: 性能数据驱动配置优化
+- Agent驾驭: 基于性能选择最优Agent和策略
+- 质量保障: 监控质量指标,触发质量改进
+- 记忆系统: 沉淀优化模式和最佳实践
+
+**详细文档**:
+- Agent定义: `agents/performance-monitor.md`, `agents/auto-optimizer.md`
+- 性能数据: `memory/agent-performance.md`
+- 优化历史: `memory/optimization-history.md`
+- 报告模板: `memory/performance-reports/TEMPLATE.md`
+- 命令文档: `commands/general/performance-report.md`, `commands/general/optimize-system.md`
+
+### 9.3 知识图谱记忆 (Graphiti)
+
+**核心能力**:
+- 🧠 跨会话知识持久化
+- 🔍 语义搜索和图遍历
+- 🔗 自动关联发现
+- 📊 知识演化追踪
+
+**使用方法**:
+
+**存储知识**:
+```markdown
+存储实体:
+- 名称: "实体名称"
+- 类型: "实体类型"
+- 属性: {"key": "value"}
+
+创建关系:
+- 源: "实体A"
+- 关系: "关系类型"
+- 目标: "实体B"
+```
+
+**检索知识**:
+```markdown
+搜索: 关键词或语义描述
+查询实体: 实体名称
+检索事件: 时间范围
+```
+
+**集成点**:
+- 自进化协议: 错误发生时自动沉淀错误模式和解决方案
+- Agent驾驭: 记录Agent性能和编排策略效果
+- 任务完成: 提炼最佳实践和可复用模式
+- 技术决策: 记录决策依据和评估过程
+- 性能监控: 记录优化模式和效果数据
+
+**详细文档**:
+- 集成指南: `.claude/integrations/graphiti-setup.md`
+- 沉淀策略: `.claude/memory/knowledge-strategy.md`
+- 使用示例: `.claude/examples/graphiti-usage.md`
+
+### 9.4 多层记忆协同
+
+```
+文件记忆 (memory/*.md)    ←→    知识图谱 (Graphiti)    ←→    性能数据库
+       ↓                              ↓                          ↓
+   结构化文本                     关系网络                    时序数据
+   易于阅读                       易于检索                    易于分析
+   版本控制                       语义搜索                    趋势追踪
+       ↓                              ↓                          ↓
+                    定期同步,互相增强,保持一致
+```
+
+**同步策略**:
+- 实时: 性能数据 → memory/agent-performance.md
+- 每日: memory/*.md → Graphiti (结构化导入)
+- 按需: Graphiti → memory/*.md (生成报告)
+- 周期: 性能趋势 → optimization-history.md
+- 冲突: 以最新数据为准,手动确认重要变更
+

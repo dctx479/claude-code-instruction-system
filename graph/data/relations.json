@@ -1,0 +1,268 @@
+[
+  {
+    "source": "Problem: TypeScript type error in agent orchestrator",
+    "type": "SOLVED_BY",
+    "target": "Solution: Add interface definition for Agent type",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:01.982740"
+  },
+  {
+    "source": "Solution: Add interface definition for Agent type",
+    "type": "MODIFIES",
+    "target": "src/agent-orchestrator.ts",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:01.983003"
+  },
+  {
+    "source": "Problem: TypeScript type error in agent orchestrator",
+    "type": "OCCURS_IN",
+    "target": "src/agent-orchestrator.ts",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:01.983251"
+  },
+  {
+    "source": "Solution: Add interface definition for Agent type",
+    "type": "MODIFIES",
+    "target": "src/types.ts",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:01.983506"
+  },
+  {
+    "source": "Problem: TypeScript type error in agent orchestrator",
+    "type": "OCCURS_IN",
+    "target": "src/types.ts",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:01.984021"
+  },
+  {
+    "source": "Problem: TypeScript type error in agent orchestrator",
+    "type": "TAGGED_WITH",
+    "target": "typescript",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:01.984312"
+  },
+  {
+    "source": "Problem: TypeScript type error in agent orchestrator",
+    "type": "TAGGED_WITH",
+    "target": "types",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:01.984574"
+  },
+  {
+    "source": "Problem: TypeScript type error in agent orchestrator",
+    "type": "TAGGED_WITH",
+    "target": "agent",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:01.984832"
+  },
+  {
+    "source": "Problem: TypeScript type error in agent orchestrator",
+    "type": "SOLVED_BY",
+    "target": "Solution: Add interface definition for Agent type",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.667543"
+  },
+  {
+    "source": "Solution: Add interface definition for Agent type",
+    "type": "MODIFIES",
+    "target": "src/agent-orchestrator.ts",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.667908"
+  },
+  {
+    "source": "Problem: TypeScript type error in agent orchestrator",
+    "type": "OCCURS_IN",
+    "target": "src/agent-orchestrator.ts",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.668353"
+  },
+  {
+    "source": "Solution: Add interface definition for Agent type",
+    "type": "MODIFIES",
+    "target": "src/types.ts",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.668764"
+  },
+  {
+    "source": "Problem: TypeScript type error in agent orchestrator",
+    "type": "OCCURS_IN",
+    "target": "src/types.ts",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.669112"
+  },
+  {
+    "source": "Problem: TypeScript type error in agent orchestrator",
+    "type": "TAGGED_WITH",
+    "target": "typescript",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.669450"
+  },
+  {
+    "source": "Problem: TypeScript type error in agent orchestrator",
+    "type": "TAGGED_WITH",
+    "target": "types",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.669759"
+  },
+  {
+    "source": "Problem: TypeScript type error in agent orchestrator",
+    "type": "TAGGED_WITH",
+    "target": "agent",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.670084"
+  },
+  {
+    "source": "Problem: TypeScript generic type inference failure",
+    "type": "SOLVED_BY",
+    "target": "Solution: Explicitly specify generic type parameters",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.672687"
+  },
+  {
+    "source": "Solution: Explicitly specify generic type parameters",
+    "type": "MODIFIES",
+    "target": "src/agent-orchestrator.ts",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.673117"
+  },
+  {
+    "source": "Problem: TypeScript generic type inference failure",
+    "type": "OCCURS_IN",
+    "target": "src/agent-orchestrator.ts",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.673517"
+  },
+  {
+    "source": "Problem: TypeScript generic type inference failure",
+    "type": "TAGGED_WITH",
+    "target": "typescript",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.673913"
+  },
+  {
+    "source": "Problem: TypeScript generic type inference failure",
+    "type": "TAGGED_WITH",
+    "target": "types",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.674481"
+  },
+  {
+    "source": "Problem: TypeScript generic type inference failure",
+    "type": "TAGGED_WITH",
+    "target": "generics",
+    "properties": {},
+    "created_at": "2026-01-22T06:57:29.674916"
+  },
+  {
+    "source": "Problem: Agent orchestrator fails with undefined property",
+    "type": "SOLVED_BY",
+    "target": "Solution: Add null checks and type guards",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.886382"
+  },
+  {
+    "source": "Solution: Add null checks and type guards",
+    "type": "MODIFIES",
+    "target": "src/orchestrator.ts",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.886815"
+  },
+  {
+    "source": "Problem: Agent orchestrator fails with undefined property",
+    "type": "OCCURS_IN",
+    "target": "src/orchestrator.ts",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.887273"
+  },
+  {
+    "source": "Solution: Add null checks and type guards",
+    "type": "MODIFIES",
+    "target": "src/types.ts",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.887704"
+  },
+  {
+    "source": "Problem: Agent orchestrator fails with undefined property",
+    "type": "OCCURS_IN",
+    "target": "src/types.ts",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.888203"
+  },
+  {
+    "source": "Problem: Agent orchestrator fails with undefined property",
+    "type": "TAGGED_WITH",
+    "target": "typescript",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.888657"
+  },
+  {
+    "source": "Problem: Agent orchestrator fails with undefined property",
+    "type": "TAGGED_WITH",
+    "target": "null-safety",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.889202"
+  },
+  {
+    "source": "Problem: Agent orchestrator fails with undefined property",
+    "type": "TAGGED_WITH",
+    "target": "agent",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.889856"
+  },
+  {
+    "source": "Problem: Code review task completed",
+    "type": "SOLVED_BY",
+    "target": "Solution: Used code-reviewer agent with parallel strategy",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.894793"
+  },
+  {
+    "source": "Solution: Used code-reviewer agent with parallel strategy",
+    "type": "MODIFIES",
+    "target": "src/app.ts",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.895302"
+  },
+  {
+    "source": "Problem: Code review task completed",
+    "type": "OCCURS_IN",
+    "target": "src/app.ts",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.895827"
+  },
+  {
+    "source": "Solution: Used code-reviewer agent with parallel strategy",
+    "type": "MODIFIES",
+    "target": "src/utils.ts",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.896411"
+  },
+  {
+    "source": "Problem: Code review task completed",
+    "type": "OCCURS_IN",
+    "target": "src/utils.ts",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.897004"
+  },
+  {
+    "source": "Problem: Code review task completed",
+    "type": "TAGGED_WITH",
+    "target": "agent",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.897632"
+  },
+  {
+    "source": "Problem: Code review task completed",
+    "type": "TAGGED_WITH",
+    "target": "code-review",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.898310"
+  },
+  {
+    "source": "Problem: Code review task completed",
+    "type": "TAGGED_WITH",
+    "target": "performance",
+    "properties": {},
+    "created_at": "2026-01-22T07:01:07.899018"
+  }
+]

@@ -1,0 +1,184 @@
+---
+# Prompt变量配置系统
+# 版本: 1.0
+
+## 全局变量
+global:
+  project_name: "Apollo 自进化元系统"
+  version: "2.0"
+  organization: "Self-built Project"
+
+## 技术栈配置
+tech_stack:
+  languages:
+    - TypeScript
+    - Python
+    - Rust
+
+  frameworks:
+    frontend:
+      - React
+      - Next.js
+      - Tailwind CSS
+    backend:
+      - FastAPI
+      - Express
+      - Axum
+    desktop:
+      - Tauri
+
+  tools:
+    - Git
+    - Docker
+    - Vite
+    - Jest
+    - pytest
+
+## 项目类型
+project_type: "AI Agent System"
+architecture_style: "Microservices + Event-Driven"
+
+## 编码规范
+coding_standards:
+  style: "简洁、模块化、可测试"
+
+  testing:
+    unit_coverage: "70%"
+    integration_coverage: "20%"
+    e2e_coverage: "10%"
+
+  naming:
+    typescript: "camelCase for variables, PascalCase for classes"
+    python: "snake_case for variables, PascalCase for classes"
+    rust: "snake_case for variables, PascalCase for types"
+
+  comments:
+    requirement: "复杂逻辑必须注释"
+    style: "解释为什么，而非什么"
+
+## 质量标准
+quality_standards:
+  code_review:
+    required: true
+    min_approvals: 1
+
+  security:
+    dependency_scan: true
+    secret_detection: true
+
+  performance:
+    api_response_time: "< 200ms (p95)"
+    page_load_time: "< 2s"
+
+## Agent配置
+agents:
+  orchestrator:
+    model: "opus"
+    capabilities:
+      - task_decomposition
+      - strategy_selection
+      - result_integration
+
+  architect:
+    model: "opus"
+    specialization: "system_design"
+    focus_areas:
+      - architecture_patterns
+      - technology_selection
+      - scalability
+
+  code_reviewer:
+    model: "sonnet"
+    specialization: "code_quality"
+    check_items:
+      - security
+      - performance
+      - maintainability
+
+  debugger:
+    model: "sonnet"
+    specialization: "problem_solving"
+    approach: "root_cause_analysis"
+
+  security_analyst:
+    model: "sonnet"
+    specialization: "security_audit"
+    standards:
+      - OWASP Top 10
+      - CWE/SANS Top 25
+
+  data_scientist:
+    model: "sonnet"
+    specialization: "data_analysis"
+    tools:
+      - SQL
+      - pandas
+      - matplotlib
+
+## 工作流配置
+workflows:
+  spec_driven_dev:
+    enabled: true
+    phases:
+      - constitution
+      - specify
+      - clarify
+      - plan
+      - tasks
+      - implement
+
+  agent_orchestration:
+    enabled: true
+    strategies:
+      - parallel
+      - sequential
+      - hierarchical
+      - collaborative
+      - competitive
+      - swarm
+
+## 开发环境
+development:
+  package_manager: "npm"
+  node_version: ">=18.0.0"
+  python_version: ">=3.11"
+  rust_version: ">=1.70"
+
+## 部署配置
+deployment:
+  environments:
+    - development
+    - staging
+    - production
+
+  ci_cd:
+    platform: "GitHub Actions"
+    auto_deploy: false
+
+## 文档标准
+documentation:
+  required_files:
+    - README.md
+    - CONTRIBUTING.md
+    - CHANGELOG.md
+
+  api_docs:
+    format: "OpenAPI 3.0"
+    tool: "Swagger/ReDoc"
+
+  code_comments:
+    style: "JSDoc/docstring/rustdoc"
+
+## 自定义变量 (可按需扩展)
+custom:
+  feature_flags:
+    use_typescript: true
+    use_python: true
+    use_rust: false
+
+  preferences:
+    tab_size: 2
+    max_line_length: 88
+    use_semicolons: true
+
+---

@@ -1,0 +1,83 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Writing file...'",
+            "description": "文件写入前通知"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/validate-command.sh",
+            "description": "验证 Bash 命令安全性",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'File written: $TOOL_OUTPUT'",
+            "description": "文件写入后通知"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/post-edit.sh",
+            "description": "编辑后运行 lint 检查",
+            "timeout": 30000
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "type": "command",
+        "command": "./scripts/notify.sh",
+        "description": "发送通知到外部系统"
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "./scripts/on-stop.sh",
+        "description": "会话结束时的清理操作"
+      }
+    ]
+  },
+  "scripts": {
+    "validate-command.sh": "#!/bin/bash\n# 验证命令安全性\nINPUT=$(cat)\nCOMMAND=$(echo \"$INPUT\" | jq -r '.tool_input.command // empty')\n\n# 检查危险命令\nif echo \"$COMMAND\" | grep -iE 'rm -rf|sudo|chmod 777' > /dev/null; then\n  echo \"Blocked: Dangerous command detected\" >&2\n  exit 2\nfi\n\nexit 0",
+    "post-edit.sh": "#!/bin/bash\n# 编辑后检查\nnpm run lint --fix 2>/dev/null || true",
+    "notify.sh": "#!/bin/bash\n# 发送通知\necho \"[$(date)] Claude notification\" >> ~/.claude/notifications.log",
+    "on-stop.sh": "#!/bin/bash\n# 清理临时文件\nrm -f /tmp/claude-* 2>/dev/null || true"
+  },
+  "notes": {
+    "exit_codes": {
+      "0": "继续执行",
+      "1": "记录错误并继续",
+      "2": "阻止工具执行"
+    },
+    "environment_variables": {
+      "TOOL_NAME": "工具名称",
+      "TOOL_INPUT": "工具输入 (JSON)",
+      "TOOL_OUTPUT": "工具输出 (PostToolUse)",
+      "SESSION_ID": "会话 ID"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "active-worktrees.md": {
+    "hash": "b07d753bc8c6e0d62ba2bffd2a3d130f",
+    "mtime": 1768554173.3511384,
+    "last_sync": "2026-01-22T14:51:47.682208"
+  },
+  "agent-performance.md": {
+    "hash": "0ec703b50fe7bd3a33da57609fe180e0",
+    "mtime": 1768554030.8161123,
+    "last_sync": "2026-01-22T14:51:47.682392"
+  },
+  "best-practices.md": {
+    "hash": "845e60c2b971f0dafdae6551b7b93e18",
+    "mtime": 1768230991.371459,
+    "last_sync": "2026-01-22T14:51:47.682523"
+  },
+  "error-patterns.md": {
+    "hash": "99c0c22f0379a295ca7615770381353c",
+    "mtime": 1768230949.7501564,
+    "last_sync": "2026-01-22T14:51:47.682634"
+  },
+  "lessons-learned.md": {
+    "hash": "3f0274e225d8ab36bc031cf4943b9973",
+    "mtime": 1768230886.523566,
+    "last_sync": "2026-01-22T14:51:47.682735"
+  },
+  "optimization-history.md": {
+    "hash": "07365602a6981907cd77fcf782e784b5",
+    "mtime": 1768554865.0768135,
+    "last_sync": "2026-01-22T14:51:47.682848"
+  },
+  "performance-reports\\TEMPLATE.md": {
+    "hash": "dbe1ce50ae0c03fee3cb3ee389d12d08",
+    "mtime": 1768554696.8165,
+    "last_sync": "2026-01-22T14:51:47.683077"
+  }
+}

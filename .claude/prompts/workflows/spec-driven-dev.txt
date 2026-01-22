@@ -1,0 +1,494 @@
+# 规范驱动开发工作流 (Spec-Driven Development)
+# 基于GitHub开源的SDD方法论
+
+## 核心理念
+
+**代码服务于规范，而非规范服务于代码**
+
+规范驱动开发实现"规范即可执行"的范式转变，规范不是实现指南，而是生成实现的源头。
+
+## 工作流阶段
+
+```
+Constitution → Specify → Clarify → Plan → Tasks → Implement
+   (宪章)      (定义)    (澄清)   (规划)  (任务)   (实施)
+```
+
+## 阶段 1: Constitution (建立宪章)
+
+### 目标
+建立项目不可协商的治理原则和架构指南
+
+### 输出文件
+`memory/constitution.md`
+
+### 内容结构
+```markdown
+# 项目宪章
+
+## Article I: [原则名称]
+[详细描述该原则]
+
+示例:
+## Article I: 模块化优先
+每个特性都从独立模块开始，确保松耦合。
+
+## Article II: 接口优先
+模块通过明确定义的接口公开功能。
+
+## Article III: 测试驱动
+测试先于实施，TDD不可协商。
+
+## Article IV: 简单性
+优先选择简单解决方案，避免过度工程。
+```
+
+### 执行建议
+- 在项目初始化时定义
+- 所有重大决策必须符合宪章
+- 定期审查和更新(但保持稳定)
+
+---
+
+## 阶段 2: Specify (定义规范)
+
+### 目标
+从自然语言描述创建功能规范
+
+### 输出文件
+`specs/###-feature-name/spec.md`
+
+### 规范模板
+```markdown
+# 特性规范: [特性名称]
+
+## 元信息
+- **分支标识符**: ###-feature-name
+- **创建日期**: YYYY-MM-DD
+- **状态**: Draft | In Review | Approved
+- **优先级**: P0 | P1 | P2 | P3
+
+## 用户场景与测试
+
+### US-001 [P1]: [用户故事标题]
+**作为** [角色]
+**我希望** [功能]
+**以便** [业务价值]
+
+**验收场景**:
+```gherkin
+Given [前置条件]
+When [操作]
+Then [预期结果]
+And [额外验证]
+```
+
+## 功能需求
+
+### 核心需求
+- FR-001: 系统 MUST 支持 [功能]
+- FR-002: 系统 SHOULD 提供 [功能]
+- FR-003: 系统 MAY 包含 [功能] [NEEDS CLARIFICATION]
+
+### 约束条件
+- CON-001: [约束描述]
+- CON-002: [约束描述]
+
+## 非功能需求
+
+### 性能
+- NFR-001: [指标] < [阈值] ([百分位])
+- NFR-002: 吞吐量 > [数值] req/s
+
+### 安全
+- NFR-003: [安全要求]
+
+### 可用性
+- NFR-004: SLA [百分比]
+
+## 成功标准
+- SC-001: [可测量的成功标准]
+- SC-002: [可测量的成功标准]
+```
+
+### 关键规则
+- 使用 `MUST/SHOULD/MAY` 语言(RFC 2119)
+- 最多 3 个 `[NEEDS CLARIFICATION]` 标记
+- 成功标准必须可测量
+- 关注 WHAT 和 WHY，不涉及 HOW
+
+---
+
+## 阶段 3: Clarify (澄清需求)
+
+### 目标
+识别并解决规范中的歧义
+
+### 九个评估维度
+1. **功能范围与行为**: 功能边界是否清晰?
+2. **领域与数据模型**: 数据结构是否明确?
+3. **交互与用户体验流程**: 用户流程是否完整?
+4. **非功能质量属性**: 性能、安全等是否量化?
+5. **集成与外部依赖**: 外部接口是否明确?
+6. **边缘情况与故障处理**: 异常场景是否覆盖?
+7. **约束与权衡**: 限制条件是否考虑?
+8. **术语与一致性**: 术语使用是否统一?
+9. **完成信号**: 如何判断功能完成?
+
+### 输出格式
+在 `spec.md` 中添加:
+
+```markdown
+## Clarifications
+
+### Session YYYY-MM-DD
+**参与者**: [列出参与者]
+
+#### Q1: [问题]
+**回答**: [答案]
+**影响**: [对规范的影响]
+**更新**: [更新的需求编号]
+
+#### Q2: [问题]
+...
+```
+
+---
+
+## 阶段 4: Plan (技术规划)
+
+### 目标
+执行实施规划，生成设计工件
+
+### Phase 0: 研究与澄清
+
+#### 输出文件
+`specs/###-feature/research.md`
+
+#### 内容结构
+```markdown
+# 技术研究
+
+## 决策: [决策主题]
+
+### 背景
+[为什么需要这个决策]
+
+### 选项
+
+#### 选项A: [名称]
+- **优点**: [列出优点]
+- **缺点**: [列出缺点]
+- **成本**: [实施成本]
+
+#### 选项B: [名称]
+...
+
+### 决定
+**选择**: [选择的方案]
+**理由**: [详细理由]
+
+### 风险与缓解
+- **风险1**: [风险] - 缓解: [措施]
+```
+
+### Phase 1: 设计与契约
+
+#### 数据模型 (`data-model.md`)
+```markdown
+# 数据模型
+
+## Entity: User
+### 字段
+- `id`: UUID (主键)
+- `email`: String (唯一, 非空)
+- `password_hash`: String (非空)
+- `created_at`: Timestamp (默认: now())
+- `status`: Enum [active, locked, suspended]
+
+### 索引
+- UNIQUE(email)
+- INDEX(created_at)
+
+### 关系
+- HAS MANY: Orders
+- BELONGS TO: Organization
+
+### 约束
+- email 必须符合邮箱格式
+- password_hash 使用 bcrypt
+```
+
+#### API契约 (`contracts/api.yaml`)
+```yaml
+openapi: 3.0.0
+info:
+  title: Feature API
+  version: 1.0.0
+
+paths:
+  /api/resource:
+    post:
+      summary: 创建资源
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                field1:
+                  type: string
+                field2:
+                  type: integer
+      responses:
+        201:
+          description: 创建成功
+        400:
+          description: 请求无效
+        401:
+          description: 未授权
+```
+
+#### 快速入门 (`quickstart.md`)
+```markdown
+# 快速入门指南
+
+## 环境准备
+1. 安装依赖: `npm install`
+2. 配置环境: 复制 `.env.example` 到 `.env`
+3. 启动数据库: `docker-compose up -d`
+
+## 开发流程
+1. 创建分支: `git checkout -b ###-feature-name`
+2. 运行测试: `npm test`
+3. 启动开发服务器: `npm run dev`
+
+## 测试
+[如何测试这个功能]
+
+## 部署
+[部署说明]
+```
+
+---
+
+## 阶段 5: Tasks (任务分解)
+
+### 目标
+生成可操作的、依赖有序的任务列表
+
+### 输出文件
+`specs/###-feature/tasks.md`
+
+### 任务格式
+```markdown
+# 任务列表
+
+## Phase 1: Setup
+- [ ] T001 初始化项目结构 `/src`, `/tests`
+- [ ] T002 配置数据库连接 `/src/config/database.ts`
+- [ ] T003 设置测试框架
+
+## Phase 2: Foundation
+- [ ] T004 创建 User 模型 `/src/models/user.ts`
+- [ ] T005 [P] 编写 User 模型测试 `/tests/models/user.test.ts`
+- [ ] T006 实现数据库迁移脚本
+
+## Phase 3: User Story - 登录 [US-001]
+- [ ] T007 [P] [US1] 编写登录 API 测试 `/tests/api/auth.test.ts`
+- [ ] T008 [US1] 实现登录端点 `/src/api/auth/login.ts`
+- [ ] T009 [US1] 实现账户锁定逻辑 `/src/services/auth.ts`
+- [ ] T010 [US1] 添加错误处理中间件
+
+## Phase 4: Polish
+- [ ] T011 添加日志 `/src/middleware/logging.ts`
+- [ ] T012 性能优化
+- [ ] T013 文档更新
+- [ ] T014 集成测试
+
+## 依赖关系
+```
+T001 → T002 → T004 → T008
+  ↓      ↓      ↓      ↓
+T003 → T005 → T007 → T010
+```
+
+## 标记说明
+- `[P]`: 可并行执行
+- `[US1]`: 关联用户故事 US-001
+- `[BLOCKED]`: 被阻塞，等待其他任务
+```
+
+---
+
+## 阶段 6: Implement (实施)
+
+### 目标
+执行任务列表中定义的所有任务
+
+### 执行流程
+
+#### 1. 准备
+- 加载上下文: `tasks.md`, `plan.md`, `data-model.md`
+- 验证项目设置
+- 确认所有依赖已就绪
+
+#### 2. 执行
+- 按依赖顺序执行任务
+- 对于标记 `[P]` 的任务，可并行执行
+- 测试优先方法: 先写测试，再写实现
+
+#### 3. 验证
+- 运行相关测试
+- 检查代码质量
+- 验证符合规范
+
+#### 4. 标记完成
+- 完成后标记 `[X]`
+- 记录任何偏差或问题
+- 更新文档
+
+### 测试驱动开发 (TDD) 循环
+```
+Red → Green → Refactor
+ ↓      ↓        ↓
+写测试 → 实现 → 重构
+(失败)  (通过)  (优化)
+```
+
+---
+
+## 目录结构
+
+```
+specs/
+├── constitution.md              # 项目宪章
+└── ###-feature-name/
+    ├── spec.md                  # 功能规范
+    ├── research.md              # 技术研究
+    ├── plan.md                  # 技术规划
+    ├── data-model.md            # 数据模型
+    ├── tasks.md                 # 任务列表
+    ├── quickstart.md            # 快速入门
+    ├── contracts/               # API契约
+    │   ├── api.yaml
+    │   └── events.yaml
+    └── checklists/              # 检查清单
+        └── requirements.md
+```
+
+---
+
+## 质量验证
+
+### 分析命令
+对规范工件执行跨工件验证
+
+#### 检测维度
+- **重复检测**: 多处定义同一需求
+- **歧义检测**: 使用模糊形容词(很快、简单等)
+- **规范不足**: 缺少关键信息
+- **宪章对齐**: 是否违反宪章原则
+- **覆盖差距**: 功能需求与测试覆盖的差距
+- **不一致检测**: 跨文件的不一致
+
+#### 严重性级别
+- **CRITICAL**: 阻塞性问题，必须立即解决
+- **HIGH**: 必须修复才能继续
+- **MEDIUM**: 应该修复
+- **LOW**: 可选优化
+
+### 检查清单
+验证需求质量(非实施正确性)
+
+```markdown
+## 需求质量检查清单
+
+### 完整性
+- [ ] 所有必要需求是否已记录?
+- [ ] 是否涵盖所有用户角色?
+- [ ] 是否包含所有边缘情况?
+
+### 清晰性
+- [ ] 需求是否具体且无歧义?
+- [ ] 术语是否一致使用?
+- [ ] 是否避免了技术实现细节?
+
+### 可测量性
+- [ ] 成功标准是否可客观验证?
+- [ ] 性能指标是否有具体数值?
+- [ ] 是否明确了验收标准?
+
+### 可行性
+- [ ] 技术上是否可实现?
+- [ ] 时间估算是否合理?
+- [ ] 资源是否充足?
+
+### 可追溯性
+- [ ] 需求是否有唯一标识?
+- [ ] 是否链接到用户故事?
+- [ ] 是否关联到测试用例?
+```
+
+---
+
+## 最佳实践
+
+1. **规范先于代码**: 永远先完成规范再开始编码
+2. **迭代细化**: 使用 clarify 阶段解决歧义，不要假设
+3. **测试驱动**: 规范中的验收标准即测试用例
+4. **版本控制**: 规范与代码一起版本控制
+5. **持续验证**: 使用 analyze 确保一致性
+6. **技术无关**: 规范描述 WHAT 和 WHY，不涉及 HOW
+7. **可测量**: 所有需求都必须可验证
+8. **简洁明确**: 避免模糊的形容词和副词
+
+---
+
+## 工具和命令
+
+### 创建规范
+```bash
+/specify [特性描述]
+# 生成 specs/###-feature/spec.md
+```
+
+### 澄清需求
+```bash
+/clarify
+# 识别并标记需要澄清的地方
+```
+
+### 技术规划
+```bash
+/plan
+# 生成 research.md, data-model.md, contracts/
+```
+
+### 生成任务
+```bash
+/tasks
+# 生成 tasks.md
+```
+
+### 实施
+```bash
+/implement
+# 按顺序执行任务
+```
+
+### 分析验证
+```bash
+/analyze
+# 执行跨工件验证
+```
+
+---
+
+## 参考资源
+
+- [GitHub spec-kit](https://github.com/github/spec-kit)
+- [Spec-Driven Development 博客](https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai/)
+- RFC 2119: MUST/SHOULD/MAY 关键词
+- OWASP ASVS: 安全验证标准

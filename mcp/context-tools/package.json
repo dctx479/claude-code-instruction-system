@@ -1,0 +1,22 @@
+{
+  "name": "context-tools",
+  "version": "1.0.0",
+  "description": "MCP server for context archive tools",
+  "main": "server.py",
+  "scripts": {
+    "start": "python server.py"
+  },
+  "dependencies": {},
+  "mcp": {
+    "tools": [
+      {
+        "name": "read_context_index",
+        "description": "读取项目上下文索引"
+      },
+      {
+        "name": "read_context_resolution",
+        "description": "读取问题解决方案详情"
+      }
+    ]
+  }
+}
