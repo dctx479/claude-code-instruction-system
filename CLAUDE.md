@@ -775,13 +775,28 @@ jq empty <配置文件.json>
 
 #### Hooks 配置格式规范
 
-**PreToolUse / PostToolUse 事件**:
-- ✅ 必须使用对象格式的 matcher: `{"matcher": {"tools": ["ToolName"]}}`
-- ❌ 不能使用字符串 matcher: `{"matcher": "ToolName"}`
+**⚠️ 重要：全局 vs 项目级别差异**
 
-**其他事件 (Stop, UserPromptSubmit, Notification, PreCompact)**:
-- ✅ 直接使用 hooks 数组，不需要 matcher
-- ❌ 不能在这些事件中使用 matcher 字段
+**项目级别** (`hooks/hooks.json`):
+- ✅ PreToolUse/PostToolUse 使用对象 matcher: `{"matcher": {"tools": ["Bash"]}}`
+- ✅ Stop/UserPromptSubmit/Notification/PreCompact 直接使用 hooks 数组
+
+**全局级别** (`~/.claude/settings.json`):
+- ⚠️ Hooks 格式可能与项目级别不同
+- ⚠️ 建议优先使用项目级别 hooks
+- ⚠️ 全局配置仅用于 statusLine 等非 hooks 功能
+- 📚 参考官方文档: https://code.claude.com/docs/en/hooks
+
+**推荐实践**:
+```markdown
+✅ 推荐：在项目级别配置 hooks
+- 文件：`hooks/hooks.json`
+- 优点：格式明确、跨项目一致、易于版本控制
+
+❌ 避免：在全局配置 hooks
+- 文件：`~/.claude/settings.json`
+- 问题：格式不明确、容易出错、难以调试
+```
 
 **Windows 环境兼容性**:
 - ✅ 优先使用 Git Bash: `"C:\\Program Files\\Git\\bin\\bash.exe" "./script.sh"`
@@ -789,7 +804,7 @@ jq empty <配置文件.json>
 - ✅ 备选 PowerShell: `"powershell -ExecutionPolicy Bypass -File \"script.ps1\""`
 - ❌ 避免直接使用 `./script.sh` (在 Windows 上不工作)
 
-**示例 - 正确的 hooks 配置**:
+**示例 - 项目级别 hooks 配置**:
 ```json
 {
   "hooks": {
@@ -807,6 +822,16 @@ jq empty <配置文件.json>
         "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./on-stop.sh\""
       }]
     }]
+  }
+}
+```
+
+**示例 - 全局 settings.json (仅 statusLine)**:
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"~/.claude/statusline-wrapper.sh\""
   }
 }
 ```
