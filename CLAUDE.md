@@ -1,8 +1,105 @@
 # 太一元系统核心配置
-# 版本: 3.0 Taiyi (太一) - 道生一，一生万物
+# 版本: 3.1.0 Taiyi (太一) - 道之演化 (Evolution of the Way)
+# 发布日期: 2026-01-23
 
 > **太一**，道家最高神格，代表宇宙本源。道生一，一生二，二生三，三生万物。
 > 太一元系统承载此哲学，从本源智慧出发，驭众智、启新程，自进化而生生不息。
+
+## 3.1 新特性
+
+### Ralph Loop - 自主循环执行
+```bash
+/ralph "完成所有待办事项"  # 自主执行直到完成
+/ralph status              # 查看执行状态
+```
+详见: `commands/general/ralph.md`
+
+### HUD Statusline - 实时状态可视化
+```
+[10:30:15] Sonnet | @architect | designing | [###.....] 30% | R:3/10
+```
+详见: `.claude/statusline/hud.sh`
+
+### Intent Detector - 智能意图识别
+自动分析用户输入，推荐合适的 Agent 和 Skill。
+详见: `hooks/intent-detector.sh`, `config/keywords.json`
+
+### Model Router - 自动模型选择
+根据任务复杂度自动选择最优模型 (Opus/Sonnet/Haiku)。
+详见: `workflows/model-router.md`
+
+### Plan-Scoped Memory - 计划级知识隔离
+为每个开发计划创建独立的知识空间，避免上下文污染。
+详见: `workflows/plan-scoped-memory.md`
+
+### 主题系统
+```bash
+cc-patcher.sh theme nerd   # 切换主题
+cc-patcher.sh themes       # 列出可用主题
+```
+可用主题: default, minimal, nerd
+
+### TUI Config - 交互式配置系统
+基于 Rust + ratatui 的终端配置界面:
+```bash
+taiyi-tui-config --path /project
+```
+- 实时预览配置变更
+- 可视化编辑 Agent 定义
+- 主题选择器
+- 5 个标签页: Overview, Agents, Themes, Hooks, Memory
+
+详见: `tools/tui-config/README.md`
+
+### Autopilot - 全自主执行模式
+端到端自动执行，从需求到交付:
+```bash
+/autopilot "开发用户认证系统"           # 默认监督模式
+/autopilot full "快速原型开发"          # 完全自主
+/autopilot supervised "重构支付模块"    # 阶段审核
+/autopilot step "数据库迁移"            # 每步确认
+```
+
+**5 阶段工作流**:
+1. Planning - 任务分解、策略选择
+2. Specification - 规范生成、架构设计
+3. Development - Ralph Loop 执行 + Model Router
+4. QA - 自动审查、自愈修复
+5. Delivery - 文档生成、变更记录
+
+详见: `commands/general/autopilot.md`, `workflows/autopilot-flow.md`
+
+### Research Parallel - 科研并行工作流
+多 Agent 并行执行科研任务:
+```bash
+/literature-review "主题" --parallel --workers 5  # 3.3x 加速
+/experiment-track parallel --workers 4             # 2.3x 加速
+```
+
+**并行策略**:
+- SWARM: 文献综述 (5 workers)
+- PARALLEL: 实验执行 (4 workers)
+- HIERARCHICAL: 数据分析 (lead + workers)
+
+详见: `workflows/research-parallel.md`
+
+### Rust 性能工具
+高性能 Rust 实现，显著提升执行速度:
+
+**HUD Renderer** (7-10x 提升):
+```bash
+hud-render --theme nerd --format full
+```
+详见: `tools/hud-render-rust/README.md`
+
+**Git Info Collector** (5-8x 提升):
+```bash
+git-info status --format compact
+git-info log --oneline --count 10
+```
+详见: `tools/git-info-rust/README.md`
+
+---
 
 ## 元系统声明
 
@@ -512,6 +609,15 @@ npm run typecheck   # 类型检查
 /parallel            # 并行执行
 /swarm               # 群体执行
 /evolve              # 触发系统进化
+```
+
+### 自主执行
+```bash
+/ralph "任务"                    # Ralph Loop 自主执行
+/autopilot "任务"                # Autopilot 全自主模式
+/autopilot full "任务"           # 完全自主
+/autopilot supervised "任务"     # 监督模式
+/autopilot status                # 查看执行状态
 ```
 
 ### 科研工作流

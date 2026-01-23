@@ -1,4 +1,6 @@
 {
+  "version": "3.1.0",
+  "description": "Taiyi System Hooks Configuration",
   "hooks": {
     "PreToolUse": [
       {
@@ -19,6 +21,17 @@
             "command": "./scripts/validate-command.sh",
             "description": "验证 Bash 命令安全性",
             "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/intent-detector.sh",
+            "description": "意图识别 - 分析用户意图并推荐Agent/Skill",
+            "timeout": 3000
           }
         ]
       }
@@ -56,8 +69,22 @@
     "Stop": [
       {
         "type": "command",
+        "command": "./hooks/ralph-stop-interceptor.sh",
+        "description": "Ralph Loop 停止拦截器 - 检查是否继续执行",
+        "timeout": 5000
+      },
+      {
+        "type": "command",
         "command": "./scripts/on-stop.sh",
         "description": "会话结束时的清理操作"
+      }
+    ],
+    "PreCompact": [
+      {
+        "type": "command",
+        "command": "./.claude/hooks/pre-compact.sh",
+        "description": "上下文压缩前自动归档",
+        "timeout": 10000
       }
     ]
   },

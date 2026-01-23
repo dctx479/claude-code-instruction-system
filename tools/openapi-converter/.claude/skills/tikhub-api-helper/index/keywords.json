@@ -1,0 +1,109 @@
+{
+  "/trending/topics": [
+    "GET /trending/topics"
+  ],
+  "获取热门话题": [
+    "GET /trending/topics"
+  ],
+  "获取当前": [
+    "GET /trending/topics",
+    "GET /trending/videos"
+  ],
+  "tiktok": [
+    "GET /trending/topics",
+    "GET /trending/videos"
+  ],
+  "平台的热门话题列表": [
+    "GET /trending/topics"
+  ],
+  "/trending/videos": [
+    "GET /trending/videos"
+  ],
+  "获取热门视频": [
+    "GET /trending/videos"
+  ],
+  "平台的热门视频列表": [
+    "GET /trending/videos"
+  ],
+  "/users/{user_id}": [
+    "GET /users/{user_id}"
+  ],
+  "获取用户信息": [
+    "GET /users/{user_id}"
+  ],
+  "根据用户": [
+    "GET /users/{user_id}"
+  ],
+  "获取用户详细信息": [
+    "GET /users/{user_id}"
+  ],
+  "/users/{user_id}/videos": [
+    "GET /users/{user_id}/videos"
+  ],
+  "获取用户视频列表": [
+    "GET /users/{user_id}/videos"
+  ],
+  "获取指定用户发布的视频列表": [
+    "GET /users/{user_id}/videos"
+  ],
+  "/videos/{video_id}": [
+    "GET /videos/{video_id}"
+  ],
+  "获取视频详情": [
+    "GET /videos/{video_id}"
+  ],
+  "根据视频": [
+    "GET /videos/{video_id}"
+  ],
+  "获取视频详细信息": [
+    "GET /videos/{video_id}"
+  ],
+  "/videos/{video_id}/comments": [
+    "GET /videos/{video_id}/comments"
+  ],
+  "获取视频评论": [
+    "GET /videos/{video_id}/comments"
+  ],
+  "获取指定视频的评论列表": [
+    "GET /videos/{video_id}/comments"
+  ],
+  "/search/users": [
+    "GET /search/users"
+  ],
+  "搜索用户": [
+    "GET /search/users"
+  ],
+  "根据关键词搜索用户": [
+    "GET /search/users"
+  ],
+  "/search/videos": [
+    "GET /search/videos"
+  ],
+  "搜索视频": [
+    "GET /search/videos"
+  ],
+  "根据关键词搜索视频": [
+    "GET /search/videos"
+  ],
+  "/hashtags/{hashtag_id}": [
+    "GET /hashtags/{hashtag_id}"
+  ],
+  "获取话题详情": [
+    "GET /hashtags/{hashtag_id}"
+  ],
+  "根据话题": [
+    "GET /hashtags/{hashtag_id}"
+  ],
+  "获取话题详细信息": [
+    "GET /hashtags/{hashtag_id}"
+  ],
+  "/hashtags/{hashtag_id}/videos": [
+    "GET /hashtags/{hashtag_id}/videos"
+  ],
+  "获取话题视频": [
+    "GET /hashtags/{hashtag_id}/videos"
+  ],
+  "获取指定话题下的视频列表": [
+    "GET /hashtags/{hashtag_id}/videos"
+  ]
+}

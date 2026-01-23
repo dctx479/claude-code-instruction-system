@@ -183,14 +183,75 @@
 }
 ```
 
+## Plan-Scoped Memory 支持
+
+### 计划级上下文管理
+
+Context Archivist 支持计划级知识隔离，为每个开发计划维护独立的上下文。
+
+### 计划相关操作
+
+1. **创建计划上下文**
+   ```
+   当新计划创建时，初始化:
+   - .claude/context/plans/{plan_id}/context.json
+   - .claude/context/plans/{plan_id}/decisions.json
+   - .claude/context/plans/{plan_id}/progress.json
+   - .claude/context/plans/{plan_id}/learnings.json
+   ```
+
+2. **归档时考虑计划**
+   ```
+   如果存在活动计划:
+   - 优先保存到计划目录
+   - 标记 resolution 属于哪个计划
+   - 更新计划进度
+   ```
+
+3. **同步到全局**
+   ```
+   计划完成时:
+   - 提取通用 resolutions 到全局
+   - 合并 learnings 到 lessons-learned.md
+   - 归档计划目录
+   ```
+
+### 计划上下文 Schema
+
+```json
+{
+  "plan_id": "plan-001",
+  "name": "计划名称",
+  "status": "active|completed|archived",
+  "scope": {
+    "files": ["文件模式"],
+    "modules": ["模块名"]
+  },
+  "goals": ["目标列表"],
+  "constraints": ["约束条件"],
+  "resolutions": ["res-xxx"],
+  "decisions": ["dec-xxx"],
+  "learnings": ["learn-xxx"]
+}
+```
+
+### 命令支持
+
+```bash
+/save-context --plan <plan_id>   # 保存到特定计划
+/save-context --sync-global      # 同步到全局
+```
+
 ## 注意事项
 
 1. **精准性**: 只记录已验证的事实，不猜测
 2. **简洁性**: 不贴代码全文，只记录关键点
 3. **可复现**: final_fix 必须可执行
 4. **稳定性**: problem_signature 应来自稳定的错误信息
+5. **计划隔离**: 默认保存到活动计划，全局内容需显式同步
 
 ## 相关文档
 - 使用指南: `docs/context-archival-guide.md`
 - Schema 规范: `docs/context-schema.md`
 - MCP 工具: `mcp/context-retrieval.md`
+- Plan-Scoped Memory: `workflows/plan-scoped-memory.md`

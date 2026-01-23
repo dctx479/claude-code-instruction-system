@@ -1,0 +1,76 @@
+# Taiyi Minimal Theme
+# 版本: 1.0.0
+# 描述: 极简主题 - 专注于内容，减少干扰
+
+[metadata]
+name = "minimal"
+version = "1.0.0"
+author = "Taiyi System"
+description = "Minimal theme - focus on content with less distraction"
+
+[colors]
+# 单色调设计
+primary = "#FFFFFF"
+secondary = "#CCCCCC"
+accent = "#FFFFFF"
+
+# 状态颜色 (使用灰度)
+success = "#FFFFFF"
+warning = "#CCCCCC"
+error = "#999999"
+info = "#FFFFFF"
+
+# 文本颜色
+text_primary = "#FFFFFF"
+text_secondary = "#CCCCCC"
+text_muted = "#999999"
+
+# 背景色
+bg_primary = "#000000"
+bg_secondary = "#111111"
+bg_elevated = "#222222"
+
+[hud]
+# 极简 HUD
+border_char = " "
+progress_filled = "="
+progress_empty = "-"
+separator = "|"
+
+# 组件颜色 - 统一使用默认色
+model_opus = "white"
+model_sonnet = "white"
+model_haiku = "white"
+agent = "white"
+task = "white"
+ralph = "white"
+time = "dim"
+tokens = "dim"
+
+[prompt]
+# 极简提示符
+prefix = ">"
+suffix = ""
+user_indicator = ">"
+assistant_indicator = "<"
+
+[icons]
+# 极简图标
+success = "+"
+error = "x"
+warning = "!"
+info = "i"
+running = "~"
+completed = "*"
+paused = "-"
+
+[typography]
+indent_size = 2
+max_line_width = 100
+code_block_style = "fenced"
+
+[output]
+timestamp_format = "%H:%M"
+date_format = "%m-%d"
+progress_bar_width = 10
+truncate_length = 30

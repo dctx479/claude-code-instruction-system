@@ -1,0 +1,92 @@
+[
+  {
+    "path": "/trending/topics",
+    "method": "GET",
+    "summary": "获取热门话题",
+    "description": "获取当前 TikTok 平台的热门话题列表",
+    "tags": [
+      "Trending"
+    ]
+  },
+  {
+    "path": "/trending/videos",
+    "method": "GET",
+    "summary": "获取热门视频",
+    "description": "获取当前 TikTok 平台的热门视频列表",
+    "tags": [
+      "Trending"
+    ]
+  },
+  {
+    "path": "/users/{user_id}",
+    "method": "GET",
+    "summary": "获取用户信息",
+    "description": "根据用户 ID 获取用户详细信息",
+    "tags": [
+      "Users"
+    ]
+  },
+  {
+    "path": "/users/{user_id}/videos",
+    "method": "GET",
+    "summary": "获取用户视频列表",
+    "description": "获取指定用户发布的视频列表",
+    "tags": [
+      "Users"
+    ]
+  },
+  {
+    "path": "/videos/{video_id}",
+    "method": "GET",
+    "summary": "获取视频详情",
+    "description": "根据视频 ID 获取视频详细信息",
+    "tags": [
+      "Videos"
+    ]
+  },
+  {
+    "path": "/videos/{video_id}/comments",
+    "method": "GET",
+    "summary": "获取视频评论",
+    "description": "获取指定视频的评论列表",
+    "tags": [
+      "Videos"
+    ]
+  },
+  {
+    "path": "/search/users",
+    "method": "GET",
+    "summary": "搜索用户",
+    "description": "根据关键词搜索用户",
+    "tags": [
+      "Search"
+    ]
+  },
+  {
+    "path": "/search/videos",
+    "method": "GET",
+    "summary": "搜索视频",
+    "description": "根据关键词搜索视频",
+    "tags": [
+      "Search"
+    ]
+  },
+  {
+    "path": "/hashtags/{hashtag_id}",
+    "method": "GET",
+    "summary": "获取话题详情",
+    "description": "根据话题 ID 获取话题详细信息",
+    "tags": [
+      "Hashtags"
+    ]
+  },
+  {
+    "path": "/hashtags/{hashtag_id}/videos",
+    "method": "GET",
+    "summary": "获取话题视频",
+    "description": "获取指定话题下的视频列表",
+    "tags": [
+      "Hashtags"
+    ]
+  }
+]

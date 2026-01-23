@@ -1,0 +1,78 @@
+# Taiyi Default Theme
+# 版本: 1.0.0
+# 描述: 太一元系统默认主题 - 平衡简洁与功能
+
+[metadata]
+name = "default"
+version = "1.0.0"
+author = "Taiyi System"
+description = "Default theme - balanced simplicity and functionality"
+
+[colors]
+# 主色调
+primary = "#3B82F6"       # 蓝色
+secondary = "#10B981"     # 绿色
+accent = "#8B5CF6"        # 紫色
+
+# 状态颜色
+success = "#22C55E"       # 成功绿
+warning = "#F59E0B"       # 警告黄
+error = "#EF4444"         # 错误红
+info = "#3B82F6"          # 信息蓝
+
+# 文本颜色
+text_primary = "#F9FAFB"  # 主要文本
+text_secondary = "#9CA3AF" # 次要文本
+text_muted = "#6B7280"    # 静音文本
+
+# 背景色
+bg_primary = "#111827"    # 主背景
+bg_secondary = "#1F2937"  # 次背景
+bg_elevated = "#374151"   # 提升背景
+
+[hud]
+# HUD 状态栏配置
+border_char = "-"
+progress_filled = "#"
+progress_empty = "."
+separator = "|"
+
+# 组件颜色映射
+model_opus = "magenta"
+model_sonnet = "blue"
+model_haiku = "cyan"
+agent = "green"
+task = "yellow"
+ralph = "cyan"
+time = "dim"
+tokens = "dim"
+
+[prompt]
+# 命令行提示符
+prefix = ">"
+suffix = ""
+user_indicator = "user"
+assistant_indicator = "claude"
+
+[icons]
+# 使用 ASCII 字符作为图标
+success = "[OK]"
+error = "[ERR]"
+warning = "[WARN]"
+info = "[INFO]"
+running = "[...]"
+completed = "[DONE]"
+paused = "[PAUSE]"
+
+[typography]
+# 排版设置
+indent_size = 2
+max_line_width = 80
+code_block_style = "fenced"
+
+[output]
+# 输出格式设置
+timestamp_format = "%H:%M:%S"
+date_format = "%Y-%m-%d"
+progress_bar_width = 20
+truncate_length = 50

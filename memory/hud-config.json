@@ -1,0 +1,55 @@
+{
+  "theme": "default",
+  "width": 80,
+  "components": {
+    "time": {
+      "enabled": true,
+      "format": "HH:MM:SS"
+    },
+    "model": {
+      "enabled": true,
+      "show_full_name": false
+    },
+    "tokens": {
+      "enabled": true,
+      "format": "compact"
+    },
+    "agent": {
+      "enabled": true,
+      "prefix": "@"
+    },
+    "task": {
+      "enabled": true,
+      "max_length": 20,
+      "truncate": true
+    },
+    "progress": {
+      "enabled": true,
+      "bar_width": 10,
+      "show_percentage": true
+    },
+    "ralph": {
+      "enabled": true,
+      "prefix": "R:"
+    }
+  },
+  "refresh": {
+    "rate": 1,
+    "auto": true
+  },
+  "colors": {
+    "enabled": true,
+    "model_opus": "magenta",
+    "model_sonnet": "blue",
+    "model_haiku": "cyan",
+    "agent": "green",
+    "task": "yellow",
+    "ralph": "cyan",
+    "time": "dim",
+    "tokens": "dim"
+  },
+  "border": {
+    "enabled": true,
+    "style": "default"
+  }
+}

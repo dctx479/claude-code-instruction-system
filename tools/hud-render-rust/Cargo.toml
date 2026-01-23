@@ -1,0 +1,40 @@
+[package]
+name = "taiyi-hud-render"
+version = "0.1.0"
+edition = "2021"
+authors = ["Taiyi System"]
+description = "High-performance HUD renderer for Taiyi Meta-System"
+license = "MIT"
+keywords = ["hud", "render", "performance", "terminal"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+# Terminal
+crossterm = "0.28"
+
+# CLI
+clap = { version = "4.5", features = ["derive"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+anyhow = "1.0"
+
+# Time
+chrono = "0.4"
+
+# Performance
+parking_lot = "0.12"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[[bin]]
+name = "hud-render"
+path = "src/main.rs"

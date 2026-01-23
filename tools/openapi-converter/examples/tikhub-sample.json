@@ -1,0 +1,335 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "TikHub API",
+    "description": "TikHub API 提供 TikTok 数据查询和分析功能",
+    "version": "1.0.0",
+    "contact": {
+      "email": "api@tikhub.example.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.tikhub.io/v1",
+      "description": "Production server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/trending/topics": {
+      "get": {
+        "summary": "获取热门话题",
+        "description": "获取当前 TikTok 平台的热门话题列表",
+        "tags": ["Trending"],
+        "operationId": "getTrendingTopics",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "返回结果数量",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "description": "地区代码",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "US"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回热门话题列表"
+          }
+        }
+      }
+    },
+    "/trending/videos": {
+      "get": {
+        "summary": "获取热门视频",
+        "description": "获取当前 TikTok 平台的热门视频列表",
+        "tags": ["Trending"],
+        "operationId": "getTrendingVideos",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "返回结果数量",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回热门视频列表"
+          }
+        }
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "summary": "获取用户信息",
+        "description": "根据用户 ID 获取用户详细信息",
+        "tags": ["Users"],
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "用户 ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回用户信息"
+          }
+        }
+      }
+    },
+    "/users/{user_id}/videos": {
+      "get": {
+        "summary": "获取用户视频列表",
+        "description": "获取指定用户发布的视频列表",
+        "tags": ["Users"],
+        "operationId": "getUserVideos",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "用户 ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "返回结果数量",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回用户视频列表"
+          }
+        }
+      }
+    },
+    "/videos/{video_id}": {
+      "get": {
+        "summary": "获取视频详情",
+        "description": "根据视频 ID 获取视频详细信息",
+        "tags": ["Videos"],
+        "operationId": "getVideoById",
+        "parameters": [
+          {
+            "name": "video_id",
+            "in": "path",
+            "description": "视频 ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回视频详情"
+          }
+        }
+      }
+    },
+    "/videos/{video_id}/comments": {
+      "get": {
+        "summary": "获取视频评论",
+        "description": "获取指定视频的评论列表",
+        "tags": ["Videos"],
+        "operationId": "getVideoComments",
+        "parameters": [
+          {
+            "name": "video_id",
+            "in": "path",
+            "description": "视频 ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "返回结果数量",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回评论列表"
+          }
+        }
+      }
+    },
+    "/search/users": {
+      "get": {
+        "summary": "搜索用户",
+        "description": "根据关键词搜索用户",
+        "tags": ["Search"],
+        "operationId": "searchUsers",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "搜索关键词",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "返回结果数量",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回搜索结果"
+          }
+        }
+      }
+    },
+    "/search/videos": {
+      "get": {
+        "summary": "搜索视频",
+        "description": "根据关键词搜索视频",
+        "tags": ["Search"],
+        "operationId": "searchVideos",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "搜索关键词",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "返回结果数量",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回搜索结果"
+          }
+        }
+      }
+    },
+    "/hashtags/{hashtag_id}": {
+      "get": {
+        "summary": "获取话题详情",
+        "description": "根据话题 ID 获取话题详细信息",
+        "tags": ["Hashtags"],
+        "operationId": "getHashtagById",
+        "parameters": [
+          {
+            "name": "hashtag_id",
+            "in": "path",
+            "description": "话题 ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回话题详情"
+          }
+        }
+      }
+    },
+    "/hashtags/{hashtag_id}/videos": {
+      "get": {
+        "summary": "获取话题视频",
+        "description": "获取指定话题下的视频列表",
+        "tags": ["Hashtags"],
+        "operationId": "getHashtagVideos",
+        "parameters": [
+          {
+            "name": "hashtag_id",
+            "in": "path",
+            "description": "话题 ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "返回结果数量",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回话题视频列表"
+          }
+        }
+      }
+    }
+  }
+}

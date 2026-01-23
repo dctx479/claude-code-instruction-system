@@ -1,0 +1,94 @@
+# Taiyi Nerd Theme
+# 版本: 1.0.0
+# 描述: Nerd 主题 - 使用 Nerd Fonts 图标，丰富的视觉体验
+
+[metadata]
+name = "nerd"
+version = "1.0.0"
+author = "Taiyi System"
+description = "Nerd theme - rich visual experience with Nerd Fonts icons"
+requires = ["nerd-fonts"]
+
+[colors]
+# 赛博朋克配色
+primary = "#00D9FF"       # 霓虹蓝
+secondary = "#FF00FF"     # 霓虹粉
+accent = "#39FF14"        # 霓虹绿
+
+# 状态颜色
+success = "#39FF14"       # 矩阵绿
+warning = "#FFD700"       # 金色
+error = "#FF0040"         # 霓虹红
+info = "#00D9FF"          # 霓虹蓝
+
+# 文本颜色
+text_primary = "#FFFFFF"
+text_secondary = "#B8B8B8"
+text_muted = "#666666"
+
+# 背景色
+bg_primary = "#0D0D0D"
+bg_secondary = "#1A1A2E"
+bg_elevated = "#16213E"
+
+[hud]
+# Nerd 风格 HUD
+border_char = "━"
+progress_filled = "█"
+progress_empty = "▒"
+separator = "┃"
+
+# 组件颜色
+model_opus = "magenta"
+model_sonnet = "blue"
+model_haiku = "cyan"
+agent = "green"
+task = "yellow"
+ralph = "cyan"
+time = "dim"
+tokens = "dim"
+
+[prompt]
+# Nerd 字体提示符
+prefix = " "           # Nerd Font: 箭头
+suffix = ""
+user_indicator = " "   # Nerd Font: 用户
+assistant_indicator = "󰚩 " # Nerd Font: 机器人
+
+[icons]
+# Nerd Font 图标
+success = " "          # 勾选
+error = " "            # 叉号
+warning = " "          # 警告
+info = " "             # 信息
+running = " "          # 加载
+completed = " "        # 完成
+paused = " "           # 暂停
+debug = " "            # Bug
+code = " "             # 代码
+git = " "              # Git
+folder = " "           # 文件夹
+file = " "             # 文件
+python = " "           # Python
+javascript = " "       # JavaScript
+typescript = " "       # TypeScript
+database = " "         # 数据库
+docker = " "           # Docker
+kubernetes = "󱃾 "       # Kubernetes
+
+[typography]
+indent_size = 2
+max_line_width = 120
+code_block_style = "fenced"
+
+[output]
+timestamp_format = "%H:%M:%S"
+date_format = "%Y-%m-%d"
+progress_bar_width = 20
+truncate_length = 60
+
+[special]
+# 特殊效果
+rainbow_progress = true
+animated_spinner = true
+gradient_text = false

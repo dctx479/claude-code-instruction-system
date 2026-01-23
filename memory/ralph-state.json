@@ -1,0 +1,19 @@
+{
+  "active": false,
+  "iteration": 0,
+  "max_iterations": 10,
+  "completed": false,
+  "fatal_error": false,
+  "current_task": null,
+  "task_description": null,
+  "started_at": null,
+  "last_updated": null,
+  "checkpoints": [],
+  "errors": [],
+  "metrics": {
+    "total_runs": 0,
+    "successful_runs": 0,
+    "failed_runs": 0,
+    "total_iterations": 0
+  }
+}
