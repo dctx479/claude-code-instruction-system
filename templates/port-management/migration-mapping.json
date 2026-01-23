@@ -1,0 +1,14 @@
+[
+  {
+    "old_port": 3306,
+    "new_port": 3307,
+    "project": "example-project",
+    "comment": "MySQL 从默认端口迁移"
+  },
+  {
+    "old_port": 6379,
+    "new_port": 6380,
+    "project": "example-project",
+    "comment": "Redis 从默认端口迁移"
+  }
+]

@@ -1,0 +1,115 @@
+{
+  "version": "2.0.0",
+  "last_updated": "2026-01-24T02:28:54.976497",
+  "ports": {
+    "3307": {
+      "port": 3307,
+      "project": "test-project",
+      "service": "mysql",
+      "description": "测试MySQL数据库",
+      "registered_at": "2026-01-24T02:28:48.121179",
+      "last_checked": "2026-01-24T02:28:48.121215"
+    },
+    "6380": {
+      "port": 6380,
+      "project": "test-project",
+      "service": "redis",
+      "description": "测试Redis缓存",
+      "registered_at": "2026-01-24T02:28:51.355539",
+      "last_checked": "2026-01-24T02:28:51.355574"
+    },
+    "8001": {
+      "port": 8001,
+      "project": "test-project",
+      "service": "api",
+      "description": "测试API服务",
+      "registered_at": "2026-01-24T02:28:54.976468",
+      "last_checked": "2026-01-24T02:28:54.976490"
+    }
+  },
+  "projects": {
+    "test-project": [
+      3307,
+      6380,
+      8001
+    ]
+  },
+  "ranges": {
+    "team-default": {
+      "start": 10000,
+      "end": 19999,
+      "owner": "default"
+    }
+  },
+  "reserved": [
+    22,
+    80,
+    443,
+    3306,
+    5432,
+    6379,
+    27017
+  ],
+  "history": [
+    {
+      "action": "register",
+      "port": 3307,
+      "project": "test-project",
+      "service": "mysql",
+      "timestamp": "2026-01-24T02:18:18.305726"
+    },
+    {
+      "action": "register",
+      "port": 6380,
+      "project": "test-project",
+      "service": "redis",
+      "timestamp": "2026-01-24T02:18:38.196861"
+    },
+    {
+      "action": "register",
+      "port": 8001,
+      "project": "test-project",
+      "service": "api",
+      "timestamp": "2026-01-24T02:18:38.285691"
+    },
+    {
+      "action": "unregister",
+      "port": 3307,
+      "project": "test-project",
+      "timestamp": "2026-01-24T02:19:48.710078"
+    },
+    {
+      "action": "unregister",
+      "port": 6380,
+      "project": "test-project",
+      "timestamp": "2026-01-24T02:19:48.788657"
+    },
+    {
+      "action": "unregister",
+      "port": 8001,
+      "project": "test-project",
+      "timestamp": "2026-01-24T02:19:48.863491"
+    },
+    {
+      "action": "register",
+      "port": 3307,
+      "project": "test-project",
+      "service": "mysql",
+      "timestamp": "2026-01-24T02:28:48.121223"
+    },
+    {
+      "action": "register",
+      "port": 6380,
+      "project": "test-project",
+      "service": "redis",
+      "timestamp": "2026-01-24T02:28:51.355580"
+    },
+    {
+      "action": "register",
+      "port": 8001,
+      "project": "test-project",
+      "service": "api",
+      "timestamp": "2026-01-24T02:28:54.976495"
+    }
+  ]
+}

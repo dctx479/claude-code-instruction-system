@@ -21,6 +21,12 @@
             "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./scripts/validate-command.sh\"",
             "description": "验证 Bash 命令安全性",
             "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "python ./scripts/port-management/port-check-hook.py",
+            "description": "检查 Docker 端口冲突",
+            "timeout": 3000
           }
         ]
       }

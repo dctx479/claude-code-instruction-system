@@ -1,0 +1,86 @@
+{
+  "version": "1.0.0",
+  "description": "端口范围配置",
+  "ranges": {
+    "mysql": {
+      "start": 3306,
+      "end": 3399,
+      "description": "MySQL 数据库"
+    },
+    "postgresql": {
+      "start": 5432,
+      "end": 5499,
+      "description": "PostgreSQL 数据库"
+    },
+    "redis": {
+      "start": 6379,
+      "end": 6449,
+      "description": "Redis 缓存"
+    },
+    "mongodb": {
+      "start": 27017,
+      "end": 27099,
+      "description": "MongoDB 数据库"
+    },
+    "elasticsearch": {
+      "start": 9200,
+      "end": 9299,
+      "description": "Elasticsearch"
+    },
+    "web": {
+      "start": 3000,
+      "end": 3999,
+      "description": "前端开发服务器"
+    },
+    "api": {
+      "start": 8000,
+      "end": 8999,
+      "description": "后端 API"
+    },
+    "websocket": {
+      "start": 9500,
+      "end": 9599,
+      "description": "WebSocket 服务"
+    },
+    "grpc": {
+      "start": 50000,
+      "end": 50099,
+      "description": "gRPC 服务"
+    },
+    "custom": {
+      "start": 10000,
+      "end": 19999,
+      "description": "自定义服务"
+    },
+    "testing": {
+      "start": 20000,
+      "end": 29999,
+      "description": "测试环境"
+    }
+  },
+  "team_ranges": {
+    "example": {
+      "backend-team": {
+        "start": 8000,
+        "end": 8099
+      },
+      "frontend-team": {
+        "start": 3000,
+        "end": 3099
+      },
+      "data-team": {
+        "start": 9000,
+        "end": 9099
+      }
+    }
+  },
+  "reserved": [
+    22,
+    80,
+    443,
+    3306,
+    5432,
+    6379,
+    27017
+  ]
+}
