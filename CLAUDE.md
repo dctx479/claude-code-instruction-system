@@ -89,7 +89,43 @@
 └───────────────┘ └───────────────┘ └───────────────┘
 ```
 
-### 2.2 编排策略矩阵
+### 2.2 渐进式披露机制 (Progressive Disclosure)
+
+**核心理念**: 仅在需要时加载完整Agent定义，节省60-80% Token开销
+
+**加载策略**:
+```
+启动时:
+1. 读取 agents/INDEX.md 获取所有Agent元数据
+2. 仅加载元数据到上下文 (~100 tokens/agent)
+3. 总成本: 25 agents × 100 tokens = 2.5K tokens
+
+任务执行时:
+1. 根据任务需求，匹配相关Agent
+2. 按需加载完整的Agent定义 (~2-5k tokens/agent)
+3. 执行完成后，可选择性卸载
+
+预期效果:
+- Token节省: 60-80%
+- 支持规模: 100+ Agents
+- 启动速度: 提升3-5倍
+```
+
+**使用方法**:
+```markdown
+# 查看所有可用Agent
+请读取 agents/INDEX.md
+
+# 加载特定Agent
+需要使用 architect Agent，请读取 agents/architect.md
+
+# 智能匹配
+根据任务"设计用户认证系统"，自动匹配并加载相关Agent
+```
+
+**详细文档**: `agents/INDEX.md`
+
+### 2.3 编排策略矩阵
 
 | 任务特征 | 推荐策略 | Agent配置 |
 |----------|----------|-----------|
@@ -99,7 +135,7 @@
 | 跨领域问题 | **协作** | 多Specialist讨论 |
 | 创新探索 | **竞争** | 多方案并行评估 |
 
-### 2.3 智能策略选择系统
+### 2.4 智能策略选择系统
 
 #### 自动策略选择
 系统通过 `strategy-selector` Agent 自动分析任务特征并推荐最优编排策略:
@@ -382,6 +418,80 @@ Agents状态:
 - 编排模式库: `workflows/orchestration-patterns.md`
 - 监控整合: `workflows/orchestration-monitor.md`
 - 完整示例: `examples/orchestration-examples.md`
+
+---
+
+## 四、Skills 系统 (Skills System)
+
+### 4.1 什么是 Skills？
+
+**Skills** 是自动激活的能力扩展单元，与 Agents 和 Commands 的区别：
+
+| 类型 | 职责 | 触发方式 | 示例 |
+|------|------|----------|------|
+| **Skills** | 知识包，能力增强 | 自动发现 | PyTorch, pandas, SHAP |
+| **Agents** | 执行单元，任务处理 | Orchestrator 调度 | spec-writer, qa-reviewer |
+| **Commands** | 显式用户操作 | 手动调用 | /commit, /review |
+
+**关系**：
+- Skills 可以调用 Agents
+- Agents 可以激活 Skills
+- Commands 可以触发 Orchestrator，进而调度 Agents 和 Skills
+
+### 4.2 渐进式披露机制
+
+Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
+
+```
+阶段 1: 会话启动
+├─ 加载所有 Skills 的 metadata (name + description)
+├─ Token 成本: ~100 tokens/skill
+└─ 总成本: 50 skills × 100 tokens = 5K tokens
+
+阶段 2: 任务匹配
+├─ Claude 分析用户请求
+├─ 匹配相关 Skills（基于 description）
+└─ 决定是否激活
+
+阶段 3: 按需加载
+├─ 仅加载激活 Skills 的完整内容
+├─ Token 成本: ~2K tokens/skill
+└─ 节省: 90% (仅加载 2-3 个相关 Skills)
+```
+
+### 4.3 已集成的 Skills
+
+#### claude-scientific-skills (140+ 科研技能)
+
+**来源**: [K-Dense-AI/claude-scientific-skills](https://github.com/K-Dense-AI/claude-scientific-skills)
+
+**包含的 Skills**:
+- **Machine Learning & AI**: 机器学习算法、模型训练、超参数优化
+- **Deep Learning**: CNN、RNN、Transformer、GAN
+- **Reinforcement Learning**: DQN、PPO、SAC、MADDPG
+- **Time Series Analysis**: ARIMA、Prophet、LSTM
+- **Model Interpretability**: SHAP、LIME、Captum、Fairlearn
+- **Data Analysis & Visualization**: pandas、numpy、matplotlib、plotly
+- **Python Packages (55+)**: PyTorch、scikit-learn、TensorFlow 等
+
+**使用示例**:
+```markdown
+# 自动激活 PyTorch Skill
+"帮我设计一个图像分类模型，使用 PyTorch"
+
+# 自动激活数据分析 Skill
+"分析这个 CSV 文件的统计特征"
+
+# 自动激活时间序列 Skill
+"预测未来 30 天的销售额"
+```
+
+**预期效果**:
+- 科研能力提升 10-20 倍
+- 支持 PyTorch、scikit-learn、pandas 等 55+ 库
+- 无需额外配置，开箱即用
+
+**详细文档**: `.claude/skills/README.md`, `.claude/skills/INTEGRATION-GUIDE.md`
 
 ---
 
