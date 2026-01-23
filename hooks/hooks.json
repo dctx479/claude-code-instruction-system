@@ -4,7 +4,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Write",
+        "matcher": {"tools": ["Write"]},
         "hooks": [
           {
             "type": "command",
@@ -14,31 +14,20 @@
         ]
       },
       {
-        "matcher": "Bash",
+        "matcher": {"tools": ["Bash"]},
         "hooks": [
           {
             "type": "command",
-            "command": "./scripts/validate-command.sh",
+            "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./scripts/validate-command.sh\"",
             "description": "验证 Bash 命令安全性",
             "timeout": 5000
-          }
-        ]
-      },
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "./hooks/intent-detector.sh",
-            "description": "意图识别 - 分析用户意图并推荐Agent/Skill",
-            "timeout": 3000
           }
         ]
       }
     ],
     "PostToolUse": [
       {
-        "matcher": "Write",
+        "matcher": {"tools": ["Write"]},
         "hooks": [
           {
             "type": "command",
@@ -48,43 +37,67 @@
         ]
       },
       {
-        "matcher": "Edit",
+        "matcher": {"tools": ["Edit"]},
         "hooks": [
           {
             "type": "command",
-            "command": "./scripts/post-edit.sh",
+            "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./scripts/post-edit.sh\"",
             "description": "编辑后运行 lint 检查",
             "timeout": 30000
           }
         ]
       }
     ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./hooks/intent-detector.sh\"",
+            "description": "Intent Detector - 智能意图识别",
+            "timeout": 3000
+          }
+        ]
+      }
+    ],
     "Notification": [
       {
-        "type": "command",
-        "command": "./scripts/notify.sh",
-        "description": "发送通知到外部系统"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./scripts/notify.sh\"",
+            "description": "发送通知到外部系统"
+          }
+        ]
       }
     ],
     "Stop": [
       {
-        "type": "command",
-        "command": "./hooks/ralph-stop-interceptor.sh",
-        "description": "Ralph Loop 停止拦截器 - 检查是否继续执行",
-        "timeout": 5000
-      },
-      {
-        "type": "command",
-        "command": "./scripts/on-stop.sh",
-        "description": "会话结束时的清理操作"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./hooks/ralph-stop-interceptor.sh\"",
+            "description": "Ralph Loop 停止拦截器 - 检查是否继续执行",
+            "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./scripts/on-stop.sh\"",
+            "description": "会话结束时的清理操作"
+          }
+        ]
       }
     ],
     "PreCompact": [
       {
-        "type": "command",
-        "command": "./.claude/hooks/pre-compact.sh",
-        "description": "上下文压缩前自动归档",
-        "timeout": 10000
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./.claude/hooks/pre-compact.sh\"",
+            "description": "上下文压缩前自动归档",
+            "timeout": 10000
+          }
+        ]
       }
     ]
   },

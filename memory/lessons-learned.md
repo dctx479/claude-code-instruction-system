@@ -149,5 +149,123 @@ if sys.platform == 'win32':
 
 ---
 
+## [2026-01-24] Hooks 配置格式错误导致系统加载失败 #003
+
+### 问题描述
+项目中的 `hooks/hooks.json` 配置文件使用了已过时的格式，导致用户复制到全局配置后出现以下错误：
+1. **Matcher 格式错误**: `"matcher": "Write"` (字符串) 应该是对象格式 `{"tools": ["Write"]}`
+2. **事件类型错误**: `Stop`, `UserPromptSubmit` 等事件直接使用 `type` 和 `command` 字段，缺少 `hooks` 数组包裹
+3. **WSL Bash 路径问题**: Windows 环境下 `./hooks/script.sh` 无法正确执行，需要使用 Git Bash 完整路径
+
+错误消息：
+```
+matcher: Expected string, but received object
+WSL ERROR: execvpe(/bin/bash) failed: No such file or directory
+```
+
+### 根因分析
+1. **格式变更未同步**: Claude Code 更新了 hooks 格式规范，但项目配置文件未及时更新
+2. **缺少格式验证**: 项目中没有自动验证 hooks 配置格式的机制
+3. **跨平台兼容性不足**: 配置文件假设 Unix/Linux 环境，未考虑 Windows 用户
+4. **文档滞后**: 快速参考文档中的示例使用了旧格式
+
+### 解决方案
+
+#### 1. 修复 hooks/hooks.json 格式
+
+**PreToolUse/PostToolUse 事件** - 使用对象格式的 matcher:
+```json
+{
+  "matcher": {"tools": ["Write"]},
+  "hooks": [...]
+}
+```
+
+**其他事件 (Stop, UserPromptSubmit, etc.)** - 移除 matcher，使用 hooks 数组:
+```json
+{
+  "hooks": [
+    {"type": "command", "command": "..."}
+  ]
+}
+```
+
+#### 2. 改用 Git Bash (Windows 兼容)
+```json
+{
+  "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./script.sh\""
+}
+```
+
+#### 3. 添加 JSON 格式验证
+```bash
+python -m json.tool hooks/hooks.json > /dev/null
+```
+
+### 配置更新
+
+| 文件 | 更新内容 | 理由 |
+|------|----------|------|
+| `hooks/hooks.json` | 修复所有 matcher 格式为对象；使用 Git Bash 完整路径 | 符合新规范，Windows 兼容 |
+| `QUICK-REFERENCE.md` | 更新 hooks 配置示例，展示正确格式 | 防止用户复制错误示例 |
+| `HOOKS-FORMAT-FIX.md` | 创建详细修复报告文档 | 记录问题和解决方案 |
+| `CLAUDE.md` | 添加配置验证规则（见下方） | 防止类似问题再次发生 |
+
+### 验证方法
+1. ✅ 运行 `python -m json.tool hooks/hooks.json` 验证 JSON 格式
+2. ✅ 重启 Claude Code，确认无错误消息
+3. ✅ 测试各个 hook 触发正常（PreToolUse, Stop, UserPromptSubmit）
+4. ✅ 在 Windows 环境下验证 Git Bash 命令执行成功
+
+### 最佳实践（新增）
+
+#### 配置文件管理
+1. **定期验证**: 在提交前运行 JSON 格式验证
+2. **跨平台测试**: 配置文件应在 Windows/Linux/macOS 测试
+3. **版本跟踪**: 关注 Claude Code 官方文档的格式变更
+4. **模板更新**: 发现格式问题后，同步更新所有模板和示例
+
+#### Hooks 配置规范
+1. **PreToolUse/PostToolUse**: 必须使用 `{"matcher": {"tools": ["ToolName"]}}`
+2. **其他事件**: 不使用 matcher，直接使用 `hooks` 数组
+3. **Windows 兼容**: 优先使用 Git Bash 完整路径
+4. **超时设置**: 复杂脚本添加 `timeout` 字段（默认 30s）
+
+#### 文档同步策略
+1. **配置变更**: 同时更新 `hooks.json`, `CLAUDE.md`, `QUICK-REFERENCE.md`
+2. **版本标注**: 在配置文件中记录格式版本号
+3. **迁移指南**: 重大格式变更时提供迁移指南
+
+### 系统改进建议
+
+#### 1. 添加配置验证命令
+创建 `/validate-config` 命令，自动检查：
+- JSON 格式正确性
+- Hooks matcher 格式
+- 跨平台路径兼容性
+- 必需字段完整性
+
+#### 2. 增强错误处理
+在 hooks 执行失败时：
+- 显示友好的错误消息
+- 提供修复建议链接
+- 记录到错误日志
+
+#### 3. 添加配置模板生成工具
+提供交互式工具生成 hooks 配置：
+```bash
+/generate-hook
+? 事件类型: PreToolUse
+? 工具名称: Write
+? 脚本路径: ./scripts/my-hook.sh
+? 超时时间: 5000
+✓ 生成配置片段到剪贴板
+```
+
+### 标签
+#hooks #configuration #format #windows #cross-platform #git-bash #validation
+
+---
+
 <!-- 新的经验条目将自动添加在这里 -->
 

@@ -90,12 +90,19 @@ permissionMode: default | acceptEdits | dontAsk
 {
   "hooks": {
     "PreToolUse": [{
-      "matcher": "Write",
-      "hooks": [{"type": "command", "command": "脚本"}]
+      "matcher": {"tools": ["Write"]},
+      "hooks": [{"type": "command", "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./script.sh\""}]
     }],
-    "PostToolUse": [...],
-    "Notification": [...],
-    "Stop": [...]
+    "PostToolUse": [{
+      "matcher": {"tools": ["Edit"]},
+      "hooks": [{"type": "command", "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./post-edit.sh\""}]
+    }],
+    "UserPromptSubmit": [{
+      "hooks": [{"type": "command", "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./intent-detector.sh\""}]
+    }],
+    "Stop": [{
+      "hooks": [{"type": "command", "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./on-stop.sh\""}]
+    }]
   }
 }
 ```

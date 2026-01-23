@@ -702,6 +702,78 @@ npm run typecheck   # 类型检查
 4. 标记旧方案为deprecated
 ```
 
+### 配置文件验证规则 (新增)
+
+#### JSON 配置文件
+在修改或创建 JSON 配置文件后，必须进行验证：
+
+```bash
+# 验证 JSON 格式
+python -m json.tool <配置文件.json> > /dev/null
+
+# 或使用 jq
+jq empty <配置文件.json>
+```
+
+**必须验证的文件**:
+- `hooks/hooks.json` - Hooks 配置
+- `config/settings.json` - 系统设置
+- `config/keywords.json` - 关键词索引
+- `config/mcp-servers.json` - MCP 服务器配置
+- 所有 `.claude/**/*.json` 文件
+
+#### Hooks 配置格式规范
+
+**PreToolUse / PostToolUse 事件**:
+- ✅ 必须使用对象格式的 matcher: `{"matcher": {"tools": ["ToolName"]}}`
+- ❌ 不能使用字符串 matcher: `{"matcher": "ToolName"}`
+
+**其他事件 (Stop, UserPromptSubmit, Notification, PreCompact)**:
+- ✅ 直接使用 hooks 数组，不需要 matcher
+- ❌ 不能在这些事件中使用 matcher 字段
+
+**Windows 环境兼容性**:
+- ✅ 优先使用 Git Bash: `"C:\\Program Files\\Git\\bin\\bash.exe" "./script.sh"`
+- ✅ 备选 WSL: `"wsl bash /mnt/c/path/to/script.sh"`
+- ✅ 备选 PowerShell: `"powershell -ExecutionPolicy Bypass -File \"script.ps1\""`
+- ❌ 避免直接使用 `./script.sh` (在 Windows 上不工作)
+
+**示例 - 正确的 hooks 配置**:
+```json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": {"tools": ["Write"]},
+      "hooks": [{
+        "type": "command",
+        "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./validate.sh\"",
+        "timeout": 5000
+      }]
+    }],
+    "Stop": [{
+      "hooks": [{
+        "type": "command",
+        "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./on-stop.sh\""
+      }]
+    }]
+  }
+}
+```
+
+#### 跨平台测试要求
+在提交配置变更前：
+1. ✅ 在 Windows 上测试（如果有 Windows 用户）
+2. ✅ 验证 JSON 格式正确性
+3. ✅ 检查路径兼容性（绝对路径 vs 相对路径）
+4. ✅ 测试 hooks 实际执行（不仅是加载）
+
+#### 配置变更同步
+修改 hooks 配置后，必须同步更新：
+1. `hooks/hooks.json` - 主配置文件
+2. `QUICK-REFERENCE.md` - 快速参考示例
+3. `CLAUDE.md` - 本文档（如有规范变更）
+4. 相关文档中的示例代码
+
 ---
 
 ## 九、记忆系统
