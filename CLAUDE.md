@@ -99,6 +99,57 @@ git-info log --oneline --count 10
 ```
 详见: `tools/git-info-rust/README.md`
 
+### Port Management - 全局端口管理系统
+跨项目端口冲突预防与管理，自动集成到开发工作流：
+
+**核心能力**：
+- 🔍 **自动检测**: PreToolUse Hook 自动拦截 Docker 命令，检查端口冲突
+- 📊 **集中管理**: 全局端口注册表 (config/port-registry.json v2.0.0)
+- 🎯 **智能分配**: 按服务类型推荐可用端口 (MySQL: 3306-3399, Redis: 6379-6449)
+- 🏢 **项目隔离**: 多项目端口分组，避免交叉干扰
+- 📝 **审计追踪**: 操作历史记录，可追溯端口使用
+
+**自动触发机制**：
+```bash
+# 当执行 Docker 命令时，自动检查端口冲突
+docker run -p 3307:3306 mysql  # ⚠️ 自动警告：端口 3307 已被 test-project/mysql 占用
+docker run -p 9999:80 nginx    # ✅ 自动通过：端口 9999 空闲
+```
+
+**手动管理命令**：
+```bash
+# 注册端口
+python scripts/port-manager.py register 3307 myproject mysql -d "主数据库"
+
+# 查看冲突
+python scripts/port-manager.py conflicts
+
+# 推荐可用端口
+python scripts/port-manager.py suggest mysql
+
+# 导出项目配置
+python scripts/port-manager.py export myproject --output myproject.env
+```
+
+**集成点**：
+- **Hooks**: 集成到 `hooks.json` 的 Bash PreToolUse 钩子
+- **Docker**: 自动解析 `docker run -p` 和 `docker-compose` 端口映射
+- **Git**: 可选 pre-commit hook 验证配置文件端口
+- **CI/CD**: 支持导出 .env 和 docker-compose.yml 格式
+
+**详见**：
+- 架构设计: `docs/PORT-MANAGEMENT-ARCHITECTURE.md`
+- 使用指南: `docs/PORT-MANAGEMENT-GUIDE.md`
+- 集成指南: `docs/PORT-INTEGRATION.md`
+- 配置文件: `config/port-registry.json`, `config/port-ranges.json`
+- 核心工具: `scripts/port-manager.py`, `scripts/port-management/`
+
+**效果**：
+- 🚫 消除 "port already in use" 调试时间
+- 📈 提升多项目并行开发效率
+- 🛡️ 防止端口冲突导致的服务启动失败
+- 📚 提供端口使用文档和历史审计
+
 ---
 
 ## 元系统声明
