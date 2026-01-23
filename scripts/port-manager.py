@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 全局端口管理工具
-版本：1.0.0
+版本：1.1.0
 用途：管理多项目环境下的端口分配，避免冲突
+支持：自动查找项目和全局配置
 """
 
 import os
@@ -16,6 +17,26 @@ import argparse
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 from pathlib import Path
+
+# ===================== 配置文件查找 =====================
+
+def find_registry_file() -> str:
+    """查找端口注册表文件（优先级：项目 > 全局 > 用户主目录）"""
+    candidates = [
+        # 1. 当前项目目录
+        'config/port-registry.json',
+        # 2. 全局 Claude 配置目录
+        os.path.expanduser('~/.claude/config/port-registry.json'),
+        # 3. Windows 用户目录
+        os.path.expanduser('~/AppData/Roaming/.claude/config/port-registry.json'),
+    ]
+
+    for path in candidates:
+        if os.path.exists(path):
+            return path
+
+    # 如果都不存在，使用全局配置目录（会自动创建）
+    return os.path.expanduser('~/.claude/config/port-registry.json')
 
 # 设置标准输出编码为 UTF-8
 if sys.platform == 'win32':
@@ -67,11 +88,15 @@ DEFAULT_PORT_RANGES = {
 # ===================== 端口管理器 =====================
 
 class PortManager:
-    """端口管理器"""
+    """端口管理器（支持全局和项目配置）"""
 
-    def __init__(self, registry_file: str = "config/port-registry.json"):
+    def __init__(self, registry_file: Optional[str] = None):
+        # 如果未指定文件，自动查找
+        if registry_file is None:
+            registry_file = find_registry_file()
         self.registry_file = registry_file
         self.registry = self._load_registry()
+        print_info(f"使用端口注册表: {self.registry_file}")
 
     def _load_registry(self) -> Dict:
         """加载端口注册表"""

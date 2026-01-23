@@ -1,6 +1,6 @@
 {
   "version": "2.0.0",
-  "last_updated": "2026-01-24T02:32:27.767431",
+  "last_updated": "2026-01-24T02:38:10.743394",
   "ports": {},
   "projects": {},
   "ranges": {
@@ -97,6 +97,19 @@
       "port": 8001,
       "project": "test-project",
       "timestamp": "2026-01-24T02:32:27.767412"
+    },
+    {
+      "action": "register",
+      "port": 3307,
+      "project": "global-test",
+      "service": "mysql",
+      "timestamp": "2026-01-24T02:37:49.673004"
+    },
+    {
+      "action": "unregister",
+      "port": 3307,
+      "project": "global-test",
+      "timestamp": "2026-01-24T02:38:10.743372"
     }
   ]
 }
