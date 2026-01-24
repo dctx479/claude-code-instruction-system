@@ -149,6 +149,79 @@ if sys.platform == 'win32':
 
 ---
 
+## [2026-01-24] 全局 Hooks 配置 Matcher 格式错误 #004
+
+### 问题描述
+在配置全局 `~/.claude/settings.json` 的 hooks 时，多次遇到格式错误：
+```
+matcher: Expected string, but received object
+```
+
+尝试了多种格式都失败：
+- `"matcher": {"tools": ["Bash"]}` - 报错
+- `"matcher": {"tools": ["BashTool"]}` - 报错
+- `"matcher": "BashTool"` - 报错（工具名称错误）
+
+### 根因分析
+1. **配置层级差异**：全局 `settings.json` 和项目级别 `hooks/hooks.json` 使用不同的 schema
+2. **Matcher 格式**：全局配置的 matcher 应该是**字符串**，不是对象
+3. **工具名称**：应该使用实际的工具名称 "Bash"，不是 "BashTool"
+4. **文档误导**：项目级别配置使用对象格式，导致误以为全局配置也应该使用相同格式
+
+### 解决方案
+
+**正确的全局配置格式**：
+```json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "python \"C:\\Users\\ASUS\\.claude\\scripts\\port-management\\port-check-hook.py\"",
+        "description": "检查 Docker 端口冲突（全局）",
+        "timeout": 3000
+      }]
+    }]
+  }
+}
+```
+
+**支持的 matcher 格式**：
+- 精确匹配：`"Bash"`, `"Write"`, `"Edit"`
+- 正则表达式：`"/Bash|Write/"`
+- 通配符：`"*"`
+
+### 配置更新
+| 文件 | 更新内容 | 理由 |
+|------|----------|------|
+| `~/.claude/settings.json` | 使用字符串格式的 matcher: `"Bash"` | 符合全局配置 schema |
+| `CLAUDE.md` | 更新 Hooks 配置格式规范，明确全局 vs 项目差异 | 防止类似错误 |
+| `memory/lessons-learned.md` | 新增经验条目 #004 | 记录正确的配置格式 |
+
+### 验证方法
+1. ✅ 修改全局配置使用字符串格式的 matcher
+2. ✅ 重启 Claude Code，确认无错误消息
+3. ✅ 测试 Bash 工具触发 Port Management hook
+4. ✅ 验证 JSON 格式正确性
+
+### 关键发现
+- **全局配置 matcher 格式**：字符串（`"Bash"`）
+- **项目配置 matcher 格式**：可能是对象（`{"tools": ["Bash"]}`）- 需要验证
+- **工具名称**：使用实际的工具名称（从工具文档确认）
+- **错误信息**：虽然示例显示对象格式，但实际应该使用字符串格式
+
+### 后续建议
+1. **验证项目配置**：检查项目级别 `hooks/hooks.json` 的 matcher 格式是否正确
+2. **统一文档**：在 CLAUDE.md 中明确说明全局和项目配置的格式差异
+3. **添加验证工具**：创建配置验证脚本，自动检查 hooks 格式
+4. **更新示例**：在所有文档中使用正确的配置示例
+
+### 标签
+#hooks #configuration #matcher #global-settings #format
+
+---
+
 ## [2026-01-24] Hooks 配置格式错误导致系统加载失败 #003
 
 ### 问题描述
