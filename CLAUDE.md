@@ -777,26 +777,41 @@ jq empty <配置文件.json>
 
 **⚠️ 重要：全局 vs 项目级别差异**
 
-**项目级别** (`hooks/hooks.json`):
-- ✅ PreToolUse/PostToolUse 使用对象 matcher: `{"matcher": {"tools": ["Bash"]}}`
-- ✅ Stop/UserPromptSubmit/Notification/PreCompact 直接使用 hooks 数组
-
 **全局级别** (`~/.claude/settings.json`):
-- ⚠️ Hooks 格式可能与项目级别不同
-- ⚠️ 建议优先使用项目级别 hooks
-- ⚠️ 全局配置仅用于 statusLine 等非 hooks 功能
-- 📚 参考官方文档: https://code.claude.com/docs/en/hooks
-
-**推荐实践**:
-```markdown
-✅ 推荐：在项目级别配置 hooks
-- 文件：`hooks/hooks.json`
-- 优点：格式明确、跨项目一致、易于版本控制
-
-❌ 避免：在全局配置 hooks
-- 文件：`~/.claude/settings.json`
-- 问题：格式不明确、容易出错、难以调试
+- ✅ Matcher 使用**字符串格式**: `"matcher": "Bash"`
+- ✅ 支持精确匹配、正则表达式、通配符
+- ✅ 示例：
+```json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "python \"script.py\"",
+        "timeout": 3000
+      }]
+    }]
+  }
+}
 ```
+
+**项目级别** (`hooks/hooks.json`):
+- ⚠️ Matcher 格式可能不同（需要验证）
+- ⚠️ 可能使用对象格式: `{"matcher": {"tools": ["Bash"]}}`
+- ⚠️ 建议优先使用项目级别 hooks
+
+**Matcher 格式对比**:
+| 配置级别 | Matcher 格式 | 示例 |
+|---------|-------------|------|
+| 全局 | 字符串 | `"matcher": "Bash"` |
+| 项目 | 对象（待验证） | `"matcher": {"tools": ["Bash"]}` |
+
+**支持的 Matcher 模式**（全局）:
+- 精确匹配：`"Bash"`, `"Write"`, `"Edit"`
+- 正则表达式：`"/Bash|Write/"`
+- 多工具匹配：`"Write|Edit"`
+- 通配符：`"*"`
 
 **Windows 环境兼容性**:
 - ✅ 优先使用 Git Bash: `"C:\\Program Files\\Git\\bin\\bash.exe" "./script.sh"`
