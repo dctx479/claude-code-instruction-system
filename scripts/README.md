@@ -44,7 +44,7 @@
 
 ```json
 {
-  "matcher": {"tools": ["Bash"]},
+  "matcher": "Bash",
   "hooks": [{
     "type": "command",
     "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./scripts/validate-command.sh\"",
@@ -99,7 +99,7 @@ fi
 
 ```json
 {
-  "matcher": {"tools": ["Edit"]},
+  "matcher": "Edit",
   "hooks": [{
     "type": "command",
     "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./scripts/post-edit.sh\"",

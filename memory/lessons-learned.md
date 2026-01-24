@@ -222,121 +222,257 @@ matcher: Expected string, but received object
 
 ---
 
-## [2026-01-24] Hooks 配置格式错误导致系统加载失败 #003
+## [2026-01-24] ⚠️ **已废弃** - Hooks 配置格式误解 #003
+
+> **警告**: 本条目记录了错误的经验，已被 #005 替代。保留此条目仅作为错误记录。
+
+### 错误记录
+**本条目错误地声称**：
+- ❌ 项目配置 `hooks/hooks.json` 应该使用对象格式 `{"matcher": {"tools": ["Write"]}}`
+- ❌ 字符串格式 `"matcher": "Write"` 是过时的格式
+
+### 实际情况
+经过验证（2026-01-24），**实际情况完全相反**：
+- ✅ **全局和项目配置都使用字符串格式**：`"matcher": "Bash"`
+- ✅ 当前项目的 `hooks/hooks.json` 就是使用字符串格式，并且工作正常
+- ❌ 对象格式会导致错误：`matcher: Expected string, but received object`
+
+### 真正的问题
+本条目混淆了真正的问题：
+1. ✅ **Windows 路径兼容性**：需要使用 Git Bash 完整路径而非相对路径
+2. ✅ **JSON 格式验证**：需要定期验证 JSON 格式正确性
+3. ❌ **Matcher 格式**：这不是问题，字符串格式始终是正确的
+
+### 正确的配置示例
+```json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./script.sh\"",
+        "timeout": 5000
+      }]
+    }]
+  }
+}
+```
+
+### 废弃原因
+- 记录了错误的"解决方案"（对象格式）
+- 误导了配置格式的理解
+- 与实际验证结果不符
+- 已被 #004 和 #005 的正确经验替代
+
+### 参考正确的经验
+- 参见 **#004**: 全局配置 matcher 格式（正确）
+- 参见 **#005**: Hooks 配置统一格式规范（正确）
+
+### 标签
+#deprecated #error #hooks #configuration #format
+
+---
+
+## [2026-01-24] Hooks 配置统一格式规范 #005
 
 ### 问题描述
-项目中的 `hooks/hooks.json` 配置文件使用了已过时的格式，导致用户复制到全局配置后出现以下错误：
-1. **Matcher 格式错误**: `"matcher": "Write"` (字符串) 应该是对象格式 `{"tools": ["Write"]}`
-2. **事件类型错误**: `Stop`, `UserPromptSubmit` 等事件直接使用 `type` 和 `command` 字段，缺少 `hooks` 数组包裹
-3. **WSL Bash 路径问题**: Windows 环境下 `./hooks/script.sh` 无法正确执行，需要使用 Git Bash 完整路径
+经过多次错误尝试（见 #003 废弃条目），最终确认了 hooks 配置的正确格式。之前的混乱源于对全局和项目配置格式的误解。
 
-错误消息：
-```
-matcher: Expected string, but received object
-WSL ERROR: execvpe(/bin/bash) failed: No such file or directory
-```
+### 核心发现
+**全局和项目配置使用相同的格式**：
+- ✅ `matcher` 字段**始终使用字符串格式**
+- ✅ 全局 `~/.claude/settings.json` 和项目 `hooks/hooks.json` 格式一致
+- ❌ 对象格式 `{"tools": ["Bash"]}` 会导致解析错误
 
-### 根因分析
-1. **格式变更未同步**: Claude Code 更新了 hooks 格式规范，但项目配置文件未及时更新
-2. **缺少格式验证**: 项目中没有自动验证 hooks 配置格式的机制
-3. **跨平台兼容性不足**: 配置文件假设 Unix/Linux 环境，未考虑 Windows 用户
-4. **文档滞后**: 快速参考文档中的示例使用了旧格式
+### 正确的配置格式
 
-### 解决方案
-
-#### 1. 修复 hooks/hooks.json 格式
-
-**PreToolUse/PostToolUse 事件** - 使用对象格式的 matcher:
+#### 1. PreToolUse / PostToolUse（需要 matcher）
 ```json
 {
-  "matcher": {"tools": ["Write"]},
-  "hooks": [...]
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./script.sh\"",
+        "description": "描述",
+        "timeout": 5000
+      }]
+    }]
+  }
 }
 ```
 
-**其他事件 (Stop, UserPromptSubmit, etc.)** - 移除 matcher，使用 hooks 数组:
+#### 2. 其他事件（无需 matcher）
 ```json
 {
-  "hooks": [
-    {"type": "command", "command": "..."}
-  ]
+  "hooks": {
+    "Stop": [{
+      "hooks": [{
+        "type": "command",
+        "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./cleanup.sh\""
+      }]
+    }]
+  }
 }
 ```
 
-#### 2. 改用 Git Bash (Windows 兼容)
-```json
-{
-  "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./script.sh\""
-}
-```
+### Matcher 支持的模式
 
-#### 3. 添加 JSON 格式验证
+| 模式 | 示例 | 说明 |
+|------|------|------|
+| **精确匹配** | `"Bash"` | 匹配 Bash 工具 |
+| **多工具** | `"Bash\|Write"` | 匹配 Bash 或 Write |
+| **正则表达式** | `"/Bash\|Write/"` | 使用正则 |
+| **通配符** | `"*"` | 匹配所有工具 |
+
+### 配置验证方法
+
+#### JSON 格式验证
 ```bash
+# 验证语法
 python -m json.tool hooks/hooks.json > /dev/null
+
+# 或使用 jq
+jq empty hooks/hooks.json
+```
+
+#### 配置测试
+```bash
+# 1. 重启 Claude Code
+# 2. 观察启动日志，确认无错误
+# 3. 触发相应工具，验证 hook 执行
+```
+
+### Windows 兼容性要点
+
+**路径处理**：
+- ✅ 使用 Git Bash：`"C:\\Program Files\\Git\\bin\\bash.exe"`
+- ✅ 脚本路径加引号：`\"./script.sh\"`
+- ❌ 避免相对路径的 bash：`./script.sh` (可能找不到 bash)
+- ❌ 避免 WSL：`wsl bash` (可能环境问题)
+
+**完整示例**：
+```json
+{
+  "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./hooks/my-hook.sh\"",
+  "timeout": 5000
+}
 ```
 
 ### 配置更新
-
 | 文件 | 更新内容 | 理由 |
 |------|----------|------|
-| `hooks/hooks.json` | 修复所有 matcher 格式为对象；使用 Git Bash 完整路径 | 符合新规范，Windows 兼容 |
-| `QUICK-REFERENCE.md` | 更新 hooks 配置示例，展示正确格式 | 防止用户复制错误示例 |
-| `HOOKS-FORMAT-FIX.md` | 创建详细修复报告文档 | 记录问题和解决方案 |
-| `CLAUDE.md` | 添加配置验证规则（见下方） | 防止类似问题再次发生 |
+| `memory/lessons-learned.md` | 废弃 #003，新增 #005 | 纠正错误经验 |
+| `CLAUDE.md` | 移除对象格式说明，统一为字符串格式 | 防止误导 |
+| `hooks/hooks.json` | 验证当前格式正确（已是字符串） | 确认无需修改 |
 
-### 验证方法
-1. ✅ 运行 `python -m json.tool hooks/hooks.json` 验证 JSON 格式
-2. ✅ 重启 Claude Code，确认无错误消息
-3. ✅ 测试各个 hook 触发正常（PreToolUse, Stop, UserPromptSubmit）
-4. ✅ 在 Windows 环境下验证 Git Bash 命令执行成功
+### 验证结果
+- ✅ 全局配置 `~/.claude/settings.json` 使用字符串 matcher
+- ✅ 项目配置 `hooks/hooks.json` 使用字符串 matcher
+- ✅ 两者格式一致，可以互相参考
+- ✅ Windows 环境下使用 Git Bash 路径工作正常
 
-### 最佳实践（新增）
+### 经验总结
 
-#### 配置文件管理
-1. **定期验证**: 在提交前运行 JSON 格式验证
-2. **跨平台测试**: 配置文件应在 Windows/Linux/macOS 测试
-3. **版本跟踪**: 关注 Claude Code 官方文档的格式变更
-4. **模板更新**: 发现格式问题后，同步更新所有模板和示例
+#### 根本原因
+1. **文档不足**：Claude Code 官方文档对 matcher 格式说明不够清晰
+2. **错误推断**：看到错误消息后，错误地推断应该改用对象格式
+3. **验证缺失**：未查看实际工作的配置文件进行对比
 
-#### Hooks 配置规范
-1. **PreToolUse/PostToolUse**: 必须使用 `{"matcher": {"tools": ["ToolName"]}}`
-2. **其他事件**: 不使用 matcher，直接使用 `hooks` 数组
-3. **Windows 兼容**: 优先使用 Git Bash 完整路径
-4. **超时设置**: 复杂脚本添加 `timeout` 字段（默认 30s）
+#### 正确方法
+1. ✅ **查看工作示例**：先检查项目中已有的、工作正常的配置
+2. ✅ **对比文档**：参考官方文档的示例
+3. ✅ **小步验证**：每次只改一处，立即测试
+4. ✅ **记录正确经验**：验证通过后记录到 lessons-learned
 
-#### 文档同步策略
-1. **配置变更**: 同时更新 `hooks.json`, `CLAUDE.md`, `QUICK-REFERENCE.md`
-2. **版本标注**: 在配置文件中记录格式版本号
-3. **迁移指南**: 重大格式变更时提供迁移指南
-
-### 系统改进建议
-
-#### 1. 添加配置验证命令
-创建 `/validate-config` 命令，自动检查：
-- JSON 格式正确性
-- Hooks matcher 格式
-- 跨平台路径兼容性
-- 必需字段完整性
-
-#### 2. 增强错误处理
-在 hooks 执行失败时：
-- 显示友好的错误消息
-- 提供修复建议链接
-- 记录到错误日志
-
-#### 3. 添加配置模板生成工具
-提供交互式工具生成 hooks 配置：
-```bash
-/generate-hook
-? 事件类型: PreToolUse
-? 工具名称: Write
-? 脚本路径: ./scripts/my-hook.sh
-? 超时时间: 5000
-✓ 生成配置片段到剪贴板
-```
+#### 防止类似错误
+1. **配置变更前**：先查看当前工作的配置格式
+2. **遇到错误时**：不要立即推断解决方案，先查资料
+3. **记录经验时**：验证解决方案确实有效再记录
+4. **定期审查**：检查 lessons-learned 中是否有矛盾或错误的条目
 
 ### 标签
-#hooks #configuration #format #windows #cross-platform #git-bash #validation
+#hooks #configuration #matcher #format #verified #windows #cross-platform
+
+---
+
+## [2026-01-24] Git Bash 路径配置错误导致 Hooks 执行失败 #006
+
+### 问题描述
+Stop hook 执行时报错：`Failed with non-blocking status code: The system cannot find the path specified.`
+
+同时 Zotero MCP 配置也有警告：`Windows requires 'cmd /c' wrapper to execute npx`
+
+### 根因分析
+1. **Git Bash 路径不匹配**：
+   - 配置中使用：`C:\Program Files\Git\bin\bash.exe`
+   - 实际路径：`I:\APP\Git\usr\bin\bash.exe`
+   - 原因：Git 安装在自定义位置，但配置使用了默认路径
+
+2. **Windows npx 执行问题**：
+   - 直接调用 `npx` 在 Windows 上可能失败
+   - 需要通过 `cmd /c` 包装器执行
+
+### 解决方案
+
+#### 1. 修复 Git Bash 路径
+使用 `where bash` 命令找到实际路径，然后更新所有 hooks 配置：
+
+```json
+{
+  "command": "\"I:\\APP\\Git\\usr\\bin\\bash.exe\" \"./script.sh\""
+}
+```
+
+#### 2. 修复 Zotero MCP 配置
+添加 `cmd /c` 包装器：
+
+```json
+{
+  "mcpServers": {
+    "zotero": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "mcp-zotero"],
+      "env": {...}
+    }
+  }
+}
+```
+
+### 配置更新
+| 文件 | 更新内容 | 理由 |
+|------|----------|------|
+| `hooks/hooks.json` | 所有 Git Bash 路径从 `C:\Program Files\Git\bin\bash.exe` 改为 `I:\APP\Git\usr\bin\bash.exe` | 匹配实际安装路径 |
+| `C:\Users\ASUS\.claude.json` | Zotero MCP 配置添加 `cmd /c` 包装器 | Windows 兼容性 |
+
+### 验证方法
+1. ✅ 验证 JSON 格式：`python -m json.tool hooks/hooks.json`
+2. ✅ 重启 Claude Code，观察是否还有错误
+3. ✅ 运行 `/doctor` 检查配置状态
+4. ✅ 触发 Stop hook，确认不再报错
+
+### 最佳实践
+
+#### 路径配置
+1. **不要假设默认路径**：始终使用 `where` 或 `which` 命令查找实际路径
+2. **使用绝对路径**：避免依赖环境变量或相对路径
+3. **转义反斜杠**：Windows 路径使用双反斜杠 `\\`
+
+#### Windows 兼容性
+1. **npx 执行**：使用 `cmd /c npx` 而非直接 `npx`
+2. **bash 脚本**：使用完整的 Git Bash 路径
+3. **路径引号**：命令和参数都要加引号
+
+#### 配置验证
+1. **修改后立即验证**：`python -m json.tool <file.json>`
+2. **测试实际执行**：不要只检查语法，要测试功能
+3. **记录实际路径**：在文档中记录当前环境的实际路径
+
+### 标签
+#hooks #windows #git-bash #path #mcp #zotero #configuration
 
 ---
 

@@ -90,11 +90,11 @@ permissionMode: default | acceptEdits | dontAsk
 {
   "hooks": {
     "PreToolUse": [{
-      "matcher": {"tools": ["Write"]},
+      "matcher": "Write",
       "hooks": [{"type": "command", "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./script.sh\""}]
     }],
     "PostToolUse": [{
-      "matcher": {"tools": ["Edit"]},
+      "matcher": "Edit",
       "hooks": [{"type": "command", "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./post-edit.sh\""}]
     }],
     "UserPromptSubmit": [{

@@ -160,7 +160,7 @@ def generate_hooks_config(bash_path: str) -> Dict:
     config = {
         "hooks": {
             "PreToolUse": [{
-                "matcher": {"tools": ["Write"]},
+                "matcher": "Write",
                 "hooks": [{
                     "type": "command",
                     "command": f'"{escaped_path}" "./your-script.sh"',

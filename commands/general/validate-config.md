@@ -45,7 +45,7 @@
 | 检查项 | 严重性 | 说明 |
 |--------|--------|------|
 | JSON 语法 | 错误 | 必须是有效的 JSON |
-| Matcher 格式 | 错误 | PreToolUse/PostToolUse 必须使用 `{"tools": [...]}` |
+| Matcher 格式 | 错误 | PreToolUse/PostToolUse 必须使用字符串格式 `"ToolName"` |
 | Hooks 数组 | 错误 | 所有事件必须使用 `hooks` 数组包裹 |
 | 命令路径 | 警告 | Windows 环境建议使用 Git Bash 完整路径 |
 | 脚本存在性 | 警告 | 引用的脚本文件应该存在 |
@@ -101,10 +101,10 @@ $ /validate-config hooks
 ============================================================
 
 [1] INVALID_MATCHER_FORMAT
-  消息: PreToolUse[0] matcher 格式错误（字符串）
+  消息: PreToolUse[0] matcher 格式错误（对象格式）
   位置: hooks.PreToolUse[0].matcher
-  当前值: "Write"
-  🔧 修复方案: 修改为: {"tools": ["Write"]}
+  当前值: {"tools": ["Write"]}
+  🔧 修复方案: 修改为字符串格式: "Write"
 
 [2] WINDOWS_INCOMPATIBLE_PATH
   消息: Stop[0].hooks[0] 使用相对路径脚本

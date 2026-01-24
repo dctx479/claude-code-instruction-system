@@ -797,17 +797,16 @@ jq empty <配置文件.json>
 ```
 
 **项目级别** (`hooks/hooks.json`):
-- ⚠️ Matcher 格式可能不同（需要验证）
-- ⚠️ 可能使用对象格式: `{"matcher": {"tools": ["Bash"]}}`
-- ⚠️ 建议优先使用项目级别 hooks
+- ✅ Matcher 格式与全局配置**完全相同**，使用字符串
+- ✅ 格式已验证：`"matcher": "Bash"` ✅ 可以参考项目中的 `hooks/hooks.json` 作为模板
 
-**Matcher 格式对比**:
+**Matcher 格式统一**:
 | 配置级别 | Matcher 格式 | 示例 |
 |---------|-------------|------|
 | 全局 | 字符串 | `"matcher": "Bash"` |
-| 项目 | 对象（待验证） | `"matcher": {"tools": ["Bash"]}` |
+| 项目 | 字符串 | `"matcher": "Bash"` |
 
-**支持的 Matcher 模式**（全局）:
+**支持的 Matcher 模式**（全局和项目通用）:
 - 精确匹配：`"Bash"`, `"Write"`, `"Edit"`
 - 正则表达式：`"/Bash|Write/"`
 - 多工具匹配：`"Write|Edit"`
@@ -824,7 +823,7 @@ jq empty <配置文件.json>
 {
   "hooks": {
     "PreToolUse": [{
-      "matcher": {"tools": ["Write"]},
+      "matcher": "Write",
       "hooks": [{
         "type": "command",
         "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./validate.sh\"",

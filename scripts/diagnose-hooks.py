@@ -138,24 +138,20 @@ class HooksDiagnostic:
                             'type': 'missing_matcher',
                             'message': f'{event_name}[{idx}] 缺少 matcher',
                             'location': f'hooks.{event_name}[{idx}]',
-                            'fix': f'添加: "matcher": {{"tools": ["ToolName"]}}'
+                            'fix': f'添加: "matcher": "ToolName"'
                         })
                     elif isinstance(hook_config['matcher'], str):
+                        # String matcher is correct format
+                        pass
+                    elif isinstance(hook_config['matcher'], dict):
+                        # Object matcher is incorrect format
                         self.errors.append({
                             'type': 'invalid_matcher_format',
-                            'message': f'{event_name}[{idx}] matcher 格式错误（字符串）',
+                            'message': f'{event_name}[{idx}] matcher 格式错误（对象格式）',
                             'location': f'hooks.{event_name}[{idx}].matcher',
-                            'current': f'"{hook_config["matcher"]}"',
-                            'fix': f'修改为: {{"tools": ["{hook_config["matcher"]}"]}}'
+                            'current': f'{hook_config["matcher"]}',
+                            'fix': f'修改为字符串格式: "{hook_config["matcher"].get("tools", ["Tool"])[0] if "tools" in hook_config["matcher"] else "Tool"}"'
                         })
-                    elif isinstance(hook_config['matcher'], dict):
-                        if 'tools' not in hook_config['matcher']:
-                            self.errors.append({
-                                'type': 'matcher_missing_tools',
-                                'message': f'{event_name}[{idx}] matcher 缺少 "tools" 字段',
-                                'location': f'hooks.{event_name}[{idx}].matcher',
-                                'fix': '添加: {"tools": ["ToolName"]}'
-                            })
 
                 # 检查其他事件不应该有 matcher
                 else:
@@ -291,8 +287,10 @@ class HooksDiagnostic:
                     continue
 
                 for hook_config in fixed_config['hooks'][event_name]:
-                    if 'matcher' in hook_config and isinstance(hook_config['matcher'], str):
-                        hook_config['matcher'] = {"tools": [hook_config['matcher']]}
+                    if 'matcher' in hook_config and isinstance(hook_config['matcher'], dict):
+                        # Convert object format to string format
+                        if 'tools' in hook_config['matcher'] and hook_config['matcher']['tools']:
+                            hook_config['matcher'] = hook_config['matcher']['tools'][0]
 
         return fixed_config
 

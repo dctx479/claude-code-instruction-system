@@ -26,19 +26,19 @@ python scripts/validate-config.py hooks
 **错误信息**:
 ```
 invalid_matcher_format
-PreToolUse[0] matcher 格式错误（字符串）
-当前值: "Write"
+PreToolUse[0] matcher 格式错误（对象格式）
+当前值: {"tools": ["Write"]}
 ```
 
-**原因**: 使用了旧的字符串格式
+**原因**: 使用了错误的对象格式
 
 **修复**:
 ```json
 ❌ 错误:
-"matcher": "Write"
+"matcher": {"tools": ["Write"]}
 
 ✅ 正确:
-"matcher": {"tools": ["Write"]}
+"matcher": "Write"
 ```
 
 ---
@@ -89,7 +89,7 @@ Stop[0] 缺少 hooks 数组包裹
 
 ✅ 正确:
 {
-  "matcher": {"tools": ["Write"]},
+  "matcher": "Write",
   "hooks": [{
     "type": "command",
     "command": "..."
@@ -126,7 +126,7 @@ python -m json.tool hooks/hooks.json
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": {"tools": ["Write", "Edit"]},
+        "matcher": "Write",
         "hooks": [
           {
             "type": "command",
@@ -147,7 +147,7 @@ python -m json.tool hooks/hooks.json
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": {"tools": ["Write", "Edit"]},
+        "matcher": "Edit",
         "hooks": [
           {
             "type": "command",

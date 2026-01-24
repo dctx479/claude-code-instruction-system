@@ -1,3 +1,19 @@
+# ⚠️ 文档已废弃
+
+**废弃日期**: 2026-01-24
+**原因**: 本文档包含错误的 hooks matcher 格式示例
+
+**正确格式**: Matcher 应使用**字符串格式**，而非对象格式
+- ✅ 正确: `"matcher": "Bash"`
+- ❌ 错误: `"matcher": {"tools": ["Bash"]}`
+
+**请参考最新文档**:
+- 核心配置: `CLAUDE.md` (第八章 进化指令 - 配置文件验证规则)
+- 快速参考: `QUICK-REFERENCE.md`
+- 配置验证: `docs/QUICK-REFERENCE-CONFIG-VALIDATION.md`
+
+---
+
 # Hooks 配置格式修复报告
 
 **日期**: 2026-01-24
@@ -22,7 +38,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Write",  // ❌ 错误：应该是对象格式
+        "matcher": "Write",  // ❌ 错误：应该是字符串格式
         "hooks": [
           {
             "type": "command",
@@ -48,7 +64,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": {"tools": ["Write"]},  // ✅ 正确：对象格式
+        "matcher": "Write",  // ✅ 正确：字符串格式
         "hooks": [
           {
             "type": "command",
@@ -87,7 +103,7 @@ Debugger Agent 已修复用户全局配置文件，将 bash 命令替换为 Wind
 
 ```json
 {
-  "matcher": {"tools": ["ToolName"]},
+  "matcher": "ToolName",
   "hooks": [
     {
       "type": "command",

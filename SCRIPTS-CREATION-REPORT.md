@@ -327,7 +327,7 @@ $ ls -l scripts/*.sh
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": {"tools": ["Bash"]},
+        "matcher": "Bash",
         "hooks": [{
           "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./scripts/validate-command.sh\"",
           "timeout": 5000
@@ -336,7 +336,7 @@ $ ls -l scripts/*.sh
     ],
     "PostToolUse": [
       {
-        "matcher": {"tools": ["Edit"]},
+        "matcher": "Edit",
         "hooks": [{
           "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./scripts/post-edit.sh\"",
           "timeout": 30000

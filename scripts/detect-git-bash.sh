@@ -105,7 +105,7 @@ generate_hooks_config() {
 {
   "hooks": {
     "PreToolUse": [{
-      "matcher": {"tools": ["Write"]},
+      "matcher": "Write",
       "hooks": [{
         "type": "command",
         "command": "\"$escaped_path\" \"./your-script.sh\"",

@@ -127,7 +127,7 @@ chmod +x .git/hooks/pre-commit
 {
   "PreToolUse": [
     {
-      "matcher": {"tools": ["Bash"]},
+      "matcher": "Bash",
       "hooks": [
         {
           "type": "command",
