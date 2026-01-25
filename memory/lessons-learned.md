@@ -41,6 +41,52 @@
 
 ## 经验条目
 
+### [2026-01-24] Stop Hook 执行失败 - Bash 脚本错误处理 #008
+
+### 问题描述
+Stop hook 执行时报错：`Failed with non-blocking status code: 系统找不到指定的路径`
+- 错误出现在 `ralph-stop-interceptor.sh` 脚本
+- Windows GBK 编码显示乱码
+- 脚本使用 `set -e` 导致命令失败时立即退出
+
+### 根因分析
+1. **过于严格的错误处理**: `set -e` 导致任何命令失败都会退出
+2. **缺少默认值**: `grep` 命令在状态文件不存在时失败，没有 fallback
+3. **不必要的 cat 管道**: `cat file | grep` 可简化为 `grep file`
+
+### 解决方案
+1. 改进 `set -e` 为 `set -euo pipefail`（更严格但可控）
+2. 为所有 grep 命令添加 `|| echo "default"` fallback
+3. 移除不必要的 `cat` 管道，直接使用 `grep file`
+
+### 配置更新
+- 文件: `hooks/ralph-stop-interceptor.sh`
+- 变更:
+  ```bash
+  # 修改前
+  RALPH_ACTIVE=$(cat "$RALPH_STATE_FILE" | grep -o '"active":[^,}]*' | cut -d':' -f2 | tr -d ' ')
+
+  # 修改后
+  RALPH_ACTIVE=$(grep -o '"active":[^,}]*' "$RALPH_STATE_FILE" | cut -d':' -f2 | tr -d ' ' || echo "false")
+  ```
+
+### 验证方法
+```bash
+cd project && bash ./hooks/ralph-stop-interceptor.sh
+# 应该返回 exit code 0，不报错
+```
+
+### 最佳实践
+- Bash 脚本中使用 `set -euo pipefail` 而非 `set -e`
+- 所有可能失败的命令都应提供 fallback: `command || default_value`
+- 避免不必要的管道: `grep file` 优于 `cat file | grep`
+- Windows 环境下注意路径和编码问题
+
+### 标签
+#hooks #bash #error-handling #windows #ralph
+
+---
+
 ### [初始化] 系统启动 #000
 
 ### 问题描述
@@ -473,6 +519,302 @@ Stop hook 执行时报错：`Failed with non-blocking status code: The system ca
 
 ### 标签
 #hooks #windows #git-bash #path #mcp #zotero #configuration
+
+---
+
+## [2026-01-24] Statusline 不显示 - 缺少全局配置 #007
+
+### 问题描述
+Statusline 不显示当前状态，用户无法看到实时的执行信息。
+
+### 根因分析
+1. **缺少全局配置**：
+   - 项目中存在 `.claude/statusline/hud.sh` 脚本
+   - 但全局配置 `C:\Users\ASUS\.claude.json` 中缺少 `statusLine` 配置
+   - Claude Code 不知道如何调用 statusline 脚本
+
+2. **配置位置**：
+   - statusLine 配置应该在全局配置文件的顶层
+   - 位于 `mcpServers` 之后，`firstStartTime` 之前
+
+### 解决方案
+
+#### 添加 statusLine 配置
+在 `C:\Users\ASUS\.claude.json` 中添加：
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "\"I:\\APP\\Git\\usr\\bin\\bash.exe\" \"./.claude/statusline/hud.sh\" render"
+  }
+}
+```
+
+**注意事项**：
+- 使用实际的 Git Bash 路径（不是默认路径）
+- 脚本路径使用相对路径 `./.claude/statusline/hud.sh`
+- 命令参数是 `render`（渲染简洁版）
+
+### 配置更新
+| 文件 | 更新内容 | 理由 |
+|------|----------|------|
+| `C:\Users\ASUS\.claude.json` | 添加 statusLine 配置 | 启用 statusline 显示 |
+
+### 验证方法
+1. ✅ 验证 JSON 格式：`python -m json.tool C:\Users\ASUS\.claude.json`
+2. ✅ 测试脚本执行：`bash ./.claude/statusline/hud.sh render`
+3. ✅ 重启 Claude Code，观察 statusline 是否显示
+4. ✅ 检查显示内容是否正确（时间、模型、Agent等）
+
+### Statusline 功能说明
+
+**显示内容**：
+- 🕐 时间：当前时间 (HH:MM:SS)
+- 🤖 模型：Opus/Sonnet/Haiku
+- 👤 Agent：当前执行的 Agent (@agent-name)
+- 📋 任务：当前任务名称
+- 📊 进度：进度条和百分比
+- 🔄 Ralph：Ralph Loop 状态 (R:iteration/max)
+- 💬 Tokens：输入/输出 token 数量
+
+**主题支持**：
+- `default`：默认主题
+- `minimal`：极简主题
+- `unicode`：Unicode 字符
+- `nerd`：Nerd Font 图标
+
+**配置文件**：
+- 脚本：`.claude/statusline/hud.sh`
+- 配置：`memory/hud-config.json`
+
+### 最佳实践
+
+#### Statusline 配置
+1. **使用绝对路径**：Git Bash 路径使用完整路径
+2. **脚本路径相对化**：statusline 脚本使用相对路径，适应不同项目
+3. **选择合适的渲染模式**：
+   - `render`：简洁版（推荐）
+   - `full`：完整版（带边框）
+
+#### 自定义 Statusline
+1. **修改主题**：编辑 `memory/hud-config.json` 中的 `theme` 字段
+2. **调整组件**：启用/禁用特定组件（时间、模型、tokens等）
+3. **自定义颜色**：修改 `colors` 配置
+
+#### 故障排查
+1. **Statusline 不显示**：
+   - 检查全局配置是否有 `statusLine` 字段
+   - 验证 Git Bash 路径是否正确
+   - 测试脚本是否可执行
+
+2. **显示内容不正确**：
+   - 检查环境变量（CLAUDE_MODEL, CLAUDE_AGENT等）
+   - 验证 Ralph 状态文件是否存在
+   - 查看脚本日志输出
+
+3. **性能问题**：
+   - 降低刷新率（修改 `refresh.rate`）
+   - 禁用不需要的组件
+   - 使用 `minimal` 主题
+
+### 标签
+#statusline #hud #configuration #display #visualization
+
+---
+
+## [2026-01-24] 配置文件位置混淆导致多次错误尝试 #008
+
+### 问题描述
+在配置 statusLine 时，多次在错误的文件中尝试配置，浪费了大量时间：
+1. 先尝试在 `C:\Users\ASUS\.claude.json` 中配置（错误）
+2. 再尝试在项目级 `.claude/settings.json` 中配置（错误）
+3. 最后才找到正确位置 `~/.claude/settings.json`
+
+### 根因分析
+
+#### 1. 配置文件命名混淆
+- `~/.claude.json` - 用户数据文件（启动次数、项目历史等）
+- `~/.claude/settings.json` - **全局设置文件**（hooks、statusLine、环境变量）
+- 两个文件名称相似，容易混淆
+
+#### 2. 文档说明不足
+- CLAUDE.md 中没有明确说明各配置文件的用途
+- 示例代码中只说"全局 settings.json"，没有给出完整路径
+- 缺少配置文件结构的总览文档
+
+### 解决方案
+
+#### 明确配置文件用途
+
+**全局配置文件**：
+
+| 文件 | 用途 | 配置内容 |
+|------|------|---------|
+| `~/.claude/settings.json` | **全局设置** | hooks, statusLine, env, permissions, model |
+| `~/.claude.json` | **用户数据** | numStartups, projects, tipsHistory（自动管理，不要手动编辑） |
+
+**项目配置文件**：
+
+| 文件 | 用途 | 配置内容 |
+|------|------|---------|
+| `.claude/settings.json` | **项目设置** | 项目级 hooks, statusLine, env |
+| `hooks/hooks.json` | **项目 hooks** | 项目特定的 hooks 配置 |
+
+#### 配置优先级
+
+```
+项目级 .claude/settings.json
+    ↓ 覆盖
+全局级 ~/.claude/settings.json
+    ↓ 覆盖
+默认配置
+```
+
+### 配置更新
+| 文件 | 更新内容 | 理由 |
+|------|----------|------|
+| `memory/lessons-learned.md` | 新增 #008 条目 | 记录配置文件混淆问题 |
+| `CLAUDE.md` | 需添加配置文件说明章节 | 明确各文件用途 |
+
+### 验证方法
+1. ✅ 检查 `~/.claude/settings.json` 是否存在 statusLine 配置
+2. ✅ 确认 `~/.claude.json` 中没有 statusLine 配置
+3. ✅ 重启 Claude Code，验证 statusLine 显示正常
+
+### 最佳实践
+
+#### 配置文件管理
+
+1. **全局配置** (`~/.claude/settings.json`):
+   - 用于所有项目通用的设置
+   - hooks、statusLine、环境变量、权限
+   - 手动编辑和管理
+
+2. **用户数据** (`~/.claude.json`):
+   - 由 Claude Code 自动管理
+   - **不要手动编辑**
+   - 包含启动次数、项目历史、提示历史
+
+3. **项目配置** (`.claude/settings.json`):
+   - 项目特定的设置
+   - 覆盖全局配置
+   - 可以提交到版本控制
+
+#### 配置查找顺序
+
+遇到配置问题时，按以下顺序检查：
+1. **项目配置**：`.claude/settings.json`
+2. **全局配置**：`~/.claude/settings.json`
+3. **用户数据**：`~/.claude.json`（通常不需要检查）
+
+#### 避免混淆的技巧
+
+1. **记住文件名**：
+   - `settings.json` = 设置（可编辑）
+   - `.claude.json` = 数据（自动管理）
+
+2. **使用完整路径**：
+   - 全局：`~/.claude/settings.json`
+   - 项目：`.claude/settings.json`
+
+### 标签
+#configuration #settings #statusline #file-location #confusion #best-practices
+
+---
+
+## [2026-01-26] Skills/Pipeline 设计模式学习与融合 #009
+
+### 问题描述
+学习外部优秀实践（research-units-pipeline-skills、literature-mentor skill、论文修改助手 prompt），提炼可融入太一元系统的设计模式。
+
+### 核心学习点
+
+#### 1. Skills 设计四要素（契约化设计）
+每个 Skill 应该是自包含的执行单元，包含：
+- **What**: 输入/输出显式声明（显式依赖）
+- **How**: 执行步骤 + 边界情况（notes + procedures）
+- **When done**: 验收标准（acceptance criteria）
+- **What NOT to do**: 边界约束（guardrails）
+
+**应用到太一系统**：
+- Agent 定义增强验收标准字段
+- 明确每个 Agent 的"绝对禁止"清单
+- 输入输出契约化
+
+#### 2. Pipeline 原子化解耦
+- 流程拆解为原子化 skills，通过配置文件（而非代码）描述执行顺序
+- 不同任务可复用同一套 skills，仅通过编排方式完成
+- 阶段性产物保留，便于回滚和调试
+- 质量门机制在关键节点兜底
+
+**应用到太一系统**：
+- 强化 orchestrator 的编排配置化能力
+- 中间产物（specs、QA reports）作为检查点
+- 质量门（QA Loop）已实现，可进一步细化
+
+#### 3. 交互式逐步推进模式
+- 每完成一个步骤必须停顿，等待用户确认
+- 禁止一次性完成多步（防止失控）
+- 三维分析视角：学习导向、批判视角、启发视角
+
+**应用到太一系统**：
+- autopilot supervised 模式已支持阶段审核
+- 可增强 Ralph Loop 的 checkpoint 机制
+- 复杂任务增加"人机确认点"
+
+#### 4. 规则化定义方法
+- 系统性词汇映射表（before -> after 示例）
+- 绝对禁止修改的内容清单
+- 约束条件明确表述（字数、风格等）
+
+**应用到太一系统**：
+- Prompt 模板可采用映射表方式定义风格
+- 每个 Agent 的 guardrails 应有具体示例
+- 避免抽象描述，用 before/after 展示预期行为
+
+### 融入策略（非照搬原则）
+
+#### 已有能力增强
+| 现有机制 | 增强方向 | 优先级 |
+|---------|---------|--------|
+| Agent 定义 | 增加验收标准和 guardrails 字段 | 高 |
+| orchestrator | 配置化编排规则 | 中 |
+| QA Loop | 细化质量门检查项 | 中 |
+| autopilot | 增强 checkpoint 交互 | 低 |
+
+#### 新增能力考虑
+| 能力 | 描述 | 评估 |
+|-----|------|------|
+| 契约化 Skill | 输入输出显式声明 | 可融入现有 Skills 系统 |
+| 阶段性产物 | 中间产物持久化 | 已有 specs/QA reports，可扩展 |
+| 质量门配置 | 可配置的检查点 | 值得添加 |
+
+### 配置更新
+- 文件: `memory/lessons-learned.md`
+- 变更: 新增 #009 条目，记录外部实践学习
+
+### 验证方法
+1. 在下次创建 Agent 时，尝试应用四要素框架
+2. 在执行复杂任务时，观察是否自然地使用了交互式确认
+3. 定期回顾此条目，评估融入效果
+
+### 经验总结
+
+#### 学习方法论
+1. **提炼而非照搬**：识别核心模式，适配到现有架构
+2. **增量融入**：先增强现有机制，再考虑新增能力
+3. **契约化思维**：明确输入输出、验收标准、边界约束
+4. **交互式思维**：复杂任务分步执行，适时确认
+
+#### 道家智慧映射
+- **原子化解耦** → 道生一，一生二，二生三：从简单到复杂的组合
+- **契约化设计** → 有无相生：明确边界才能自由组合
+- **交互式推进** → 动静有常：行动与反思交替进行
+- **质量门机制** → 无为而治：系统自动守护质量底线
+
+### 标签
+#self-evolution #skills #pipeline #design-pattern #learning #contract #guardrails
 
 ---
 

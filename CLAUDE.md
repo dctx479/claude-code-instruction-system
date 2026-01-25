@@ -162,6 +162,102 @@ python scripts/port-manager.py export myproject --output myproject.env
 
 ---
 
+## 配置文件说明 (Configuration Files Guide)
+
+### 配置文件结构
+
+太一元系统使用多个配置文件来管理不同层级的设置：
+
+#### 全局配置文件
+
+| 文件 | 路径 | 用途 | 是否手动编辑 |
+|------|------|------|-------------|
+| **settings.json** | `~/.claude/settings.json` | 全局设置（hooks、statusLine、env、permissions） | ✅ 是 |
+| **.claude.json** | `~/.claude.json` | 用户数据（启动次数、项目历史、提示历史） | ❌ 否（自动管理） |
+
+#### 项目配置文件
+
+| 文件 | 路径 | 用途 | 是否提交到 Git |
+|------|------|------|---------------|
+| **settings.json** | `.claude/settings.json` | 项目级设置（覆盖全局设置） | ✅ 可选 |
+| **hooks.json** | `hooks/hooks.json` | 项目特定的 hooks 配置 | ✅ 推荐 |
+
+### 配置优先级
+
+```
+项目级 .claude/settings.json
+    ↓ 覆盖
+全局级 ~/.claude/settings.json
+    ↓ 覆盖
+默认配置
+```
+
+### 常见配置项
+
+#### 全局 settings.json 示例
+
+```json
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "your-token",
+    "ANTHROPIC_BASE_URL": "https://api.anthropic.com/"
+  },
+  "model": "claude-sonnet-4-5-20250929",
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline/hud.sh render"
+  },
+  "hooks": {
+    "PreToolUse": [...],
+    "Stop": [...]
+  },
+  "permissions": {
+    "defaultMode": "default"
+  }
+}
+```
+
+#### 项目 settings.json 示例
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "bash ./.claude/statusline/hud.sh render"
+  },
+  "hooks": {
+    "PreToolUse": [...]
+  }
+}
+```
+
+### 配置文件查找顺序
+
+遇到配置问题时，按以下顺序检查：
+
+1. **项目配置**：`.claude/settings.json`
+2. **全局配置**：`~/.claude/settings.json`
+3. **用户数据**：`~/.claude.json`（通常不需要检查）
+
+### 重要提示
+
+⚠️ **不要手动编辑 `~/.claude.json`**
+- 此文件由 Claude Code 自动管理
+- 包含启动次数、项目历史等数据
+- 手动编辑可能导致数据损坏
+
+✅ **应该编辑 `~/.claude/settings.json`**
+- 用于配置 hooks、statusLine、环境变量等
+- 这是正确的全局配置文件
+
+### 详细文档
+
+- 配置文件完整指南：`docs/CONFIG-FILES-GUIDE.md`（待创建）
+- Hooks 配置：参见"八、进化指令 - 配置文件验证规则"
+- Statusline 配置：参见 `memory/lessons-learned.md` #007
+
+---
+
 ## 一、自进化协议 (Self-Evolution Protocol)
 
 ### 1.1 学习触发机制
@@ -586,7 +682,23 @@ Agents状态:
 - Agents 可以激活 Skills
 - Commands 可以触发 Orchestrator，进而调度 Agents 和 Skills
 
-### 4.2 渐进式披露机制
+### 4.2 Skill 设计原则（契约化设计）
+
+每个 Skill 应是自包含的执行单元，遵循四要素框架：
+
+| 要素 | 描述 | 示例 |
+|------|------|------|
+| **What** | 输入/输出显式声明 | 输入: CSV 文件路径; 输出: 统计报告 |
+| **How** | 执行步骤 + 边界情况 | 1. 加载数据 2. 检查缺失值 3. 计算统计量 |
+| **When done** | 验收标准 | 报告包含均值、方差、分布图 |
+| **What NOT** | 边界约束 (guardrails) | 不修改原始数据；不输出超过 10 列 |
+
+**设计建议**：
+- 原子化：每个 Skill 只做一件事
+- 可组合：通过编排配置组合多个 Skills
+- 可验证：明确验收标准，便于质量门检查
+
+### 4.3 渐进式披露机制
 
 Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 
@@ -607,7 +719,7 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 └─ 节省: 90% (仅加载 2-3 个相关 Skills)
 ```
 
-### 4.3 已集成的 Skills
+### 4.4 已集成的 Skills
 
 #### claude-scientific-skills (140+ 科研技能)
 

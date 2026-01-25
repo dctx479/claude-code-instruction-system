@@ -1,6 +1,6 @@
 #!/bin/bash
 # Ralph Stop Interceptor - 自主循环执行系统的停止钩子
-# 版本: 1.0.0
+# 版本: 1.1.0
 # 触发时机: Stop hook 被调用时
 #
 # 功能:
@@ -9,7 +9,7 @@
 # 3. 如果任务未完成且没有致命错误，继续执行
 # 4. 如果任务完成或遇到致命错误，允许停止
 
-set -e
+set -uo pipefail
 
 # 配置
 RALPH_STATE_FILE="${RALPH_STATE_FILE:-$HOME/.claude/ralph-state.json}"
@@ -20,7 +20,7 @@ RALPH_LOG_FILE="${RALPH_LOG_FILE:-$HOME/.claude/ralph.log}"
 log() {
     local level="$1"
     shift
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $*" >> "$RALPH_LOG_FILE"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $*" >> "$RALPH_LOG_FILE" 2>/dev/null || true
 }
 
 # 检查 Ralph 状态文件是否存在
@@ -29,11 +29,11 @@ if [[ ! -f "$RALPH_STATE_FILE" ]]; then
     exit 0
 fi
 
-# 读取状态
-RALPH_ACTIVE=$(cat "$RALPH_STATE_FILE" | grep -o '"active":[^,}]*' | cut -d':' -f2 | tr -d ' ')
-CURRENT_ITERATION=$(cat "$RALPH_STATE_FILE" | grep -o '"iteration":[^,}]*' | cut -d':' -f2 | tr -d ' ')
-TASK_COMPLETED=$(cat "$RALPH_STATE_FILE" | grep -o '"completed":[^,}]*' | cut -d':' -f2 | tr -d ' ')
-HAS_FATAL_ERROR=$(cat "$RALPH_STATE_FILE" | grep -o '"fatal_error":[^,}]*' | cut -d':' -f2 | tr -d ' ')
+# 读取状态（添加 fallback 防止 grep 失败）
+RALPH_ACTIVE=$(grep -o '"active":[^,}]*' "$RALPH_STATE_FILE" 2>/dev/null | cut -d':' -f2 | tr -d ' ' || echo "false")
+CURRENT_ITERATION=$(grep -o '"iteration":[^,}]*' "$RALPH_STATE_FILE" 2>/dev/null | cut -d':' -f2 | tr -d ' ' || echo "0")
+TASK_COMPLETED=$(grep -o '"completed":[^,}]*' "$RALPH_STATE_FILE" 2>/dev/null | cut -d':' -f2 | tr -d ' ' || echo "false")
+HAS_FATAL_ERROR=$(grep -o '"fatal_error":[^,}]*' "$RALPH_STATE_FILE" 2>/dev/null | cut -d':' -f2 | tr -d ' ' || echo "false")
 
 log "DEBUG" "Ralph state: active=$RALPH_ACTIVE, iteration=$CURRENT_ITERATION, completed=$TASK_COMPLETED, fatal=$HAS_FATAL_ERROR"
 
@@ -70,7 +70,7 @@ log "INFO" "Task not completed, iteration $CURRENT_ITERATION/$RALPH_MAX_ITERATIO
 
 # 更新迭代计数
 NEW_ITERATION=$((CURRENT_ITERATION + 1))
-cat "$RALPH_STATE_FILE" | sed "s/\"iteration\":[^,}]*/\"iteration\": $NEW_ITERATION/" > "${RALPH_STATE_FILE}.tmp"
+sed "s/\"iteration\":[^,}]*/\"iteration\": $NEW_ITERATION/" "$RALPH_STATE_FILE" > "${RALPH_STATE_FILE}.tmp"
 mv "${RALPH_STATE_FILE}.tmp" "$RALPH_STATE_FILE"
 
 # 输出继续执行的提示

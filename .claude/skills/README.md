@@ -44,6 +44,16 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 
 ## 已集成的 Skills
 
+### 核心 Skills（项目内置）
+
+| Skill | 描述 | 类别 |
+|-------|------|------|
+| **literature-mentor** | 文献深度解读助手，像导师一样交互式解读论文 | research |
+| **paper-revision** | 论文/技术文档修改助手，风格转换 | research |
+| **pytorch** | PyTorch 深度学习框架 | ai-ml |
+| **pandas** | pandas 数据分析库 | ai-ml |
+| **data-analysis** | 通用数据分析技能 | ai-ml |
+
 ### 1. claude-scientific-skills (140+ 科研技能)
 
 **来源**: [K-Dense-AI/claude-scientific-skills](https://github.com/K-Dense-AI/claude-scientific-skills)

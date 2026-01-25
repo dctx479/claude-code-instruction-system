@@ -29,6 +29,17 @@
             "timeout": 3000
           }
         ]
+      },
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"I:\\APP\\Git\\usr\\bin\\bash.exe\" \"./hooks/agent-tracker.sh\"",
+            "description": "跟踪当前活动的 Agent",
+            "timeout": 2000
+          }
+        ]
       }
     ],
     "PostToolUse": [
