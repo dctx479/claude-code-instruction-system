@@ -721,6 +721,41 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 
 ### 4.4 已集成的 Skills
 
+#### 核心研究 Skills（项目内置）
+
+| Skill | 描述 | 触发词 | 类别 |
+|-------|------|--------|------|
+| **deep-research** | 深度研究，Lead Agent + Subagent 并行调研 | `deep-research <主题>` | research |
+| **market-insight** | 市场洞察，三段式用户画像与产品机会分析 | `/insight <产品描述>` | product |
+| **exa-research** | 企业与市场研究，基于 Exa 搜索引擎 | `研究竞争对手`, `分析行业` | research |
+| **brightdata-research** | 电商平台深度调研，反反爬虫支持 | `电商调研`, `畅销排行` | research |
+| **social-media-research** | 跨平台社媒研究，12+ 平台覆盖 | `舆情监控`, `KOL 分析` | research |
+| **literature-mentor** | 文献深度解读，导师式交互 | `解读这篇论文` | research |
+| **paper-revision** | 论文风格修改，技术准确性保持 | `修改论文风格` | research |
+
+**使用示例**:
+```markdown
+# 深度研究
+"deep-research 2024年AI Agent发展趋势"
+
+# 市场洞察
+"/insight 我要做一个AI产品：基于Claude Code的智能数据分析平台"
+
+# 企业研究
+"研究一下特斯拉的竞争对手"
+
+# 电商调研
+"分析Amazon上智能手表市场的畅销排行"
+
+# 社媒分析
+"监控小红书上品牌XXX的舆情"
+```
+
+**Skill 组合模式**:
+- **社媒 + 深度调研** = 社媒调研智能体
+- **社媒 + 市场洞察** = 消费者画像
+- **电商 + 企业研究** = 全链路竞争分析
+
 #### claude-scientific-skills (140+ 科研技能)
 
 **来源**: [K-Dense-AI/claude-scientific-skills](https://github.com/K-Dense-AI/claude-scientific-skills)
@@ -752,6 +787,47 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 - 无需额外配置，开箱即用
 
 **详细文档**: `.claude/skills/README.md`, `.claude/skills/INTEGRATION-GUIDE.md`
+
+### 4.5 MCP 集成配置
+
+新增的研究 Skills 需要配置对应的 MCP 服务器：
+
+#### Exa MCP（企业与市场研究）
+```bash
+claude mcp add --transport http exa "https://mcp.exa.ai/mcp?tools=web_search_advanced_exa"
+```
+
+#### Bright Data MCP（电商调研）
+```json
+{
+  "mcpServers": {
+    "brightdata": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-brightdata"],
+      "env": {
+        "BRIGHTDATA_API_TOKEN": "your-token"
+      }
+    }
+  }
+}
+```
+
+#### TikHub MCP（社媒研究）
+```json
+{
+  "mcpServers": {
+    "tikhub": {
+      "command": "npx",
+      "args": ["-y", "@tikhub/mcp-server"],
+      "env": {
+        "TIKHUB_API_TOKEN": "your-token"
+      }
+    }
+  }
+}
+```
+
+**详细配置**: 参见各 Skill 的 `SKILL.md` 文件
 
 ---
 

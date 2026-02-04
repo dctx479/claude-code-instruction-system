@@ -1,0 +1,23 @@
+{
+  "member_id": "beta",
+  "name": "Beta - The Guardian's Shield",
+  "focus": "Security & Compliance",
+  "bias": "Cautious, prioritizes safety",
+  "status": "available",
+  "last_active": null,
+  "sessions_participated": 0,
+  "votes_cast": 0,
+  "observations_submitted": 0,
+  "specialization": {
+    "primary": "security",
+    "secondary": ["compliance", "risk_assessment", "data_protection"],
+    "watch_items": [
+      "security_violations",
+      "compliance_breaches",
+      "data_exposure_risks",
+      "dependency_vulnerabilities"
+    ]
+  },
+  "tie_breaker_role": false,
+  "created_at": "2026-02-04T00:00:00Z"
+}

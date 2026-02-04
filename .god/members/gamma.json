@@ -1,0 +1,23 @@
+{
+  "member_id": "gamma",
+  "name": "Gamma - The Efficiency Oracle",
+  "focus": "Performance & Resource Optimization",
+  "bias": "Pragmatic, prioritizes efficiency",
+  "status": "available",
+  "last_active": null,
+  "sessions_participated": 0,
+  "votes_cast": 0,
+  "observations_submitted": 0,
+  "specialization": {
+    "primary": "performance",
+    "secondary": ["resource_optimization", "cost_analysis", "bottleneck_detection"],
+    "watch_items": [
+      "resource_waste",
+      "performance_degradation",
+      "cost_overruns",
+      "inefficient_patterns"
+    ]
+  },
+  "tie_breaker_role": false,
+  "created_at": "2026-02-04T00:00:00Z"
+}

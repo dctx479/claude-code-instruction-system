@@ -1,0 +1,182 @@
+{
+  "$schema": "./schemas/directives.schema.json",
+  "version": "1.0.0",
+  "queue": [],
+  "processed": [],
+  "templates": {
+    "pause_execution": {
+      "type": "control",
+      "action": "pause",
+      "priority": "critical",
+      "level": "L2",
+      "message_template": "Execution paused by God Committee. Reason: {{reason}}",
+      "required_fields": ["reason", "duration"],
+      "auto_resume": false
+    },
+    "resume_execution": {
+      "type": "control",
+      "action": "resume",
+      "priority": "high",
+      "level": "L2",
+      "message_template": "Execution resumed by God Committee. Notes: {{notes}}",
+      "required_fields": ["notes"]
+    },
+    "code_quality_warning": {
+      "type": "advisory",
+      "action": "review",
+      "priority": "medium",
+      "level": "L1",
+      "message_template": "Code quality concern detected: {{concern}}. Recommended action: {{recommendation}}",
+      "required_fields": ["concern", "recommendation", "files"]
+    },
+    "architecture_review": {
+      "type": "gate",
+      "action": "block",
+      "priority": "high",
+      "level": "L3",
+      "message_template": "Architecture decision requires committee review: {{decision}}",
+      "required_fields": ["decision", "rationale", "alternatives"],
+      "requires_consensus": true
+    },
+    "rollback_request": {
+      "type": "intervention",
+      "action": "rollback",
+      "priority": "critical",
+      "level": "L4",
+      "message_template": "Rollback initiated to {{target_ref}}. Reason: {{reason}}",
+      "required_fields": ["target_ref", "reason", "scope"],
+      "requires_consensus": true,
+      "pre_actions": ["create_snapshot", "notify_stakeholders"]
+    },
+    "emergency_stop": {
+      "type": "termination",
+      "action": "stop",
+      "priority": "critical",
+      "level": "L5",
+      "message_template": "EMERGENCY STOP issued by {{issuer}}. Reason: {{reason}}",
+      "required_fields": ["issuer", "reason"],
+      "requires_consensus": true,
+      "immediate": true
+    },
+    "resource_limit": {
+      "type": "control",
+      "action": "throttle",
+      "priority": "medium",
+      "level": "L2",
+      "message_template": "Resource usage approaching limit: {{resource}} at {{usage}}%. Action: {{action}}",
+      "required_fields": ["resource", "usage", "action", "threshold"]
+    },
+    "security_alert": {
+      "type": "alert",
+      "action": "investigate",
+      "priority": "high",
+      "level": "L3",
+      "message_template": "Security concern detected: {{concern}}. Severity: {{severity}}",
+      "required_fields": ["concern", "severity", "affected_components"],
+      "auto_escalate": true
+    },
+    "compliance_check": {
+      "type": "advisory",
+      "action": "verify",
+      "priority": "medium",
+      "level": "L1",
+      "message_template": "Compliance verification needed for: {{area}}. Standard: {{standard}}",
+      "required_fields": ["area", "standard", "checklist"]
+    },
+    "performance_optimization": {
+      "type": "recommendation",
+      "action": "suggest",
+      "priority": "low",
+      "level": "L1",
+      "message_template": "Performance improvement opportunity: {{opportunity}}. Expected gain: {{gain}}",
+      "required_fields": ["opportunity", "gain", "implementation_effort"]
+    }
+  },
+  "directive_schema": {
+    "id": "string (uuid)",
+    "type": "string (control|advisory|gate|intervention|termination|alert|recommendation)",
+    "action": "string",
+    "priority": "string (critical|high|medium|low)",
+    "level": "string (L1|L2|L3|L4|L5)",
+    "issuer": "string (alpha|beta|gamma|system)",
+    "timestamp": "string (ISO 8601)",
+    "expires": "string (ISO 8601) | null",
+    "message": "string",
+    "payload": "object",
+    "consensus": {
+      "required": "boolean",
+      "votes": "array",
+      "result": "string (pending|approved|rejected)"
+    },
+    "status": "string (pending|active|completed|expired|cancelled)",
+    "acknowledgment": {
+      "required": "boolean",
+      "acknowledged_by": "string | null",
+      "acknowledged_at": "string | null"
+    }
+  },
+  "examples": [
+    {
+      "id": "dir-001-example",
+      "type": "advisory",
+      "action": "review",
+      "priority": "medium",
+      "level": "L1",
+      "issuer": "alpha",
+      "timestamp": "2026-02-04T10:00:00Z",
+      "expires": "2026-02-04T18:00:00Z",
+      "message": "Code quality concern detected: High cyclomatic complexity in auth module. Recommended action: Refactor into smaller functions",
+      "payload": {
+        "concern": "High cyclomatic complexity",
+        "recommendation": "Refactor into smaller functions",
+        "files": ["src/auth/login.ts", "src/auth/verify.ts"],
+        "metrics": {
+          "complexity": 25,
+          "threshold": 10
+        }
+      },
+      "consensus": {
+        "required": false,
+        "votes": [],
+        "result": "approved"
+      },
+      "status": "active",
+      "acknowledgment": {
+        "required": true,
+        "acknowledged_by": null,
+        "acknowledged_at": null
+      }
+    },
+    {
+      "id": "dir-002-example",
+      "type": "intervention",
+      "action": "rollback",
+      "priority": "critical",
+      "level": "L4",
+      "issuer": "beta",
+      "timestamp": "2026-02-04T14:30:00Z",
+      "expires": null,
+      "message": "Rollback initiated to commit abc123. Reason: Critical bug in production affecting user authentication",
+      "payload": {
+        "target_ref": "abc123",
+        "reason": "Critical bug in production affecting user authentication",
+        "scope": ["src/auth/*", "src/api/auth/*"],
+        "affected_commits": ["def456", "ghi789"]
+      },
+      "consensus": {
+        "required": true,
+        "votes": [
+          {"member": "alpha", "vote": "approve", "timestamp": "2026-02-04T14:31:00Z"},
+          {"member": "gamma", "vote": "approve", "timestamp": "2026-02-04T14:32:00Z"}
+        ],
+        "result": "approved"
+      },
+      "status": "completed",
+      "acknowledgment": {
+        "required": true,
+        "acknowledged_by": "orchestrator",
+        "acknowledged_at": "2026-02-04T14:33:00Z"
+      }
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "../schemas/power-log.schema.json",
+  "_template": true,
+  "_description": "Template for God Committee power exercise logs. Created automatically by god-intervention agent.",
+  "power_id": "pwr-YYYYMMDD-NNN",
+  "directive_id": "dir-YYYYMMDD-NNN",
+  "session_id": "gc-session-YYYYMMDD-NNN",
+  "timestamp": "ISO 8601",
+  "intervention": {
+    "level": "L1|L2|L3|L4|L5",
+    "type": "housekeeping|control|correction|major|termination",
+    "action": "action_name",
+    "target": {},
+    "justification": ""
+  },
+  "authorization": {
+    "consensus_required": false,
+    "consensus_achieved": false,
+    "votes": [],
+    "quorum_type": "standard|emergency"
+  },
+  "pre_snapshot": "snap-YYYYMMDD-NNN|null",
+  "execution": {
+    "status": "pending|in_progress|success|failed|rolled_back",
+    "started_at": "ISO 8601",
+    "completed_at": "ISO 8601",
+    "duration_seconds": 0,
+    "steps": [],
+    "errors": []
+  },
+  "verification": {
+    "performed": false,
+    "tests_passed": null,
+    "state_verified": null,
+    "metrics_after": {}
+  },
+  "impact": {
+    "files_affected": 0,
+    "commits_involved": 0,
+    "downtime_seconds": 0,
+    "agents_affected": []
+  },
+  "follow_up": []
+}

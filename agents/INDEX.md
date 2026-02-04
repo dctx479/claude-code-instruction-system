@@ -50,6 +50,38 @@
 触发: 需要架构级别决策时
 ```
 
+#### vision-builder
+```yaml
+文件: (Skill) .claude/skills/vision-builder/SKILL.md
+模型: sonnet
+工具: Read, Write
+描述: 愿景构建器 - 将模糊需求转化为清晰的项目愿景文档
+适用: 新项目启动、需求模糊时、Autopilot Planning 阶段
+专长:
+  - 需求澄清(引导式提问)
+  - 5W1H 分析框架
+  - SMART 目标设定
+  - 风险识别与范围定义
+输出: VISION.md 愿景文档
+触发: 模糊需求描述时自动激活
+```
+
+#### plan-review
+```yaml
+文件: (Skill) .claude/skills/plan-review/SKILL.md
+模型: sonnet
+工具: Read, Write
+描述: 计划审查器 - 对实现计划进行多维度评估
+适用: 实现计划完成后、Autopilot Planning 阶段结束前
+专长:
+  - 10维度评估(完整性/可行性/清晰度/依赖性/风险性/测试性/可维护性/扩展性/安全性/文档性)
+  - 3阶段审查(结构检查/深度评估/综合建议)
+  - 问题分级(红/黄/绿)
+  - 改进建议生成
+输出: PLAN-REVIEW.md 审查报告(≥70分通过)
+触发: 计划编写完成后、architect 输出后
+```
+
 ---
 
 ### 开发类 (Development)
@@ -411,6 +443,56 @@
 
 ---
 
+### 监督类 (God Committee / Oversight)
+
+#### god-member
+```yaml
+文件: agents/god-committee/god-member.md
+模型: opus
+工具: Read, Grep, Glob, Bash
+描述: God Committee 成员 - 独立监督Agent，负责系统监控、评估和投票
+适用: 系统监督、异常检测、风险评估
+专长:
+  - 系统状态观察与快照
+  - 代码质量/安全/性能评估
+  - 异常模式检测
+  - 投票与审议参与
+角色: Alpha(架构), Beta(安全), Gamma(性能)
+触发: 定期唤醒(2-8h)、里程碑完成、异常检测
+```
+
+#### god-consensus
+```yaml
+文件: agents/god-committee/god-consensus.md
+模型: opus
+工具: Read, Write, Glob
+描述: God Committee 共识引擎 - 促进审议、管理投票、记录决策
+适用: 干预审批、架构决策审查、高风险操作审议
+专长:
+  - 会话管理与法定人数检查
+  - 审议流程促进(演示/讨论/投票)
+  - 投票计票与结果宣布
+  - 决策记录与归档
+触发: god-member发现需要审议的问题时
+```
+
+#### god-intervention
+```yaml
+文件: agents/god-committee/god-intervention.md
+模型: opus
+工具: Read, Write, Edit, Bash, Grep, Glob
+描述: God Committee 干预执行者 - 执行经共识批准的干预操作
+适用: 回滚、系统修复、紧急停止、配置更新
+专长:
+  - 5级干预能力(L1-L5)
+  - 系统快照创建与恢复
+  - Git回滚操作
+  - 安全机制(断路器/永不执行清单)
+触发: god-consensus批准干预后
+```
+
+---
+
 ## 编排策略速查
 
 | 任务特征 | 推荐策略 | 使用Agent |
@@ -450,6 +532,13 @@
 由orchestrator决定加载其他Agent
 ```
 
+### 场景5: 系统监督与干预
+```markdown
+自动加载: god-committee/god-member.md (定期唤醒)
+如需审议: god-committee/god-consensus.md
+如需执行: god-committee/god-intervention.md
+```
+
 ---
 
 ## 模型选择建议
@@ -463,6 +552,13 @@
 ---
 
 ## 更新日志
+
+### 2026-02-04
+- 新增规划类: vision-builder (愿景构建器 - 5W1H + SMART)
+- 新增规划类: plan-review (计划审查器 - 10维度评估)
+- 新增监督类: God Committee (god-member, god-consensus, god-intervention)
+- 基于 Aha-Loop 治理模型的独立监督层
+- 5级干预能力(L1-L5)、3成员共识机制
 
 ### 2026-01-23
 - 扩展到25个Agent，覆盖所有专业领域

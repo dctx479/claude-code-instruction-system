@@ -1,0 +1,54 @@
+{
+  "$schema": "../schemas/observation.schema.json",
+  "_template": true,
+  "_description": "Template for God Committee observation snapshots. Copy and fill in for each observation.",
+  "observation_id": "obs-YYYYMMDD-NNN",
+  "timestamp": "ISO 8601",
+  "observer": "member_id",
+  "type": "routine|anomaly|milestone|manual",
+  "period": {
+    "start": "ISO 8601",
+    "end": "ISO 8601"
+  },
+  "metrics": {
+    "code_quality": {
+      "score": 0,
+      "threshold": 70,
+      "trend": "stable|improving|declining",
+      "details": {}
+    },
+    "test_coverage": {
+      "percentage": 0,
+      "threshold": 80,
+      "trend": "stable|improving|declining",
+      "uncovered_areas": []
+    },
+    "security_score": {
+      "score": 0,
+      "threshold": 80,
+      "vulnerabilities": [],
+      "last_scan": "ISO 8601"
+    },
+    "performance": {
+      "score": 0,
+      "response_times": {},
+      "bottlenecks": []
+    },
+    "resource_usage": {
+      "cpu_percent": 0,
+      "memory_percent": 0,
+      "disk_percent": 0,
+      "token_usage": 0
+    }
+  },
+  "activity": {
+    "recent_commits": [],
+    "active_tasks": [],
+    "agent_activity": [],
+    "files_changed": 0
+  },
+  "anomalies": [],
+  "concerns": [],
+  "recommendations": [],
+  "requires_session": false
+}

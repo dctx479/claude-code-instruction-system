@@ -1,0 +1,194 @@
+{
+  "$schema": "./schemas/config.schema.json",
+  "version": "1.0.0",
+  "name": "God Committee Governance",
+  "description": "Aha-Loop based independent oversight layer for Taiyi Meta-System",
+
+  "council": {
+    "members": ["alpha", "beta", "gamma"],
+    "quorum": {
+      "standard": 2,
+      "emergency": 1
+    },
+    "session_timeout": 3600,
+    "max_deliberation_rounds": 5
+  },
+
+  "awakening": {
+    "enabled": true,
+    "random_interval": {
+      "min_hours": 2,
+      "max_hours": 8
+    },
+    "triggers": [
+      {
+        "type": "milestone",
+        "description": "Major task completion",
+        "conditions": ["phase_complete", "commit_threshold"]
+      },
+      {
+        "type": "daily_check",
+        "description": "Routine daily review",
+        "cron": "0 9 * * *"
+      },
+      {
+        "type": "anomaly",
+        "description": "Anomaly detection triggers",
+        "conditions": [
+          "high_error_rate",
+          "resource_spike",
+          "security_alert",
+          "long_running_task"
+        ]
+      }
+    ],
+    "deliberation_topics": [
+      "code_quality",
+      "architecture_decisions",
+      "resource_usage",
+      "risk_assessment",
+      "compliance_check"
+    ]
+  },
+
+  "intervention_levels": {
+    "L1": {
+      "name": "Housekeeping",
+      "operations": ["file_repair", "log_cleanup", "cache_clear"],
+      "consensus_required": false,
+      "notification": "silent"
+    },
+    "L2": {
+      "name": "Execution Control",
+      "operations": ["pause_execution", "resume_execution", "adjust_priority"],
+      "consensus_required": "optional",
+      "notification": "info"
+    },
+    "L3": {
+      "name": "Active Correction",
+      "operations": ["bug_fix", "config_update", "dependency_patch"],
+      "consensus_required": "recommended",
+      "notification": "warning"
+    },
+    "L4": {
+      "name": "Major Intervention",
+      "operations": ["multi_commit_rollback", "system_reset", "architecture_override"],
+      "consensus_required": true,
+      "notification": "critical"
+    },
+    "L5": {
+      "name": "System Termination",
+      "operations": ["full_stop", "emergency_shutdown"],
+      "consensus_required": true,
+      "notification": "emergency"
+    }
+  },
+
+  "directive_priorities": {
+    "critical": {
+      "level": 4,
+      "effect": "pause_execution",
+      "timeout": 0,
+      "escalation": "immediate"
+    },
+    "high": {
+      "level": 3,
+      "effect": "priority_process",
+      "timeout": 300,
+      "escalation": "5min"
+    },
+    "medium": {
+      "level": 2,
+      "effect": "normal_process",
+      "timeout": 1800,
+      "escalation": "30min"
+    },
+    "low": {
+      "level": 1,
+      "effect": "advisory",
+      "timeout": null,
+      "escalation": null
+    }
+  },
+
+  "integration": {
+    "orchestrator": {
+      "hook_point": "pre_execution",
+      "check_directives": true,
+      "report_progress": true
+    },
+    "autopilot": {
+      "hook_point": "phase_transition",
+      "require_approval": ["L4", "L5"],
+      "checkpoint_sync": true
+    },
+    "qa_system": {
+      "receive_reports": true,
+      "override_authority": ["P0", "P1"]
+    },
+    "memory_system": {
+      "archive_decisions": true,
+      "archive_path": "memory/god-committee/"
+    }
+  },
+
+  "snapshot": {
+    "enabled": true,
+    "triggers": [
+      "before_L3_intervention",
+      "before_L4_intervention",
+      "daily_backup"
+    ],
+    "retention_days": 30,
+    "include": [
+      "*.ts",
+      "*.tsx",
+      "*.json",
+      "*.md",
+      "*.yaml"
+    ],
+    "exclude": [
+      "node_modules/**",
+      ".git/**",
+      "dist/**",
+      "*.log"
+    ]
+  },
+
+  "rollback": {
+    "enabled": true,
+    "max_depth": 10,
+    "require_consensus": true,
+    "verification_required": true,
+    "auto_snapshot_before": true
+  },
+
+  "logging": {
+    "level": "info",
+    "destinations": [
+      {
+        "type": "file",
+        "path": ".god/logs/committee.log"
+      },
+      {
+        "type": "memory",
+        "path": "memory/god-committee/activity-log.md"
+      }
+    ],
+    "retention_days": 90
+  },
+
+  "alerts": {
+    "channels": [
+      {
+        "type": "inline",
+        "for": ["warning", "critical", "emergency"]
+      }
+    ],
+    "throttle": {
+      "enabled": true,
+      "window_seconds": 300,
+      "max_alerts": 5
+    }
+  }
+}

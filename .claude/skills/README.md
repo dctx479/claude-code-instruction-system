@@ -48,11 +48,21 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 
 | Skill | 描述 | 类别 |
 |-------|------|------|
+| **observability** | AI 思维日志可观测性系统，实时记录推理过程、决策点和执行状态，帮助人类理解 AI 决策过程 | system |
+| **deep-research** | 深度研究技能，Lead Agent + Subagent 并行调研，生成带数据点的结构化报告 | research |
+| **exa-research** | 企业与市场研究技能，基于 Exa 搜索引擎进行公司情报、竞争对手分析和市场研究 | research |
+| **brightdata-research** | 电商平台深度调研，基于 Bright Data MCP 的反反爬虫市场情报收集 | research |
+| **social-media-research** | 跨平台社媒数据研究，基于 TikHub MCP 的舆情监控、KOL 分析和内容趋势洞察 | research |
 | **literature-mentor** | 文献深度解读助手，像导师一样交互式解读论文 | research |
 | **paper-revision** | 论文/技术文档修改助手，风格转换 | research |
+| **market-insight** | 市场洞察分析助手，三段式框架快速识别用户画像、情绪动机和产品机会 | product |
 | **pytorch** | PyTorch 深度学习框架 | ai-ml |
 | **pandas** | pandas 数据分析库 | ai-ml |
 | **data-analysis** | 通用数据分析技能 | ai-ml |
+| **parallel-explore** | Git Worktree 并行探索，基于 Aha-Loop 方法论为多方案决策创建独立工作树，完整实现后标准化评估选择最优方案 | development |
+| **vision-builder** | 愿景构建器，将模糊需求转化为清晰的项目愿景文档（5W1H + SMART），包含目标、范围、成功标准和风险评估 | planning |
+| **plan-review** | 计划审查器，对实现计划进行多维度评估（10维度×1-10分），识别风险和改进点，确保计划可执行且完整 | planning |
+| **god-oversight** | God Committee 监督能力，独立监控和治理，异常检测和干预 | governance |
 
 ### 1. claude-scientific-skills (140+ 科研技能)
 
@@ -256,6 +266,32 @@ rm -rf .claude/skills/skill-name
 ---
 
 ## 更新日志
+
+### 2026-02-04
+- **新增 vision-builder Skill** - 愿景构建器（Aha-Loop 方法论）
+  - 5W1H 分析框架 + SMART 目标设定
+  - 4 阶段工作流：收集 → 分析 → 构建 → 验证
+  - 标准化 VISION.md 模板
+  - 与 Autopilot Planning 阶段、architect、spec-writer 深度集成
+- **新增 plan-review Skill** - 计划审查器（Aha-Loop 方法论）
+  - 10 维度多维度评估框架（完整性、可行性、清晰度、依赖性、风险性、测试性、可维护性、扩展性、安全性、文档性）
+  - 3 阶段审查流程：结构检查 → 深度评估 → 综合建议
+  - PLAN-REVIEW.md 标准化报告模板
+  - 与 Autopilot Planning 阶段、spec-writer、qa-reviewer、God Committee 深度集成
+- **新增 parallel-explore Skill** - Git Worktree 并行探索（Aha-Loop 方法论）
+  - 多方案决策的独立工作树创建
+  - 标准化 EXPLORATION_RESULT.md 评估报告（10 分制多维度）
+  - 与 Orchestrator COMPETITIVE 策略、Autopilot 深度集成
+  - 配套 scripts/parallel-explorer.sh 命令行工具
+- **新增 observability Skill** - AI 思维日志可观测性系统（Aha-Loop 灵感）
+  - 实时记录推理过程、决策点、执行状态
+  - 与 Context Archival、Ralph Loop、Autopilot 深度集成
+  - 支持日志轮转和归档管理
+- 新增 social-media-research Skill（跨平台社媒数据研究，TikHub MCP 集成）
+- 新增 exa-research Skill（企业与市场研究，Exa MCP 集成）
+- 新增 brightdata-research Skill（电商平台深度调研，Bright Data MCP 集成）
+- 新增 deep-research Skill（深度研究，Lead Agent + Subagent 架构）
+- 新增 market-insight Skill（市场洞察分析）
 
 ### 2026-01-23
 - 创建 Skills 集成指南
