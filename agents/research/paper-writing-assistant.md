@@ -391,17 +391,78 @@ def write_draft(plan_file, style_guide):
 
 ## 与现有系统集成
 
-### 1. 文献管理集成
+### 1. 与 literature-mentor Skill 协作
+
+**协作场景**：
+- **深度文献理解**：在写作前，使用 literature-mentor 深度解读核心文献，提取关键观点和方法学启发
+- **综述框架优化**：基于 literature-mentor 的精读报告，优化综述章节结构和论述逻辑
+- **引用质量提升**：利用 literature-mentor 的批判性分析，确保引用准确且有深度
+
+**工作流程**：
+```
+Phase 1: 文献深度解读
+literature-mentor 精读核心文献（10-20篇）
+    ↓
+提取每篇文献的核心观点、方法、局限
+    ↓
+生成文献关系图谱和研究脉络
+
+Phase 2: 综述框架设计
+paper-writing-assistant 基于精读报告
+    ↓
+设计综述章节结构
+    ↓
+分配文献到各章节
+    ↓
+生成写作计划（IMPLEMENT.md）
+
+Phase 3: 内容撰写
+paper-writing-assistant 撰写初稿
+    ↓
+引用 literature-mentor 的深度分析
+    ↓
+确保论述有深度和批判性
+
+Phase 4: 质量审查
+对比 literature-mentor 报告
+    ↓
+验证引用准确性
+    ↓
+补充遗漏的关键观点
+```
+
+**使用示例**：
+```bash
+# Step 1: 深度解读核心文献
+"使用 literature-mentor 解读以下 10 篇核心文献，
+生成精读报告保存到 .research/literature/reviews/"
+
+# Step 2: 基于精读报告生成写作计划
+"访问 .research/literature/reviews/ 中的精读报告，
+结合 Zotero 文献库，生成综述写作计划 IMPLEMENT.md"
+
+# Step 3: 撰写初稿
+"按照 IMPLEMENT.md 撰写综述初稿，
+引用精读报告中的关键观点和批判性分析"
+```
+
+**集成优势**：
+- 确保对核心文献的深度理解
+- 提升综述的学术深度和批判性
+- 避免浅层引用和误读文献
+- 构建清晰的研究脉络和逻辑
+
+### 2. 文献管理集成
 - 调用 Literature Manager Agent
 - 访问文献索引和图谱
 - 自动引用管理
 
-### 2. 知识图谱集成
+### 3. 知识图谱集成
 - 可视化文献关系
 - 识别研究脉络
 - 发现研究空白
 
-### 3. 上下文归档集成
+### 4. 上下文归档集成
 - 写作过程归档
 - 关键决策记录
 - 经验沉淀

@@ -1,2 +1,10 @@
 __pycache__/
 scripts/hooks-config.json
+
+# Claude Code 运行时文件
+.claude/agent-state.json
+.claude/settings.json
+.claude/context/
+
+# Windows 系统文件
+nul

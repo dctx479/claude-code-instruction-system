@@ -1,62 +1,60 @@
 {
-  "mcpServers": {
-    "github": {
+  "version": "1.0.0",
+  "description": "MCP 服务器配置 - 太一元系统外部集成",
+  "servers": {
+    "zotero": {
+      "name": "Zotero MCP",
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "args": ["-y", "@anthropic/mcp-server-zotero"],
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+        "ZOTERO_API_KEY": "${ZOTERO_API_KEY}"
       },
-      "description": "GitHub 集成 - Issues, PRs, 仓库操作"
+      "required_by": [
+        "literature-mentor",
+        "literature-manager",
+        "paper-writing-assistant"
+      ],
+      "description": "访问个人 Zotero 文献库"
     },
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
-      "description": "文件系统操作"
+    "exa": {
+      "name": "Exa MCP",
+      "transport": "http",
+      "url": "https://mcp.exa.ai/mcp?tools=web_search_advanced_exa",
+      "required_by": [
+        "exa-research",
+        "deep-research"
+      ],
+      "description": "企业与市场研究搜索引擎"
     },
-    "memory": {
+    "brightdata": {
+      "name": "Bright Data MCP",
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"],
-      "description": "持久化记忆存储"
-    },
-    "brave-search": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "args": ["-y", "@anthropic/mcp-server-brightdata"],
       "env": {
-        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+        "BRIGHTDATA_API_TOKEN": "${BRIGHTDATA_API_TOKEN}"
       },
-      "description": "Web 搜索"
+      "required_by": [
+        "brightdata-research"
+      ],
+      "description": "电商平台数据采集（反反爬虫）"
     },
-    "puppeteer": {
+    "tikhub": {
+      "name": "TikHub MCP",
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
-      "description": "浏览器自动化和截图"
-    },
-    "postgres": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "args": ["-y", "@tikhub/mcp-server"],
       "env": {
-        "DATABASE_URL": "${DATABASE_URL}"
+        "TIKHUB_API_TOKEN": "${TIKHUB_API_TOKEN}"
       },
-      "description": "PostgreSQL 数据库操作"
-    },
-    "sequential-thinking": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
-      "description": "结构化思考和推理"
+      "required_by": [
+        "social-media-research"
+      ],
+      "description": "跨平台社交媒体数据采集（12+ 平台）"
     }
   },
-  "notes": {
-    "installation": "使用 claude mcp add-json <name> '<config>' 添加服务器",
-    "scopes": {
-      "local": "当前目录，仅自己可用",
-      "project": ".mcp.json 文件，团队共享",
-      "user": "全局配置，所有项目可用"
-    },
-    "commands": {
-      "add": "claude mcp add <name> <command> [args...]",
-      "list": "claude mcp list",
-      "remove": "claude mcp remove <name>",
-      "test": "claude mcp get <name>"
-    }
+  "setup_instructions": {
+    "zotero": "1. 注册 Zotero 账号\n2. 获取 API Key: https://www.zotero.org/settings/keys\n3. 设置环境变量: export ZOTERO_API_KEY=your_key",
+    "exa": "1. 访问 https://exa.ai\n2. 无需 API Key，直接使用 HTTP 传输",
+    "brightdata": "1. 注册 Bright Data 账号\n2. 获取 API Token\n3. 设置环境变量: export BRIGHTDATA_API_TOKEN=your_token",
+    "tikhub": "1. 注册 TikHub 账号\n2. 获取 API Token\n3. 设置环境变量: export TIKHUB_API_TOKEN=your_token"
   }
 }

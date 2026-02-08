@@ -1,115 +1,20 @@
 {
   "version": "1.0.0",
-  "description": "Intent detection keywords for Taiyi system",
-  "intents": {
-    "debug": {
-      "keywords": ["debug", "调试", "bug", "错误", "error", "fix", "修复", "crash", "崩溃", "exception", "异常"],
-      "agent": "debugger",
-      "skills": [],
-      "priority": "high"
-    },
-    "review": {
-      "keywords": ["review", "审查", "code review", "代码审查", "pr review", "check", "检查"],
-      "agent": "code-reviewer",
-      "skills": [],
-      "priority": "medium"
-    },
-    "test": {
-      "keywords": ["test", "测试", "unit test", "单元测试", "integration test", "集成测试", "e2e", "端到端", "coverage", "覆盖率"],
-      "agent": "automated-testing",
-      "skills": [],
-      "priority": "medium"
-    },
-    "refactor": {
-      "keywords": ["refactor", "重构", "optimize", "优化", "clean", "清理", "improve", "改进"],
-      "agent": "code-reviewer",
-      "skills": [],
-      "priority": "medium"
-    },
-    "architect": {
-      "keywords": ["architect", "架构", "design", "设计", "system design", "系统设计", "structure", "结构", "pattern", "模式"],
-      "agent": "architect",
-      "skills": [],
-      "priority": "high"
-    },
-    "security": {
-      "keywords": ["security", "安全", "vulnerability", "漏洞", "audit", "审计", "xss", "sql injection", "csrf", "owasp"],
-      "agent": "security-analyst",
-      "skills": [],
-      "priority": "high"
-    },
-    "data": {
-      "keywords": ["sql", "database", "数据库", "query", "查询", "postgresql", "mysql", "mongodb", "redis"],
-      "agent": "data-scientist",
-      "skills": [],
-      "priority": "medium"
-    },
-    "analysis": {
-      "keywords": ["analyze", "分析", "statistics", "统计", "visualization", "可视化", "chart", "图表", "report", "报告", "eda"],
-      "agent": "data-analyst",
-      "skills": ["pandas", "data-analysis"],
-      "priority": "medium"
-    },
-    "ml": {
-      "keywords": ["pytorch", "tensorflow", "model", "模型", "train", "训练", "neural", "神经网络", "deep learning", "深度学习", "cnn", "rnn", "transformer", "gpu", "cuda"],
-      "agent": "deep-learning",
-      "skills": ["pytorch", "tensorflow"],
-      "priority": "high"
-    },
-    "research": {
-      "keywords": ["paper", "论文", "literature", "文献", "research", "研究", "experiment", "实验", "citation", "引用", "zotero"],
-      "agent": "literature-manager",
-      "skills": ["literature", "paper-writing"],
-      "priority": "medium"
-    },
-    "document": {
-      "keywords": ["document", "文档", "readme", "spec", "规范", "api doc", "api文档", "jsdoc", "docstring"],
-      "agent": "spec-writer",
-      "skills": [],
-      "priority": "low"
-    },
-    "git": {
-      "keywords": ["commit", "提交", "pr", "pull request", "merge", "合并", "branch", "分支", "rebase", "cherry-pick", "git"],
-      "agent": "orchestrator",
-      "skills": [],
-      "priority": "medium"
-    },
-    "deploy": {
-      "keywords": ["deploy", "部署", "docker", "kubernetes", "k8s", "ci/cd", "pipeline", "release", "发布", "production", "生产"],
-      "agent": "orchestrator",
-      "skills": [],
-      "priority": "high"
-    },
-    "performance": {
-      "keywords": ["performance", "性能", "slow", "慢", "optimize", "优化", "benchmark", "基准测试", "profiling", "分析"],
-      "agent": "performance-monitor",
-      "skills": [],
-      "priority": "medium"
-    },
-    "api": {
-      "keywords": ["api", "rest", "graphql", "endpoint", "接口", "request", "请求", "response", "响应", "openapi", "swagger"],
-      "agent": "orchestrator",
-      "skills": [],
-      "priority": "medium"
+  "description": "关键词配置 - 用于智能意图识别和 Skill 触发",
+  "skills": {
+    "literature-mentor": {
+      "keywords": [
+        "解读",
+        "精读",
+        "论文解读",
+        "文献解读",
+        "生成精读报告",
+        "快速调研",
+        "文献综述",
+        "论文分析"
+      ],
+      "priority": "high",
+      "category": "research"
     }
-  },
-  "patterns": {
-    "question": {
-      "regex": "^(what|how|why|when|where|who|which|是什么|怎么|为什么|什么时候|哪里|谁|哪个)",
-      "boost": 0.5
-    },
-    "command": {
-      "regex": "^(create|delete|update|fix|add|remove|make|build|run|创建|删除|更新|修复|添加|移除|构建|运行)",
-      "boost": 0.8
-    },
-    "request": {
-      "regex": "(please|帮我|请|能否|可以)",
-      "boost": 0.3
-    }
-  },
-  "fallback": {
-    "agent": "orchestrator",
-    "skills": [],
-    "message": "No specific intent detected, using default orchestrator"
   }
 }

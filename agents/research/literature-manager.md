@@ -286,17 +286,54 @@ def build_citation_graph(papers):
 
 ## 与现有系统集成
 
-### 1. 复用知识图谱
+### 1. 与 literature-mentor Skill 协作
+
+**协作场景**：
+- **批量精读报告生成**：literature-manager 管理文献集合，调用 literature-mentor 为每篇文献生成精读报告
+- **文献分类优化**：基于 literature-mentor 的深度解读结果，优化文献分类和标签
+- **引用图谱增强**：结合 literature-mentor 的方法学分析，构建更精准的引用关系网络
+
+**工作流程**：
+```
+literature-manager 导入文献集合
+    ↓
+批量调用 literature-mentor 生成精读报告
+    ↓
+提取报告中的关键信息（方法、发现、局限）
+    ↓
+更新文献索引和引用图谱
+    ↓
+生成文献集合总结报告
+```
+
+**使用示例**：
+```bash
+# 为 Zotero 集合中的所有文献生成精读报告
+/research literature batch-review --collection "Coronary CTA Segmentation"
+
+# 输出：
+# - 每篇文献的精读报告（.research/literature/reviews/）
+# - 更新后的文献索引（.research/literature/index.json）
+# - 集合总结报告（.research/literature/collection-summary.md）
+```
+
+**集成优势**：
+- 自动化文献深度分析
+- 提取方法学启发和研究局限
+- 构建知识关联网络
+- 节省人工精读时间
+
+### 2. 复用知识图谱
 - 文献作为图谱节点
 - 引用关系作为边
 - 与实验、概念节点关联
 
-### 2. 复用上下文归档
+### 3. 复用上下文归档
 - 文献分析结果归档
 - 重要发现自动沉淀
 - 生成 resolution 格式总结
 
-### 3. 复用推荐系统
+### 4. 复用推荐系统
 - 基于相似度推荐文献
 - 基于研究方向推荐
 - 基于引用关系推荐

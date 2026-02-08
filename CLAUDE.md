@@ -730,7 +730,7 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 | **exa-research** | 企业与市场研究，基于 Exa 搜索引擎 | `研究竞争对手`, `分析行业` | research |
 | **brightdata-research** | 电商平台深度调研，反反爬虫支持 | `电商调研`, `畅销排行` | research |
 | **social-media-research** | 跨平台社媒研究，12+ 平台覆盖 | `舆情监控`, `KOL 分析` | research |
-| **literature-mentor** | 文献深度解读，导师式交互 | `解读这篇论文` | research |
+| **literature-mentor** | 文献深度解读，支持交互模式和报告模式，自动识别文献类型 | `解读这篇论文`, `生成精读报告` | research |
 | **paper-revision** | 论文风格修改，技术准确性保持 | `修改论文风格` | research |
 
 **使用示例**:
@@ -749,12 +749,21 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 
 # 社媒分析
 "监控小红书上品牌XXX的舆情"
+
+# 文献精读（交互模式）
+"帮我解读这篇文献 'Attention Is All You Need'"
+
+# 文献精读（报告模式）
+"生成这篇文献的精读报告 'Deep Residual Learning for Image Recognition'"
 ```
 
 **Skill 组合模式**:
 - **社媒 + 深度调研** = 社媒调研智能体
 - **社媒 + 市场洞察** = 消费者画像
 - **电商 + 企业研究** = 全链路竞争分析
+- **literature-mentor + paper-writing-assistant** = 文献综述写作
+- **literature-mentor + experiment-logger** = 实验设计与执行
+- **literature-mentor + data-analyst** = 数据分析方法学习
 
 #### claude-scientific-skills (140+ 科研技能)
 
