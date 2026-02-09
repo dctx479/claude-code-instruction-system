@@ -15,6 +15,98 @@
       ],
       "priority": "high",
       "category": "research"
+    },
+    "deep-research": {
+      "keywords": [
+        "深度研究",
+        "调研",
+        "研究报告",
+        "市场调研",
+        "行业分析"
+      ],
+      "priority": "high",
+      "category": "research"
+    },
+    "market-insight": {
+      "keywords": [
+        "市场洞察",
+        "用户画像",
+        "产品机会",
+        "需求分析",
+        "竞品分析"
+      ],
+      "priority": "high",
+      "category": "product"
+    },
+    "exa-research": {
+      "keywords": [
+        "企业研究",
+        "竞争对手",
+        "行业研究",
+        "公司分析"
+      ],
+      "priority": "medium",
+      "category": "research"
+    },
+    "brightdata-research": {
+      "keywords": [
+        "电商调研",
+        "畅销排行",
+        "价格监控",
+        "商品分析"
+      ],
+      "priority": "medium",
+      "category": "research"
+    },
+    "social-media-research": {
+      "keywords": [
+        "舆情监控",
+        "KOL分析",
+        "社媒分析",
+        "品牌监测"
+      ],
+      "priority": "medium",
+      "category": "research"
+    },
+    "paper-revision": {
+      "keywords": [
+        "论文修改",
+        "风格修改",
+        "学术润色",
+        "论文优化"
+      ],
+      "priority": "medium",
+      "category": "research"
+    },
+    "data-analysis": {
+      "keywords": [
+        "数据分析",
+        "统计分析",
+        "数据可视化",
+        "数据报告"
+      ],
+      "priority": "high",
+      "category": "analysis"
+    },
+    "pandas": {
+      "keywords": [
+        "pandas",
+        "dataframe",
+        "数据处理",
+        "数据清洗"
+      ],
+      "priority": "medium",
+      "category": "analysis"
+    },
+    "pytorch": {
+      "keywords": [
+        "pytorch",
+        "深度学习",
+        "神经网络",
+        "模型训练"
+      ],
+      "priority": "medium",
+      "category": "ai"
     }
   }
 }
