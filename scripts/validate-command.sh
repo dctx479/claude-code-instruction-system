@@ -1,17 +1,19 @@
 #!/bin/bash
 # Bash 命令安全性验证工具
-# 版本: 1.0.0
+# 版本: 1.1.0
 # 用途: 在执行 Bash 工具前验证命令安全性
+
+set -euo pipefail
 
 # 读取输入（从 stdin 接收 JSON）
 INPUT=$(cat)
 
 # 提取命令（使用 jq 解析 JSON）
-COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null)
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null || echo "")
 
-# 如果没有 jq，尝试简单的文本匹配
+# 如果没有 jq，尝试可移植的文本匹配（兼容 GNU/BSD grep）
 if [ -z "$COMMAND" ]; then
-    COMMAND=$(echo "$INPUT" | grep -oP '"command"\s*:\s*"\K[^"]+' | head -1)
+    COMMAND=$(echo "$INPUT" | grep -o '"command"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"command"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' || echo "")
 fi
 
 # 如果仍然为空，直接通过

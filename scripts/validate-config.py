@@ -12,7 +12,6 @@ import io
 import json
 import argparse
 import platform
-import subprocess
 from pathlib import Path
 from typing import List, Dict, Tuple, Optional
 from datetime import datetime

@@ -1,10 +1,50 @@
+# Python
 __pycache__/
-scripts/hooks-config.json
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+
+# Node.js
+node_modules/
+.npm
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
 # Claude Code 运行时文件
 .claude/agent-state.json
-.claude/settings.json
-.claude/context/
+.claude/context/sessions/
+.claude/intent-state.json
+
+# Rust 编译产物
+tools/hud-render-rust/target/
+tools/git-info-rust/target/
+tools/tui-config/target/
+
+# 日志文件
+*.log
+.god/logs/
 
 # Windows 系统文件
 nul
+Thumbs.db
+Desktop.ini
+
+# macOS 系统文件
+.DS_Store
+
+# 临时文件
+*.tmp
+.claude-tmp/
+
+# 环境变量和密钥（防止意外提交）
+.env
+.env.local
+.env.*.local
+credentials.json

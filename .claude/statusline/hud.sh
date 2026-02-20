@@ -7,7 +7,7 @@
 # 2. 显示进度、Agent状态、资源使用
 # 3. 支持多种主题
 
-set -e
+set -eo pipefail
 
 # 配置
 HUD_CONFIG_FILE="${HUD_CONFIG_FILE:-$HOME/.claude/hud-config.json}"
@@ -131,9 +131,12 @@ get_progress() {
 get_ralph_status() {
     local ralph_file="${HOME}/.claude/ralph-state.json"
     if [[ -f "$ralph_file" ]]; then
-        local active=$(cat "$ralph_file" | grep -o '"active":[^,}]*' | cut -d':' -f2 | tr -d ' ')
-        local iteration=$(cat "$ralph_file" | grep -o '"iteration":[^,}]*' | cut -d':' -f2 | tr -d ' ')
-        local max=$(cat "$ralph_file" | grep -o '"max_iterations":[^,}]*' | cut -d':' -f2 | tr -d ' ')
+        # 读取文件一次，缓存内容
+        local content
+        content=$(cat "$ralph_file" 2>/dev/null) || return
+        local active=$(echo "$content" | grep -o '"active":[^,}]*' | cut -d':' -f2 | tr -d ' ')
+        local iteration=$(echo "$content" | grep -o '"iteration":[^,}]*' | cut -d':' -f2 | tr -d ' ')
+        local max=$(echo "$content" | grep -o '"max_iterations":[^,}]*' | cut -d':' -f2 | tr -d ' ')
 
         if [[ "$active" == "true" ]]; then
             echo "R:${iteration}/${max}"

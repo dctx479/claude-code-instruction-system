@@ -1,0 +1,123 @@
+{
+  "version": "2.0.0",
+  "theme": "nerd",
+  "width": "auto",
+  "modules": {
+    "time": {
+      "enabled": true,
+      "priority": 2,
+      "format": "HH:MM:SS",
+      "description": "Current time display"
+    },
+    "model": {
+      "enabled": true,
+      "priority": 1,
+      "show_full_name": false,
+      "description": "Current Claude model (Opus/Sonnet/Haiku)"
+    },
+    "project": {
+      "enabled": true,
+      "priority": 1,
+      "max_length": 30,
+      "description": "Current project directory name"
+    },
+    "git": {
+      "enabled": true,
+      "priority": 1,
+      "show_branch": true,
+      "show_status": true,
+      "show_ahead_behind": true,
+      "description": "Git branch and status information"
+    },
+    "context": {
+      "enabled": true,
+      "priority": 1,
+      "format": "percentage",
+      "warn_threshold": 80,
+      "critical_threshold": 90,
+      "description": "Context window usage percentage"
+    },
+    "cost": {
+      "enabled": true,
+      "priority": 2,
+      "format": "dollars",
+      "show_trend": false,
+      "description": "Session cost in dollars"
+    },
+    "agent": {
+      "enabled": true,
+      "priority": 2,
+      "prefix": "@",
+      "description": "Current active agent"
+    },
+    "performance": {
+      "enabled": false,
+      "priority": 3,
+      "show_response_time": true,
+      "show_success_rate": false,
+      "description": "Performance metrics (response time, success rate)"
+    },
+    "task": {
+      "enabled": true,
+      "priority": 2,
+      "max_length": 20,
+      "truncate": true,
+      "description": "Current task description"
+    },
+    "progress": {
+      "enabled": true,
+      "priority": 2,
+      "bar_width": 10,
+      "show_percentage": true,
+      "description": "Task progress bar"
+    },
+    "ralph": {
+      "enabled": true,
+      "priority": 3,
+      "prefix": "R:",
+      "description": "Ralph Loop status (iteration/max)"
+    },
+    "tokens": {
+      "enabled": true,
+      "priority": 3,
+      "format": "compact",
+      "description": "Token usage (input/output)"
+    }
+  },
+  "cache": {
+    "enabled": true,
+    "git_ttl": 5,
+    "project_ttl": 60,
+    "performance_ttl": 1,
+    "description": "Cache time-to-live in seconds"
+  },
+  "performance": {
+    "max_execution_time": 100,
+    "lazy_evaluation": true,
+    "description": "Performance optimization settings"
+  },
+  "colors": {
+    "enabled": true,
+    "model_opus": "magenta",
+    "model_sonnet": "blue",
+    "model_haiku": "cyan",
+    "agent": "green",
+    "task": "yellow",
+    "ralph": "cyan",
+    "time": "dim",
+    "tokens": "dim",
+    "git_clean": "green",
+    "git_dirty": "yellow",
+    "git_ahead_behind": "dim",
+    "context_good": "green",
+    "context_warn": "yellow",
+    "context_critical": "red",
+    "cost": "dim"
+  },
+  "display": {
+    "adaptive_width": true,
+    "priority_threshold": 2,
+    "separator": "┃",
+    "description": "Display behavior settings"
+  }
+}

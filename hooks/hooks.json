@@ -1,5 +1,5 @@
 {
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Taiyi System Hooks Configuration",
   "hooks": {
     "PreToolUse": [
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"I:\\APP\\Git\\usr\\bin\\bash.exe\" \"./scripts/validate-command.sh\"",
+            "command": "bash \"./scripts/validate-command.sh\"",
             "description": "验证 Bash 命令安全性",
             "timeout": 5000
           },
@@ -35,7 +35,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"I:\\APP\\Git\\usr\\bin\\bash.exe\" \"./hooks/agent-tracker.sh\"",
+            "command": "bash \"./hooks/agent-tracker.sh\"",
             "description": "跟踪当前活动的 Agent",
             "timeout": 2000
           }
@@ -48,7 +48,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo 'File written: $TOOL_OUTPUT'",
+            "command": "echo 'File write completed'",
             "description": "文件写入后通知"
           }
         ]
@@ -58,7 +58,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"I:\\APP\\Git\\usr\\bin\\bash.exe\" \"./scripts/post-edit.sh\"",
+            "command": "bash \"./scripts/post-edit.sh\"",
             "description": "编辑后运行 lint 检查",
             "timeout": 30000
           }
@@ -70,7 +70,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"I:\\APP\\Git\\usr\\bin\\bash.exe\" \"./hooks/intent-detector.sh\"",
+            "command": "bash \"./hooks/intent-detector.sh\"",
             "description": "Intent Detector - 智能意图识别",
             "timeout": 3000
           }
@@ -82,7 +82,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"I:\\APP\\Git\\usr\\bin\\bash.exe\" \"./scripts/notify.sh\"",
+            "command": "bash \"./scripts/notify.sh\"",
             "description": "发送通知到外部系统"
           }
         ]
@@ -93,13 +93,13 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"I:\\APP\\Git\\usr\\bin\\bash.exe\" \"./hooks/ralph-stop-interceptor.sh\"",
+            "command": "bash \"./hooks/ralph-stop-interceptor.sh\"",
             "description": "Ralph Loop 停止拦截器 - 检查是否继续执行",
             "timeout": 5000
           },
           {
             "type": "command",
-            "command": "\"I:\\APP\\Git\\usr\\bin\\bash.exe\" \"./scripts/on-stop.sh\"",
+            "command": "bash \"./scripts/on-stop.sh\"",
             "description": "会话结束时的清理操作"
           }
         ]
@@ -110,19 +110,13 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"I:\\APP\\Git\\usr\\bin\\bash.exe\" \"./.claude/hooks/pre-compact.sh\"",
+            "command": "bash \"./.claude/hooks/pre-compact.sh\"",
             "description": "上下文压缩前自动归档",
             "timeout": 10000
           }
         ]
       }
     ]
-  },
-  "scripts": {
-    "validate-command.sh": "#!/bin/bash\n# 验证命令安全性\nINPUT=$(cat)\nCOMMAND=$(echo \"$INPUT\" | jq -r '.tool_input.command // empty')\n\n# 检查危险命令\nif echo \"$COMMAND\" | grep -iE 'rm -rf|sudo|chmod 777' > /dev/null; then\n  echo \"Blocked: Dangerous command detected\" >&2\n  exit 2\nfi\n\nexit 0",
-    "post-edit.sh": "#!/bin/bash\n# 编辑后检查\nnpm run lint --fix 2>/dev/null || true",
-    "notify.sh": "#!/bin/bash\n# 发送通知\necho \"[$(date)] Claude notification\" >> ~/.claude/notifications.log",
-    "on-stop.sh": "#!/bin/bash\n# 清理临时文件\nrm -f /tmp/claude-* 2>/dev/null || true"
   },
   "notes": {
     "exit_codes": {
@@ -132,9 +126,13 @@
     },
     "environment_variables": {
       "TOOL_NAME": "工具名称",
-      "TOOL_INPUT": "工具输入 (JSON)",
-      "TOOL_OUTPUT": "工具输出 (PostToolUse)",
+      "TOOL_INPUT": "工具输入 (JSON, via stdin)",
+      "TOOL_OUTPUT": "工具输出 (PostToolUse, via stdin)",
       "SESSION_ID": "会话 ID"
+    },
+    "platform": {
+      "windows": "需要在 PATH 中有 bash (Git Bash)。如系统未识别 bash 命令，可用绝对路径替代。",
+      "macos_linux": "直接使用 bash 命令即可"
     }
   }
 }

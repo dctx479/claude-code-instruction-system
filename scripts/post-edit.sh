@@ -1,14 +1,19 @@
 #!/bin/bash
 # 文件编辑后处理脚本
-# 版本: 1.0.0
+# 版本: 1.1.0
 # 用途: 在 Edit 工具执行后运行代码质量检查
 
-# 获取编辑的文件路径
-FILE_PATH=$(echo "$TOOL_INPUT" | jq -r '.file_path // empty' 2>/dev/null)
+set -uo pipefail
 
-# 如果无法获取路径，尝试从环境变量获取
+# 从 stdin 读取工具输出（Claude Code PostToolUse hook 通过 stdin 传入）
+TOOL_DATA=$(cat 2>/dev/null || echo "{}")
+
+# 获取编辑的文件路径
+FILE_PATH=$(echo "$TOOL_DATA" | jq -r '.tool_input.file_path // empty' 2>/dev/null || echo "")
+
+# 如果无法从 stdin 获取，尝试环境变量
 if [ -z "$FILE_PATH" ]; then
-    FILE_PATH="$EDITED_FILE"
+    FILE_PATH="${EDITED_FILE:-}"
 fi
 
 # 记录日志

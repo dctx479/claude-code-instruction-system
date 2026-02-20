@@ -8,7 +8,7 @@
 # 2. 自动激活相关的 Agent 或 Skill
 # 3. 提供上下文增强建议
 
-set -e
+set -euo pipefail
 
 # 配置
 KEYWORDS_FILE="${KEYWORDS_FILE:-$(dirname "$0")/../../config/keywords.json}"
@@ -193,10 +193,12 @@ if [[ -n "$USER_MESSAGE" ]]; then
 
     log "INFO" "Intent: $intent, Agent: $agent, Skill: $skill"
 
-    # 设置环境变量供后续使用
-    export CLAUDE_INTENT="$intent"
-    export CLAUDE_RECOMMENDED_AGENT="$agent"
-    export CLAUDE_RECOMMENDED_SKILL="$skill"
+    # 注意: 子进程 export 无法传递到父进程
+    # 将推荐结果写入文件供 HUD 等读取
+    INTENT_STATE_FILE="${HOME}/.claude/intent-state.json"
+    mkdir -p "$(dirname "$INTENT_STATE_FILE")" 2>/dev/null
+    printf '{"intent":"%s","agent":"%s","skill":"%s"}\n' \
+        "$intent" "$agent" "$skill" > "$INTENT_STATE_FILE"
 
     # 输出建议 (可选，供调试)
     if [[ "${INTENT_VERBOSE:-false}" == "true" ]]; then

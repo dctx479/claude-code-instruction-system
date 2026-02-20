@@ -1,5 +1,4 @@
 {
-  "$schema": "./schemas/config.schema.json",
   "version": "1.0.0",
   "name": "God Committee Governance",
   "description": "Aha-Loop based independent oversight layer for Taiyi Meta-System",

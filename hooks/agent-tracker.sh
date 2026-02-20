@@ -22,17 +22,19 @@ if [[ -z "$AGENT_TYPE" ]]; then
     exit 0
 fi
 
+# 安全: 验证 AGENT_TYPE 仅包含合法字符 (字母、数字、连字符)
+if [[ ! "$AGENT_TYPE" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+    echo "WARNING: Invalid agent type: $AGENT_TYPE" >&2
+    exit 0
+fi
+
 # 更新 agent-state.json
 AGENT_STATE_FILE=".claude/agent-state.json"
+mkdir -p "$(dirname "$AGENT_STATE_FILE")" 2>/dev/null
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# 创建或更新状态文件
-cat > "$AGENT_STATE_FILE" <<EOF
-{
-  "current_agent": "$AGENT_TYPE",
-  "last_updated": "$TIMESTAMP",
-  "agent_history": []
-}
-EOF
+# 使用 printf 安全写入，避免 heredoc 注入
+printf '{\n  "current_agent": "%s",\n  "last_updated": "%s",\n  "agent_history": []\n}\n' \
+    "$AGENT_TYPE" "$TIMESTAMP" > "$AGENT_STATE_FILE"
 
 exit 0

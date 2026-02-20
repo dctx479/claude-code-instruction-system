@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"I:\\\\APP\\\\Git\\\\bin\\\\bash.exe\" \"./your-script.sh\"",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"I:\\\\APP\\\\Git\\\\bin\\\\bash.exe\" \"./your-script.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

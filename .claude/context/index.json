@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "claude-code-instruction-system",
+    "description": "太一元系统 - Claude Code 指令系统",
+    "status": "active",
+    "created": "2026-01-23",
+    "last_updated": "2026-02-08"
+  },
+  "current_state": {
+    "last_updated": "2026-02-08",
+    "active_tasks": [
+      "集成 literature-mentor skill 双模式支持",
+      "完善项目文档和配置"
+    ],
+    "verified_facts": [
+      "literature-mentor skill 已成功集成",
+      "文件路径问题已修复",
+      "Git 配置已优化",
+      "所有 P0 优先级问题已修复"
+    ]
+  },
+  "resolutions": []
+}

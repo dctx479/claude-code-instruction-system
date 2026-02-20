@@ -79,7 +79,7 @@ def main():
     # 读取标准输入 (Claude Code 传入的工具输入)
     try:
         input_data = json.load(sys.stdin)
-    except:
+    except (json.JSONDecodeError, ValueError):
         input_data = {}
 
     command = input_data.get('tool_input', {}).get('command', '')

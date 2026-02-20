@@ -29,8 +29,8 @@
     },
     "web": {
       "start": 3000,
-      "end": 3999,
-      "description": "前端开发服务器"
+      "end": 3299,
+      "description": "前端开发服务器 (避开 3306-3399 MySQL 范围)"
     },
     "api": {
       "start": 8000,

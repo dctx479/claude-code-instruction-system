@@ -35,6 +35,21 @@
 触发: 自动激活于复杂任务
 ```
 
+#### autopilot-orchestrator
+```yaml
+文件: agents/autopilot-orchestrator.md
+模型: opus
+工具: Read, Write, Edit, Bash, Grep, Glob, Task
+描述: 全自主编排器 - 整合 Ralph Loop、Orchestrator 和 QA 系统，端到端任务自动执行
+适用: 完全自主开发、端到端任务、Autopilot 模式
+专长:
+  - 5阶段工作流(规划/规范/开发/QA/交付)
+  - Ralph Loop 自主循环
+  - Model Router 智能模型选择
+  - 自动质量保障
+触发: /autopilot 命令
+```
+
 #### architect
 ```yaml
 文件: agents/architect.md
