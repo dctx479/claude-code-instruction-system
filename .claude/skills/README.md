@@ -63,6 +63,12 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 | **vision-builder** | 愿景构建器，将模糊需求转化为清晰的项目愿景文档（5W1H + SMART），包含目标、范围、成功标准和风险评估 | planning |
 | **plan-review** | 计划审查器，对实现计划进行多维度评估（10维度×1-10分），识别风险和改进点，确保计划可执行且完整 | planning |
 | **god-oversight** | God Committee 监督能力，独立监控和治理，异常检测和干预 | governance |
+| **seedance-prompt** | Seedance 2.0 分镜提示词生成专家，将想法/图片转化为专业的 AI 视频结构化分镜提示词 | creative |
+| **seedance-storyboard** | Seedance 2.0 剧本分镜生成器，将小说/故事转化为多集视频剧本和分镜脚本 | creative |
+| **frontend-design** | 前端设计与 UI/UX 指导专家，提供布局、交互、配色、可访问性审查（AI 前端设计总监） | design |
+| **ui-ux-pro-max** | 最强前端设计知识库，57+ UI 风格、97 配色、57 字体搭配、25+ 图表类型 | design |
+| **react-best-practices** | Vercel 官方 React + Next.js 性能优化宝典，45+ 条规则按影响力排序 | development |
+| **web-artifacts-builder** | Anthropic 官方 Web Artifacts 构建器，React + Tailwind + shadcn/ui 单文件 HTML 应用 | development |
 
 ### 1. claude-scientific-skills (140+ 科研技能)
 
@@ -266,6 +272,43 @@ rm -rf .claude/skills/skill-name
 ---
 
 ## 更新日志
+
+### 2026-02-20
+- **新增 seedance-prompt Skill** - Seedance 2.0 分镜提示词生成专家
+  - 结构化提示词模板（风格+时间轴+声音+参考素材）
+  - 镜头语言库（景别、运动、角度完整覆盖）
+  - 10+ 风格声明（电影写实、水墨、赛博朋克、动漫等）
+  - 16+ 模板分类（人物特写、场景转换、动作追踪等）
+  - 支持看图说故事和多轮优化
+- **新增 seedance-storyboard Skill** - Seedance 2.0 剧本分镜生成器
+  - 四幕结构剧本创作（起承转合）
+  - 编号素材清单系统（角色C/场景S/道具P + 英文提示词）
+  - Seedance 2.0 时间轴格式分镜脚本
+  - 视频延长链式方案（集间无缝衔接）
+  - 三件套工具链：Claude Code + 生图AI + Seedance 2.0
+- **新增 frontend-design Skill** - 前端设计与 UI/UX 指导
+  - 基于 Anthropic 官方 frontend-design skill
+  - 视觉层次、间距系统、配色策略、字体规范
+  - 交互规范（动画、表单、响应式）
+  - 可访问性检查（WCAG 2.1 AA）
+  - 设计审查能力
+- **新增 ui-ux-pro-max Skill** - 最强前端设计知识库
+  - 基于 nextlevelbuilder/ui-ux-pro-max-skill
+  - 57+ UI 风格、97 配色方案、57 字体搭配
+  - 25+ 图表类型、98 UX 规范
+  - 11 技术栈支持（React/Vue/Svelte/SwiftUI/Flutter 等）
+  - BM25 智能推荐引擎
+  - 2025/2026 UI 新趋势
+- **新增 react-best-practices Skill** - React 性能优化宝典
+  - 基于 Vercel 官方 vercel-labs/agent-skills
+  - 45+ 条规则按影响力排序
+  - 8 大规则类别（Waterfalls/Bundle Size/Data Fetching 等）
+  - 代码审查和新功能开发两种模式
+- **新增 web-artifacts-builder Skill** - Web Artifacts 构建器
+  - 基于 Anthropic 官方 anthropics/skills
+  - React 18 + TypeScript + Vite + Tailwind + shadcn/ui
+  - 40+ 预装 shadcn/ui 组件
+  - 打包为单文件 bundle.html
 
 ### 2026-02-04
 - **新增 vision-builder Skill** - 愿景构建器（Aha-Loop 方法论）

@@ -733,6 +733,22 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 | **literature-mentor** | 文献深度解读，支持交互模式和报告模式，自动识别文献类型 | `解读这篇论文`, `生成精读报告` | research |
 | **paper-revision** | 论文风格修改，技术准确性保持 | `修改论文风格` | research |
 
+#### AI 视频创作 Skills（新增）
+
+| Skill | 描述 | 触发词 | 类别 |
+|-------|------|--------|------|
+| **seedance-prompt** | Seedance 2.0 分镜提示词生成专家，结构化时间轴格式 | `生成视频提示词`, `分镜提示词` | creative |
+| **seedance-storyboard** | 剧本分镜生成器，小说/故事转多集视频 | `写剧本`, `生成分镜`, `/seedance` | creative |
+
+#### 前端设计与开发 Skills（新增）
+
+| Skill | 描述 | 触发词 | 类别 |
+|-------|------|--------|------|
+| **frontend-design** | 前端设计总监，布局/交互/配色/可访问性审查 | `设计页面`, `审查UI`, `检查可访问性` | design |
+| **ui-ux-pro-max** | 最强设计知识库，57+风格/97配色/57字体 | `推荐UI风格`, `设计系统`, `配色方案` | design |
+| **react-best-practices** | Vercel 官方 React 性能优化 45+ 规则 | `优化React`, `性能审查`, `消除waterfall` | development |
+| **web-artifacts-builder** | Anthropic 官方 Web 应用构建器 | `构建Web应用`, `创建Artifact`, `单页应用` | development |
+
 **使用示例**:
 ```markdown
 # 深度研究
@@ -764,6 +780,9 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 - **literature-mentor + paper-writing-assistant** = 文献综述写作
 - **literature-mentor + experiment-logger** = 实验设计与执行
 - **literature-mentor + data-analyst** = 数据分析方法学习
+- **seedance-prompt + seedance-storyboard** = AI 短剧全流程制作
+- **frontend-design + ui-ux-pro-max** = 专业级 UI 设计系统
+- **react-best-practices + web-artifacts-builder** = 高性能 Web 应用开发
 
 #### claude-scientific-skills (140+ 科研技能)
 
