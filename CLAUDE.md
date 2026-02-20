@@ -1098,30 +1098,6 @@ value=$(echo "$JSON" | jq -r '.field' 2>/dev/null || echo "default")
 | PostToolUse | `"tool_name"`, `"tool_output"` |
 | Stop | （无 stdin JSON） |
 
-**StatusLine stdin JSON 格式（已验证）**:
-
-Claude Code 在每次 Stop 事件后通过 stdin 向 statusLine 命令传入以下 JSON：
-```json
-{
-  "model": {"id": "claude-sonnet-4-6", "display_name": "Sonnet 4.6"},
-  "cost": {"total_cost_usd": 0.349},
-  "transcript_path": "C:/Users/.../.claude/projects/.../session.jsonl",
-  "exceeds_200k_tokens": false
-}
-```
-
-**⚠️ 注意事项**:
-- Token/Context 数据**不在**此 JSON 中，需从 `transcript_path` JSONL 提取
-- 从 JSONL 找最后一条 `"type":"assistant"` 行，读取其 `"usage"` 字段
-- 上下文使用率 = `(input_tokens + cache_read_input_tokens + cache_creation_input_tokens) / 200000 * 100`
-- **Cygwin/Windows 上 `[[ -p /dev/stdin ]]` 始终为 false**，必须用无条件 `cat` 读取 stdin
-- Agent 信息从 `~/.claude/intent-state.json` 读取，不是环境变量
-
-**跨会话 Edit 规则**:
-- 上下文压缩后新会话**必须先 Read 文件**才能 Edit
-- 即使摘要中提到"已读取"，新会话中该记录已失效
-- 继续上次任务时，第一步永远是：Read 所有需编辑的文件
-
 #### JSON 配置文件
 在修改或创建 JSON 配置文件后，必须进行验证：
 

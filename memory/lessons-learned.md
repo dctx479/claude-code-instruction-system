@@ -950,5 +950,117 @@ Statusline 不显示当前状态，用户无法看到实时的执行信息。
 
 ---
 
+## [2026-02-20] StatusLine 对话启动时竖排显示 #010
+
+### 问题描述
+对话启动时，Claude Code 的 statusLine 将每个字符单独显示在一行，形成竖排效果（`2`, `1`, `:`, `4`, `0`... 各占一行，颜色正确但位置错误）。问题仅在对话启动时出现，Stop 事件后正常。
+
+### 根因分析
+**双重原因**：
+
+1. **`cat` 阻塞风险**：`HUD_SESSION_JSON=$(cat 2>/dev/null || echo "")` 在对话启动时，若 Claude Code 建立了未写数据的 stdin pipe，`cat` 会阻塞等待，statusLine 命令挂起。
+
+2. **Rendering area 未初始化**：对话启动时 Claude Code 的 statusLine 渲染区域尚未完全初始化（宽度接近 0），任何有内容的输出都会导致每个字符换行——即使脚本最终输出了完整的单行 ANSI 字符串。
+
+**关键证据**：
+- `cat -A` 检测到输出无 CRLF，单行输出，ANSI 码正确
+- `xxd` 验证字节序列完整无误
+- 仅在对话启动时触发，Stop 事件后正常
+- 截图显示字符带有正确颜色（说明 ANSI 码被处理），但每字符占一行（说明宽度=1）
+
+### 解决方案
+```bash
+# 1. cat 加 timeout 防阻塞
+HUD_SESSION_JSON=$(timeout 0.5 cat 2>/dev/null || echo "")
+
+# 2. 无 session JSON（对话启动）时直接退出，不渲染
+if [[ -z "$HUD_SESSION_JSON" && "$action" == "render" ]]; then
+    exit 0
+fi
+```
+
+**逻辑**：Stop 事件触发时 JSON 立即可用（0.5s 超时足够），对话启动时无 JSON → 退出 → 渲染区域初始化完成后再正常渲染。
+
+### 配置更新
+- 文件: `~/.claude/statusline/hud-v2.sh`
+- 变更: `main()` 函数第一段替换为 `timeout 0.5 cat` + 空 JSON 早退出保护
+- 文件: `~/.claude/CLAUDE.md`
+- 变更: StatusLine stdin JSON 格式规范中更新 `cat` 说明为 `timeout` 方案，并注明启动时早退出规则
+
+### 验证方法
+```bash
+# 无 stdin：输出为空（启动保护）
+bash ~/.claude/statusline/hud-v2.sh render < /dev/null | wc -c  # 应为 0
+
+# 有 session JSON：正常单行输出
+echo '{"model":...}' | bash ~/.claude/statusline/hud-v2.sh render | wc -l  # 应为 1
+```
+
+### 反模式（禁止）
+- ❌ `HUD_SESSION_JSON=$(cat 2>/dev/null || echo "")` 无超时 → 启动阻塞
+- ❌ 无论是否有 JSON 都输出 statusLine → 启动时竖排
+- ❌ `[[ -p /dev/stdin ]]` 检测是否为 pipe → Cygwin 始终 false
+
+### 标签
+#statusline #cygwin #windows #startup #rendering #timeout #ansi
+
+---
+
+## [2026-02-20] CLAUDE.md 超过 40k 字符阈值 #011
+
+### 问题描述
+Claude Code 每次启动时警告 `⚠Large CLAUDE.md will impact performance (40.4k chars > 40.0k)`。警告来自项目级 CLAUDE.md（40,446 chars），全局 CLAUDE.md 当时为 39,946 chars（恰好在阈值以下）。
+
+### 根因分析
+项目 CLAUDE.md 在一次自进化中新增了 "Bash 脚本安全规则（新增）" section（~1,500 chars），同时将原来的独立 StatusLine 格式规范和跨会话 Edit 规则从文档末尾**嵌入**到该新 section 内（而非作为独立 section）。
+
+结果：
+- 独立 section（StatusLine + Edit）被移走 (~1,000 chars)
+- Bash 规则 section 包含所有内容 (~1,500 chars)
+- 净增 ~500 chars → 超过 40k 阈值
+
+**双重问题**：内容重复（全局 CLAUDE.md 已有独立 StatusLine/Edit sections）+ 文件过大。
+
+### 解决方案
+**三步修复**：
+1. 从项目 CLAUDE.md 的 Bash 规则 section 中移除嵌入的 StatusLine 和 Edit 子节（这些内容在全局 CLAUDE.md 的独立 section 中已存在）
+2. 更新全局 CLAUDE.md 的 `cat` 说明为新的 `timeout` 方案
+3. 验证两文件均在 40k 以下
+
+**结果**：
+- 项目 CLAUDE.md: 40,446 → 39,654 chars ✓
+- 全局 CLAUDE.md: 39,946 → 39,996 chars ✓
+
+### 配置更新
+- 文件: `CLAUDE.md`（项目）
+- 变更: 移除 Bash 规则 section 内嵌的 StatusLine JSON 格式和 Edit 规则内容（约 600 chars）
+- 文件: `~/.claude/CLAUDE.md`（全局）
+- 变更: StatusLine 说明中更新 `cat` 为 `timeout`，添加启动时退出说明
+
+### 验证方法
+```bash
+wc -m ~/.claude/CLAUDE.md         # 应 < 40000
+wc -m /path/to/project/CLAUDE.md  # 应 < 40000
+```
+
+### 最佳实践（防止再次超限）
+
+**CLAUDE.md 内容管理规则**：
+1. **新增内容前先检查字符数**：`wc -m CLAUDE.md` 确认余量
+2. **避免跨 section 重复**：同一信息只保留一处（preferring 全局文件的独立 section）
+3. **Bash 规则 section 只存放独特规则**：不嵌入 StatusLine/Edit 等已有独立 section 的内容
+4. **阈值：40,000 chars**，建议保留 ≥500 chars 余量（目标 ≤39,500）
+5. **大块详细内容移到外部文件引用**：如 `memory/lessons-learned.md`、`agents/*.md`
+
+### 反模式（禁止）
+- ❌ 自进化时在新 section 中嵌入已有 section 的内容（造成重复）
+- ❌ 不检查字符数就添加大块内容
+- ❌ 两个 section 包含相同信息（一处为主，另一处应引用）
+
+### 标签
+#claude-md #size-limit #performance #duplication #self-evolution #config
+
+---
+
 <!-- 新的经验条目将自动添加在这里 -->
 
