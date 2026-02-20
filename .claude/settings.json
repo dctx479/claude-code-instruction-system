@@ -1,6 +1,6 @@
 {
   "statusLine": {
     "type": "command",
-    "command": "\"I:\\APP\\Git\\usr\\bin\\bash.exe\" \"./.claude/statusline/hud-v2.sh\" render"
+    "command": "bash \"./.claude/statusline/hud-v2.sh\" render"
   }
 }

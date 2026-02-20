@@ -22,7 +22,12 @@
 
 ### Intent Detector - 智能意图识别
 自动分析用户输入，推荐合适的 Agent 和 Skill。
+v2.0: 支持 27 种意图到 22 个 Agent 的自动调度。
 详见: `hooks/intent-detector.sh`, `config/keywords.json`
+
+### Agent Auto-Dispatch - Agent 自动调度
+基于 intent-state.json 自动加载 Agent 定义并切换角色。
+详见: 本文档"零、Agent 自动调度协议"
 
 ### Model Router - 自动模型选择
 根据任务复杂度自动选择最优模型 (Opus/Sonnet/Haiku)。
@@ -255,6 +260,103 @@ python scripts/port-manager.py export myproject --output myproject.env
 - 配置文件完整指南：`docs/CONFIG-FILES-GUIDE.md`（待创建）
 - Hooks 配置：参见"八、进化指令 - 配置文件验证规则"
 - Statusline 配置：参见 `memory/lessons-learned.md` #007
+
+---
+
+## 零、Agent 自动调度协议 (Auto-Dispatch Protocol)
+
+### 0.1 核心机制
+
+Intent Detector (UserPromptSubmit Hook) 在每次用户消息提交时自动运行，将识别结果写入 `~/.claude/intent-state.json`。Claude 读取此文件后，按需加载对应 Agent 定义并以该角色执行任务。
+
+**数据流**:
+```
+用户输入 → UserPromptSubmit Hook → intent-detector.sh
+    → 写入 ~/.claude/intent-state.json
+    → Claude 读取 intent-state.json
+    → 加载 agents/{agent}.md
+    → 以 Agent 角色执行任务
+```
+
+### 0.2 每次响应前的强制检查
+
+**在回复任何用户消息之前，必须执行以下步骤：**
+
+1. 使用 Read 工具读取 `~/.claude/intent-state.json`
+2. 提取 `agent` 字段值
+3. **调度决策**:
+   - 如果 `agent` 为 `orchestrator` 或字段为空 → 保持默认行为，不加载特定 Agent
+   - 如果 `agent` 为其他值 → 继续步骤 4
+4. **Agent 文件查找**（按以下顺序查找，找到即停止）:
+   - 项目内: `agents/{agent}.md`
+   - 项目内子目录: `agents/**/{agent}.md`（如 `agents/ai/deep-learning.md`）
+   - 全局: `~/.claude/agents/{agent}.md`
+5. 使用 Read 工具加载找到的 Agent 定义文件
+6. 以该 Agent 的**角色、专长、工具权限和行为准则**执行当前任务
+7. 如果文件不存在，回退到默认 orchestrator 行为并在回复中简要说明
+
+### 0.3 Agent 路由表
+
+完整的 intent -> agent -> 文件映射关系：
+
+| Intent | Agent ID | Agent 文件路径 | 角色描述 |
+|--------|----------|---------------|----------|
+| debug | debugger | `agents/debugger.md` | 调试专家 - Bug修复/错误诊断 |
+| review | code-reviewer | `agents/code-reviewer.md` | 代码审查员 - 质量/安全审查 |
+| test | automated-testing | `agents/testing/automated-testing.md` | 测试专家 - 用例生成/覆盖分析 |
+| refactor | code-reviewer | `agents/code-reviewer.md` | 代码审查员 - 重构建议 |
+| architect | architect | `agents/architect.md` | 软件架构师 - 系统设计/技术选型 |
+| security | security-analyst | `agents/security-analyst.md` | 安全分析 - 漏洞/XSS/注入 |
+| security-audit | security-audit | `agents/security/security-audit.md` | 安全审计 - 合规/CVE/依赖扫描 |
+| data | data-scientist | `agents/data-scientist.md` | 数据科学 - SQL/数据库 |
+| analysis | data-analyst | `agents/research/data-analyst.md` | 数据分析 - 统计/分析 |
+| visualization | data-visualization | `agents/visualization/data-visualization.md` | 数据可视化 - 图表/Dashboard |
+| ml | deep-learning | `agents/ai/deep-learning.md` | 深度学习 - CNN/RNN/Transformer |
+| rl | reinforcement-learning | `agents/ai/reinforcement-learning.md` | 强化学习 - DQN/PPO/SAC |
+| timeseries | time-series-analysis | `agents/ai/time-series-analysis.md` | 时间序列 - ARIMA/Prophet |
+| interpretability | model-interpretability | `agents/ai/model-interpretability.md` | 可解释性 - SHAP/LIME |
+| research | literature-manager | `agents/research/literature-manager.md` | 文献管理 - 导入/分类/摘要 |
+| paper-writing | paper-writing-assistant | `agents/research/paper-writing-assistant.md` | 论文写作 - 综述/撰写 |
+| experiment | experiment-logger | `agents/research/experiment-logger.md` | 实验记录 - 追踪/对比 |
+| document | spec-writer | `agents/spec-writer.md` | 规范编写 - 功能规范文档 |
+| qa-review | qa-reviewer | `agents/qa-reviewer.md` | QA审查 - 质量验证/评分 |
+| qa-fix | qa-fixer | `agents/qa-fixer.md` | QA修复 - 自动修复P2问题 |
+| perf-monitor | performance-monitor | `agents/performance-monitor.md` | 性能监控 - 数据收集/报告 |
+| optimize | auto-optimizer | `agents/auto-optimizer.md` | 自动优化 - 系统配置优化 |
+| autopilot | autopilot-orchestrator | `agents/autopilot-orchestrator.md` | 全自主编排 - 端到端执行 |
+| archive | context-archivist | `agents/context-archivist.md` | 上下文归档 - 信息沉淀 |
+| git | orchestrator | （默认行为） | 元编排者 |
+| deploy | orchestrator | （默认行为） | 元编排者 |
+| general | orchestrator | （默认行为） | 元编排者 |
+
+### 0.4 渐进式角色加载
+
+- 每次只加载 **1 个** Agent 定义文件（约 2-5K tokens）
+- 不预加载其他不相关 Agent
+- Agent 角色在当前任务期间保持，直到下一次用户消息触发新的 intent 检测
+- 如果任务需要多 Agent 协作，由 orchestrator 模式下的编排系统处理
+
+### 0.5 手动覆盖
+
+用户可以通过以下方式手动覆盖自动调度：
+
+```
+@architect 请帮我设计系统       -- 强制使用 architect，忽略 intent-state
+@debugger 这个报错怎么回事      -- 强制使用 debugger
+@orchestrator 编排这个复杂任务  -- 强制回到编排者模式
+```
+
+**覆盖规则**：
+- 用户消息以 `@{agent-id}` 开头时，直接加载指定 Agent，跳过 intent-state 检查
+- `@` 覆盖优先级高于 intent-state.json 的自动检测结果
+
+### 0.6 调度豁免场景
+
+以下情况**不执行**自动调度，直接使用默认行为：
+- intent-state.json 文件不存在或读取失败
+- `agent` 字段为空字符串或 `orchestrator`
+- 用户正在进行多轮对话的中间步骤（上下文已有明确 Agent 角色）
+- `/ralph` 或 `/autopilot` 等命令已接管执行流程
 
 ---
 
@@ -971,6 +1073,55 @@ npm run typecheck   # 类型检查
 
 ### 配置文件验证规则 (新增)
 
+#### Bash 脚本安全规则（新增）
+
+**使用 `set -eo pipefail` 时的外部工具调用规范**:
+
+```bash
+# ❌ 危险：工具缺失时 pipefail 捕获 exit 127，脚本静默崩溃
+value=$(echo "$JSON" | jq -r '.field' 2>/dev/null)
+
+# ✅ 安全：|| fallback 保护，脚本继续执行
+value=$(echo "$JSON" | jq -r '.field' 2>/dev/null || echo "default")
+```
+
+**强制规则**：
+- 凡使用 `set -eo pipefail` 的脚本，所有外部工具（jq、curl、python 等）调用**必须**加 `|| fallback`
+- 新增外部依赖时，在脚本顶部显式检查：`command -v jq &>/dev/null || { echo "jq not found"; exit 1; }`
+- 升级脚本版本时，检查新版是否引入了旧版没有的外部依赖
+
+**Hook stdin JSON 字段名规范**:
+| Hook 事件 | stdin JSON 字段 |
+|-----------|----------------|
+| UserPromptSubmit | `"prompt"` |
+| PreToolUse | `"tool_name"`, `"tool_input"` |
+| PostToolUse | `"tool_name"`, `"tool_output"` |
+| Stop | （无 stdin JSON） |
+
+**StatusLine stdin JSON 格式（已验证）**:
+
+Claude Code 在每次 Stop 事件后通过 stdin 向 statusLine 命令传入以下 JSON：
+```json
+{
+  "model": {"id": "claude-sonnet-4-6", "display_name": "Sonnet 4.6"},
+  "cost": {"total_cost_usd": 0.349},
+  "transcript_path": "C:/Users/.../.claude/projects/.../session.jsonl",
+  "exceeds_200k_tokens": false
+}
+```
+
+**⚠️ 注意事项**:
+- Token/Context 数据**不在**此 JSON 中，需从 `transcript_path` JSONL 提取
+- 从 JSONL 找最后一条 `"type":"assistant"` 行，读取其 `"usage"` 字段
+- 上下文使用率 = `(input_tokens + cache_read_input_tokens + cache_creation_input_tokens) / 200000 * 100`
+- **Cygwin/Windows 上 `[[ -p /dev/stdin ]]` 始终为 false**，必须用无条件 `cat` 读取 stdin
+- Agent 信息从 `~/.claude/intent-state.json` 读取，不是环境变量
+
+**跨会话 Edit 规则**:
+- 上下文压缩后新会话**必须先 Read 文件**才能 Edit
+- 即使摘要中提到"已读取"，新会话中该记录已失效
+- 继续上次任务时，第一步永远是：Read 所有需编辑的文件
+
 #### JSON 配置文件
 在修改或创建 JSON 配置文件后，必须进行验证：
 
@@ -1029,9 +1180,10 @@ jq empty <配置文件.json>
 - 通配符：`"*"`
 
 **Windows 环境兼容性**:
-- ✅ 优先使用 Git Bash: `"C:\\Program Files\\Git\\bin\\bash.exe" "./script.sh"`
-- ✅ 备选 WSL: `"wsl bash /mnt/c/path/to/script.sh"`
-- ✅ 备选 PowerShell: `"powershell -ExecutionPolicy Bypass -File \"script.ps1\""`
+- ✅ **正确格式**：`bash "C:\\path\\to\\script.sh"`（以 `bash` 开头）
+- ✅ 或直接引用脚本（依赖 shebang）：`"C:\\path\\to\\script.sh"`
+- ❌ **禁止**：`"I:\\APP\\Git\\usr\\bin\\bash.exe" "script.sh"`
+  - Claude Code 在 Windows 检测到 `.sh` 时自动追加 `bash `，导致 `bash "bash.exe" "script.sh"` → `cannot execute binary file`
 - ❌ 避免直接使用 `./script.sh` (在 Windows 上不工作)
 
 **示例 - 项目级别 hooks 配置**:

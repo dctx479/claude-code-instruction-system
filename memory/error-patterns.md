@@ -27,6 +27,88 @@
 
 ## 已知错误模式
 
+### EP-006: 跨会话 Edit 失败 — "File has not been read yet"
+
+**模式描述**:
+在上下文压缩（context compaction）后启动新会话时，尝试 Edit 旧会话中已 Read 过的文件，报错 `File has not been read yet`。
+
+**触发条件**:
+- 对话上下文被压缩/摘要
+- 新会话中直接 Edit 文件（未在本次会话中 Read）
+- 即使摘要中明确提到"已读取该文件"
+
+**解决方案**:
+```bash
+# ❌ 错误：直接在新会话中 Edit 旧会话读过的文件
+Edit(file_path="C:/...", old_string="...", new_string="...")
+# → File has not been read yet
+
+# ✅ 正确：新会话中先 Read，再 Edit
+Read(file_path="C:/...")
+Edit(file_path="C:/...", old_string="...", new_string="...")
+```
+
+**预防措施**:
+- 每次新会话开始，**必须先 Read 所有需要编辑的文件**
+- 从对话摘要继续工作时，把"读取文件"作为第一步
+- 批量修改多个文件时，可并行 Read 所有文件后再批量 Edit
+
+---
+
+### EP-004: Windows Hook "cannot execute binary file"
+
+**模式描述**:
+Claude Code 的 hook 或 statusLine 命令在 Windows 上执行时报 `cannot execute binary file`，命令静默失败，statusline 不显示或 hook 不执行。
+
+**触发条件**:
+- hook/statusLine 命令格式为 `"bash.exe" "script.sh"`（包含 bash 可执行文件路径）
+- Claude Code 在 Windows 上检测到 `.sh` 文件时自动在命令前追加 `bash `
+- 结果：`bash "bash.exe" "script.sh"` → Cygwin bash 把 PE 二进制当脚本执行 → 失败
+
+**解决方案**:
+```json
+// ❌ 错误格式（触发双重 bash 问题）
+"command": "\"I:\\APP\\Git\\usr\\bin\\bash.exe\" \"script.sh\""
+
+// ✅ 正确格式（以 bash 开头，Claude Code 不再追加）
+"command": "bash \"C:\\Users\\...\\script.sh\""
+
+// ✅ 或直接引用脚本（依赖 shebang #!/bin/bash）
+"command": "\"C:\\Users\\...\\script.sh\""
+```
+
+**预防措施**:
+- Windows 上所有 hook/statusLine 命令统一以 `bash "script.sh"` 格式书写
+- 写完配置后运行脚本直接测试一次
+
+---
+
+### EP-005: set -eo pipefail + 外部工具缺失 → 脚本静默崩溃
+
+**模式描述**:
+脚本使用 `set -eo pipefail`，内部调用了未安装的外部工具（如 jq、python 等），工具缺失时返回 exit 127，`pipefail` 捕获后脚本立即静默退出，无任何错误输出。
+
+**触发条件**:
+- `set -eo pipefail` 已启用
+- 调用外部工具（jq、curl、python 等）无 `|| fallback` 保护
+- 工具未安装或不在 PATH
+
+**解决方案**:
+```bash
+# ❌ 危险：jq 缺失时 pipefail 捕获 exit 127，脚本立即退出
+value=$(echo "$JSON" | jq -r '.field' 2>/dev/null)
+
+# ✅ 安全：|| fallback 让整体表达式成功，pipefail 不会触发
+value=$(echo "$JSON" | jq -r '.field' 2>/dev/null || echo "default")
+```
+
+**预防措施**:
+- 脚本顶部用 `command -v tool &>/dev/null || { echo "tool missing"; exit 1; }` 显式检查依赖
+- 所有外部工具调用加 `|| fallback_value`
+- 升级脚本时检查新增的外部依赖
+
+---
+
 ### EP-001: Agent超时无响应
 
 **模式描述**:

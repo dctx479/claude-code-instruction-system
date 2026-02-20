@@ -41,6 +41,138 @@
 
 ## 经验条目
 
+### [2026-02-20] hud-v2.sh 数据源全面错误 + 跨会话 Edit 陷阱 #010
+
+### 问题描述
+`hud-v2.sh` v2.0.0 的所有动态数据（model、cost、tokens、context、agent）均显示为 0 或默认值。调查发现脚本中使用的 JSON 字段名全部错误，与 Claude Code 实际发送的 JSON 格式不符。同时，在上下文压缩后新会话中尝试 Edit 旧会话已读文件时全部报 "File has not been read yet" 错误。
+
+### 根因分析
+
+**A：Claude Code statusline JSON 实际格式与脚本假设不符**
+
+| 脚本中使用的字段（错误） | Claude Code 实际字段（正确） |
+|---|---|
+| `.model.name` | `.model.display_name` |
+| `.session.estimatedCost` | `.cost.total_cost_usd` |
+| `.session.contextUsed` / `.contextLimit` | 不存在，需读 `transcript_path` JSONL |
+| `.session.inputTokens` / `.outputTokens` | 不存在，需读 `transcript_path` JSONL |
+| CLAUDE_AGENT 环境变量 | `~/.claude/intent-state.json` 文件 |
+
+**实际 JSON 结构**：
+```json
+{
+  "model": {"id": "claude-sonnet-4-6", "display_name": "Sonnet 4.6"},
+  "cost": {"total_cost_usd": 0.349},
+  "transcript_path": "C:/Users/.../.claude/projects/.../session.jsonl",
+  "exceeds_200k_tokens": false
+}
+```
+
+**B：Token/Context 数据需从 transcript JSONL 提取**
+
+Token 数据存储在 `transcript_path` 指向的 JSONL 文件中，最后一条 `"type":"assistant"` 行的 `"usage"` 字段：
+```json
+{"type":"assistant","usage":{"input_tokens":N,"output_tokens":N,"cache_read_input_tokens":N,"cache_creation_input_tokens":N}}
+```
+上下文使用率 = `(input + cache_read + cache_creation) / 200000 * 100`
+
+**C：跨会话 Edit 失败**
+
+当对话被上下文压缩后，旧会话中 Read 的文件记录不会被带入新会话。在新会话中直接 Edit 这些文件会报：
+```
+File has not been read yet. Read it first before writing to it.
+```
+即使上次会话的摘要中提到"已读取该文件"，新会话仍需重新 Read。
+
+**D：`-p /dev/stdin` 在 Cygwin/Windows 始终返回 false**
+
+hud-v2.sh 使用 `if [[ -p /dev/stdin ]]` 检测管道输入，在 Cygwin 环境下永远为 false，导致 stdin JSON 从未被读取，`HUD_SESSION_JSON` 始终为空。
+
+### 解决方案
+
+1. **修正所有字段名**：按实际 JSON 格式更新 `get_model()`、`get_session_cost()`
+2. **重写 context/token 函数**：通过 `transcript_path` 读取 JSONL 文件提取数据
+3. **修复 stdin 读取**：移除 `-p /dev/stdin` 检测，改为无条件 `HUD_SESSION_JSON=$(cat 2>/dev/null || echo "")`
+4. **跨会话编辑规则**：新会话开始时必须 Read 文件后才能 Edit
+
+### 配置更新
+- 文件: `.claude/statusline/hud-v2.sh` (项目级) → 6 处函数全面重写
+- 文件: `C:\Users\ASUS\.claude\statusline\hud-v2.sh` (全局级) → 同步所有修复
+
+### 验证方法
+```bash
+# 用实际 JSON 格式测试
+echo '{"model":{"id":"claude-sonnet-4-6","display_name":"Sonnet 4.6"},"cost":{"total_cost_usd":0.123},"transcript_path":"","exceeds_200k_tokens":false}' \
+  | bash "C:/Users/ASUS/.claude/statusline/hud-v2.sh" render
+# 期望: 显示 Sonnet、$0.123、正确时间、git 信息
+```
+
+### 最佳实践
+- **新会话中首先 Read 所有需要编辑的文件**，即使摘要中提到曾经读过
+- **statusline 脚本写入前先用 JSON 测试**，验证字段名正确
+- Cygwin 环境下避免使用 `[[ -p /dev/stdin ]]`，改用无条件 stdin 读取
+
+### 标签
+#statusline #hud #json-fields #cross-session #cygwin #stdin #transcript-jsonl
+
+---
+
+### [2026-02-20] Windows Hooks/Statusline 静默失败三连击 #009
+
+### 问题描述
+重启 Claude Code 后 statusline 完全不显示，UserPromptSubmit hook 持续报错 `cannot execute binary file`，且意图识别（intent-detector）从未工作过（1443 条日志全为空 USER_MESSAGE）。三个问题叠加，互相掩盖，排查困难。
+
+### 根因分析
+
+**根因 A：Claude Code Windows .sh 自动前缀逻辑**
+Claude Code 在 Windows 上检测到命令包含 `.sh` 时，若不以 `bash ` 开头会自动追加 `bash `：
+```
+原命令:  "I:\APP\Git\usr\bin\bash.exe" "hud-v2.sh" render
+转换后:  bash "I:\APP\Git\usr\bin\bash.exe" "hud-v2.sh" render
+```
+Cygwin bash 把 `bash.exe`（Windows PE 二进制）当脚本解释 → `cannot execute binary file`
+
+**根因 B：set -eo pipefail + jq 缺失 → 脚本静默崩溃**
+`hud-v2.sh` 升级到 v2.0.0 时引入 `set -eo pipefail`，但 4 个函数的 6 处 jq 调用没有 `|| fallback`。jq 未安装时 exit 127 被 pipefail 捕获，脚本立即退出，零输出。
+
+**根因 C：Hook stdin JSON 字段名错误**
+`intent-detector.sh` 读取 `"user_message"` 字段，但 UserPromptSubmit hook 的实际字段是 `"prompt"`，导致意图识别从未生效。
+
+### 解决方案
+
+1. **statusLine/hook 命令格式**：改为 `bash "script.sh"` 前缀格式（满足 Claude Code 的前缀检查，避免双重追加）
+2. **jq fallback**：所有 jq 调用加 `|| echo "default_value"`，不论 `set -eo pipefail` 是否启用
+3. **字段名修复**：`"user_message"` → `"prompt"`
+
+### 配置更新
+- 文件: `~/.claude/settings.json` → statusLine command 改为 `bash "C:\\...\\hud-v2.sh" render`
+- 文件: `.claude/settings.json` → statusLine command 改为 `bash "./.claude/statusline/hud-v2.sh" render`
+- 文件: `.claude/statusline/hud-v2.sh` → 6 处 jq 调用加 `|| echo "0"` / `|| echo ""`
+- 文件: `~/.claude/hooks/intent-detector.sh` → 字段名 `user_message` → `prompt`
+- 文件: `~/.claude/settings.json` → 8 处 hook 命令移除 `bash.exe` 前缀，改为直接引用脚本路径
+
+### 验证方法
+```bash
+# 验证 statusline 脚本能正常输出
+"I:\APP\Git\usr\bin\bash.exe" "./.claude/statusline/hud-v2.sh" render
+# 期望: 有 ANSI 格式的状态行输出
+
+# 验证意图识别
+echo '{"prompt":"测试"}' | bash ~/.claude/hooks/intent-detector.sh
+# 期望: intent.log 有非空 USER_MESSAGE 记录
+```
+
+### 最佳实践
+- Windows 上所有 hook/statusLine 命令**必须**以 `bash "script.sh"` 格式书写
+- 使用 `set -eo pipefail` 的脚本中，所有外部工具调用**必须**加 `|| fallback`
+- 升级脚本版本时，检查是否引入了新的外部依赖（jq、python、etc.）
+- UserPromptSubmit hook 使用 `"prompt"` 字段，不是 `"user_message"` 或 `"content"`
+
+### 标签
+#hooks #statusline #windows #bash #set-pipefail #jq #intent-detector #silent-failure
+
+---
+
 ### [2026-01-24] Stop Hook 执行失败 - Bash 脚本错误处理 #008
 
 ### 问题描述

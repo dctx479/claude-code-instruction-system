@@ -70,8 +70,12 @@ log "INFO" "Task not completed, iteration $CURRENT_ITERATION/$RALPH_MAX_ITERATIO
 
 # 更新迭代计数
 NEW_ITERATION=$((CURRENT_ITERATION + 1))
-sed "s/\"iteration\":[^,}]*/\"iteration\": $NEW_ITERATION/" "$RALPH_STATE_FILE" > "${RALPH_STATE_FILE}.tmp"
-mv "${RALPH_STATE_FILE}.tmp" "$RALPH_STATE_FILE"
+if sed "s/\"iteration\":[^,}]*/\"iteration\": $NEW_ITERATION/" "$RALPH_STATE_FILE" > "${RALPH_STATE_FILE}.tmp"; then
+    mv "${RALPH_STATE_FILE}.tmp" "$RALPH_STATE_FILE"
+else
+    rm -f "${RALPH_STATE_FILE}.tmp"
+    log "WARN" "Failed to update iteration count in state file"
+fi
 
 # 输出继续执行的提示
 echo ""

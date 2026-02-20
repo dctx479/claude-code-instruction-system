@@ -508,6 +508,57 @@
 
 ---
 
+## 自动调度映射 (Auto-Dispatch Mapping)
+
+> 此表记录 intent-detector.sh 的意图识别结果与 Agent 的映射关系。
+> 当用户消息提交后，UserPromptSubmit Hook 自动写入 `~/.claude/intent-state.json`，
+> Claude 读取后按此表加载对应 Agent。
+
+| Intent | Agent ID | 文件路径 | 触发关键词 |
+|--------|----------|----------|-----------|
+| debug | debugger | agents/debugger.md | debug/调试/bug/错误/fix/修复/报错/崩溃/异常 |
+| review | code-reviewer | agents/code-reviewer.md | review/审查/code review/代码审查/代码质量 |
+| test | automated-testing | agents/testing/automated-testing.md | test/测试/单元测试/e2e/覆盖率 |
+| refactor | code-reviewer | agents/code-reviewer.md | refactor/重构/优化代码/代码整理 |
+| architect | architect | agents/architect.md | architect/架构/系统设计/技术选型/微服务 |
+| security | security-analyst | agents/security-analyst.md | security/安全/漏洞/vulnerability/xss/csrf |
+| security-audit | security-audit | agents/security/security-audit.md | 安全审计/依赖扫描/cve/合规/gdpr/hipaa |
+| data | data-scientist | agents/data-scientist.md | sql/database/数据库/query/查询 |
+| analysis | data-analyst | agents/research/data-analyst.md | analyze/分析/statistics/统计 |
+| visualization | data-visualization | agents/visualization/data-visualization.md | 可视化/chart/图表/plot/dashboard |
+| ml | deep-learning | agents/ai/deep-learning.md | pytorch/tensorflow/model/模型/训练/深度学习 |
+| rl | reinforcement-learning | agents/ai/reinforcement-learning.md | 强化学习/rl/dqn/ppo/sac/reward |
+| timeseries | time-series-analysis | agents/ai/time-series-analysis.md | 时间序列/预测/forecast/arima/prophet |
+| interpretability | model-interpretability | agents/ai/model-interpretability.md | shap/lime/可解释/公平性/bias |
+| research | literature-manager | agents/research/literature-manager.md | paper/论文/文献/research/研究 |
+| paper-writing | paper-writing-assistant | agents/research/paper-writing-assistant.md | 论文写作/综述写/写论文/撰写 |
+| experiment | experiment-logger | agents/research/experiment-logger.md | 实验记录/实验追踪/experiment track |
+| document | spec-writer | agents/spec-writer.md | document/文档/readme/spec/规范 |
+| qa-review | qa-reviewer | agents/qa-reviewer.md | qa/质量审查/质量检查/验收 |
+| qa-fix | qa-fixer | agents/qa-fixer.md | qa fix/qa修复/自动修复/autofix |
+| perf-monitor | performance-monitor | agents/performance-monitor.md | 性能报告/性能监控/performance monitor |
+| optimize | auto-optimizer | agents/auto-optimizer.md | 系统优化/成本优化/token优化 |
+| autopilot | autopilot-orchestrator | agents/autopilot-orchestrator.md | /autopilot/全自主/端到端 |
+| archive | context-archivist | agents/context-archivist.md | save context/保存上下文/归档 |
+| git | orchestrator | agents/orchestrator.md | commit/pr/merge/branch |
+| deploy | orchestrator | agents/orchestrator.md | deploy/部署/docker/k8s |
+| general | orchestrator | agents/orchestrator.md | （默认） |
+
+### 未覆盖的 Agent（内部调用或特殊触发）
+
+以下 Agent 不通过意图检测自动触发，而是由编排系统或特定工作流内部调用：
+
+| Agent ID | 文件路径 | 触发方式 |
+|----------|----------|----------|
+| strategy-selector | agents/strategy-selector.md | orchestrator 内部调用 |
+| god-member | agents/god-committee/god-member.md | 定期唤醒 / 里程碑触发 |
+| god-consensus | agents/god-committee/god-consensus.md | god-member 发起审议 |
+| god-intervention | agents/god-committee/god-intervention.md | god-consensus 批准后 |
+| vision-builder | .claude/skills/vision-builder/SKILL.md | Autopilot Planning 阶段 |
+| plan-review | .claude/skills/plan-review/SKILL.md | 计划完成后自动触发 |
+
+---
+
 ## 编排策略速查
 
 | 任务特征 | 推荐策略 | 使用Agent |
@@ -567,6 +618,12 @@
 ---
 
 ## 更新日志
+
+### 2026-02-20
+- 新增自动调度映射表 (Auto-Dispatch Mapping)
+- 记录 intent -> agent -> 文件路径的完整映射
+- 标注未覆盖 Agent 的内部触发方式
+- intent-detector.sh 升级到 v2.0.0，覆盖 27 个 intent 到 22 个 Agent
 
 ### 2026-02-04
 - 新增规划类: vision-builder (愿景构建器 - 5W1H + SMART)

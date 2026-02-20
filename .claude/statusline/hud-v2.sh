@@ -198,7 +198,11 @@ get_model() {
 
     # Try to read from stdin JSON if available
     if [[ -n "$HUD_SESSION_JSON" ]]; then
-        model=$(echo "$HUD_SESSION_JSON" | jq -r '.model.name // ""' 2>/dev/null)
+        if command -v jq &>/dev/null; then
+            model=$(echo "$HUD_SESSION_JSON" | jq -r '.model.display_name // ""' 2>/dev/null || echo "")
+        else
+            model=$(echo "$HUD_SESSION_JSON" | grep -o '"display_name":"[^"]*"' | cut -d'"' -f4 || echo "")
+        fi
     fi
 
     # Fallback to environment variable
@@ -326,18 +330,30 @@ get_git_ahead_behind() {
     echo "$result"
 }
 
-# Get context usage from stdin JSON
+# Get context usage by reading transcript JSONL
 get_context_usage() {
+    local transcript=""
     if [[ -n "$HUD_SESSION_JSON" ]]; then
-        local used
-        local limit
-        used=$(echo "$HUD_SESSION_JSON" | jq -r '.session.contextUsed // 0' 2>/dev/null)
-        limit=$(echo "$HUD_SESSION_JSON" | jq -r '.session.contextLimit // 200000' 2>/dev/null)
+        if command -v jq &>/dev/null; then
+            transcript=$(echo "$HUD_SESSION_JSON" | jq -r '.transcript_path // ""' 2>/dev/null || echo "")
+        else
+            transcript=$(echo "$HUD_SESSION_JSON" | grep -o '"transcript_path":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
+        fi
+    fi
 
-        if [[ $limit -gt 0 ]]; then
-            local percentage=$((used * 100 / limit))
-            echo "$percentage"
-            return
+    if [[ -f "$transcript" ]]; then
+        local last_line usage_block input cache_read cache_creation used
+        last_line=$(grep '"type":"assistant"' "$transcript" 2>/dev/null | tail -n 1)
+        usage_block=$(echo "$last_line" | grep -o '"usage":{[^}]*}' || echo "")
+        if [[ -n "$usage_block" ]]; then
+            input=$(echo "$usage_block" | grep -o '"input_tokens":[0-9]*' | cut -d':' -f2 || echo "0")
+            cache_read=$(echo "$usage_block" | grep -o '"cache_read_input_tokens":[0-9]*' | cut -d':' -f2 || echo "0")
+            cache_creation=$(echo "$usage_block" | grep -o '"cache_creation_input_tokens":[0-9]*' | cut -d':' -f2 || echo "0")
+            used=$(( ${input:-0} + ${cache_read:-0} + ${cache_creation:-0} ))
+            if [[ $used -gt 0 ]]; then
+                echo $(( used * 100 / 200000 ))
+                return
+            fi
         fi
     fi
 
@@ -348,7 +364,11 @@ get_context_usage() {
 get_session_cost() {
     if [[ -n "$HUD_SESSION_JSON" ]]; then
         local cost
-        cost=$(echo "$HUD_SESSION_JSON" | jq -r '.session.estimatedCost // 0' 2>/dev/null)
+        if command -v jq &>/dev/null; then
+            cost=$(echo "$HUD_SESSION_JSON" | jq -r '.cost.total_cost_usd // 0' 2>/dev/null || echo "0")
+        else
+            cost=$(echo "$HUD_SESSION_JSON" | grep -o '"total_cost_usd":[0-9.]*' | head -1 | cut -d':' -f2 || echo "0")
+        fi
         printf "%.3f" "$cost"
         return
     fi
@@ -356,25 +376,42 @@ get_session_cost() {
     echo "0.000"
 }
 
-# Get token usage
+# Get token usage from transcript JSONL
 get_tokens() {
+    local transcript=""
     if [[ -n "$HUD_SESSION_JSON" ]]; then
-        local input output
-        input=$(echo "$HUD_SESSION_JSON" | jq -r '.session.inputTokens // 0' 2>/dev/null)
-        output=$(echo "$HUD_SESSION_JSON" | jq -r '.session.outputTokens // 0' 2>/dev/null)
-        echo "${input}i/${output}o"
-        return
+        if command -v jq &>/dev/null; then
+            transcript=$(echo "$HUD_SESSION_JSON" | jq -r '.transcript_path // ""' 2>/dev/null || echo "")
+        else
+            transcript=$(echo "$HUD_SESSION_JSON" | grep -o '"transcript_path":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
+        fi
     fi
 
-    local input="${CLAUDE_TOKENS_IN:-0}"
-    local output="${CLAUDE_TOKENS_OUT:-0}"
-    echo "${input}i/${output}o"
+    if [[ -f "$transcript" ]]; then
+        local last_line usage_block input output
+        last_line=$(grep '"type":"assistant"' "$transcript" 2>/dev/null | tail -n 1)
+        usage_block=$(echo "$last_line" | grep -o '"usage":{[^}]*}' || echo "")
+        if [[ -n "$usage_block" ]]; then
+            input=$(echo "$usage_block" | grep -o '"input_tokens":[0-9]*' | cut -d':' -f2 || echo "0")
+            output=$(echo "$usage_block" | grep -o '"output_tokens":[0-9]*' | cut -d':' -f2 || echo "0")
+            echo "${input:-0}i/${output:-0}o"
+            return
+        fi
+    fi
+
+    echo "0i/0o"
 }
 
-# Get current agent
+# Get current agent from intent-state.json (written by intent-detector hook)
 get_agent() {
-    local agent="${CLAUDE_AGENT:-orchestrator}"
-    echo "$agent"
+    local intent_state="${HOME}/.claude/intent-state.json"
+    if [[ -f "$intent_state" ]]; then
+        local agent
+        agent=$(grep -o '"agent":"[^"]*"' "$intent_state" | cut -d'"' -f4 || echo "")
+        echo "${agent:-orchestrator}"
+    else
+        echo "${CLAUDE_AGENT:-orchestrator}"
+    fi
 }
 
 # Get current task
@@ -691,11 +728,9 @@ clear_cache() {
 main() {
     local action="${1:-render}"
 
-    # Read stdin if available (for Claude Code integration)
-    if [[ -p /dev/stdin ]]; then
-        HUD_SESSION_JSON=$(cat)
-        export HUD_SESSION_JSON
-    fi
+    # Read stdin unconditionally (Claude Code pipes JSON, but /dev/stdin check fails on Windows/Cygwin)
+    HUD_SESSION_JSON=$(cat 2>/dev/null || echo "")
+    export HUD_SESSION_JSON
 
     case "$action" in
         "render")
