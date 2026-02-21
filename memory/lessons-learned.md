@@ -41,6 +41,175 @@
 
 ## 经验条目
 
+### [2026-02-21] statusline 不显示 - session_id 检测误杀 Stop 事件 #012
+
+### 问题描述
+修复竖排显示问题的过程中，引入了 `session_id` 字段检测作为"启动时 JSON"的判断依据。修复后 statusline **完全不显示**（比竖排更严重的退步）。
+
+### 根因分析
+
+**假设链式错误**（每一步假设都经过"验证"，但验证样本不具代表性）：
+
+| 轮次 | 假设 | 观察到的样本 | 为何错误 |
+|------|------|------------|---------|
+| 第1轮 | 启动时 stdin 为空 | 空 stdin 测试通过 | Claude Code 始终发送 JSON，包括启动时 |
+| 第2轮 | Stop 事件 JSON 无 `session_id` | 简单测试会话（"abc"）Stop JSON 无 session_id | **真实会话** Stop JSON 可能也含 `session_id` |
+| 第3轮 | `cost > 0` 是唯一可靠标志 | 所有场景验证 ✓ | **当前最佳假设**（待最终确认） |
+
+**调试日志关键证据**：
+```
+# 真实启动 JSON（json_len=1121）：含 session_id，含 transcript_path，无 cost
+{"session_id":"acee10ae-...","transcript_path":"...","cwd":"...","model":{...},"workspace":...}
+
+# 简单测试 Stop 事件（json_len=158）：无 session_id，含 cost
+{"model":{...},"cost":{"total_cost_usd":0.015},"transcript_path":"...","exceeds_200k_tokens":false}
+
+# 初始化调用（json_len=82）：含 session_id，cost=0
+{"session_id":"abc","cost":{"total_cost_usd":0},"model":{...}}
+```
+
+**真实会话 Stop 事件 JSON 格式仍未确认**（json_len 更大，结构可能不同）。
+
+### 解决方案
+唯一可靠的区分依据：**`total_cost_usd > 0`**
+
+```bash
+if [[ "$action" == "render" ]]; then
+    local _cost
+    _cost=$(echo "$HUD_SESSION_JSON" | grep -o '"total_cost_usd":[0-9.]*' | cut -d':' -f2 || echo "")
+    # 无 cost 字段（启动时）或 cost=0（初始化调用）→ 不渲染
+    if [[ -z "$HUD_SESSION_JSON" ]] || [[ -z "$_cost" ]] || [[ "$_cost" == "0" ]]; then
+        exit 0
+    fi
+    # cost > 0 → Stop 事件 → 渲染
+fi
+```
+
+**为何 `cost > 0` 有效**：
+- 启动 JSON：无 `total_cost_usd` 字段 → `_cost=""` → EXIT
+- 初始化调用：`total_cost_usd:0` → `_cost="0"` → EXIT
+- Stop 事件：`total_cost_usd:0.015` → `_cost="0.015"` → RENDER
+
+### 反模式（绝对不要做）
+- ❌ 用 `session_id` 存在与否区分 JSON 类型——Stop 事件也可能含 session_id
+- ❌ 从少量样本（简单测试会话）推断所有场景的 JSON 格式
+- ❌ 在未捕获真实 Stop 事件 JSON 前认为修复已完成
+
+### 配置更新
+- 文件: `~/.claude/statusline/hud-v2.sh` + `.claude/statusline/hud-v2.sh`
+- 变更: 移除 `session_id` 检测，改用 `total_cost_usd > 0` 检测
+
+### 验证方法
+```bash
+# 启动 JSON → 0 字节输出
+echo '{"session_id":"abc","cwd":"G:\\proj","model":{"id":"claude-sonnet-4-6"},"version":"2.0.80"}' \
+  | bash hud-v2.sh render | wc -c  # 期望: 0
+
+# Stop 事件 JSON（cost>0）→ 1 行输出
+echo '{"session_id":"abc","model":{...},"cost":{"total_cost_usd":0.015},...}' \
+  | bash hud-v2.sh render | wc -l  # 期望: 1
+
+# 初始化调用（cost=0）→ 0 字节输出
+echo '{"session_id":"abc","cost":{"total_cost_usd":0},"model":{...}}' \
+  | bash hud-v2.sh render | wc -c  # 期望: 0
+```
+
+### 标签
+#statusline #over-filtering #sample-bias #incremental-breakage
+
+---
+
+### [2026-02-20] statusline 竖排显示 - 启动时 JSON 无 cost 字段导致误渲染 #011
+
+### 问题描述
+对话启动时 statusline 竖排显示问题持续存在。前次修复（timeout + 空 stdin 检查）无效，因为对根因的假设错误。
+
+### 根因分析（最终确认）
+
+**假设错误导致修复无效**：
+- 前次假设：「对话启动时 stdin 为空」
+- 实际情况：**Claude Code 始终通过 stdin 发送 JSON，包括启动时**
+
+**Claude Code 发送两种不同结构的 JSON**：
+
+| 场景 | JSON 结构 | 关键字段 |
+|------|-----------|----------|
+| 启动时（初始化） | `{"session_id":"...","cwd":"...","workspace":{...},"version":"...","output_style":{...}}` | 有 `session_id`，**无 `cost`** |
+| Stop 事件后（正常渲染） | `{"model":{...},"cost":{"total_cost_usd":0.015},"transcript_path":"...","exceeds_200k_tokens":false}` | **有 `cost`**，无 `session_id`（简单会话） |
+
+> ⚠️ 后续发现（见 #012）：真实会话 Stop 事件 JSON 可能也含 `session_id`，因此 session_id 不能作为区分依据。
+
+**证据来源**：`statusline.log` debug 日志：
+```
+# 启动时：cost= 空
+[2026-01-24 21:20:06] Parsed: model=Opus 4.5, dir=mafql, tokens=0i/0o, cost=
+# Stop 事件后：cost=$0.28
+[2026-01-24 21:27:37] Parsed: model=Sonnet 4.5, dir=mafql, tokens=0i/0o, cost=$0.28
+```
+
+**竖排显示的底层机制**：
+- 启动时 JSON 无 `cost` 字段，但非空
+- `[[ -z "$HUD_SESSION_JSON" ]]` 判断失效（JSON 非空）
+- 脚本继续渲染 HUD → statusLine 渲染区域未初始化 → 竖排显示
+
+### 解决方案
+改变检测逻辑：从「检测 stdin 是否为空」改为「检测 JSON 是否包含 cost 字段（Stop 事件专有）」
+
+> ⚠️ 此方案后来被 `total_cost_usd > 0` 检测替代（见 #012），原因是 cost 字段存在但值为 0 的情况也会误触发渲染。
+
+**修复代码**（main 函数入口）：
+```bash
+main() {
+    local action="${1:-render}"
+
+    HUD_SESSION_JSON=$(timeout 0.5 cat 2>/dev/null || echo "")
+    export HUD_SESSION_JSON
+
+    # Only render for Stop events (JSON has 'cost' field).
+    # Startup JSON has session_id/cwd/workspace but NO "cost" field.
+    if [[ "$action" == "render" ]]; then
+        if [[ -z "$HUD_SESSION_JSON" ]] || ! echo "$HUD_SESSION_JSON" | grep -q '"cost"'; then
+            exit 0
+        fi
+    fi
+    ...
+}
+```
+
+### 配置更新
+- 文件: `.claude/statusline/hud-v2.sh`（项目级）
+- 变更: stdin 处理逻辑与全局版本同步（timeout + exit 0）
+
+### 验证方法
+```bash
+# 1. 空 stdin（对话启动场景）——应无输出
+bash .claude/statusline/hud-v2.sh render </dev/null
+# 期望：无输出，exit 0
+
+# 2. open pipe 无数据（Claude Code 实际场景）——应无输出
+bash .claude/statusline/hud-v2.sh render < <(sleep 10) &
+sleep 0.7 && echo "No output after 0.7s = PASS"
+
+# 3. 有效 JSON（Stop 事件后）——应有 HUD 输出
+echo '{"model":{"display_name":"Sonnet 4.6"},"cost":{"total_cost_usd":0.05}}' \
+  | bash .claude/statusline/hud-v2.sh render
+# 期望：单行 HUD 显示
+```
+
+### 预防措施
+**每次修改脚本后，必须同时修改并验证两个副本**：
+- 全局：`~/.claude/statusline/hud-v2.sh`
+- 项目：`.claude/statusline/hud-v2.sh`
+
+**提交检查清单**：
+- [ ] `.claude/statusline/hud-v2.sh` 已包含在 git commit 中
+- [ ] 两个文件的 main 函数 diff 仅有注释差异
+
+### 标签
+#statusline #windows #cygwin #stdin #project-vs-global #commit-hygiene
+
+---
+
 ### [2026-02-20] hud-v2.sh 数据源全面错误 + 跨会话 Edit 陷阱 #010
 
 ### 问题描述

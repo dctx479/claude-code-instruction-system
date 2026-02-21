@@ -728,9 +728,19 @@ clear_cache() {
 main() {
     local action="${1:-render}"
 
-    # Read stdin unconditionally (Claude Code pipes JSON, but /dev/stdin check fails on Windows/Cygwin)
-    HUD_SESSION_JSON=$(cat 2>/dev/null || echo "")
+    # Read stdin with timeout to prevent blocking.
+    HUD_SESSION_JSON=$(timeout 0.5 cat 2>/dev/null || echo "")
     export HUD_SESSION_JSON
+
+    # 只在 Stop 事件（cost > 0）时渲染。
+    # 启动 JSON 无 cost 字段；初始化调用的 cost=0；Stop 事件 cost > 0。
+    if [[ "$action" == "render" ]]; then
+        local _cost
+        _cost=$(echo "$HUD_SESSION_JSON" | grep -o '"total_cost_usd":[0-9.]*' | cut -d':' -f2 || echo "")
+        if [[ -z "$HUD_SESSION_JSON" ]] || [[ -z "$_cost" ]] || [[ "$_cost" == "0" ]]; then
+            exit 0
+        fi
+    fi
 
     case "$action" in
         "render")

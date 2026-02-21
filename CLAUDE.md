@@ -920,44 +920,7 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 
 ### 4.5 MCP 集成配置
 
-新增的研究 Skills 需要配置对应的 MCP 服务器：
-
-#### Exa MCP（企业与市场研究）
-```bash
-claude mcp add --transport http exa "https://mcp.exa.ai/mcp?tools=web_search_advanced_exa"
-```
-
-#### Bright Data MCP（电商调研）
-```json
-{
-  "mcpServers": {
-    "brightdata": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-brightdata"],
-      "env": {
-        "BRIGHTDATA_API_TOKEN": "your-token"
-      }
-    }
-  }
-}
-```
-
-#### TikHub MCP（社媒研究）
-```json
-{
-  "mcpServers": {
-    "tikhub": {
-      "command": "npx",
-      "args": ["-y", "@tikhub/mcp-server"],
-      "env": {
-        "TIKHUB_API_TOKEN": "your-token"
-      }
-    }
-  }
-}
-```
-
-**详细配置**: 参见各 Skill 的 `SKILL.md` 文件
+各 Skill 所需 MCP 服务器配置详见各 SKILL.md 文件，以及 `.claude/integrations/` 目录。
 
 ---
 
@@ -1488,296 +1451,25 @@ Layer 3: 长期记忆 (memory/*.md)
 
 ### 10.1 核心理念：Vibe Researching
 
-**定义**：AI 协作研究的新范式
-- **AI 角色**：主导执行层面工作（文献综述、数据分析、论文写作）
-- **人类角色**：提出问题、设定方向、把控质量
-- **核心原则**：AI 是高质量信息加工器，而非生成器
-
-**"Garbage in, Garbage out"**：
-- 输入质量决定输出质量
-- 必须提供高质量文献（闭源期刊为主）
-- 框架确定后再开始写作
-- 人工审核每个关键环节
-
-### 10.2 系统架构
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    科研工作流编排层                          │
-│  - 任务分解与调度                                            │
-│  - Agent 协作编排                                            │
-│  - 进度追踪与报告                                            │
-└───────────────────────┬─────────────────────────────────────┘
-                        │
-        ┌───────────────┼───────────────┬───────────────┐
-        │               │               │               │
-        ▼               ▼               ▼               ▼
-┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-│ Literature   │ │ Paper        │ │ Experiment   │ │ Data         │
-│ Manager      │ │ Writing      │ │ Logger       │ │ Analyst      │
-│ 文献管理     │ │ 论文写作     │ │ 实验追踪     │ │ 数据分析     │
-└──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘
-        │               │               │               │
-        ▼               ▼               ▼               ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    外部工具集成层                            │
-│  - Zotero-MCP (文献库)                                       │
-│  - arXiv/PubMed MCP (开源文献)                               │
-│  - Jupyter Notebook (数据分析)                               │
-│  - Pandoc (格式转换)                                         │
-└─────────────────────────────────────────────────────────────┘
-```
+**定义**：AI 协作研究的新范式 - AI 主导执行层（综述/分析/写作），人类提出问题、把控质量。
+**核心原则**：AI 是高质量信息加工器，而非生成器。"Garbage in, Garbage out"：必须提供高质量文献，框架确定后再写作，人工审核每个关键环节。
 
 ### 10.3 核心 Agent
 
-#### Literature Manager（文献管理专家）
-**职责**：
-- 文献导入和分类
-- 智能摘要提取
-- 引用图谱构建
-- 相关文献推荐
-
-**集成**：
-- Zotero-MCP：访问个人文献库
-- arXiv/PubMed MCP：搜索开源文献
-
-**详见**：`agents/research/literature-manager.md`
-
-#### Paper Writing Assistant（论文写作助手）
-**职责**：
-- 文献综述生成
-- 研究论文撰写
-- 写作风格学习
-- 自动引用管理
-
-**工作流**：
-1. 准备高质量文献（Zotero）
-2. 提供顶级期刊范本
-3. AI 学习写作风格
-4. 生成综述框架（人工审核）
-5. AI 撰写初稿
-6. 人工审核和润色
-
-**详见**：`agents/research/paper-writing-assistant.md`
-
-#### Experiment Logger（实验记录专家）
-**职责**：
-- 结构化实验记录
-- 参数和配置管理
-- 结果追踪和对比
-- 复现指南生成
-
-**自动记录**：
-- Git commit hash
-- 环境依赖
-- 随机种子
-- 硬件信息
-- 执行时间
-
-**详见**：`agents/research/experiment-logger.md`
-
-#### Data Analyst（数据分析专家）
-**职责**：
-- 数据预处理和清洗
-- 统计分析和假设检验
-- 高质量可视化
-- 结果解读
-
-**工具集成**：
-- Python: pandas, numpy, scipy, statsmodels
-- Jupyter Notebook: 交互式分析
-- LaTeX: 公式和表格生成
-
-**详见**：`agents/research/data-analyst.md`
+- **Literature Manager**：文献导入/分类/摘要/引用图谱。详见 `agents/research/literature-manager.md`
+- **Paper Writing Assistant**：文献综述生成、论文撰写、写作风格学习。详见 `agents/research/paper-writing-assistant.md`
+- **Experiment Logger**：结构化实验记录、参数管理、结果追踪对比。详见 `agents/research/experiment-logger.md`
+- **Data Analyst**：数据预处理、统计分析、高质量可视化。详见 `agents/research/data-analyst.md`
 
 ### 10.4 核心命令
 
-#### /literature-review - 文献综述生成
 ```bash
-/literature-review <主题> \
-  --zotero-collection <集合名称> \
-  --style <nature|ieee|apa> \
-  --output <输出路径>
+/literature-review <主题> --zotero-collection <集合> --style <nature|ieee|apa>
+/experiment-track create --name <名称>
+/experiment-track config|result|report|compare --exp-id <ID>
 ```
 
-**工作流程**：
-1. 准备阶段（人工）：在 Zotero 中收集高质量文献
-2. 学习阶段（AI）：分析范本综述的写作风格
-3. 规划阶段（AI + 人工审核）：生成综述框架
-4. 写作阶段（AI）：按照框架撰写综述
-5. 审核阶段（人工）：Review 全文并润色
-
-**详见**：`commands/research/literature-review.md`
-
-#### /experiment-track - 实验追踪
-```bash
-# 创建实验
-/experiment-track create --name <名称> --description <描述>
-
-# 记录配置
-/experiment-track config --exp-id <ID> --file <配置文件>
-
-# 记录结果
-/experiment-track result --exp-id <ID> --metrics <结果文件>
-
-# 生成报告
-/experiment-track report --exp-id <ID> --output <报告路径>
-
-# 对比实验
-/experiment-track compare --exp-ids <ID1,ID2,ID3>
-```
-
-**详见**：`commands/research/experiment-track.md`
-
-### 10.5 外部工具集成
-
-#### Zotero-MCP
-**功能**：访问个人 Zotero 文献库
-**安装**：参见 `integrations/zotero-mcp-setup.md`
-**使用**：
-```bash
-# 搜索文献
-"帮我在 Zotero 中搜索关于深度学习医学图像分割的论文"
-
-# 总结文献集合
-"总结 Zotero 中 'Coronary CTA' 集合的所有论文"
-```
-
-#### arXiv/PubMed MCP
-**功能**：搜索开源文献数据库
-**使用**：自动集成到文献综述工作流
-
-#### Jupyter Notebook
-**功能**：交互式数据分析
-**集成**：Claude Code 原生支持读写 cell、理解图表输出
-
-#### Pandoc
-**功能**：格式转换（Markdown → Word/PDF）
-**使用**：
-```bash
-pandoc review.md -o review.docx --bibliography references.bib
-```
-
-### 10.6 最佳实践
-
-#### 文献管理
-✅ **推荐**：
-- 优先收集闭源期刊高质量论文（IF > 3.0）
-- 使用 Zotero Collections 分类管理
-- 补充开源数据库（arXiv, PubMed）
-- 定期更新和清理文献库
-
-❌ **避免**：
-- 把所有 PDF 放本地目录
-- 依赖 AI 网络搜索
-- 不整理文献元数据
-
-#### 论文写作
-✅ **推荐**：
-- 提供顶级期刊范本学习风格
-- 框架确定后再开始写作
-- 人工审核每个关键环节
-- 把 AI 当作信息加工器
-
-❌ **避免**：
-- 让 AI 凭空生成内容
-- 跳过框架审核环节
-- 完全信任 AI 输出
-- 忽视人工润色
-
-#### 实验管理
-✅ **推荐**：
-- 每个实验都记录完整配置
-- 使用版本控制（Git）
-- 记录随机种子保证可复现
-- 定期备份实验数据
-
-❌ **避免**：
-- 只记录成功实验
-- 忽略环境依赖
-- 不记录失败原因
-
-#### 数据分析
-✅ **推荐**：
-- 使用 Jupyter Notebook 交互式分析
-- 进行适当的统计检验
-- 生成符合期刊要求的图表
-- 报告置信区间和效应量
-
-❌ **避免**：
-- 只报告 p 值
-- 过度拟合数据
-- 忽略多重比较校正
-
-### 10.7 真实案例
-
-#### 案例 1：医学影像 AI 综述
-**背景**：冠脉 CTA 影像深度学习分割方向
-
-**成果**：
-- 45 页，13,813 单词
-- 113 篇引用文献（全部真实）
-- 遵循 Nature 期刊风格
-- 3-5 天完成（传统方式需 2-3 个月）
-
-**效率提升**：10-20 倍
-
-**详见**：`examples/research-workflow-example.md`
-
-#### 案例 2：Schrödinger（计算药物发现）
-**评价**：
-> "Claude Code allows us to turn ideas into working code in minutes instead of hours, enabling us to move up to 10x faster in some cases."
-
-**效果**：从想法到代码，从小时级缩短到分钟级
-
-#### 案例 3：斯坦福 Paper2Agent
-**创新**：
-- 把论文转化成可交互的 AI Agent
-- 相当于给每篇论文配了虚拟通讯作者
-- 3 小时生成 22 个可用工具
-
-### 10.8 学术诚信
-
-#### 必须遵守
-- ✅ 所有引用必须真实可查
-- ✅ 人工审核 AI 生成内容
-- ✅ 标注 AI 辅助写作（如期刊要求）
-- ❌ 不得编造数据和引用
-- ❌ 不得抄袭和自我抄袭
-
-#### 质量控制
-- ✅ 提供高质量输入（文献、数据）
-- ✅ 人工审核关键环节（框架、结论）
-- ✅ 验证统计分析正确性
-- ❌ 不完全依赖 AI
-- ❌ 不跳过人工审核
-
-#### 局限性
-- AI 在执行层面强，但判断层面有短板
-- 需要人类把关：方法论透明度、学术诚信、批判性思维
-- Vibe Researching 是人机协作，而非 AI 替代
-
-### 10.9 相关文档
-
-**核心文档**：
-- 使用指南：`docs/research-support-guide.md`
-- 工作流示例：`examples/research-workflow-example.md`
-- Zotero 集成：`integrations/zotero-mcp-setup.md`
-
-**Agent 定义**：
-- `agents/research/literature-manager.md`
-- `agents/research/paper-writing-assistant.md`
-- `agents/research/experiment-logger.md`
-- `agents/research/data-analyst.md`
-
-**命令文档**：
-- `commands/research/literature-review.md`
-- `commands/research/experiment-track.md`
-
-**外部资源**：
-- [Vibe Researching 播客](https://a16z.com/podcast/)
-- [claude-scientific-skills](https://github.com/K-Dense/claude-scientific-skills)
-- [medical-imaging-review](https://github.com/luwill/research-skills)
+详见 `commands/research/literature-review.md`, `commands/research/experiment-track.md`, `docs/research-support-guide.md`
 
 ---
 
@@ -1785,178 +1477,31 @@ pandoc review.md -o review.docx --bibliography references.bib
 
 ### 11.1 核心 Agent
 
-#### Deep Learning Agent（深度学习专家）
-**职责**：
-- 模型架构设计（CNN, RNN, Transformer, GAN）
-- 模型训练和超参数优化
-- 模型评估和部署
-
-**工具集成**：PyTorch, TensorFlow, Hugging Face Transformers
-
-**详见**：`agents/ai/deep-learning.md`
-
-#### Reinforcement Learning Agent（强化学习专家）
-**职责**：
-- 环境建模和策略设计
-- 算法实现（DQN, PPO, SAC, MADDPG）
-- 训练优化和性能评估
-
-**工具集成**：Stable-Baselines3, RLlib, OpenAI Gym
-
-**详见**：`agents/ai/reinforcement-learning.md`
-
-#### Time Series Analysis Agent（时间序列分析专家）
-**职责**：
-- 时间序列预测（ARIMA, Prophet, LSTM）
-- 异常检测和趋势分析
-- 因果推断
-
-**工具集成**：statsmodels, Prophet, PyTorch Forecasting
-
-**详见**：`agents/ai/time-series-analysis.md`
-
-#### Model Interpretability Agent（模型可解释性专家）
-**职责**：
-- 全局和局部可解释性（SHAP, LIME）
-- 模型调试和公平性审计
-- 可解释性报告生成
-
-**工具集成**：SHAP, LIME, Captum, Fairlearn
-
-**详见**：`agents/ai/model-interpretability.md`
+| Agent | 职责 | 文件 |
+|-------|------|------|
+| Deep Learning | CNN/RNN/Transformer/GAN 架构设计、训练、部署（PyTorch, TF） | `agents/ai/deep-learning.md` |
+| Reinforcement Learning | DQN/PPO/SAC/MADDPG 实现、环境建模（SB3, RLlib） | `agents/ai/reinforcement-learning.md` |
+| Time Series Analysis | ARIMA/Prophet/LSTM 预测、异常检测（statsmodels） | `agents/ai/time-series-analysis.md` |
+| Model Interpretability | SHAP/LIME 可解释性、公平性审计（Captum, Fairlearn） | `agents/ai/model-interpretability.md` |
 
 ### 11.2 开发支持 Agent
 
-#### Automated Testing Agent（自动化测试专家）
-**职责**：
-- 测试策略设计和用例生成
-- 测试执行和覆盖率分析
-
-**工具集成**：pytest, Jest, coverage.py
-
-**详见**：`agents/testing/automated-testing.md`
-
-#### Code Reviewer Agent（代码审查专家 - 增强版）
-**职责**：
-- 代码质量审查
-- 安全性审查（OWASP Top 10）
-- 性能和可维护性审查
-
-**详见**：`agents/code-reviewer.md`
-
-#### Data Visualization Agent（数据可视化专家）
-**职责**：
-- 数据探索和图表设计
-- 交互式可视化和报告生成
-
-**工具集成**：matplotlib, plotly, seaborn
-
-**详见**：`agents/visualization/data-visualization.md`
-
-#### Security Audit Agent（安全审计专家）
-**职责**：
-- 代码安全审计（SQL 注入, XSS, CSRF）
-- 依赖安全扫描
-- 合规性验证（GDPR, HIPAA）
-
-**工具集成**：Bandit, Snyk, TruffleHog
-
-**详见**：`agents/security/security-audit.md`
+| Agent | 职责 | 文件 |
+|-------|------|------|
+| Automated Testing | 测试策略/用例生成/覆盖率分析（pytest, Jest） | `agents/testing/automated-testing.md` |
+| Code Reviewer | 代码质量/安全/性能审查（OWASP Top 10） | `agents/code-reviewer.md` |
+| Data Visualization | 数据探索/交互式可视化（matplotlib, plotly） | `agents/visualization/data-visualization.md` |
+| Security Audit | SQL注入/XSS/CSRF/依赖扫描/合规（Bandit, Snyk） | `agents/security/security-audit.md` |
 
 ### 11.3 使用场景
 
-#### AI 研究
 ```bash
-# 深度学习模型开发
 /agents deep-learning "设计并训练一个图像分类模型"
-
-# 强化学习实验
 /agents reinforcement-learning "实现 PPO 算法解决 CartPole 问题"
-
-# 模型可解释性分析
-/agents model-interpretability "使用 SHAP 解释模型预测结果"
-```
-
-#### 数据分析
-```bash
-# 时间序列预测
 /agents time-series-analysis "预测未来 30 天的销售额"
-
-# 数据可视化
-/agents data-visualization "生成实验结果对比图表"
-```
-
-#### 代码质量
-```bash
-# 自动化测试
 /agents automated-testing "为新功能生成测试用例"
-
-# 代码审查
-/agents code-reviewer "审查最近的代码变更"
-
-# 安全审计
 /agents security-audit "扫描代码中的安全漏洞"
 ```
 
-### 11.4 集成 claude-scientific-skills
-
-**推荐集成**：
-```bash
-# 克隆仓库
-git clone https://github.com/K-Dense-AI/claude-scientific-skills.git
-
-# 集成 AI/ML 相关技能
-cp -r claude-scientific-skills/scientific-skills/machine-learning/* \
-  .claude/skills/ai/
-
-# 集成数据分析技能
-cp -r claude-scientific-skills/scientific-skills/data-analysis/* \
-  .claude/skills/analysis/
-```
-
-**可用技能**（140+ 总计）：
-- Machine Learning & AI
-- Deep Learning
-- Reinforcement Learning
-- Time Series Analysis
-- Model Interpretability
-- Data Analysis & Visualization
-- Python Packages（55+）：PyTorch, scikit-learn, etc.
-
-### 11.5 最佳实践
-
-#### AI/ML 开发
-- 使用预训练模型加速开发
-- 记录实验（MLflow, Weights & Biases）
-- 使用版本控制管理模型
-- 定期评估模型性能
-- 关注模型可解释性和公平性
-
-#### 代码质量
-- 集成自动化测试到 CI/CD
-- 定期进行代码审查
-- 使用静态分析工具
-- 监控测试覆盖率（目标 >80%）
-
-#### 安全
-- 定期进行安全审计
-- 扫描依赖库漏洞
-- 遵循 OWASP 最佳实践
-- 不在代码中硬编码密钥
-
-### 11.6 相关文档
-
-**Agent 定义**：
-- `agents/ai/deep-learning.md`
-- `agents/ai/reinforcement-learning.md`
-- `agents/ai/time-series-analysis.md`
-- `agents/ai/model-interpretability.md`
-- `agents/testing/automated-testing.md`
-- `agents/visualization/data-visualization.md`
-- `agents/security/security-audit.md`
-
-**外部资源**：
-- [claude-scientific-skills](https://github.com/K-Dense-AI/claude-scientific-skills)
-- [Agent Skills Marketplace](https://skillsmp.com/)
-- [Awesome Agent Skills](https://github.com/heilcheng/awesome-agent-skills)
+详见 `agents/ai/`, `agents/testing/`, `agents/security/`，以及 [claude-scientific-skills](https://github.com/K-Dense-AI/claude-scientific-skills)（140+ 技能）。
 
