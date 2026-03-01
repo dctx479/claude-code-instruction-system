@@ -69,6 +69,8 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 | **ui-ux-pro-max** | 最强前端设计知识库，57+ UI 风格、97 配色、57 字体搭配、25+ 图表类型 | design |
 | **react-best-practices** | Vercel 官方 React + Next.js 性能优化宝典，45+ 条规则按影响力排序 | development |
 | **web-artifacts-builder** | Anthropic 官方 Web Artifacts 构建器，React + Tailwind + shadcn/ui 单文件 HTML 应用 | development |
+| **collaborating-with-codex** | 多模型协作，通过后台 Bash 子进程调用 Codex CLI 并行实现代码，Claude 融合审查，优势互补 | development |
+| **collaborating-with-gemini** | 多模型协作，通过后台 Bash 子进程调用 Gemini CLI 处理大上下文分析，适合整个代码库扫描 | development |
 
 ### 1. claude-scientific-skills (140+ 科研技能)
 
@@ -272,6 +274,19 @@ rm -rf .claude/skills/skill-name
 ---
 
 ## 更新日志
+
+### 2026-03-01
+- **新增 collaborating-with-codex Skill** - 多模型协作（Codex）
+  - 后台 Bash 子进程调用 OpenAI Codex CLI（非阻塞）
+  - Claude 并行分析，完成后读取结果文件融合
+  - 适合代码实现、样板生成、API 示例、测试用例
+  - 与 Orchestrator COLLABORATIVE 策略集成
+  - 与 Ralph Loop 和 Autopilot Development 阶段集成
+- **新增 collaborating-with-gemini Skill** - 多模型协作（Gemini）
+  - 后台 Bash 子进程调用 Google Gemini CLI（非阻塞）
+  - 利用 Gemini 超长上下文窗口（100万+ tokens）
+  - 适合整个代码库扫描、大型文档处理、跨文件 bug 追踪
+  - 明确与 Codex Skill 的任务分工
 
 ### 2026-02-20
 - **新增 seedance-prompt Skill** - Seedance 2.0 分镜提示词生成专家

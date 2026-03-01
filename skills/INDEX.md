@@ -26,6 +26,13 @@
 | pytorch | PyTorch 深度学习框架 | pytorch, 深度学习 | .claude/skills/pytorch/ |
 | pandas | pandas 数据分析库 | pandas, 数据分析 | .claude/skills/pandas/ |
 
+## 开发协作 Skills (Development)
+
+| Skill | 描述 | 触发词 | 位置 |
+|-------|------|--------|------|
+| collaborating-with-codex | 多模型协作，通过后台进程调用 Codex CLI 并行实现代码，Claude 融合审查 | 调用 Codex, 多模型协作, 代码生成对比 | .claude/skills/collaborating-with-codex/ |
+| collaborating-with-gemini | 多模型协作，通过后台进程调用 Gemini CLI 处理长上下文分析，Claude 融合洞察 | 调用 Gemini, 大上下文分析, 代码库全局分析 | .claude/skills/collaborating-with-gemini/ |
+
 ## 使用说明
 
 ### 渐进式披露机制
@@ -48,8 +55,11 @@
 - **literature-mentor + paper-writing-assistant** = 文献综述写作
 - **literature-mentor + experiment-logger** = 实验设计与执行
 
+- **collaborating-with-codex + collaborating-with-gemini** = 三模型并行协作
+- **collaborating-with-codex + parallel-explore** = 多方案并行实现对比
+
 ## 版本信息
 
-- **版本**：1.0.0
-- **更新日期**：2026-02-08
-- **Skills 总数**：9
+- **版本**：1.1.0
+- **更新日期**：2026-03-01
+- **Skills 总数**：11

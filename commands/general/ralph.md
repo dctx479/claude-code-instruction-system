@@ -121,7 +121,14 @@
 
 ## 状态文件
 
-Ralph 使用 `memory/ralph-state.json` 跟踪执行状态:
+Ralph 使用两层状态文件，HUD 按对应层级读取：
+
+| 层级 | 路径 | 读取方 | 说明 |
+|------|------|--------|------|
+| **项目级** | `memory/ralph-state.json` | 项目 `hud.sh` | 项目内 ralph 执行状态 |
+| **全局级** | `~/.claude/memory/ralph-state.json` | 全局 `hud.sh` | 跨项目 ralph 执行状态 |
+
+Ralph 写入哪个路径取决于调用上下文：在项目内调用写项目路径，全局模式写全局路径。
 
 ```json
 {
