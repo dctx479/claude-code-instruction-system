@@ -94,43 +94,55 @@ else:
 
 ### 4. Execution Loop (执行循环)
 
-核心执行逻辑:
+核心执行逻辑 — **一轮 (Iteration) = 一个完整工作周期**，包含评估→规划→执行→验证全过程：
 
 ```python
 def execution_loop():
     while state.active and state.iteration < max_iterations:
-        # 1. 分析当前状态
-        current_state = analyze_progress()
+        # ── 一轮开始 ──────────────────────────────────────────
+        state.round_complete = False  # 标记轮次进行中
+        save_state()
+
+        # 1. 全面评估当前状态（非单步操作，而是整体进展）
+        current_state = assess_full_state()
 
         # 2. 检查完成条件
         if is_task_completed(current_state):
             state.completed = True
             break
 
-        # 3. 规划下一步
-        next_action = plan_next_step(current_state)
+        # 3. 规划本轮完整工作计划（可包含多个步骤）
+        work_plan = plan_iteration(current_state)
 
-        # 4. 检查是否需要确认
-        if requires_confirmation(next_action):
-            state.status = PAUSED
-            yield next_action  # 请求人工确认
-            continue
+        # 4. 执行本轮所有步骤（多次 tool call 均属于同一轮）
+        for step in work_plan.steps:
+            if requires_confirmation(step):
+                state.status = PAUSED
+                yield step  # 请求人工确认，暂停当前轮
+                continue
 
-        # 5. 执行操作
-        result = execute_action(next_action)
+            result = execute_step(step)
 
-        # 6. 处理结果
-        if result.is_error:
-            if result.is_fatal:
+            if result.is_fatal_error:
                 state.fatal_error = True
                 break
-            else:
-                handle_error(result)
+            elif result.is_error:
+                handle_recoverable_error(result)
 
-        # 7. 更新状态
+        # 5. 验证本轮成果
+        verify_iteration_results()
+
+        # 6. 本轮完成 — 递增计数并通知 Stop Hook
         state.iteration += 1
+        state.round_complete = True  # ← Stop Hook 读取此标志才会递增计数
         save_checkpoint_if_needed()
+        # ── 一轮结束 ──────────────────────────────────────────
 ```
+
+**关键原则**：
+- `round_complete = False` 期间，Stop Hook 只会"续跑"当前轮，**不**递增迭代计数
+- `round_complete = True` 时，Stop Hook 递增计数并启动下一轮
+- 一轮内执行多少 tool call、多少文件操作，都属于同一轮，不影响计数
 
 ## 完成条件检测
 

@@ -2,6 +2,7 @@
   "active": false,
   "iteration": 0,
   "max_iterations": 10,
+  "round_complete": false,
   "completed": false,
   "fatal_error": false,
   "current_task": null,

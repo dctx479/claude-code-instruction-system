@@ -34,8 +34,9 @@ RALPH_ACTIVE=$(grep -o '"active":[^,}]*' "$RALPH_STATE_FILE" 2>/dev/null | cut -
 CURRENT_ITERATION=$(grep -o '"iteration":[^,}]*' "$RALPH_STATE_FILE" 2>/dev/null | cut -d':' -f2 | tr -d ' ' || echo "0")
 TASK_COMPLETED=$(grep -o '"completed":[^,}]*' "$RALPH_STATE_FILE" 2>/dev/null | cut -d':' -f2 | tr -d ' ' || echo "false")
 HAS_FATAL_ERROR=$(grep -o '"fatal_error":[^,}]*' "$RALPH_STATE_FILE" 2>/dev/null | cut -d':' -f2 | tr -d ' ' || echo "false")
+ROUND_COMPLETE=$(grep -o '"round_complete":[^,}]*' "$RALPH_STATE_FILE" 2>/dev/null | cut -d':' -f2 | tr -d ' ' || echo "false")
 
-log "DEBUG" "Ralph state: active=$RALPH_ACTIVE, iteration=$CURRENT_ITERATION, completed=$TASK_COMPLETED, fatal=$HAS_FATAL_ERROR"
+log "DEBUG" "Ralph state: active=$RALPH_ACTIVE, iteration=$CURRENT_ITERATION, round_complete=$ROUND_COMPLETE, completed=$TASK_COMPLETED, fatal=$HAS_FATAL_ERROR"
 
 # 如果 Ralph 不活跃，允许停止
 if [[ "$RALPH_ACTIVE" != "true" ]]; then
@@ -66,24 +67,41 @@ if [[ "$CURRENT_ITERATION" -ge "$RALPH_MAX_ITERATIONS" ]]; then
 fi
 
 # 任务未完成，继续执行
-log "INFO" "Task not completed, iteration $CURRENT_ITERATION/$RALPH_MAX_ITERATIONS, continuing..."
+# 根据 round_complete 判断是轮次结束还是轮次中途
+if [[ "$ROUND_COMPLETE" == "true" ]]; then
+    # 一轮完整工作周期结束，递增迭代计数
+    log "INFO" "Round $CURRENT_ITERATION complete, starting iteration $((CURRENT_ITERATION + 1))/$RALPH_MAX_ITERATIONS"
 
-# 更新迭代计数
-NEW_ITERATION=$((CURRENT_ITERATION + 1))
-if sed "s/\"iteration\":[^,}]*/\"iteration\": $NEW_ITERATION/" "$RALPH_STATE_FILE" > "${RALPH_STATE_FILE}.tmp"; then
-    mv "${RALPH_STATE_FILE}.tmp" "$RALPH_STATE_FILE"
+    NEW_ITERATION=$((CURRENT_ITERATION + 1))
+    # 重置 round_complete 并递增 iteration
+    if sed "s/\"iteration\":[^,}]*/\"iteration\": $NEW_ITERATION/" "$RALPH_STATE_FILE" \
+       | sed "s/\"round_complete\":[^,}]*/\"round_complete\": false/" \
+       > "${RALPH_STATE_FILE}.tmp"; then
+        mv "${RALPH_STATE_FILE}.tmp" "$RALPH_STATE_FILE"
+    else
+        rm -f "${RALPH_STATE_FILE}.tmp"
+        log "WARN" "Failed to update state file"
+    fi
+
+    echo ""
+    echo "========================================"
+    echo "  RALPH LOOP: Round $CURRENT_ITERATION complete"
+    echo "  Starting Round: $NEW_ITERATION / $RALPH_MAX_ITERATIONS"
+    echo "========================================"
+    echo ""
+    echo "继续执行下一轮。请评估当前进展，规划并执行本轮工作，完成后将 round_complete 设为 true。"
 else
-    rm -f "${RALPH_STATE_FILE}.tmp"
-    log "WARN" "Failed to update iteration count in state file"
-fi
+    # 轮次进行中（Claude 在一轮内停止），继续完成当前轮
+    log "INFO" "Mid-round stop detected, resuming iteration $CURRENT_ITERATION/$RALPH_MAX_ITERATIONS"
 
-# 输出继续执行的提示
-echo ""
-echo "========================================"
-echo "  RALPH LOOP: Continuing execution"
-echo "  Iteration: $NEW_ITERATION / $RALPH_MAX_ITERATIONS"
-echo "========================================"
-echo ""
+    echo ""
+    echo "========================================"
+    echo "  RALPH LOOP: Resuming round $CURRENT_ITERATION"
+    echo "  Round $CURRENT_ITERATION / $RALPH_MAX_ITERATIONS (in progress)"
+    echo "========================================"
+    echo ""
+    echo "当前轮次 $CURRENT_ITERATION 尚未完成。请继续执行本轮剩余工作，完成后将 round_complete 设为 true。"
+fi
 
 # 返回特殊退出码表示继续执行
 # 退出码 3 表示 Ralph 要求继续

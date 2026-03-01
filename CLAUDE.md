@@ -190,6 +190,28 @@ npm run build / dev / test / typecheck
 /autopilot full|supervised|step  # 模式选择
 ```
 
+#### Ralph 循环规则
+
+**一轮 (Iteration) = 一个完整工作周期**，不是单次操作：
+
+```
+评估当前进展 → 规划本轮工作 → 执行多个操作步骤 → 验证成果 → 标记完成
+```
+
+**Claude 的职责**：每轮末尾必须将 `round_complete` 写入状态文件：
+
+```bash
+# 本轮工作全部完成后，更新状态文件
+# 路径: memory/ralph-state.json (项目内) 或 ~/.claude/ralph-state.json (全局)
+{"active": true, "iteration": N, "round_complete": true, ...}
+```
+
+**Stop Hook 行为**：
+- `round_complete = true` → 递增 `iteration`，重置标志，启动下一轮
+- `round_complete = false` → 当前轮未完成，续跑但**不**递增计数
+
+> 详见: `commands/general/ralph.md`, `workflows/execution/ralph-manager.md`
+
 ### 科研工作流
 ```bash
 /literature-review <主题> --zotero-collection <集合> --style <风格>
