@@ -1,6 +1,6 @@
 # 太一元系统 · Claude Code 指令体系
 
-> 版本: 3.1.0 Taiyi (太一) — 道之演化 | 发布日期: 2026-01-23
+> 版本: 1.0 Taiyi (太一) — 道之演化 | 发布日期: 2026-03-01
 
 太一元系统是一套完善的 Claude Code CLI 配置与指令体系，覆盖软件开发、AI/ML 科研、数据分析、网络安全等专业领域。系统具备自进化、Agent 编排、并行科研、全自主执行等核心能力。
 
@@ -96,7 +96,7 @@ claude-code-instruction-system/
 ### 1. 克隆仓库
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/claude-code-instruction-system.git
+git clone https://github.com/dctx479/claude-code-instruction-system.git
 cd claude-code-instruction-system
 ```
 
@@ -107,6 +107,7 @@ cd claude-code-instruction-system
   "model": "claude-sonnet-4-6",
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "your-api-key",
+    "ANTHROPIC_BASE_URL": "https://api.anthropic.com/",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
     "DISABLE_INSTALLATION_CHECKS": "1"
