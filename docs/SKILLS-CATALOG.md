@@ -30,10 +30,17 @@
 
 ## AI 视频创作 Skills
 
-| Skill | 描述 | 触发词 |
-|-------|------|--------|
-| **seedance-prompt** | Seedance 2.0 分镜提示词生成 | `生成视频提示词`, `分镜提示词` |
-| **seedance-storyboard** | 小说/故事转多集视频剧本 | `写剧本`, `生成分镜`, `/seedance` |
+| Skill | 描述 | 触发词 | 适用场景 |
+|-------|------|--------|----------|
+| **seedance-prompt** | Seedance 2.0 分镜提示词生成 | `生成视频提示词`, `分镜提示词` | 15s 内短片分镜 |
+| **seedance-storyboard** | 小说/故事转多集视频剧本 | `写剧本`, `生成分镜`, `/seedance` | 短剧/电影完整制作 |
+| **seedance-prompt-ads** | 视频广告 Seedance 提示词生成 | `视频广告`, `品牌TVC`, `带货广告` | 品牌广告/电商带货 |
+
+**seedance-prompt-ads 说明**: 上传产品素材和广告诉求，生成结构化视频提示词。支持两种模式:
+- **品牌 TVC 广告**: 16:9 横屏，专业电影感，情感共鸣叙事
+- **带货广告**: 9:16 竖屏，UGC 真实感，核心信任建立 + 紧迫感
+
+开源地址: [make-prompt-seedance2](https://github.com/liangdabiao/make-prompt-seedance2)
 
 ---
 
@@ -90,3 +97,17 @@
 
 详细文档: `.claude/skills/README.md`, `.claude/skills/INTEGRATION-GUIDE.md`
 MCP 集成配置: `.claude/integrations/`
+
+---
+
+## 社区 Skills（第三方）
+
+通过 `npx skills add {user}/{skill} -g -y` 一键安装:
+
+| Skill | 描述 | 安装命令 |
+|-------|------|---------|
+| **x-ai-topic-selector** | 推特信息流选题助手，Chrome CDP 抓取 + AI 评分，支持扫描/书签两种模式 | `npx skills add vigorX777/x-ai-topic-selector -g -y` |
+
+**x-ai-topic-selector 说明**: 启动后输入 `/select-topics`。需 Chrome 登录推特账号 + Gemini API Key（可换 DeepSeek）。两种模式:
+- **扫描模式**: 批量抓取信息流 → AI 评分 → Top N 精选
+- **书签模式**: 分析已收藏内容 → 生成摘要 + 选题建议（不做排序）
