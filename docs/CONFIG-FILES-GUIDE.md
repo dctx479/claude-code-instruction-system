@@ -48,7 +48,7 @@
 
 ```json
 {
-  "model": "claude-sonnet-4-5-20250929",
+  "model": "claude-sonnet-4-6",
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "your-token",
     "ANTHROPIC_BASE_URL": "https://api.anthropic.com/"
@@ -411,7 +411,7 @@ Hooks 配置会合并（不是覆盖）：
 
 ```json
 {
-  "model": "claude-sonnet-4-5-20250929",
+  "model": "claude-sonnet-4-6",
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "sk-ant-xxx"
   },
@@ -652,12 +652,9 @@ Hooks 配置会合并（不是覆盖）：
    "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./script.sh\""
    ```
 
-3. **使用 WSL（备选）**：
-   ```json
-   {
-     "command": "wsl bash /mnt/c/path/to/script.sh"
-   }
-   ```
+3. **⚠️ 不建议使用 WSL**：
+   - 如果默认 WSL 发行版是 `docker-desktop`（无 `/bin/bash`），会导致 `execvpe` 错误
+   - 建议始终使用 Git Bash 绝对路径方案
 
 ### 问题 4: MCP 服务器连接失败
 

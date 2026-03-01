@@ -75,7 +75,7 @@ python -m json.tool .claude/context/index.json
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "your-api-key-here"
   },
-  "model": "claude-sonnet-4-5-20250929",
+  "model": "claude-sonnet-4-6",
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/statusline/hud.sh render"
