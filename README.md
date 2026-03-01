@@ -35,9 +35,12 @@ claude-code-instruction-system/
 │   ├── ORCHESTRATION-GUIDE.md   # 编排系统使用指南
 │   ├── SKILLS-CATALOG.md        # Skills 完整目录
 │   ├── MEMORY-SYSTEM.md         # 记忆系统架构
-│   ├── HUD-STATUSLINE-GUIDE.md  # HUD 状态栏指南
-│   ├── PORT-MANAGEMENT-GUIDE.md # 端口管理指南
-│   └── research-support-guide.md # 科研工作流指南
+│   ├── hud/                     # HUD/Statusline 文档
+│   ├── port-management/         # 端口管理文档
+│   ├── context-archival/        # 上下文归档文档
+│   ├── research/                # 科研支持文档
+│   ├── reports/                 # 历史实现报告
+│   └── releases/                # 发版记录
 │
 ├── agents/                      # 专家 Agent 定义
 │   ├── INDEX.md                 # Agent 索引（渐进式披露）
@@ -213,7 +216,7 @@ Windows 用户配置详见 [docs/CONFIG-FILES-GUIDE.md](docs/CONFIG-FILES-GUIDE.
 | [docs/ORCHESTRATION-GUIDE.md](docs/ORCHESTRATION-GUIDE.md) | 编排系统与策略 |
 | [docs/SKILLS-CATALOG.md](docs/SKILLS-CATALOG.md) | 140+ Skills 目录 |
 | [docs/MEMORY-SYSTEM.md](docs/MEMORY-SYSTEM.md) | 多层记忆架构 |
-| [docs/HUD-STATUSLINE-GUIDE.md](docs/HUD-STATUSLINE-GUIDE.md) | HUD 状态栏配置 |
+| [docs/hud/HUD-STATUSLINE-GUIDE.md](docs/hud/HUD-STATUSLINE-GUIDE.md) | HUD 状态栏配置 |
 | [agents/INDEX.md](agents/INDEX.md) | 所有 Agent 索引 |
 
 ---
