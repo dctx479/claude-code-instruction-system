@@ -25,8 +25,10 @@
 
 ```
 claude-code-instruction-system/
-├── CLAUDE.md                    # 核心配置（精简版，~13KB）
+├── CLAUDE.md                    # 核心配置
 ├── QUICK-REFERENCE.md           # 快速参考手册
+├── CHANGELOG.md                 # 更新记录
+├── CONTRIBUTING.md              # 贡献指南
 │
 ├── docs/                        # 参考文档
 │   ├── FEATURES.md              # 系统特性详细说明
@@ -35,10 +37,10 @@ claude-code-instruction-system/
 │   ├── ORCHESTRATION-GUIDE.md   # 编排系统使用指南
 │   ├── SKILLS-CATALOG.md        # Skills 完整目录
 │   ├── MEMORY-SYSTEM.md         # 记忆系统架构
-│   ├── hud/                     # HUD/Statusline 文档
-│   ├── port-management/         # 端口管理文档
-│   ├── context-archival/        # 上下文归档文档
-│   ├── research/                # 科研支持文档
+│   ├── hud/                     # HUD/Statusline 文档（10个）
+│   ├── port-management/         # 端口管理文档（3个）
+│   ├── context-archival/        # 上下文归档文档（5个）
+│   ├── research/                # 科研支持文档（3个）
 │   ├── reports/                 # 历史实现报告
 │   └── releases/                # 发版记录
 │
@@ -48,13 +50,20 @@ claude-code-instruction-system/
 │   ├── architect.md             # 软件架构师
 │   ├── debugger.md              # 调试专家
 │   ├── code-reviewer.md         # 代码审查员
-│   ├── spec-writer.md           # 规范编写
-│   ├── qa-reviewer.md / qa-fixer.md
+│   ├── spec-writer.md / qa-reviewer.md / qa-fixer.md
+│   ├── ops/                     # 运维 Agent（auto-optimizer 等 5个）
 │   ├── ai/                      # AI/ML 专家 Agent
 │   ├── research/                # 科研 Agent
 │   ├── testing/                 # 测试 Agent
 │   ├── security/                # 安全 Agent
 │   └── visualization/           # 可视化 Agent
+│
+├── workflows/                   # 工作流模式文档
+│   ├── orchestration/           # 编排模式（4个）
+│   ├── execution/               # 执行流程（ralph, autopilot 等 3个）
+│   ├── quality/                 # 质量保障（self-healing 等 3个）
+│   ├── routing/                 # 路由选择（model-router 等 3个）
+│   └── research/                # 科研并行工作流（2个）
 │
 ├── commands/                    # 自定义 Slash 命令
 │   ├── general/                 # 通用命令（ralph, autopilot 等）
@@ -64,26 +73,31 @@ claude-code-instruction-system/
 │   ├── ai-agent/                # AI Agent 命令
 │   └── data-analysis/           # 数据分析命令
 │
+├── scripts/                     # 工具脚本
+│   ├── test-integrations.sh     # 集成测试入口
+│   ├── validate/                # 配置验证与诊断（7个）
+│   ├── context/                 # 上下文管理脚本（4个）
+│   ├── hooks/                   # 生命周期钩子脚本（3个）
+│   ├── utils/                   # 通用工具（7个）
+│   └── port-management/         # 端口管理脚本
+│
 ├── .claude/                     # Claude Code 项目配置
 │   ├── settings.json            # 项目级设置
 │   ├── statusline/              # HUD 状态栏脚本
 │   ├── skills/                  # Skills 知识包
-│   ├── context/                 # 上下文归档
-│   └── hooks/                   # 生命周期钩子
+│   └── context/                 # 上下文归档
 │
-├── hooks/                       # 全局钩子脚本
-│   ├── hooks.json               # 钩子配置
+├── hooks/                       # 全局钩子配置
+│   ├── hooks.json               # 钩子入口配置
 │   ├── intent-detector.sh       # 意图识别（27种意图）
 │   └── ralph-stop-interceptor.sh
 │
-├── config/                      # 配置文件
+├── config/                      # 系统配置文件
 │   ├── keywords.json            # 意图关键词索引
 │   ├── mcp-servers.json         # MCP 服务器配置
 │   ├── port-registry.json       # 端口注册表
 │   └── port-ranges.json         # 端口范围规则
 │
-├── workflows/                   # 工作流模式文档
-├── scripts/                     # 工具脚本
 ├── memory/                      # 记忆/知识库
 ├── specs/                       # 功能规范文件
 ├── examples/                    # 使用示例
