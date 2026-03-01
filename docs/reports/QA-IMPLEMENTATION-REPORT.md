@@ -291,7 +291,7 @@ qa-reviewer → qa-fixer (质量保障阶段)
 - ✅ `QA-QUICKSTART.md` - 5分钟快速上手
 - ✅ `QA-SYSTEM.md` - 完整系统说明
 - ✅ `specs/README.md` - 规范管理指南
-- ✅ `workflows/self-healing.md` - 循环流程详解
+- ✅ `workflows/quality/self-healing.md` - 循环流程详解
 - ✅ `.claude/examples/spec-first-workflow.md` - 完整示例
 
 #### 技术文档 (3个)

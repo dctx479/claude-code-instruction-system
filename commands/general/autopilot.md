@@ -330,8 +330,8 @@ Autopilot 执行完成后生成以下文件：
 
 ## 相关文档
 
-- Agent 定义: `agents/autopilot-orchestrator.md`
-- 工作流: `workflows/autopilot-flow.md`
+- Agent 定义: `agents/ops/autopilot-orchestrator.md`
+- 工作流: `workflows/execution/autopilot-flow.md`
 - Ralph Loop: `commands/general/ralph.md`
 - QA 系统: `QA-SYSTEM.md`
-- 编排模式: `workflows/orchestration-patterns.md`
+- 编排模式: `workflows/orchestration/orchestration-patterns.md`

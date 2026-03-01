@@ -14,14 +14,14 @@
 | **HUD Statusline** | `.claude/statusline/hud.sh` | 实时状态可视化 |
 | **Intent Detector** | `hooks/intent-detector.sh` | 27种意图→22个Agent自动调度 |
 | **Agent Auto-Dispatch** | `~/.claude/intent-state.json` | 自动加载Agent定义切换角色 |
-| **Model Router** | `workflows/model-router.md` | 根据任务复杂度自动选模型 |
-| **Plan-Scoped Memory** | `workflows/plan-scoped-memory.md` | 计划级知识隔离 |
+| **Model Router** | `workflows/routing/model-router.md` | 根据任务复杂度自动选模型 |
+| **Plan-Scoped Memory** | `workflows/research/plan-scoped-memory.md` | 计划级知识隔离 |
 | **Autopilot** | `/autopilot "任务"` | 端到端5阶段全自主执行 |
-| **Research Parallel** | `workflows/research-parallel.md` | 多Agent并行科研工作流 |
+| **Research Parallel** | `workflows/research/research-parallel.md` | 多Agent并行科研工作流 |
 | **TUI Config** | `taiyi-tui-config --path /project` | Rust+ratatui 交互式配置 |
 | **HUD Renderer (Rust)** | `hud-render --theme nerd` | 7-10x 性能提升 |
 | **Git Info Collector (Rust)** | `git-info status` | 5-8x 性能提升 |
-| **Port Management** | `scripts/port-manager.py` | 跨项目端口冲突预防 |
+| **Port Management** | `scripts/port-management/port-manager.py` | 跨项目端口冲突预防 |
 
 ---
 
@@ -42,7 +42,7 @@
 /autopilot step "数据库迁移"         # 每步确认
 ```
 
-详见: `commands/general/autopilot.md`, `workflows/autopilot-flow.md`
+详见: `commands/general/autopilot.md`, `workflows/execution/autopilot-flow.md`
 
 ---
 
@@ -65,10 +65,10 @@ docker run -p 9999:80 nginx    # ✅ 自动通过：端口空闲
 
 **手动管理**：
 ```bash
-python scripts/port-manager.py register 3307 myproject mysql -d "主数据库"
-python scripts/port-manager.py conflicts
-python scripts/port-manager.py suggest mysql
-python scripts/port-manager.py export myproject --output myproject.env
+python scripts/port-management/port-manager.py register 3307 myproject mysql -d "主数据库"
+python scripts/port-management/port-manager.py conflicts
+python scripts/port-management/port-manager.py suggest mysql
+python scripts/port-management/port-manager.py export myproject --output myproject.env
 ```
 
 详见: `docs/PORT-MANAGEMENT-GUIDE.md`, `docs/PORT-MANAGEMENT-ARCHITECTURE.md`
@@ -88,4 +88,4 @@ python scripts/port-manager.py export myproject --output myproject.env
 /experiment-track parallel --workers 4
 ```
 
-详见: `workflows/research-parallel.md`
+详见: `workflows/research/research-parallel.md`

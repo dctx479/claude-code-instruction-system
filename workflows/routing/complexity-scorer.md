@@ -349,6 +349,6 @@ def calibrate_scores(history):
 
 ## 相关文档
 
-- Model Router: `workflows/model-router.md`
-- 性能监控: `agents/performance-monitor.md`
-- 自动优化: `agents/auto-optimizer.md`
+- Model Router: `workflows/routing/model-router.md`
+- 性能监控: `agents/ops/performance-monitor.md`
+- 自动优化: `agents/ops/auto-optimizer.md`

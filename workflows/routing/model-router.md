@@ -350,6 +350,6 @@ agents:
 
 ## 相关文档
 
-- 复杂度评分器: `workflows/complexity-scorer.md`
-- 性能监控: `agents/performance-monitor.md`
-- 成本优化: `agents/auto-optimizer.md`
+- 复杂度评分器: `workflows/routing/complexity-scorer.md`
+- 性能监控: `agents/ops/performance-monitor.md`
+- 成本优化: `agents/ops/auto-optimizer.md`

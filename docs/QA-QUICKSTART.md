@@ -314,7 +314,7 @@ A: 技术上可以，但强烈不建议:
 
 ### 深入学习
 - 完整流程示例: `.claude/examples/spec-first-workflow.md`
-- 自我修复循环: `workflows/self-healing.md`
+- 自我修复循环: `workflows/quality/self-healing.md`
 - 规范编写指南: `specs/README.md`
 
 ### Agent详细文档

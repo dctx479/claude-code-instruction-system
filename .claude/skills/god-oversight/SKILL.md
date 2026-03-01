@@ -296,7 +296,7 @@ Output:
   - `.god/directives.json` - Directive queue
 - **Integration:**
   - `agents/orchestrator.md` - Orchestrator (receives directives)
-  - `agents/autopilot-orchestrator.md` - Autopilot (phase gates)
+  - `agents/ops/autopilot-orchestrator.md` - Autopilot (phase gates)
   - `agents/qa-reviewer.md` - QA (reports to committee)
 
 ## Metrics & Monitoring

@@ -65,7 +65,7 @@
 | COMPETITIVE | 1.5-2x | 最优 | 高 | 探索创新 |
 | SWARM | 5-10x | 中 | 低 | 大规模批量 |
 
-完整模式定义: `workflows/orchestration-patterns.md`
+完整模式定义: `workflows/orchestration/orchestration-patterns.md`
 
 ---
 
@@ -145,7 +145,7 @@
 - 任务超时 → 自动重试或分解
 - 高错误率 → 升级模型或调整策略
 
-详见: `workflows/orchestration-monitor.md`
+详见: `workflows/orchestration/orchestration-monitor.md`
 
 ---
 
@@ -157,4 +157,4 @@
 /swarm         # 强制使用群体策略
 ```
 
-Agent定义: `agents/orchestrator.md`, `agents/strategy-selector.md`
+Agent定义: `agents/orchestrator.md`, `agents/ops/strategy-selector.md`

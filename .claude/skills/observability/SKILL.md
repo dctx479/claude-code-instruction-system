@@ -508,10 +508,10 @@ fi
 ## 参考资源
 
 - **Aha-Loop**: 可观测性灵感来源
-- **Context Archivist Agent**: `agents/context-archivist.md`
+- **Context Archivist Agent**: `agents/ops/context-archivist.md`
 - **Ralph Loop**: `commands/general/ralph.md`
 - **Autopilot**: `commands/general/autopilot.md`
-- **Plan-Scoped Memory**: `workflows/plan-scoped-memory.md`
+- **Plan-Scoped Memory**: `workflows/research/plan-scoped-memory.md`
 
 ---
 

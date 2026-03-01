@@ -94,12 +94,12 @@ if git diff --cached --name-only | grep -qE '\.env|docker-compose\.yml|port-regi
     echo "Checking port configuration..."
     
     # 运行端口冲突检测
-    python scripts/port-manager.py conflicts --quiet
+    python scripts/port-management/port-manager.py conflicts --quiet
     
     if [ $? -ne 0 ]; then
         echo "ERROR: Port conflict detected!"
         echo "Please resolve conflicts before committing."
-        echo "Run: python scripts/port-manager.py conflicts"
+        echo "Run: python scripts/port-management/port-manager.py conflicts"
         exit 1
     fi
     
@@ -194,7 +194,7 @@ jobs:
       
       - name: Validate ports
         run: |
-          python scripts/port-manager.py conflicts --ci
+          python scripts/port-management/port-manager.py conflicts --ci
 ```
 
 ### 5.2 GitLab CI
@@ -203,7 +203,7 @@ jobs:
 port-validation:
   stage: validate
   script:
-    - python scripts/port-manager.py conflicts --ci
+    - python scripts/port-management/port-manager.py conflicts --ci
   only:
     changes:
       - .env*
@@ -233,14 +233,14 @@ fi
 echo "Initializing project: $PROJECT_NAME"
 
 # 分配端口
-MYSQL_PORT=$(python scripts/port-manager.py suggest mysql --json | jq -r '.port')
-REDIS_PORT=$(python scripts/port-manager.py suggest redis --json | jq -r '.port')
-API_PORT=$(python scripts/port-manager.py suggest api --json | jq -r '.port')
+MYSQL_PORT=$(python scripts/port-management/port-manager.py suggest mysql --json | jq -r '.port')
+REDIS_PORT=$(python scripts/port-management/port-manager.py suggest redis --json | jq -r '.port')
+API_PORT=$(python scripts/port-management/port-manager.py suggest api --json | jq -r '.port')
 
 # 注册端口
-python scripts/port-manager.py register $MYSQL_PORT $PROJECT_NAME mysql -d "主数据库"
-python scripts/port-manager.py register $REDIS_PORT $PROJECT_NAME redis -d "缓存"
-python scripts/port-manager.py register $API_PORT $PROJECT_NAME api -d "后端API"
+python scripts/port-management/port-manager.py register $MYSQL_PORT $PROJECT_NAME mysql -d "主数据库"
+python scripts/port-management/port-manager.py register $REDIS_PORT $PROJECT_NAME redis -d "缓存"
+python scripts/port-management/port-manager.py register $API_PORT $PROJECT_NAME api -d "后端API"
 
 # 生成 .env
 cat > .env << ENVEOF
@@ -269,10 +269,10 @@ echo "  API: $API_PORT"
 **解决**:
 ```bash
 # 1. 检查冲突
-python scripts/port-manager.py conflicts
+python scripts/port-management/port-manager.py conflicts
 
 # 2. 查看占用进程
-python scripts/port-manager.py check <port>
+python scripts/port-management/port-manager.py check <port>
 
 # 3. 重新分配端口
 python scripts/port-management/docker-compose-sync.py sync ./docker-compose.yml

@@ -360,6 +360,6 @@ Autopilot 状态保存在 `memory/autopilot-state.json`:
 ## 相关文档
 
 - `/autopilot` 命令: `commands/general/autopilot.md`
-- 工作流: `workflows/autopilot-flow.md`
+- 工作流: `workflows/execution/autopilot-flow.md`
 - Ralph Loop: `commands/general/ralph.md`
 - QA 系统: `QA-SYSTEM.md`

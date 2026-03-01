@@ -148,7 +148,7 @@
 
 #### 2.3 完整文档
 
-- `workflows/self-healing.md` (12KB)
+- `workflows/quality/self-healing.md` (12KB)
 - `.claude/examples/spec-first-workflow.md` (13KB)
 - `QA-SYSTEM.md` (9.5KB)
 - `QA-QUICKSTART.md` (7.0KB)
@@ -240,7 +240,7 @@
 
 #### 4.4 完整文档
 
-- `workflows/parallel-development.md` (543行)
+- `workflows/execution/parallel-development.md` (543行)
 - `examples/worktree-workflow.md` (643行) - 10天Sprint完整示例
 
 ---
@@ -308,7 +308,7 @@ Agent Prompt = Core + Agent-Specific + Variables
 
 #### 6.1 智能策略选择
 
-**创建**: `agents/strategy-selector.md` (323行, 10.2KB)
+**创建**: `agents/ops/strategy-selector.md` (323行, 10.2KB)
 
 **7维度分析**:
 1. 任务复杂度 (简单/中等/复杂)
@@ -326,7 +326,7 @@ Agent Prompt = Core + Agent-Specific + Variables
 
 #### 6.2 编排模式库
 
-**创建**: `workflows/orchestration-patterns.md` (1,305行, 41.1KB)
+**创建**: `workflows/orchestration/orchestration-patterns.md` (1,305行, 41.1KB)
 
 **7种编排模式**:
 
@@ -350,7 +350,7 @@ Agent Prompt = Core + Agent-Specific + Variables
 
 #### 6.3 监控与整合
 
-**创建**: `workflows/orchestration-monitor.md` (1,085行, 34.2KB)
+**创建**: `workflows/orchestration/orchestration-monitor.md` (1,085行, 34.2KB)
 
 **6大核心系统**:
 1. 实时监控 (健康、进度、性能)
@@ -416,7 +416,7 @@ Agent Prompt = Core + Agent-Specific + Variables
 
 #### 7.2 监控Agent
 
-**创建**: `agents/performance-monitor.md` (11.4KB)
+**创建**: `agents/ops/performance-monitor.md` (11.4KB)
 
 **核心功能**:
 - 自动数据收集
@@ -427,7 +427,7 @@ Agent Prompt = Core + Agent-Specific + Variables
 
 #### 7.3 自动优化器
 
-**创建**: `agents/auto-optimizer.md` (16.4KB)
+**创建**: `agents/ops/auto-optimizer.md` (16.4KB)
 
 **4大优化策略**:
 1. **模型选择**: Sonnet → Haiku降级机会
@@ -634,12 +634,12 @@ Agent Prompt = Core + Agent-Specific + Variables
 
 **深入学习** (2-4小时):
 4. `analysis/COMPREHENSIVE-ANALYSIS.md` (设计理念)
-5. `workflows/orchestration-patterns.md` (编排模式)
+5. `workflows/orchestration/orchestration-patterns.md` (编排模式)
 6. `examples/orchestration-examples.md` (实战案例)
 
 **专题研究** (按需):
 7. 质量保障: `QA-QUICKSTART.md`
-8. Worktree并行: `workflows/parallel-development.md`
+8. Worktree并行: `workflows/execution/parallel-development.md`
 9. Prompt管理: `.claude/prompts/README.md`
 10. 性能监控: `examples/performance-monitoring.md`
 

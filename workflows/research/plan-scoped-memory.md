@@ -355,6 +355,6 @@ Intent Detector 可以:
 
 ## 相关文档
 
-- Context Archivist: `agents/context-archivist.md`
+- Context Archivist: `agents/ops/context-archivist.md`
 - 上下文归档: `docs/context-archival-guide.md`
-- Ralph Manager: `workflows/ralph-manager.md`
+- Ralph Manager: `workflows/execution/ralph-manager.md`

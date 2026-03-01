@@ -37,7 +37,7 @@ The Ralph Loop is a self-executing iteration system that autonomously completes 
 - Checkpoint-based recovery and fault tolerance
 - Maximum 10 iterations with configurable limits
 
-**Documentation**: `agents/ralph.md`, `workflows/ralph-manager.md`
+**Documentation**: `agents/ralph.md`, `workflows/execution/ralph-manager.md`
 
 #### HUD Statusline
 
@@ -99,7 +99,7 @@ Isolated knowledge contexts for different development tasks:
     └── ...
 ```
 
-**Documentation**: `workflows/plan-scoped-memory.md`
+**Documentation**: `workflows/research/plan-scoped-memory.md`
 
 #### TUI Configuration
 
@@ -142,7 +142,7 @@ Full autonomous execution from requirements to delivery:
 - `supervised`: Phase-level review checkpoints
 - `step`: Every step confirmation
 
-**Documentation**: `commands/general/autopilot.md`, `workflows/autopilot-flow.md`
+**Documentation**: `commands/general/autopilot.md`, `workflows/execution/autopilot-flow.md`
 
 #### Research Parallel Workflow
 
@@ -158,7 +158,7 @@ Multi-agent scientific research orchestration:
 - **PARALLEL**: Experiment execution (4 workers, 2.3x speedup)
 - **HIERARCHICAL**: Data analysis (lead + workers, 2.7x speedup)
 
-**Documentation**: `workflows/research-parallel.md`
+**Documentation**: `workflows/research/research-parallel.md`
 
 #### Rust Performance Tools
 

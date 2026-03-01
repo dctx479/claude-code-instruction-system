@@ -262,7 +262,7 @@ Workers 状态：
 
 - Skill 定义：`C:\Users\ASUS\.claude\skills\literature-mentor\SKILL.md`
 - 单篇快速：`commands/research/literature-review-quick.md`
-- 编排模式：`workflows/orchestration-patterns.md`（SWARM 模式）
+- 编排模式：`workflows/orchestration/orchestration-patterns.md`（SWARM 模式）
 - Zotero 集成：`integrations/zotero-mcp-setup.md`
 
 ## 预期效果

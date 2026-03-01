@@ -253,4 +253,4 @@ Ralph 的每次执行会创建独立的计划记忆空间。
 
 - `hooks/ralph-stop-interceptor.sh` - Stop Hook 实现
 - `memory/ralph-state.json` - 状态文件
-- `workflows/ralph-manager.md` - 详细工作流
+- `workflows/execution/ralph-manager.md` - 详细工作流

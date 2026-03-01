@@ -11,32 +11,32 @@
 
 ```bash
 # 查看所有已注册端口
-python scripts/port-manager.py list
+python scripts/port-management/port-manager.py list
 
 # 注册端口
-python scripts/port-manager.py register 3307 myproject mysql -d "主数据库"
+python scripts/port-management/port-manager.py register 3307 myproject mysql -d "主数据库"
 
 # 查看端口详情
-python scripts/port-manager.py check 3307
+python scripts/port-management/port-manager.py check 3307
 
 # 推荐可用端口
-python scripts/port-manager.py suggest mysql
+python scripts/port-management/port-manager.py suggest mysql
 
 # 检测端口冲突
-python scripts/port-manager.py conflicts
+python scripts/port-management/port-manager.py conflicts
 ```
 
 ### 2. 项目管理
 
 ```bash
 # 列出所有项目
-python scripts/port-manager.py projects
+python scripts/port-management/port-manager.py projects
 
 # 查看项目端口
-python scripts/port-manager.py list --project myproject
+python scripts/port-management/port-manager.py list --project myproject
 
 # 导出项目配置到 .env
-python scripts/port-manager.py export myproject -o .env
+python scripts/port-management/port-manager.py export myproject -o .env
 ```
 
 ---
@@ -83,17 +83,17 @@ ADMIN_PORT=8081
 
 ```bash
 # 1. 查看推荐端口
-python scripts/port-manager.py suggest mysql
-python scripts/port-manager.py suggest redis
-python scripts/port-manager.py suggest api
+python scripts/port-management/port-manager.py suggest mysql
+python scripts/port-management/port-manager.py suggest redis
+python scripts/port-management/port-manager.py suggest api
 
 # 2. 注册端口
-python scripts/port-manager.py register 3307 myproject mysql -d "主数据库"
-python scripts/port-manager.py register 6380 myproject redis -d "缓存"
-python scripts/port-manager.py register 8001 myproject api -d "后端API"
+python scripts/port-management/port-manager.py register 3307 myproject mysql -d "主数据库"
+python scripts/port-management/port-manager.py register 6380 myproject redis -d "缓存"
+python scripts/port-management/port-manager.py register 8001 myproject api -d "后端API"
 
 # 3. 导出配置
-python scripts/port-manager.py export myproject -o .env
+python scripts/port-management/port-manager.py export myproject -o .env
 ```
 
 ### 2. 使用环境变量
@@ -112,20 +112,20 @@ services:
 
 ```bash
 # 查看端口使用统计
-python scripts/port-manager.py stats
+python scripts/port-management/port-manager.py stats
 
 # 检测长期未使用的端口
-python scripts/port-manager.py cleanup --dry-run --inactive-days 30
+python scripts/port-management/port-manager.py cleanup --dry-run --inactive-days 30
 ```
 
 ### 4. 解决冲突
 
 ```bash
 # 检测冲突
-python scripts/port-manager.py conflicts
+python scripts/port-management/port-manager.py conflicts
 
 # 迁移到新端口
-python scripts/port-manager.py migrate 3306 3307 --project myproject
+python scripts/port-management/port-manager.py migrate 3306 3307 --project myproject
 ```
 
 ---
@@ -136,7 +136,7 @@ python scripts/port-manager.py migrate 3306 3307 --project myproject
 
 ```bash
 # 检查端口详情，会显示占用进程
-python scripts/port-manager.py check 3306
+python scripts/port-management/port-manager.py check 3306
 ```
 
 ### Q: 如何批量导入现有项目的端口?

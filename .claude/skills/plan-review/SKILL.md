@@ -388,8 +388,8 @@ PLAN.md - 微服务架构重构计划
   - `agents/god-committee/god-member.md` - God Committee
 
 - **工作流**:
-  - `workflows/autopilot-flow.md` - Autopilot 工作流
-  - `workflows/self-healing.md` - 自愈循环
+  - `workflows/execution/autopilot-flow.md` - Autopilot 工作流
+  - `workflows/quality/self-healing.md` - 自愈循环
 
 - **模板**:
   - `specs/SPEC-TEMPLATE.md` - 规范模板

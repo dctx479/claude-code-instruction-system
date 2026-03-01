@@ -433,7 +433,7 @@ def select_strategy_with_worktree(task):
 
 ### 参考资料
 
-- 详细工作流: `workflows/parallel-development.md`
+- 详细工作流: `workflows/execution/parallel-development.md`
 - 完整示例: `examples/worktree-workflow.md`
 - 追踪数据: `memory/active-worktrees.md`
 

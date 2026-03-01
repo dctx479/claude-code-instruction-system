@@ -552,7 +552,7 @@ Hooks 配置会合并（不是覆盖）：
         "hooks": [
           {
             "type": "command",
-            "command": "python ./scripts/port-manager.py check-docker-command",
+            "command": "python ./scripts/port-management/port-manager.py check-docker-command",
             "timeout": 3000
           }
         ]

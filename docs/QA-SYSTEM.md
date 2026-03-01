@@ -334,7 +334,7 @@ grep "P0\|P1\|P2" QA-REPORT-*.md | sort | uniq -c
 ### 核心文档
 - 规范管理指南: `specs/README.md`
 - 规范模板: `specs/SPEC-TEMPLATE.md`
-- 自我修复循环: `workflows/self-healing.md`
+- 自我修复循环: `workflows/quality/self-healing.md`
 - 完整流程示例: `.claude/examples/spec-first-workflow.md`
 
 ### Agent定义

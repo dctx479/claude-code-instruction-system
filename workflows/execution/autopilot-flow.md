@@ -454,7 +454,7 @@ completion_report:
 ## 相关文档
 
 - 命令文档: `commands/general/autopilot.md`
-- Agent 定义: `agents/autopilot-orchestrator.md`
-- Ralph Loop: `workflows/ralph-manager.md`
-- QA 系统: `workflows/self-healing.md`
-- 编排模式: `workflows/orchestration-patterns.md`
+- Agent 定义: `agents/ops/autopilot-orchestrator.md`
+- Ralph Loop: `workflows/execution/ralph-manager.md`
+- QA 系统: `workflows/quality/self-healing.md`
+- 编排模式: `workflows/orchestration/orchestration-patterns.md`

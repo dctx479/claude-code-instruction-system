@@ -174,5 +174,5 @@ The intervention agent will always:
 - **Agent Definitions**: `agents/god-committee/`
 - **Skill Definition**: `.claude/skills/god-oversight/SKILL.md`
 - **Orchestrator**: `agents/orchestrator.md`
-- **Autopilot**: `agents/autopilot-orchestrator.md`
+- **Autopilot**: `agents/ops/autopilot-orchestrator.md`
 - **QA System**: `agents/qa-reviewer.md`, `agents/qa-fixer.md`

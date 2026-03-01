@@ -635,7 +635,7 @@ A: 用数据说话，展示A/B测试结果，强调风险控制措施。
 ## 附录
 
 ### A. 相关文档
-- Agent定义: `agents/performance-monitor.md`, `agents/auto-optimizer.md`
+- Agent定义: `agents/ops/performance-monitor.md`, `agents/ops/auto-optimizer.md`
 - 性能数据: `memory/agent-performance.md`
 - 优化历史: `memory/optimization-history.md`
 - 报告模板: `memory/performance-reports/TEMPLATE.md`

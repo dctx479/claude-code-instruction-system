@@ -540,7 +540,7 @@ git worktree prune
    - 创建定时清理脚本
 
 3. **探索高级功能**
-   - 阅读 `workflows/parallel-development.md`
+   - 阅读 `workflows/execution/parallel-development.md`
    - 尝试 `/orchestrate` 自动化编排
    - 使用 `/swarm` 大规模并行
 

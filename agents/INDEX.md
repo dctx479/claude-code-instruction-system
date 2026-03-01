@@ -37,7 +37,7 @@
 
 #### autopilot-orchestrator
 ```yaml
-文件: agents/autopilot-orchestrator.md
+文件: agents/ops/autopilot-orchestrator.md
 模型: opus
 工具: Read, Write, Edit, Bash, Grep, Glob, Task
 描述: 全自主编排器 - 整合 Ralph Loop、Orchestrator 和 QA 系统，端到端任务自动执行
@@ -137,7 +137,7 @@
 
 #### security-analyst
 ```yaml
-文件: agents/security-analyst.md
+文件: agents/security/security-analyst.md
 模型: sonnet
 工具: Read, Grep, Glob, Bash
 描述: 安全分析专家 - 代码安全审计、漏洞分析和安全建议
@@ -171,7 +171,7 @@
 
 #### strategy-selector
 ```yaml
-文件: agents/strategy-selector.md
+文件: agents/ops/strategy-selector.md
 模型: sonnet
 工具: Read, Grep, Glob
 描述: 策略选择专家 - 分析任务特征并推荐最优编排策略
@@ -229,7 +229,7 @@
 
 #### performance-monitor
 ```yaml
-文件: agents/performance-monitor.md
+文件: agents/ops/performance-monitor.md
 模型: sonnet
 工具: Read, Write, Glob, Bash
 描述: 性能监控专家 - 监控和分析Agent性能数据
@@ -243,7 +243,7 @@
 
 #### auto-optimizer
 ```yaml
-文件: agents/auto-optimizer.md
+文件: agents/ops/auto-optimizer.md
 模型: sonnet
 工具: Read, Edit, Write, Glob
 描述: 自动优化专家 - 基于性能数据优化系统配置
@@ -257,7 +257,7 @@
 
 #### context-archivist
 ```yaml
-文件: agents/context-archivist.md
+文件: agents/ops/context-archivist.md
 模型: sonnet
 工具: Read, Write, Grep, Glob
 描述: 上下文归档专家 - 提炼对话中的关键信息并结构化沉淀
@@ -521,7 +521,7 @@
 | test | automated-testing | agents/testing/automated-testing.md | test/测试/单元测试/e2e/覆盖率 |
 | refactor | code-reviewer | agents/code-reviewer.md | refactor/重构/优化代码/代码整理 |
 | architect | architect | agents/architect.md | architect/架构/系统设计/技术选型/微服务 |
-| security | security-analyst | agents/security-analyst.md | security/安全/漏洞/vulnerability/xss/csrf |
+| security | security-analyst | agents/security/security-analyst.md | security/安全/漏洞/vulnerability/xss/csrf |
 | security-audit | security-audit | agents/security/security-audit.md | 安全审计/依赖扫描/cve/合规/gdpr/hipaa |
 | data | data-scientist | agents/data-scientist.md | sql/database/数据库/query/查询 |
 | analysis | data-analyst | agents/research/data-analyst.md | analyze/分析/statistics/统计 |
@@ -536,10 +536,10 @@
 | document | spec-writer | agents/spec-writer.md | document/文档/readme/spec/规范 |
 | qa-review | qa-reviewer | agents/qa-reviewer.md | qa/质量审查/质量检查/验收 |
 | qa-fix | qa-fixer | agents/qa-fixer.md | qa fix/qa修复/自动修复/autofix |
-| perf-monitor | performance-monitor | agents/performance-monitor.md | 性能报告/性能监控/performance monitor |
-| optimize | auto-optimizer | agents/auto-optimizer.md | 系统优化/成本优化/token优化 |
-| autopilot | autopilot-orchestrator | agents/autopilot-orchestrator.md | /autopilot/全自主/端到端 |
-| archive | context-archivist | agents/context-archivist.md | save context/保存上下文/归档 |
+| perf-monitor | performance-monitor | agents/ops/performance-monitor.md | 性能报告/性能监控/performance monitor |
+| optimize | auto-optimizer | agents/ops/auto-optimizer.md | 系统优化/成本优化/token优化 |
+| autopilot | autopilot-orchestrator | agents/ops/autopilot-orchestrator.md | /autopilot/全自主/端到端 |
+| archive | context-archivist | agents/ops/context-archivist.md | save context/保存上下文/归档 |
 | git | orchestrator | agents/orchestrator.md | commit/pr/merge/branch |
 | deploy | orchestrator | agents/orchestrator.md | deploy/部署/docker/k8s |
 | general | orchestrator | agents/orchestrator.md | （默认） |
@@ -550,7 +550,7 @@
 
 | Agent ID | 文件路径 | 触发方式 |
 |----------|----------|----------|
-| strategy-selector | agents/strategy-selector.md | orchestrator 内部调用 |
+| strategy-selector | agents/ops/strategy-selector.md | orchestrator 内部调用 |
 | god-member | agents/god-committee/god-member.md | 定期唤醒 / 里程碑触发 |
 | god-consensus | agents/god-committee/god-consensus.md | god-member 发起审议 |
 | god-intervention | agents/god-committee/god-intervention.md | god-consensus 批准后 |

@@ -40,7 +40,7 @@
 - `hooks/ralph-stop-interceptor.sh` - Stop Hook 拦截器
 - `memory/ralph-state.json` - 状态追踪文件
 - `commands/general/ralph.md` - 命令文档
-- `workflows/ralph-manager.md` - 工作流文档
+- `workflows/execution/ralph-manager.md` - 工作流文档
 
 **核心特性**:
 - 自动检测任务完成条件
@@ -83,7 +83,7 @@
 **实施文件**:
 - `hooks/intent-detector.sh` - 意图检测 Hook
 - `config/keywords.json` - 关键词配置
-- `workflows/intent-matcher.md` - 工作流文档
+- `workflows/routing/intent-matcher.md` - 工作流文档
 
 **支持的意图类型**:
 - debug, review, test, refactor
@@ -131,8 +131,8 @@ cc-patcher.sh verify       # 验证安装
 **功能描述**: 根据任务复杂度自动选择最优模型，平衡成本和质量。
 
 **实施文件**:
-- `workflows/model-router.md` - 路由工作流
-- `workflows/complexity-scorer.md` - 复杂度评分
+- `workflows/routing/model-router.md` - 路由工作流
+- `workflows/routing/complexity-scorer.md` - 复杂度评分
 
 **评分维度** (总分10分):
 1. 代码规模 (0-2)
@@ -159,8 +159,8 @@ cc-patcher.sh verify       # 验证安装
 
 **实施文件**:
 - `.claude/context/plans/index.json` - 计划索引
-- `workflows/plan-scoped-memory.md` - 工作流文档
-- `agents/context-archivist.md` - Agent 增强
+- `workflows/research/plan-scoped-memory.md` - 工作流文档
+- `agents/ops/context-archivist.md` - Agent 增强
 
 **目录结构**:
 ```
@@ -224,9 +224,9 @@ cargo build --release
 **功能描述**: 端到端自动执行，从需求到交付，整合 Ralph Loop + Orchestrator + QA 系统。
 
 **实施文件**:
-- `agents/autopilot-orchestrator.md` - Agent 定义
+- `agents/ops/autopilot-orchestrator.md` - Agent 定义
 - `commands/general/autopilot.md` - 命令文档
-- `workflows/autopilot-flow.md` - 工作流定义
+- `workflows/execution/autopilot-flow.md` - 工作流定义
 
 **5 阶段工作流**:
 1. **Planning** - 任务分解、策略选择、资源分配
@@ -264,7 +264,7 @@ IDLE → PLANNING → SPEC_GEN → DEVELOP → QA → DELIVERY → COMPLETE
 **功能描述**: 多 Agent 并行执行科研任务，显著提升研究效率。
 
 **实施文件**:
-- `workflows/research-parallel.md` - 并行工作流定义
+- `workflows/research/research-parallel.md` - 并行工作流定义
 
 **三种并行策略**:
 
@@ -392,7 +392,7 @@ git-info diff --base main         # 差异统计
 
 ### 3.3 Agent 增强
 
-更新 `agents/context-archivist.md`:
+更新 `agents/ops/context-archivist.md`:
 - 添加 Plan-Scoped Memory 支持
 - 新增计划级上下文管理
 - 新增命令支持
@@ -410,11 +410,11 @@ git-info diff --base main         # 差异统计
 | `memory/ralph-state.json` | Ralph 状态 | ~0.5KB |
 | `memory/hud-config.json` | HUD 配置 | ~1KB |
 | `commands/general/ralph.md` | Ralph 命令文档 | ~8KB |
-| `workflows/ralph-manager.md` | Ralph 工作流 | ~6KB |
-| `workflows/intent-matcher.md` | 意图匹配工作流 | ~5KB |
-| `workflows/model-router.md` | 模型路由工作流 | ~7KB |
-| `workflows/complexity-scorer.md` | 复杂度评分 | ~5KB |
-| `workflows/plan-scoped-memory.md` | 计划级记忆 | ~8KB |
+| `workflows/execution/ralph-manager.md` | Ralph 工作流 | ~6KB |
+| `workflows/routing/intent-matcher.md` | 意图匹配工作流 | ~5KB |
+| `workflows/routing/model-router.md` | 模型路由工作流 | ~7KB |
+| `workflows/routing/complexity-scorer.md` | 复杂度评分 | ~5KB |
+| `workflows/research/plan-scoped-memory.md` | 计划级记忆 | ~8KB |
 | `.claude/statusline/hud.sh` | HUD 渲染脚本 | ~5KB |
 | `.claude/context/plans/index.json` | 计划索引 | ~0.3KB |
 | `config/keywords.json` | 意图关键词 | ~4KB |
@@ -429,7 +429,7 @@ git-info diff --base main         # 差异统计
 |------|----------|
 | `CLAUDE.md` | 版本号 + 新特性章节 |
 | `hooks/hooks.json` | 新增 hooks |
-| `agents/context-archivist.md` | Plan-Scoped 支持 |
+| `agents/ops/context-archivist.md` | Plan-Scoped 支持 |
 
 ---
 

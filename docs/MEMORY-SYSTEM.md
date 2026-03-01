@@ -77,7 +77,7 @@
 
 **自动触发**: PreCompact Hook（`.claude/hooks/pre-compact.sh`）
 
-**Agent**: `agents/context-archivist.md`
+**Agent**: `agents/ops/context-archivist.md`
 
 ---
 

@@ -25,24 +25,24 @@
 - ✅ `.claude/statusline/hud.sh`
 - ✅ `hooks/intent-detector.sh`
 - ✅ `config/keywords.json`
-- ✅ `workflows/model-router.md`
-- ✅ `workflows/plan-scoped-memory.md`
+- ✅ `workflows/routing/model-router.md`
+- ✅ `workflows/research/plan-scoped-memory.md`
 - ✅ `tools/tui-config/README.md`
 - ✅ `commands/general/autopilot.md`
-- ✅ `workflows/autopilot-flow.md`
-- ✅ `workflows/research-parallel.md`
+- ✅ `workflows/execution/autopilot-flow.md`
+- ✅ `workflows/research/research-parallel.md`
 - ✅ `tools/hud-render-rust/README.md`
 - ✅ `tools/git-info-rust/README.md`
 
 #### 编排系统文档
-- ✅ `workflows/orchestration-patterns.md`
-- ✅ `workflows/orchestration-monitor.md`
+- ✅ `workflows/orchestration/orchestration-patterns.md`
+- ✅ `workflows/orchestration/orchestration-monitor.md`
 - ✅ `agents/orchestrator.md`
-- ✅ `agents/strategy-selector.md`
+- ✅ `agents/ops/strategy-selector.md`
 
 #### 质量保障文档
 - ✅ `specs/README.md`
-- ✅ `workflows/self-healing.md`
+- ✅ `workflows/quality/self-healing.md`
 - ✅ `.claude/examples/spec-first-workflow.md`
 - ✅ `agents/spec-writer.md`
 - ✅ `agents/qa-reviewer.md`
@@ -55,9 +55,9 @@
 - ✅ `agents/research/data-analyst.md`
 
 #### 性能监控文档
-- ✅ `agents/performance-monitor.md`
-- ✅ `agents/auto-optimizer.md`
-- ✅ `agents/context-archivist.md`
+- ✅ `agents/ops/performance-monitor.md`
+- ✅ `agents/ops/auto-optimizer.md`
+- ✅ `agents/ops/context-archivist.md`
 
 #### 代码规范文档
 - ✅ `docs/coding-standards.md`
@@ -113,7 +113,7 @@
 - ✅ `hooks/ralph-stop-interceptor.sh` - 语法正确
 
 #### Python 脚本
-- ✅ `scripts/port-manager.py` - 语法正确
+- ✅ `scripts/port-management/port-manager.py` - 语法正确
 - ✅ `graph/builder.py` - 语法正确
 - ✅ `mcp/context-tools/server.py` - 语法正确
 

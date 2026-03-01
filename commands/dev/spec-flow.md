@@ -412,9 +412,9 @@ Session 3: IMPLEMENT (4 小时)
 
 ## 相关文档
 
-- **Spec-First 工作流**: `workflows/spec-driven-dev.md`
+- **Spec-First 工作流**: `workflows/quality/spec-driven-dev.md`
 - **九维度清单**: `agents/spec-writer.md`
-- **编排策略**: `workflows/orchestration-patterns.md`
+- **编排策略**: `workflows/orchestration/orchestration-patterns.md`
 - **上下文工程**: `workflows/context-engineering.md`
 
 ---

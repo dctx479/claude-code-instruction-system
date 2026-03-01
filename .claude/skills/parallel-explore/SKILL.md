@@ -504,8 +504,8 @@ parallel_explore_config:
 
 - **Aha-Loop 方法论**: 基于完整实现的探索式开发
 - **Git Worktree 文档**: https://git-scm.com/docs/git-worktree
-- **太一元系统 COMPETITIVE 策略**: `workflows/orchestration-patterns.md`
-- **Strategy Selector**: `agents/strategy-selector.md`
+- **太一元系统 COMPETITIVE 策略**: `workflows/orchestration/orchestration-patterns.md`
+- **Strategy Selector**: `agents/ops/strategy-selector.md`
 
 ---
 

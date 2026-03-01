@@ -397,5 +397,5 @@ web_search 返回结果
 
 - **调研来源**: simple_claude_deep_research_agent
 - **太一元系统文档**: `CLAUDE.md`
-- **编排模式**: `workflows/orchestration-patterns.md`
+- **编排模式**: `workflows/orchestration/orchestration-patterns.md`
 - **Task Agent 使用**: Claude Code 内置能力

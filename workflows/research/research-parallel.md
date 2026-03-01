@@ -414,4 +414,4 @@ conflict_resolution:
 - 文献综述命令: `commands/research/literature-review.md`
 - 实验追踪命令: `commands/research/experiment-track.md`
 - 科研 Agent: `agents/research/`
-- 编排模式: `workflows/orchestration-patterns.md`
+- 编排模式: `workflows/orchestration/orchestration-patterns.md`

@@ -607,5 +607,5 @@ Day 2 (下午):
 
 **参考资料**:
 - 规范模板: `specs/SPEC-TEMPLATE.md`
-- QA流程: `workflows/self-healing.md`
+- QA流程: `workflows/quality/self-healing.md`
 - Agent定义: `agents/spec-writer.md`, `agents/qa-reviewer.md`, `agents/qa-fixer.md`
