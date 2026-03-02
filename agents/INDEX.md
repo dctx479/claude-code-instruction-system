@@ -97,6 +97,36 @@
 触发: 计划编写完成后、architect 输出后
 ```
 
+#### requirements-analyst
+```yaml
+文件: agents/requirements-analyst.md
+模型: sonnet
+工具: Read, Grep, Glob
+描述: 需求分析专家 - 识别、分析和澄清软件开发需求，分解用户故事
+适用: 需求模糊时、用户故事拆解、功能点细化
+专长:
+  - 高层次需求分解为具体功能点
+  - 功能性 vs 非功能性需求区分
+  - 需求澄清与歧义识别
+  - 验收标准定义
+触发: requirements intent 或 @requirements
+```
+
+#### tech-mentor
+```yaml
+文件: agents/tech-mentor.md
+模型: sonnet
+工具: All tools（含 Context7/DuckDuckGo/Serena MCP）
+描述: 技术导师 - 全栈架构指导、文档查询、技术方案深度对比
+适用: 技术难题攻坚、架构方案对比、框架原理深度理解
+专长:
+  - 系统架构设计与评审
+  - 技术方案深度对比（成本/适用场景）
+  - Context7 查询官方文档
+  - 启发式技术引导，培养独立思考
+触发: mentor intent 或 @mentor
+```
+
 ---
 
 ### 开发类 (Development)
@@ -129,6 +159,21 @@
   - 最小修复方案
   - 防御性代码添加
 触发: 遇到任何问题时主动使用
+```
+
+#### senior-code-architect
+```yaml
+文件: agents/senior-code-architect.md
+模型: sonnet
+工具: Read, Grep, Glob, Bash
+描述: 高级架构师 - 代码审查、框架指导（Fastify/pnpm），集成 Exa MCP 获取最新实践
+适用: 框架选型、高级代码审查、现代开发栈最佳实践
+专长:
+  - 流行框架指导（Fastify/Node.js/React）
+  - pnpm 最佳实践与依赖管理
+  - Exa MCP 获取最新框架指南
+  - 代码质量与架构审查
+触发: architect-senior intent 或 @architect-senior
 ```
 
 ---
@@ -418,6 +463,21 @@
 触发: 测试任务
 ```
 
+#### vitest-tester
+```yaml
+文件: agents/vitest-tester.md
+模型: sonnet
+工具: Bash, Read, Write
+描述: Vitest 测试专家 - 单元/集成测试编写、mock 策略设计
+适用: Vitest 测试框架相关任务、测试调试
+专长:
+  - 单元测试和集成测试编写
+  - Mock/Stub 策略设计
+  - 断言和匹配器使用
+  - 测试覆盖率优化
+触发: vitest intent 或 @vitest
+```
+
 ---
 
 ### 可视化类 (Visualization)
@@ -540,6 +600,10 @@
 | optimize | auto-optimizer | agents/ops/auto-optimizer.md | 系统优化/成本优化/token优化 |
 | autopilot | autopilot-orchestrator | agents/ops/autopilot-orchestrator.md | /autopilot/全自主/端到端 |
 | archive | context-archivist | agents/ops/context-archivist.md | save context/保存上下文/归档 |
+| requirements | requirements-analyst | agents/requirements-analyst.md | 需求分析/需求拆解/user story/功能点 |
+| mentor | tech-mentor | agents/tech-mentor.md | 技术导师/技术方案/架构对比/原理讲解 |
+| architect-senior | senior-code-architect | agents/senior-code-architect.md | 高级架构/框架选型/fastify/pnpm |
+| vitest | vitest-tester | agents/vitest-tester.md | vitest/单元测试/mock/测试框架 |
 | git | orchestrator | agents/orchestrator.md | commit/pr/merge/branch |
 | deploy | orchestrator | agents/orchestrator.md | deploy/部署/docker/k8s |
 | general | orchestrator | agents/orchestrator.md | （默认） |
@@ -618,6 +682,13 @@
 ---
 
 ## 更新日志
+
+### 2026-03-02
+- 新增专业类: requirements-analyst（需求分析专家）
+- 新增专业类: tech-mentor（技术导师，含 Context7/DuckDuckGo/Serena MCP）
+- 新增开发类: senior-code-architect（高级架构师，Exa MCP 集成）
+- 新增测试类: vitest-tester（Vitest 测试专家）
+- 自动调度映射表补充 4 个新意图（requirements/mentor/architect-senior/vitest）
 
 ### 2026-02-20
 - 新增自动调度映射表 (Auto-Dispatch Mapping)
