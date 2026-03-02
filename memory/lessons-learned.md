@@ -41,6 +41,36 @@
 
 ## 经验条目
 
+### [2026-03-02] Ralph Stop Interceptor 三大 Bug 修复 #013
+
+### 问题描述
+Ralph 自主循环的 Stop Hook 存在三个连环 Bug：
+1. `grep|cut|tr` JSON 解析在嵌套/空格场景下失效
+2. `max_iterations` 只读 env var，忽略 state 文件里的值
+3. 双 sed 非原子更新导致 state 文件可能被破坏
+
+额外问题：Windows 上 `command -v python3` 找到 Microsoft Store 执行别名，实际不可运行；`RALPH_STATE_FILE` 优先级逻辑错误（项目级覆盖显式设置的 env var）。
+
+### 根因分析
+- JSON 解析：shell text processing 无法可靠处理 JSON 结构
+- Python 检测：Windows App 执行别名返回真实路径但运行失败，需通过实际执行验证
+- 优先级：`${RALPH_STATE_FILE:-$GLOBAL_STATE}` 在 `if [[ -f $PROJECT_STATE ]]` 已赋值后无效
+
+### 解决方案
+1. 用 Python 内联 heredoc 替代所有 grep/sed JSON 操作（原子读取+写入 `.tmp` 再 `os.replace`）
+2. `_find_python()` 函数：用 `python -c "import sys; sys.exit(0)"` 验证可执行性
+3. 路径优先级修正：`if [[ -z "${RALPH_STATE_FILE:-}" ]]` → 显式 env var 优先
+
+### 新增功能
+- `status` 字段（INACTIVE/RUNNING/PAUSED/COMPLETED/FAILED）
+- `needs_confirmation` + PAUSED 状态支持
+- `last_updated` 自动更新（每次 Stop Hook 触发）
+- `metrics.total_iterations` 累计递增
+- 读取 state 文件的 `max_iterations`（而非 env var）
+
+### 标签
+#ralph #stop-hook #bash #windows #python #json
+
 ### [2026-02-21] statusline 不显示 - session_id 检测误杀 Stop 事件 #012
 
 ### 问题描述
