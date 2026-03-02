@@ -1231,5 +1231,45 @@ wc -m /path/to/project/CLAUDE.md  # 应 < 40000
 
 ---
 
+## [2026-03-02] 外部 Claude Code Agent 项目学习：互联网指标缺口与 SWARM 模式 #013
+
+### 问题描述
+审阅外部社区分享的 12 个 Claude Code + 多框架 Agent 项目，评估对当前太一元系统的学习价值。
+
+### 核心发现
+
+#### 1. Claude Code = Agent 框架定位
+> "Claude Code 也是 agent 框架，类似 langgraph, crewAI, autogen 等等 agent 框架"
+
+这是一个重要的心智模型：Claude Code 本身就是 Agent 编排平台，而不仅仅是 IDE 插件。太一元系统的架构选择（Agent 调度协议、Skills 系统、Ralph 循环）与 LangGraph/CrewAI 在设计哲学上是对等的。此定位值得在文档中明确阐述。
+
+#### 2. 互联网业务指标在 data-analyst 中缺失
+当前 `data-analyst` Agent 聚焦学术场景（假设检验、期刊图表）。外部项目展示了互联网场景的真实需求：
+- 拉新/留存/促活/转化漏斗
+- A/B 实验（样本量计算、统计显著性）
+- RFM 用户分群、LTV 估算
+- 推荐系统指标（CTR、覆盖率）
+
+**已修复**：`agents/research/data-analyst.md` 补充「互联网/业务场景」章节。
+
+#### 3. SWARM 模式的真实案例验证
+Claude-Code-Stock-Deep-Research 项目实现了「8阶段股票尽调 + 28个并行 Agent」的 SWARM 模式，验证了以下设计决策正确性：
+- 大规模并行（>10 agents）在真实任务中可行
+- 领域分阶段（8 stages）后再并行（28 agents/stage）是有效策略
+- `/stock-research AAPL, quick overview` 的简洁命令接口 UX 值得参考
+
+### 学习方法论
+- **提炼缺口，非照搬实现**：不引入 CrewAI/LangGraph 代码，但借鉴其场景覆盖
+- **增量补充现有 Agent**：data-analyst 扩展使用场景，而非创建新文件
+- **验证现有设计**：SWARM 模式已在编排指南中，外部案例证明路线正确
+
+### 过滤掉的内容
+- Seedance 分镜提示词 → 已有 skills，重复
+- CrewAI/AutoGen/LangGraph 具体实现 → 非 Claude Code 原生
+- OpenClaw Skills 集合 → 不同平台格式，不兼容
+
+### 标签
+#self-evolution #external-learning #data-analyst #internet-metrics #swarm #agent-framework
+
 <!-- 新的经验条目将自动添加在这里 -->
 
