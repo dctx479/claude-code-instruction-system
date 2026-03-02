@@ -228,17 +228,38 @@ npm run build / dev / test / typecheck
 评估当前进展 → 规划本轮工作 → 执行多个操作步骤 → 验证成果 → 标记完成
 ```
 
-**Claude 的职责**：每轮末尾必须将 `round_complete` 写入状态文件：
+**Claude 的职责 — 启动时**：执行 `/ralph` 后立即初始化状态文件：
 
-```bash
-# 本轮工作全部完成后，更新状态文件
-# 路径: memory/ralph-state.json (项目内) 或 ~/.claude/ralph-state.json (全局)
-{"active": true, "iteration": N, "round_complete": true, ...}
+```json
+// memory/ralph-state.json (项目内) 或 ~/.claude/ralph-state.json (全局)
+{
+  "active": true, "status": "RUNNING",
+  "iteration": 0, "max_iterations": 10,
+  "round_complete": false, "completed": false,
+  "fatal_error": false, "needs_confirmation": false,
+  "current_task": "task-id", "task_description": "用户任务描述",
+  "started_at": "<ISO8601>", "last_updated": "<ISO8601>",
+  "metrics": { "total_runs": 1, "successful_runs": 0, "failed_runs": 0, "total_iterations": 0 }
+}
 ```
 
-**Stop Hook 行为**：
-- `round_complete = true` → 递增 `iteration`，重置标志，启动下一轮
-- `round_complete = false` → 当前轮未完成，续跑但**不**递增计数
+**Claude 的职责 — 每轮结束时**写入以下信号之一：
+
+| 情形 | 写入字段 |
+|------|----------|
+| 本轮完成，任务未结束 | `round_complete: true` |
+| 整个任务全部完成 | `completed: true` + `round_complete: true` |
+| 不可恢复错误 | `fatal_error: true` |
+| 需要人工确认 | `needs_confirmation: true` |
+
+**Stop Hook 行为**（决策优先级从高到低）：
+- `active = false` → 允许停止
+- `completed = true` → 允许停止，写入 `status: COMPLETED`
+- `fatal_error = true` → 允许停止，写入 `status: FAILED`
+- `iteration ≥ max_iterations` → 允许停止
+- `needs_confirmation = true` → 允许停止，写入 `status: PAUSED`（用户确认后重置该字段）
+- `round_complete = true` → 递增 `iteration`，重置标志，启动下一轮（exit 3）
+- `round_complete = false` → 续跑当前轮，**不**递增计数（exit 3）
 
 > 详见: `commands/general/ralph.md`, `workflows/execution/ralph-manager.md`
 
