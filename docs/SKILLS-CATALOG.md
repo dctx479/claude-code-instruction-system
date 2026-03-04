@@ -22,6 +22,7 @@
 | **market-insight** | 三段式用户画像与产品机会分析 | `/insight <产品描述>` |
 | **exa-research** | 企业与市场研究，基于 Exa 搜索引擎 | `研究竞争对手`, `分析行业` |
 | **brightdata-research** | 电商平台深度调研，反反爬虫支持 | `电商调研`, `畅销排行` |
+| **amazon-analyse** | 亚马逊竞品 Listing 全维度穿透分析，基于 Sorftime MCP | `/amazon-analyse <ASIN> <市场>` |
 | **social-media-research** | 跨平台社媒研究，12+ 平台覆盖 | `舆情监控`, `KOL 分析` |
 | **literature-mentor** | 文献深度解读，交互/报告双模式 | `解读这篇论文`, `生成精读报告` |
 | **paper-revision** | 论文风格修改，技术准确性保持 | `修改论文风格` |
@@ -78,6 +79,8 @@
 | 社媒 + 深度调研 | 社媒调研智能体 |
 | 社媒 + 市场洞察 | 消费者画像 |
 | 电商 + 企业研究 | 全链路竞争分析 |
+| amazon-analyse + market-insight | 亚马逊选品决策闭环（竞品数据 → 用户需求洞察） |
+| brightdata-research + amazon-analyse | 双渠道电商情报（平台爬取 + MCP 官方数据） |
 | literature-mentor + paper-writing-assistant | 文献综述写作 |
 | literature-mentor + experiment-logger | 实验设计与执行 |
 | seedance-prompt + seedance-storyboard | AI 短剧全流程制作 |

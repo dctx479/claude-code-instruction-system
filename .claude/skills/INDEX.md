@@ -210,6 +210,19 @@
 触发: 电商平台数据调研任务
 ```
 
+#### amazon-analyse
+```yaml
+文件: .claude/skills/amazon-analyse/SKILL.md
+描述: 亚马逊竞品 Listing 全维度穿透分析，基于 Sorftime MCP 获取官方数据
+适用: 亚马逊选品决策、竞品 Listing 分析、关键词流量研究、评论痛点挖掘
+专长:
+  - 六大维度：产品详情/关键词流量/评论情感/销量排名/竞争格局/市场机会
+  - Quick/Standard/Deep 三种分析深度
+  - 真实 API 数据（非爬取），支持 US/DE/UK/JP 等多市场
+集成: Sorftime MCP
+触发: /amazon-analyse <ASIN> <MARKETPLACE>
+```
+
 #### social-media-research
 ```yaml
 文件: .claude/skills/social-media-research/SKILL.md
@@ -368,7 +381,8 @@
 | 快速构建 Demo | web-artifacts-builder | — |
 | 深度主题研究 | deep-research | exa-research |
 | 企业/竞品调研 | exa-research | — |
-| 电商数据采集 | brightdata-research | — |
+| 电商数据采集 | brightdata-research | amazon-analyse |
+| 亚马逊竞品分析 | amazon-analyse | market-insight |
 | 社媒舆情分析 | social-media-research | — |
 | 论文精读 | literature-mentor | — |
 | 论文写作润色 | paper-revision | — |
