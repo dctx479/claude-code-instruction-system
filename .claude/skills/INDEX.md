@@ -253,13 +253,15 @@
 #### paper-revision
 ```yaml
 文件: .claude/skills/paper-revision/SKILL.md
-描述: 论文/技术文档修改助手，将文本改写为解释性、通俗化的学术风格
-适用: 学术论文润色、技术文档改写、写作风格转换
+描述: 论文/技术文档全流程写作助手，覆盖大纲审核、结构仿写、润色、去AI化四种模式
+适用: 论文大纲检查、AI写作痕迹消除、文风仿写改写、学术文本润色
 专长:
-  - 保持技术准确性的同时提升可读性
-  - 学术风格规范（被动语态/客观表述/逻辑连贯）
-  - 段落重组与逻辑强化
-触发: 论文/文档写作和修改任务
+  - 大纲审核（逻辑/完整性/层级三维评分 + 修改建议大纲）
+  - 去AI化（识别8类AI特征句式并改写为自然表达）
+  - 结构仿写（提取参考段落逻辑骨架，套用到用户内容）
+  - 润色（改写措辞风格，更解释性、通俗化，保持技术准确）
+触发: 大纲审核/去AI化/仿写/论文润色修改任务
+集成: [paper-writing-assistant, literature-review, qa-reviewer]
 ```
 
 ---
@@ -384,8 +386,12 @@
 | 电商数据采集 | brightdata-research | amazon-analyse |
 | 亚马逊竞品分析 | amazon-analyse | market-insight |
 | 社媒舆情分析 | social-media-research | — |
-| 论文精读 | literature-mentor | — |
-| 论文写作润色 | paper-revision | — |
+| **论文大纲检查** | paper-revision（大纲审核模式） | — |
+| **论文写作润色** | paper-revision（润色模式） | — |
+| **去AI化/降AIGC率** | paper-revision（去AI化模式） | — |
+| **学习参考论文写法** | paper-revision（结构仿写模式） | — |
+| **论文精读/文献理解** | literature-mentor | — |
+| **论文全流程写作** | paper-revision | literature-mentor |
 | 数据分析 | data-analysis / pandas | — |
 | 深度学习任务 | pytorch | data-analysis |
 | 代码实现加速 | collaborating-with-codex | — |
@@ -399,6 +405,10 @@
 ---
 
 ## 更新日志
+
+### 2026-03-06
+- paper-revision 升级至 v1.1.0（四模式：润色/大纲审核/去AI化/结构仿写）
+- 场景速查表补充论文全流程 6 个场景，每种模式独立映射
 
 ### 2026-03-01
 - 创建 INDEX.md，实现真正的渐进式披露（节省 98% Token）
