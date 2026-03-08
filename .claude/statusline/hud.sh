@@ -194,25 +194,42 @@ get_time() {
 
 # Get current model from environment or stdin JSON
 get_model() {
-    local model="${CLAUDE_MODEL:-}"
+    local display_name="" model_id=""
 
     # Try to read from stdin JSON if available
     if [[ -n "$HUD_SESSION_JSON" ]]; then
         if command -v jq &>/dev/null; then
-            model=$(echo "$HUD_SESSION_JSON" | jq -r '.model.display_name // ""' 2>/dev/null || echo "")
+            display_name=$(echo "$HUD_SESSION_JSON" | jq -r '.model.display_name // ""' 2>/dev/null || echo "")
+            model_id=$(echo "$HUD_SESSION_JSON" | jq -r '.model.id // ""' 2>/dev/null || echo "")
         else
-            model=$(echo "$HUD_SESSION_JSON" | grep -o '"display_name":"[^"]*"' | cut -d'"' -f4 || echo "")
+            display_name=$(echo "$HUD_SESSION_JSON" | grep -o '"display_name":"[^"]*"' | cut -d'"' -f4 || echo "")
+            model_id=$(echo "$HUD_SESSION_JSON" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
         fi
     fi
 
-    # Fallback to environment variable
-    model="${model:-sonnet}"
+    # If display_name already has version info (e.g. "Sonnet 4.6"), use directly
+    if [[ -n "$display_name" && "$display_name" =~ [0-9] ]]; then
+        echo "$display_name"
+        return
+    fi
 
+    # Try to extract version from model_id (e.g. "claude-sonnet-4-6" → "Sonnet 4.6")
+    if [[ -n "$model_id" && "$model_id" =~ claude-(opus|sonnet|haiku)-([0-9]+)-([0-9]+) ]]; then
+        local family="${BASH_REMATCH[1]}"
+        local major="${BASH_REMATCH[2]}"
+        local minor="${BASH_REMATCH[3]}"
+        family="$(echo "${family:0:1}" | tr '[:lower:]' '[:upper:]')${family:1}"
+        echo "$family $major.$minor"
+        return
+    fi
+
+    # Fallback: use display_name or env
+    local model="${display_name:-${CLAUDE_MODEL:-sonnet}}"
     case "$model" in
-        *opus*) echo "Opus" ;;
-        *sonnet*) echo "Sonnet" ;;
-        *haiku*) echo "Haiku" ;;
-        *) echo "$(echo "$model" | cut -d'-' -f2 | head -c 6)" ;;
+        *[Oo]pus*) echo "Opus" ;;
+        *[Ss]onnet*) echo "Sonnet" ;;
+        *[Hh]aiku*) echo "Haiku" ;;
+        *) echo "$model" ;;
     esac
 }
 
@@ -330,7 +347,7 @@ get_git_ahead_behind() {
     echo "$result"
 }
 
-# Get context usage by reading transcript JSONL
+# Get context usage from transcript JSONL (via transcript_path in stdin JSON)
 get_context_usage() {
     local transcript=""
     if [[ -n "$HUD_SESSION_JSON" ]]; then
@@ -369,14 +386,14 @@ get_session_cost() {
         else
             cost=$(echo "$HUD_SESSION_JSON" | grep -o '"total_cost_usd":[0-9.]*' | head -1 | cut -d':' -f2 || echo "0")
         fi
-        printf "%.3f" "$cost"
+        printf "%.3f" "${cost:-0}"
         return
     fi
 
     echo "0.000"
 }
 
-# Get token usage from transcript JSONL
+# Get token usage from transcript JSONL (via transcript_path in stdin JSON)
 get_tokens() {
     local transcript=""
     if [[ -n "$HUD_SESSION_JSON" ]]; then
@@ -399,10 +416,12 @@ get_tokens() {
         fi
     fi
 
-    echo "0i/0o"
+    local input="${CLAUDE_TOKENS_IN:-0}"
+    local output="${CLAUDE_TOKENS_OUT:-0}"
+    echo "${input}i/${output}o"
 }
 
-# Get current agent from intent-state.json (written by intent-detector hook)
+# Get current agent from intent-state.json
 get_agent() {
     local intent_state="${HOME}/.claude/intent-state.json"
     if [[ -f "$intent_state" ]]; then
@@ -438,7 +457,7 @@ get_progress() {
 
 # Get Ralph status
 get_ralph_status() {
-    local ralph_file="${PWD}/memory/ralph-state.json"
+    local ralph_file="${HOME}/.claude/memory/ralph-state.json"
     if [[ -f "$ralph_file" ]]; then
         local content
         content=$(cat "$ralph_file" 2>/dev/null) || return
@@ -484,13 +503,13 @@ render_progress_bar() {
 render_model() {
     local model="$1"
     case "$model" in
-        "Opus")
+        *[Oo]pus*)
             echo -e "${COLORS[magenta]}${COLORS[bold]}$model${COLORS[reset]}"
             ;;
-        "Sonnet")
+        *[Ss]onnet*)
             echo -e "${COLORS[blue]}$model${COLORS[reset]}"
             ;;
-        "Haiku")
+        *[Hh]aiku*)
             echo -e "${COLORS[cyan]}$model${COLORS[reset]}"
             ;;
         *)
