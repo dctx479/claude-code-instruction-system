@@ -49,7 +49,8 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 | Skill | 描述 | 类别 |
 |-------|------|------|
 | **observability** | AI 思维日志可观测性系统，实时记录推理过程、决策点和执行状态，帮助人类理解 AI 决策过程 | system |
-| **deep-research** | 深度研究技能，Lead Agent + Subagent 并行调研，生成带数据点的结构化报告 | research |
+| **deep-research** | 深度研究技能，Lead Agent + Subagent 并行调研，支持引用验证、置信度评分和领域扩展 | research |
+| **question-refiner** | 研究查询精炼器，验证和结构化用户查询，输出标准化 Structured Research Prompt | research |
 | **exa-research** | 企业与市场研究技能，基于 Exa 搜索引擎进行公司情报、竞争对手分析和市场研究 | research |
 | **brightdata-research** | 电商平台深度调研，基于 Bright Data MCP 的反反爬虫市场情报收集 | research |
 | **social-media-research** | 跨平台社媒数据研究，基于 TikHub MCP 的舆情监控、KOL 分析和内容趋势洞察 | research |
@@ -274,6 +275,19 @@ rm -rf .claude/skills/skill-name
 ---
 
 ## 更新日志
+
+### 2026-03-08
+- **新增 question-refiner Skill** - 研究查询精炼器
+  - 7 项验证清单（意图/范围/信息类型/可操作性/无歧义/粒度/前提）
+  - 快速通过机制（≥5/7 通过则零追问直接精炼）
+  - 引导式澄清（最多 3 个问题）
+  - 标准化 Structured Research Prompt 输出
+  - 与 deep-research / exa-research / brightdata-research / social-media-research 集成
+- **deep-research 升级至 v1.2.0**
+  - Question Refiner 可选前置集成
+  - 综合增强：交叉引用验证 + 矛盾解决矩阵 + 发现置信度评分
+  - 可选阶段 2.5 引用验证（来源 5 级可信度评分）
+  - 领域扩展协议（基座 + 叠加式领域增强）
 
 ### 2026-03-01
 - **新增 collaborating-with-codex Skill** - 多模型协作（Codex）

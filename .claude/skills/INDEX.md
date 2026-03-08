@@ -175,13 +175,29 @@
 #### deep-research
 ```yaml
 文件: .claude/skills/deep-research/SKILL.md
-描述: 深度研究技能，Lead Agent + Subagent 架构并行执行多维度网络调研
+描述: 深度研究技能 v1.2，Lead Agent + Subagent 架构并行调研，支持引用验证、置信度评分和领域扩展
 适用: 需要全面深入的主题研究、市场分析、技术调研
 专长:
   - Lead Agent 规划 + 多 Subagent 并行搜索
-  - 多维度交叉验证
+  - 多维度交叉验证 + 矛盾解决矩阵 + 发现置信度评分
+  - 可选 Citation Validation（深度模式）
+  - 领域扩展协议（叠加式增强特定领域）
   - 自动生成带数据点和引用的结构化报告
 触发: 需要深度调研、无法通过单次搜索得出结论时
+```
+
+#### question-refiner
+```yaml
+文件: .claude/skills/question-refiner/SKILL.md
+描述: 研究查询精炼器，验证和结构化用户查询，输出标准化 Structured Research Prompt
+适用: 研究查询模糊或不完整时，作为 research 类 Skill 的可选前置网关
+专长:
+  - 7 项验证清单（意图/范围/信息类型/可操作性/无歧义/粒度/前提）
+  - 快速通过机制（≥5/7 通过则零追问直接精炼）
+  - 引导式澄清（最多 3 个问题）
+  - 标准化输出可被所有 research 类 Skill 消费
+触发: 研究查询不清晰、范围过宽、用户请求帮助澄清时
+集成: [deep-research, exa-research, brightdata-research, social-media-research]
 ```
 
 #### exa-research
@@ -382,6 +398,8 @@
 | 精确风格控制 | ui-ux-pro-max | frontend-design |
 | 快速构建 Demo | web-artifacts-builder | — |
 | 深度主题研究 | deep-research | exa-research |
+| 研究问题不清晰 | question-refiner | deep-research |
+| 深度研究需引用验证 | deep-research（深度模式） | — |
 | 企业/竞品调研 | exa-research | — |
 | 电商数据采集 | brightdata-research | amazon-analyse |
 | 亚马逊竞品分析 | amazon-analyse | market-insight |
@@ -405,6 +423,11 @@
 ---
 
 ## 更新日志
+
+### 2026-03-08
+- deep-research 升级至 v1.2.0（Question Refiner 集成 + 引用验证 + 置信度评分 + 领域扩展协议）
+- 新增 question-refiner Skill（研究查询精炼器，7 项验证 + 快速通过 + 引导澄清）
+- 场景速查表新增 2 个场景：研究问题不清晰 / 深度研究需引用验证
 
 ### 2026-03-06
 - paper-revision 升级至 v1.1.0（四模式：润色/大纲审核/去AI化/结构仿写）
