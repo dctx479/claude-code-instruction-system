@@ -19,6 +19,7 @@
 | Skill | 描述 | 触发词 |
 |-------|------|--------|
 | **deep-research** | Lead Agent + Subagent 并行调研 | `deep-research <主题>` |
+| **stock-research** | 8阶段股票投资尽调框架，模拟巴菲特式理性投资分析 | `/stock-research <股票代码>`, `分析股票` |
 | **market-insight** | 三段式用户画像与产品机会分析 | `/insight <产品描述>` |
 | **exa-research** | 企业与市场研究，基于 Exa 搜索引擎 | `研究竞争对手`, `分析行业` |
 | **brightdata-research** | 电商平台深度调研，反反爬虫支持 | `电商调研`, `畅销排行` |
@@ -81,6 +82,8 @@
 | 电商 + 企业研究 | 全链路竞争分析 |
 | amazon-analyse + market-insight | 亚马逊选品决策闭环（竞品数据 → 用户需求洞察） |
 | brightdata-research + amazon-analyse | 双渠道电商情报（平台爬取 + MCP 官方数据） |
+| stock-research + data-analysis | 指数成分股批量分析（恒生科技/科创50/创业板50） |
+| stock-research + exa-research | 股票基本面 + 行业竞争格局深度分析 |
 | literature-mentor + paper-writing-assistant | 文献综述写作 |
 | literature-mentor + experiment-logger | 实验设计与执行 |
 | seedance-prompt + seedance-storyboard | AI 短剧全流程制作 |

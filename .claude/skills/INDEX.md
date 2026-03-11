@@ -186,6 +186,21 @@
 触发: 需要深度调研、无法通过单次搜索得出结论时
 ```
 
+#### stock-research (deep-research 扩展)
+```yaml
+文件: .claude/skills/deep-research/extensions/stock-research.md
+描述: 8阶段股票投资尽调框架，模拟巴菲特式理性投资分析（大量阅读、多空平衡）
+适用: 个股分析、指数成分股批量研究、投资决策支持
+专长:
+  - 8阶段顺序管道（公司底座→行业周期→业务拆解→财务质量→股权治理→市场分歧→估值护城河→执行摘要）
+  - 投资信号评级（6维度评分 + 建议仓位）
+  - 多空平衡矩阵（强制呈现Bull/Bear两面）
+  - 财务概览仪表盘（核心指标 + 估值指标 + 杜邦分解）
+  - 快速/标准/完整三种模式（4-22个Subagent）
+触发: /stock-research <股票代码>，分析股票、投资研究任务
+实践: 1000+ 次使用，已验证恒生科技/科创50/创业板50/纳斯达克金龙指数成分股批量分析
+```
+
 #### question-refiner
 ```yaml
 文件: .claude/skills/question-refiner/SKILL.md
@@ -400,6 +415,9 @@
 | 深度主题研究 | deep-research | exa-research |
 | 研究问题不清晰 | question-refiner | deep-research |
 | 深度研究需引用验证 | deep-research（深度模式） | — |
+| **股票投资分析** | stock-research（完整模式） | exa-research |
+| **快速筛选股票** | stock-research（快速模式） | — |
+| **指数成分股批量分析** | stock-research + data-analysis | — |
 | 企业/竞品调研 | exa-research | — |
 | 电商数据采集 | brightdata-research | amazon-analyse |
 | 亚马逊竞品分析 | amazon-analyse | market-insight |
@@ -423,6 +441,11 @@
 ---
 
 ## 更新日志
+
+### 2026-03-11
+- 新增 stock-research 扩展（deep-research 领域扩展，8阶段股票投资尽调框架）
+- 场景速查表新增 3 个股票研究场景：股票投资分析/快速筛选股票/指数成分股批量分析
+- SKILLS-CATALOG.md 新增 stock-research 组合模式（stock-research + data-analysis/exa-research）
 
 ### 2026-03-08
 - deep-research 升级至 v1.2.0（Question Refiner 集成 + 引用验证 + 置信度评分 + 领域扩展协议）
