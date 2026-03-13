@@ -275,6 +275,33 @@ Final: Lead Agent 撰写 Phase 0 执行摘要（综合所有阶段）
 | 多空论点不平衡（一方 <2 个论点） | 追加 Subagent 专门搜索弱势方论点 |
 | 估值模型仅用 1 种方法 | 追加 Subagent 补充第 2 种估值 |
 
+### 批量分析模式（>10 只股票）
+
+**问题**: 逐个分析大量股票时，AI 上下文压缩导致后期分析质量下降（跳过 Phase、格式漂移、遗忘约束）。
+
+**方案**: 使用持久化规划文件 + Ralph 循环：
+
+```bash
+# Step 1: 创建规划文件
+task_plan.md:
+  - 股票清单（代码 + 名称 + 所属行业）
+  - 分析模式（快速/标准/完整）
+  - 质量约束（必须包含多空平衡、至少2种估值方法、免责声明）
+
+# Step 2: 驱动执行
+/ralph "按 task_plan.md 逐个执行 /stock-research，每完成一只更新 progress.md"
+
+# Step 3: 每轮 Claude 操作
+  重读 task_plan.md 约束 → 执行 /stock-research → 追加 findings.md → 更新 progress.md
+```
+
+**findings.md 累积价值**: 跨股票的行业趋势、估值对比、共性风险会自然浮现，
+后期分析可引用前期发现（如"本行业平均 P/E 为 25x，见 findings.md #腾讯/#阿里 数据"）。
+
+**已验证规模**: 127 只股票（恒生科技 30 + 科创 50 + 创业板 50 + 金龙 98）。
+
+详见: `docs/ORCHESTRATION-GUIDE.md` 示例4、`commands/general/ralph.md` 持久化规划文件集成
+
 ---
 
 ## 6. 免责声明模板

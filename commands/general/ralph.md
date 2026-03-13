@@ -311,6 +311,52 @@ Ralph 使用意图检测来理解任务完成条件。
 ### 与 Plan-Scoped Memory 集成
 Ralph 的每次执行会创建独立的计划记忆空间。
 
+### 与持久化规划文件集成（批量任务模式）
+
+**问题**: 批量处理 >50 个同质任务（如逐个分析 127 只股票）时，AI 上下文压缩导致后期任务质量下降——跳过分析阶段、格式漂移、遗忘约束条件。
+
+**方案**: 用 3 个持久化 markdown 文件作为 Ralph 循环的"外部记忆"：
+
+```
+task_plan.md   ← 完整任务清单 + 约束条件（每轮开头重读）
+findings.md    ← 累积发现（每完成一项追加）
+progress.md    ← 当前进度（每轮更新）
+```
+
+**工作流**:
+
+```bash
+# Step 1: 创建规划文件
+/ralph "创建 task_plan.md，列出所有待分析股票及分析标准"
+
+# Step 2: 用规划文件驱动批量执行
+/ralph "按 task_plan.md 逐个执行分析，每完成一项更新 progress.md 和 findings.md"
+```
+
+**Claude 每轮操作规范**:
+
+```
+轮次开始时:
+  1. 读取 task_plan.md 的约束条件（防止漂移）
+  2. 读取 progress.md 确定下一个待处理项
+  3. 开始执行
+
+轮次结束时:
+  1. 将结果追加到 findings.md
+  2. 在 progress.md 勾选已完成项
+  3. 设置 round_complete: true
+```
+
+**与 `/issues-execute` 的选择**:
+
+| 场景 | 推荐工具 |
+|------|---------|
+| 结构化任务，有明确 acceptance_criteria | `/plan-to-issues` + `/issues-execute` |
+| 开放式批量分析（研究、调研、审查） | `/ralph` + 持久化规划文件 |
+| 超大规模（>100项）结构化任务 | 先 task_plan.md 梳理 → 转 issues CSV |
+
+详见: `docs/ORCHESTRATION-GUIDE.md` 示例4
+
 ## 最佳实践
 
 1. **明确任务描述**: 越具体越好

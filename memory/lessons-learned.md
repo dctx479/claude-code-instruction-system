@@ -1431,5 +1431,30 @@ Claude-Code-Stock-Deep-Research 项目实现了「8阶段股票尽调 + 28个并
 ### 标签
 #self-evolution #knowledge-quality #semi-automatic #case-reference #product-design #external-learning
 
+## [2026-03-13] 大批量任务的认知上下文持久化：planning-with-files 模式 #015
+
+### 问题描述
+批量分析 127+ 只股票时，AI 在第 30-50 只后开始"忘记"任务约束——跳过分析阶段、格式漂移、多空平衡变单边。
+
+### 根因分析
+AI 上下文窗口有限，大批量同质任务（>50 项）逐步压缩早期上下文，任务规范和格式要求被丢弃。
+
+### 解决方案
+用 3 个持久化 markdown 文件（task_plan.md / findings.md / progress.md）作为"外部记忆"，每轮开头重读约束，每轮结束追加发现和进度。
+
+**已融入项目以下位置**：
+- `docs/ORCHESTRATION-GUIDE.md` → 示例4：SWARM + 持久化规划文件
+- `commands/general/ralph.md` → "与持久化规划文件集成"章节
+- `.claude/skills/deep-research/extensions/stock-research.md` → "批量分析模式"章节
+
+### 案例引用
+- LinuxDo 帖子：127 只科技股批量分析实践
+- 参考：github.com/OthmanAdi/planning-with-files（Manus-style 规划模式）
+
+### 标签
+#batch-processing #context-loss #planning-with-files #ralph #stock-research
+
+---
+
 <!-- 新的经验条目将自动添加在这里 -->
 
