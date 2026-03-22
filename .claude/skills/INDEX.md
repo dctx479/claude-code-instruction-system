@@ -244,14 +244,16 @@
 #### amazon-analyse
 ```yaml
 文件: .claude/skills/amazon-analyse/SKILL.md
-描述: 亚马逊竞品 Listing 全维度穿透分析，基于 Sorftime MCP 获取官方数据
-适用: 亚马逊选品决策、竞品 Listing 分析、关键词流量研究、评论痛点挖掘
+描述: 亚马逊选品全维度分析工具集（三模块），基于 Sorftime MCP 获取官方数据
+适用: 亚马逊选品决策、竞品 Listing 分析、关键词深度调研、差评痛点挖掘、广告投放词库
 专长:
-  - 六大维度：产品详情/关键词流量/评论情感/销量排名/竞争格局/市场机会
+  - 模块 A - Listing 穿透分析：六大维度（产品/关键词/评论/排名/竞争/市场）
+  - 模块 B - 关键词深度调研：三阶段流水线，2000+ 词库，7 类分类，CSV/HTML Dashboard
+  - 模块 C - 差评痛点分析：6 维痛点框架（电子/结构/设计/外观/描述/服务），三级严重度
   - Quick/Standard/Deep 三种分析深度
   - 真实 API 数据（非爬取），支持 US/DE/UK/JP 等多市场
 集成: Sorftime MCP
-触发: /amazon-analyse <ASIN> <MARKETPLACE>
+触发: /amazon-analyse | /keyword-research | /review-analysis <ASIN> <MARKETPLACE>
 ```
 
 #### social-media-research
@@ -421,6 +423,11 @@
 | 企业/竞品调研 | exa-research | — |
 | 电商数据采集 | brightdata-research | amazon-analyse |
 | 亚马逊竞品分析 | amazon-analyse | market-insight |
+| **亚马逊关键词调研** | amazon-analyse（/keyword-research） | — |
+| **亚马逊差评痛点挖掘** | amazon-analyse（/review-analysis） | market-insight |
+| **亚马逊选品全流程** | amazon-analyse → /keyword-research → /review-analysis | spec-writer |
+| **亚马逊选品深度调研** | amazon-analyse（/product-research，规划中 v1.2.0） | market-insight, deep-research |
+| **亚马逊广告词库** | amazon-analyse（/keyword-research） | — |
 | 社媒舆情分析 | social-media-research | — |
 | **论文大纲检查** | paper-revision（大纲审核模式） | — |
 | **论文写作润色** | paper-revision（润色模式） | — |
@@ -441,6 +448,13 @@
 ---
 
 ## 更新日志
+
+### 2026-03-17
+- amazon-analyse 升级至 v1.1.0（三模块架构）
+- 新增模块 B：关键词深度调研（`/keyword-research`），三阶段流水线，2000+ 词库，7 类分类
+- 新增模块 C：差评痛点分析（`/review-analysis`），6 维痛点框架，三级严重度
+- 场景速查表新增 4 个场景：关键词调研/差评痛点/选品全流程/广告词库
+- 新增三模块协同数据流和推荐组合用法
 
 ### 2026-03-11
 - 新增 stock-research 扩展（deep-research 领域扩展，8阶段股票投资尽调框架）

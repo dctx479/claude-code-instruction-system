@@ -282,3 +282,124 @@ Coze 技能商店（豆包/Douyin 生态，亿级用户）
 - 文献工作用 Zotero MCP 等工具替代生成
 - 科研工作流需要多人协作，单人 ROI 有限
 
+---
+
+### BP-012: Anthropic 官方 Skills 设计最佳实践
+
+**来源**: Anthropic Thariq (Claude Code 团队) 2026-03 公开分享，Anthropic 内部数百个 Skill 实践总结
+
+**Skills 九大分类体系**:
+
+| 分类 | 说明 | 示例 |
+|------|------|------|
+| **Library & API Reference** | 教模型正确使用库/CLI/SDK | billing-lib, internal-platform-cli |
+| **Product Verification** | 测试/验证代码是否正常工作 | signup-flow-driver, checkout-verifier |
+| **Data Fetching & Analysis** | 连接数据和监控系统 | funnel-query, grafana |
+| **Business Process & Team Automation** | 重复性工作流自动化 | standup-post, weekly-recap |
+| **Code Scaffolding & Templates** | 生成框架模板代码 | new-migration, create-app |
+| **Code Quality & Review** | 推行代码质量标准 | adversarial-review, testing-practices |
+| **CI/CD & Deployment** | 代码推送和部署 | babysit-pr, deploy-service, cherry-pick-prod |
+| **Runbooks** | 多工具排查流程 | service-debugging, oncall-runner |
+| **Infrastructure Operations** | 日常运维 | resource-orphans, cost-investigation |
+
+**当前项目覆盖情况**:
+- ✅ 已覆盖: Library/API (pytorch, pandas), Data Fetching (data-analysis, amazon-analyse), Code Quality (QA 系统)
+- ⚠️ 部分覆盖: Business Automation (有 commit/standup 但不完善), Code Scaffolding (parallel-explore)
+- ❌ 未覆盖: Product Verification, CI/CD & Deployment, Runbooks, Infrastructure Operations
+
+**10 条 Skill 设计原则**:
+
+1. **只写 Claude 不知道的东西** — Claude 对代码库已有了解，聚焦于能让它跳出常规思维的信息。示例: frontend-design Skill 专门避免"AI 味"（Inter 字体 + 紫色渐变）
+
+2. **认真写 Gotchas 部分** — 任何 Skill 中信噪比最高的内容。从 Claude 反复踩的坑中积累，随时间持续更新
+
+3. **文件系统 = 渐进式上下文** — Skill 是文件夹不只是 Markdown。用 `references/api.md`、`assets/template.md`、`scripts/` 实现按需加载
+
+4. **给出信息但留出灵活度** — Skills 高度可复用，别把指令写得太死。给 Claude 需要的信息，也给它灵活调整的空间
+
+5. **用 config.json 做初始化设置** — 需要用户上下文时，存到 Skill 目录下的 config.json。未配置时用 AskUserQuestion 主动问
+
+6. **Description 是触发器不是摘要** — Claude 靠 description 判断"这个请求有没有对应的 Skill"。写法要像触发条件
+
+7. **让 Skill 拥有记忆** — 用追加写入的日志文件或 JSON。`${CLAUDE_PLUGIN_DATA}` 是稳定数据目录，Skill 目录可能被升级覆盖
+
+8. **给 Claude 可直接用的代码** — 提供脚本和函数库，让 Claude 花精力在组合和决策上而非从零重写
+
+9. **善用 Skill 级别 Hooks** — Skills 可包含只在该 Skill 调用时激活的 hooks。适合放"平时不想开但有时很有用"的强约束（如 `/careful` 拦截危险命令、`/freeze` 锁定编辑范围）
+
+10. **分享策略** — 小团队直接提交到 `.claude/skills/`；规模扩大用 plugin 市场分发。过多 Skills 增加上下文负担
+
+**验证方法**: 对照现有 Skill 逐条审查，识别改进点（如缺少 Gotchas、Description 不够触发式等）
+
+**案例引用**: Anthropic 内部数百个 Skill 实践，frontend-design Skill 消除 AI 味的迭代
+
+---
+
+### BP-013: 并行研究架构中的压缩与隔离权衡
+
+**来源**: ODR (Open Deep Research) 架构分析，与 deep-research Skill 的 Lead Agent + Subagent 模式直接相关
+
+**核心架构模式**:
+```
+Supervisor (Plan-and-Execute)
+  ├─ think_tool → 反思/规划
+  ├─ ConductResearch → 派发任务（×N 并行）
+  └─ ResearchComplete → 判断信息足够
+        ↓
+Researcher (ReAct 循环)
+  ├─ search → 搜索
+  ├─ think_tool → 搜后反思
+  └─ ResearchComplete → 信息足够退出
+        ↓
+compress_research → 保真去重，交回摘要
+```
+
+**关键设计洞察**:
+
+1. **两层用不同模式**: Supervisor 用 Plan-and-Execute（可控性），Researcher 用 ReAct（灵活性）。搜索本质是探索性的，ReAct 适配
+2. **"空工具"塑造角色**: think_tool 和 ResearchComplete 都是空壳（输入原样返回/终止信号），但定义了"想-做-停"的完整行为空间
+3. **两个出口并存**: 模型信号（ResearchComplete）是正常出口，资源上限（max_tool_calls）是安全网
+4. **搜-想节奏**: 每次搜索后必须 think_tool 反思（"搜到什么？还缺什么？够了吗？"），不允许连续搜索
+
+**压缩的两层机制**:
+- 第一层: 原始网页 → 预处理摘要（~25% 体量），保留 who/what/when/where/why
+- 第二层: Researcher 工作历史 → compress_research 结构化摘要（保真去重，非总结）
+
+**并行隔离的收益与代价**:
+
+| 收益 | 代价 |
+|------|------|
+| 速度: 耗时≈最慢的单条线索 | 跨线索关联在压缩时不可见 |
+| 聚焦: 每个 Researcher 上下文干净 | 做判断的模型不知道下游需要什么 |
+| 容错: 单条线质量波动不传染 | 压缩是有损的 |
+| 上下文效率: 最终能一次综合 | 关联细节可能被丢弃 |
+
+**缓解机制**: 压缩的保真原则、Supervisor 多轮反思、Synthesizer 全局视野、prompt 显式告知隔离存在。每一层都依赖模型判断，是概率性缓解而非结构性保证。
+
+**应用到 deep-research Skill**: 当研究问题本质是因果链而非独立线索时，需要格外关注 Subagent 间的信息传递完整性
+
+**案例引用**: Anthropic Open Deep Research 开源项目架构
+
+---
+
+### BP-014: 极简 Skill 设计哲学
+
+**来源**: liangdabiao simple-review-analyzer 项目，LinuxDo 开源社区
+
+**核心理念**: "以至简达至繁" — 纯 Markdown 指令，不写 Python，不教 AI 做事，让 AI 按指导原则自主解决
+
+**两种 Skill 设计风格对比**:
+
+| 维度 | 结构化风格（当前项目） | 极简风格 |
+|------|----------------------|---------|
+| 实现方式 | 详细步骤 + 模板 + 脚本 | 纯 Markdown 指导原则 |
+| 控制力 | 强（输出格式精确可控） | 弱（依赖 AI 自主判断） |
+| 可维护性 | 需要维护脚本和模板 | 几乎零维护 |
+| 一致性 | 高（模板保证） | 中（AI 每次可能不同） |
+| 灵活性 | 低（模板限制） | 高（AI 自适应） |
+| 适合场景 | 生产级、需要稳定输出 | 个人使用、快速迭代 |
+
+**实践建议**: 不必二选一。核心生产 Skill 用结构化风格保证稳定输出；探索性/个人 Skill 可用极简风格快速验证。关键在于明确输入/输出契约和验收标准。
+
+**案例引用**: simple-review-analyzer（GitHub: liangdabiao），buluslan/review-analyzer-skill（22 维度分析的结构化对照）
+

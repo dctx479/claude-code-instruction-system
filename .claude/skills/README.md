@@ -373,6 +373,43 @@ rm -rf .claude/skills/skill-name
 
 ---
 
+## Anthropic 官方 Skills 设计指南
+
+> 来源: Anthropic Thariq (Claude Code 团队) 2026-03 分享，内部数百个 Skill 实践总结
+
+### 官方九大分类体系
+
+| # | 分类 | 说明 | 当前覆盖 |
+|---|------|------|---------|
+| 1 | **Library & API Reference** | 教模型正确使用库/CLI/SDK | ✅ pytorch, pandas |
+| 2 | **Product Verification** | 测试/验证代码是否正常工作 | ❌ 缺失 |
+| 3 | **Data Fetching & Analysis** | 连接数据和监控系统 | ✅ data-analysis, amazon-analyse |
+| 4 | **Business Process & Team Automation** | 重复性工作流自动化 | ⚠️ 部分 |
+| 5 | **Code Scaffolding & Templates** | 生成框架模板代码 | ⚠️ 部分 |
+| 6 | **Code Quality & Review** | 推行代码质量标准 | ✅ QA 系统 |
+| 7 | **CI/CD & Deployment** | 代码推送和部署 | ❌ 缺失 |
+| 8 | **Runbooks** | 多工具排查流程 | ❌ 缺失 |
+| 9 | **Infrastructure Operations** | 日常运维 | ❌ 缺失 |
+
+**设计原则**: 最好的 Skill 只属于其中一类；跨多类的往往让人摸不着头脑。
+
+### 写好 Skill 的 10 条原则
+
+1. **只写 Claude 不知道的** — 聚焦于让 Claude 跳出常规思维的信息
+2. **认真写 Gotchas** — 信噪比最高的部分，从 Claude 反复踩的坑中积累
+3. **文件系统 = 渐进式上下文** — 用 `references/`、`assets/`、`scripts/` 实现按需加载
+4. **给信息但留灵活度** — Skill 高度可复用，别把指令写得太死
+5. **用 config.json 做初始化** — 需要用户上下文时存配置，未配置时主动问
+6. **Description 是触发器** — 不是摘要，要像触发条件一样写
+7. **让 Skill 有记忆** — 用日志/JSON 存执行历史，`${CLAUDE_PLUGIN_DATA}` 是稳定目录
+8. **给可直接用的代码** — 提供脚本和函数库，Claude 花精力在组合和决策上
+9. **善用 Skill 级 Hooks** — 只在 Skill 调用时激活的强约束（如拦截危险命令）
+10. **控制 Skill 数量** — 过多 Skills 增加上下文负担，规模扩大用 plugin 市场分发
+
+> 详细实践案例: `memory/best-practices.md` → BP-012
+
+---
+
 ## 相关文档
 
 - **Agent 索引**: `agents/INDEX.md`
