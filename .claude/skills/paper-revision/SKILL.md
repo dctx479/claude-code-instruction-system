@@ -1,11 +1,11 @@
 ---
 name: paper-revision
-description: 论文/技术文档全流程写作助手，覆盖大纲审核、结构仿写、润色、去AI化四种模式
-version: 1.1.0
+description: 论文/技术文档全流程写作助手，覆盖大纲审核、结构仿写、润色、去AI化（两轮 23 类模式检测 + 70 分评分）四种模式
+version: 1.2.0
 license: MIT
 metadata:
   category: research
-  tags: [writing, paper, revision, academic, technical, outline, de-ai]
+  tags: [writing, paper, revision, academic, technical, outline, de-ai, humanizer]
 ---
 
 # Paper Revision Skill
