@@ -72,6 +72,16 @@ Skills 采用与 Agents 相同的渐进式披露机制，节省 70-90% Token：
 | **web-artifacts-builder** | Anthropic 官方 Web Artifacts 构建器，React + Tailwind + shadcn/ui 单文件 HTML 应用 | development |
 | **collaborating-with-codex** | 多模型协作，通过后台 Bash 子进程调用 Codex CLI 并行实现代码，Claude 融合审查，优势互补 | development |
 | **collaborating-with-gemini** | 多模型协作，通过后台 Bash 子进程调用 Gemini CLI 处理大上下文分析，适合整个代码库扫描 | development |
+| **schedule-analyzer** | 课表空课查找统计分析，批量 OCR 提取课表、分组统计、周次差异分析 | utility |
+| **solve-challenge** | CTF 挑战解题编排器，自动识别题目类型并调度对应 CTF 技能 | security |
+| **ctf-crypto** | 密码学攻击技术（RSA/AES/ECC/格密码/PRNG/签名） | security |
+| **ctf-forensics** | 数字取证与信号分析（磁盘镜像/内存转储/网络抓包/隐写术） | security |
+| **ctf-malware** | 恶意软件分析（混淆脚本/C2流量/PE分析/反分析） | security |
+| **ctf-misc** | CTF 杂项技术（编码解谜/沙箱逃逸/RF信号/Z3求解） | security |
+| **ctf-osint** | 开源情报收集（社交媒体/地理定位/DNS/反向搜索） | security |
+| **ctf-pwn** | 二进制漏洞利用（栈溢出/堆利用/ROP/内核提权） | security |
+| **ctf-reverse** | 逆向工程（二进制分析/反调试/自定义VM/多平台） | security |
+| **ctf-web** | Web 安全漏洞利用（XSS/SQLi/SSTI/SSRF/JWT/原型链） | security |
 
 ### 1. claude-scientific-skills (140+ 科研技能)
 
@@ -275,6 +285,13 @@ rm -rf .claude/skills/skill-name
 ---
 
 ## 更新日志
+
+### 2026-04-15
+- **迁入 schedule-analyzer Skill** - 课表空课查找统计分析
+- **迁入 8 类 CTF Skills** - 77 个安全技能文件（crypto/forensics/malware/misc/osint/pwn/reverse/web）
+- 新增 solve-challenge CTF 编排器
+- 迁入参考文档：API-KEYS-SETUP.md、CLI-SETUP-SUMMARY.md（已脱敏）、THIRD-PARTY-API-INVESTIGATION-SUMMARY.md
+- 迁入 statusline.py、mcp-configuration-guide.md
 
 ### 2026-03-08
 - **新增 question-refiner Skill** - 研究查询精炼器

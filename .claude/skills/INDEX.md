@@ -403,6 +403,95 @@
 
 ---
 
+### 工具类 (Utility)
+
+#### schedule-analyzer
+```yaml
+文件: .claude/skills/schedule-analyzer/SKILL.md
+描述: 课表空课查找统计分析，批量 OCR 提取课表数据、解析周次、分组统计、差异分析
+适用: 多人课表空课时间统计、排课协调、会议时间查找
+专长:
+  - 批量 OCR 提取课表图片（Vision API）
+  - 周次解析（单双周/逗号分隔/范围表达）
+  - 分组空课统计 + 黄金时段识别（88% 阈值）
+  - 周次差异分析 + Markdown 报告生成
+触发: 课表分析、空课查找、排课统计任务
+```
+
+---
+
+### 安全类 (Security/CTF)
+
+#### solve-challenge (CTF 编排器)
+```yaml
+文件: .claude/skills/solve-challenge/SKILL.md (如有)
+描述: CTF 挑战解题编排器，分析题目类型并调度对应 CTF 技能
+适用: CTF 竞赛解题、安全挑战分析
+专长:
+  - 自动识别题目类型（pwn/crypto/web/reverse/forensics/osint/malware/misc）
+  - 调度对应类别 CTF 技能
+触发: CTF 挑战题目分析和解题
+集成: [ctf-crypto, ctf-forensics, ctf-malware, ctf-misc, ctf-osint, ctf-pwn, ctf-reverse, ctf-web]
+```
+
+#### ctf-crypto
+```yaml
+文件: .claude/skills/ctf-crypto/SKILL.md
+描述: 密码学攻击技术，RSA/AES/ECC/格密码/PRNG/签名伪造
+触发: CTF 密码学题目
+```
+
+#### ctf-forensics
+```yaml
+文件: .claude/skills/ctf-forensics/SKILL.md
+描述: 数字取证与信号分析，磁盘镜像/内存转储/网络抓包/隐写术
+触发: CTF 取证题目
+```
+
+#### ctf-malware
+```yaml
+文件: .claude/skills/ctf-malware/SKILL.md
+描述: 恶意软件分析，混淆脚本/C2流量/PE分析/反分析绕过
+触发: CTF 恶意软件分析题目
+```
+
+#### ctf-misc
+```yaml
+文件: .claude/skills/ctf-misc/SKILL.md
+描述: 杂项技术，编码解谜/Python沙箱逃逸/RF信号处理/Z3约束求解
+触发: CTF 杂项题目
+```
+
+#### ctf-osint
+```yaml
+文件: .claude/skills/ctf-osint/SKILL.md
+描述: 开源情报收集，社交媒体/地理定位/DNS记录/反向图片搜索
+触发: CTF OSINT 题目
+```
+
+#### ctf-pwn
+```yaml
+文件: .claude/skills/ctf-pwn/SKILL.md
+描述: 二进制漏洞利用，栈溢出/堆利用/ROP/内核提权/沙箱逃逸
+触发: CTF PWN 题目
+```
+
+#### ctf-reverse
+```yaml
+文件: .claude/skills/ctf-reverse/SKILL.md
+描述: 逆向工程，二进制分析/反调试绕过/自定义VM/多平台逆向
+触发: CTF 逆向题目
+```
+
+#### ctf-web
+```yaml
+文件: .claude/skills/ctf-web/SKILL.md
+描述: Web 安全漏洞利用，XSS/SQLi/SSTI/SSRF/JWT/原型链污染
+触发: CTF Web 安全题目
+```
+
+---
+
 ## 场景速查：该加载哪个 Skill？
 
 ### 按业务阶段速查
@@ -457,10 +546,24 @@
 | 产品方向验证 | market-insight | exa-research |
 | 任务可追溯性 | observability | — |
 | 系统监控 | god-oversight | — |
+| **课表空课统计** | schedule-analyzer | — |
+| **CTF 解题** | solve-challenge | ctf-* (按题目类型) |
+| **密码学攻击** | ctf-crypto | — |
+| **数字取证** | ctf-forensics | — |
+| **二进制漏洞利用** | ctf-pwn | ctf-reverse |
+| **逆向工程** | ctf-reverse | ctf-pwn |
+| **Web 安全** | ctf-web | — |
 
 ---
 
 ## 更新日志
+
+### 2026-04-15
+- 从全局配置迁入 schedule-analyzer Skill（课表空课分析）
+- 从全局配置迁入 8 类 CTF Skills（crypto/forensics/malware/misc/osint/pwn/reverse/web，共 77 个文件）
+- 新增 solve-challenge CTF 编排器条目
+- 场景速查表新增 7 个场景：课表统计/CTF解题/密码学/取证/PWN/逆向/Web安全
+- 新增工具类 (Utility) 和安全类 (Security/CTF) 分类
 
 ### 2026-03-17
 - amazon-analyse 升级至 v1.1.0（三模块架构）
