@@ -353,3 +353,84 @@ agents:
 - 复杂度评分器: `workflows/routing/complexity-scorer.md`
 - 性能监控: `agents/ops/performance-monitor.md`
 - 成本优化: `agents/ops/auto-optimizer.md`
+
+---
+
+## 智能化增强
+
+### 历史学习机制
+
+基于历史任务的成功/失败率动态调整模型选择阈值:
+
+```python
+def update_thresholds(history):
+    """
+    每日统计:
+    - 如果 Haiku 在某类任务上 success_rate < 80%
+      → 该类任务的 Haiku 阈值 +1（更容易升级到 Sonnet）
+    - 如果 Sonnet 在某类任务上 success_rate = 100% 且 cost 偏高
+      → 该类任务的 Sonnet 阈值 -1（更容易降级到 Haiku）
+    """
+    for task_type, stats in history.items():
+        if stats["haiku_success_rate"] < 0.80:
+            thresholds[task_type]["haiku_ceiling"] += 1
+        if stats["sonnet_success_rate"] == 1.0 and stats["avg_complexity"] < 5:
+            thresholds[task_type]["sonnet_floor"] -= 1
+```
+
+**数据来源**: `memory/agent-performance.md` 中的任务执行记录。
+
+**调整频率**: 每日自动分析，阈值变化幅度限制为 ±1/天（防止剧烈波动）。
+
+### 渐进式升级模式
+
+"先便宜后贵"策略 — 节省 30-50% token 成本:
+
+```
+Step 1: Haiku 尝试（成本最低）
+  ├─ 成功且质量达标 → 完成 ✓
+  └─ 失败或质量不足 → Step 2
+
+Step 2: Sonnet 尝试（中等成本）
+  ├─ 成功且质量达标 → 完成 ✓
+  └─ 失败或质量不足 → Step 3
+
+Step 3: Opus 执行（最高成本，最终保障）
+  └─ 完成 ✓
+```
+
+**适用条件**:
+- 任务复杂度未知或评估不确定
+- 批量任务中同质性高（先用低模型探路，确认难度后固定）
+- 成本敏感场景
+
+**不适用**:
+- 复杂度明确 ≥8 的任务（直接 Opus，避免浪费低模型的 token）
+- 安全审计等高风险任务（直接使用最强模型）
+- 时间紧迫场景（重试有延迟成本）
+
+### 多模型共识模式
+
+高风险决策使用多模型投票:
+
+```
+架构决策 → 同时请求 Opus + Sonnet
+  ├─ 两者一致 → 采纳（高置信度）
+  ├─ 两者矛盾 → 人工裁决 + 记录分歧原因
+  └─ 部分一致 → 采纳一致部分，矛盾部分人工裁决
+```
+
+**适用**: 架构选型、安全审计结论、数据库 Schema 设计等不可逆决策。
+
+**成本**: 约 2x 单模型，但降低决策风险。建议仅在高影响决策时使用。
+
+### 节省预估
+
+基于上述三种机制的综合节省:
+
+| 机制 | 预估节省 | 说明 |
+|------|---------|------|
+| 历史学习 | 10-15% | 避免高模型处理简单任务 |
+| 渐进式升级 | 20-30% | 多数任务在低模型即完成 |
+| 多模型共识 | -50~100% 增加 | 仅用于高风险，频率低 |
+| **综合** | **约 30-50% 节省** | 批量任务场景更显著 |

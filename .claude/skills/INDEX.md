@@ -405,6 +405,19 @@
 
 ## 场景速查：该加载哪个 Skill？
 
+### 按业务阶段速查
+
+| 阶段 | 可用 Skill | 说明 |
+|------|-----------|------|
+| **需求** | vision-builder, question-refiner | 从模糊需求到清晰目标 |
+| **调研** | deep-research, exa-research, brightdata-research, social-media-research, literature-mentor | 信息收集和分析 |
+| **方案** | plan-review, parallel-explore, spec-writer (Agent) | 方案设计和评审 |
+| **开发** | react-best-practices, web-artifacts-builder, collaborating-with-codex, collaborating-with-gemini | 代码实现 |
+| **测试** | QA 系统 (qa-reviewer + qa-fixer Agent) | 质量验证 |
+| **沉淀** | observability, paper-revision | 记录和总结 |
+
+### 按场景速查
+
 | 场景 | 优先加载 | 可选加载 |
 |------|----------|----------|
 | 新项目启动 | vision-builder | plan-review |

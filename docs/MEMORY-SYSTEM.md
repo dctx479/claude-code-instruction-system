@@ -129,3 +129,32 @@
 1. 引用相关 resolution ID
 2. 说明与历史方案的关系
 3. 如有改进 → 记录到新 resolution
+
+---
+
+## 知识复利机制
+
+> 详细指南: `docs/KNOWLEDGE-COMPOUNDING-GUIDE.md`
+
+### 三层知识架构
+
+```
+Layer 1: 原始记录 → memory/lessons-learned.md, .claude/context/resolutions/
+Layer 2: 策展知识 → memory/best-practices.md, memory/error-patterns.md, docs/*.md
+Layer 3: 执行规则 → CLAUDE.md, agents/*.md, .claude/skills/*/SKILL.md
+```
+
+### 知识晋升流程
+
+```
+单次经验 → 通用模式 → 系统规则 → Agent/Skill 定义
+  (2+ 次重复)  (跨场景验证)  (强制执行)   (领域专门化)
+```
+
+### 去重协议
+
+新增知识条目前必须搜索现有内容，避免重复。详见 `memory/lessons-learned.md` 使用说明。
+
+### 置信度标注
+
+`[VERIFIED]` / `[INFERRED]` / `[AMBIGUOUS]` / `[UNVERIFIED]` — AI 参考知识时优先使用高置信度条目。

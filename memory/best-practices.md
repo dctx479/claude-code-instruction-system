@@ -403,3 +403,81 @@ compress_research → 保真去重，交回摘要
 
 **案例引用**: simple-review-analyzer（GitHub: liangdabiao），buluslan/review-analyzer-skill（22 维度分析的结构化对照）
 
+---
+
+### BP-015: Context Hygiene — 上下文卫生实践
+
+**来源**: Token 优化文章 + Everything Claude Code 上下文腐化分析 + CLAUDE.md 超限事件（lessons-learned #011）
+
+**核心理念**: 上下文工程的核心指标是信噪比 (SNR)，而非总信息量。
+
+**5 习惯**:
+
+1. **精准加载，按需注入** — INDEX → 按需 SKILL.md，不一次性加载所有内容
+   - Before: 启动时加载 50K tokens 的全部 Agent 定义
+   - After: 加载 600 tokens INDEX，按需加载 3K tokens 单个 Agent
+
+2. **压缩终端输出** — 工具调用后只保留对下一步有用的信息
+   - Before: 500 行 npm test 输出全部注入上下文
+   - After: "3 tests failed: auth.test.ts:45, user.test.ts:78, api.test.ts:112"
+
+3. **单一事实源** — 每个概念只在一处权威定义，其他地方引用
+   - Before: CLAUDE.md 和 docs/ 各写一份完整规则 → 修改时漏改一处 → 矛盾
+   - After: CLAUDE.md 写 2-3 行摘要 + 指向 docs/X.md 的链接
+
+4. **定期审计固定上下文税** — 每月审计 CLAUDE.md，目标 ≤39,500 chars
+   - 触发条件: CLAUDE.md 接近 39K 或每月例行
+
+5. **避免内容重复** — 重复 = 增大固定税 + 矛盾风险
+   - 具体案例: lessons-learned #011 中 Bash 规则 section 嵌入已有 StatusLine 内容导致超限
+
+**两大失效模式**:
+- **上下文投毒**: 过时信息残留 → 产出偏差（检测: AI 引用废弃规则）
+- **注意力漂移**: 批量任务 >30 项后遗忘约束（检测: 格式漂移/跳步）
+
+**验证方法**: `wc -m CLAUDE.md` < 40000; 新增内容前检查是否已有重复
+
+**案例引用**: lessons-learned.md #011（CLAUDE.md 超限）、#015（批量任务上下文丢失）、`docs/CONTEXT-ENGINEERING-GUIDE.md`
+
+---
+
+### BP-016: Phase-Gated Execution — 阶段门禁执行
+
+**来源**: Superpowers 方法论 + SDD 阶段门禁规则 + 127 只股票批量分析中的格式漂移经验
+
+**核心理念**: 每个阶段结束时都有可验证的验收标准，禁止"跳过规划直接实现"（除非小任务）。
+
+**阶段序列**:
+
+```
+brainstorm → spec → plan → execute → review → finish
+  (发散)    (定义)  (规划)  (实现)   (验证)   (收尾)
+```
+
+**任务规模-流程深度匹配表**:
+
+| 规模 | 预估工时 | 流程 | 可跳过 |
+|------|---------|------|--------|
+| **小** | ≤1h | brainstorm → execute → finish | spec, plan, review |
+| **中** | 1-4h | brainstorm → spec → execute → review → finish | 独立 plan |
+| **大** | >4h | 全流程（不可跳过任何阶段） | 无 |
+
+**每步验收标准示例**:
+
+| 阶段 | Before（不合格） | After（合格） |
+|------|-----------------|--------------|
+| brainstorm | "可以用几种方案做" | "方案 A: JWT+Redis, 方案 B: Session+DB, 推荐 A 因为..." |
+| spec | "实现用户认证" | SPEC-user-auth.md 包含 API 列表、数据模型、验收标准 |
+| plan | "先做后端再做前端" | 任务拆分为 12 个子任务，有依赖图和时间估算 |
+| execute | "代码写完了" | 所有测试通过 + lint 无错误 + 功能演示通过 |
+| review | "看了一下没问题" | QA 评分 ≥80，P0/P1 问题清零 |
+
+**禁止行为**:
+- ❌ 大任务不经 spec 直接实现
+- ❌ 跳过 review 直接发布
+- ❌ brainstorm 只列方案不给推荐和理由
+
+**验证方法**: 编排器在任务开始时评估规模 → 自动匹配流程深度 → 在每个门禁检查验收标准
+
+**案例引用**: Superpowers 方法论、spec-writer Agent 的阶段门禁规则、批量股票分析中的格式漂移问题
+

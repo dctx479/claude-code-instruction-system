@@ -58,6 +58,25 @@
 - 按问题类型: 查找类似问题的解决方案
 - 按案例: 通过 commit hash 或文件路径反向查找相关经验
 
+### 去重协议
+
+**添加新条目前，必须执行以下步骤**:
+1. 用关键词搜索现有条目（Grep 工具搜索 lessons-learned.md）
+2. 如果找到相似条目 → 更新现有条目（追加新案例），而非创建新条目
+3. 如果确认无类似条目 → 创建新条目
+4. 跨文件检查: 该知识是否已在 best-practices.md 或 error-patterns.md 中以更成熟形式存在
+
+### 置信度标注
+
+在条目标签中添加置信度标注:
+- `[VERIFIED]` — 已验证，有案例引用 + 验证方法已执行
+- `[INFERRED]` — 基于有限样本推断，尚未大规模验证
+- `[UNVERIFIED]` — 新记录，尚未验证
+
+示例: `#hooks #windows #bash [VERIFIED]`
+
+> 详见: `docs/KNOWLEDGE-COMPOUNDING-GUIDE.md` — 知识复利指南
+
 ---
 
 ## 经验条目

@@ -416,3 +416,53 @@ rm -rf .claude/skills/skill-name
 - **编排模式**: `workflows/orchestration/orchestration-patterns.md`
 - **上下文工程**: `workflows/context-engineering.md`
 - **最佳实践**: `memory/best-practices.md`
+
+---
+
+## 闭环 Skill 提取协议
+
+> 来源: Hermes Agent "用着用着越来越懂你"理念 — 完成任务后自动评估是否产生了可复用模式
+
+### 提取条件
+
+任务完成后，如果满足以下任一条件，触发 Skill 提取评估:
+
+| 条件 | 说明 |
+|------|------|
+| **重复模式** | 相同类型的任务已完成 3+ 次，每次都执行相似步骤 |
+| **复杂流程** | 任务涉及 5+ 个步骤的固定序列（可编码为流程） |
+| **领域知识** | 任务依赖特定领域知识（非通用编程知识） |
+| **用户请求** | 用户明确要求将某个工作流沉淀为 Skill |
+
+### 提取流程
+
+```
+Step 1: 识别 — 任务完成后，检查是否满足提取条件
+Step 2: 提炼 — 提取输入/输出/步骤/边界条件/Gotchas
+Step 3: 验证 — 用户确认提取的模式是否准确
+Step 4: 编写 — 创建 SKILL.md（遵循标准格式）
+Step 5: 注册 — 更新 INDEX.md，添加新 Skill 条目
+```
+
+### 提取质量标准
+
+新提取的 Skill 必须满足:
+1. **契约化**: 输入/输出显式声明
+2. **Gotchas**: 至少 1 条从实践中发现的陷阱
+3. **验收标准**: 如何判断 Skill 执行成功
+4. **触发条件**: Description 写成触发器而非摘要（参见 BP-012 原则 6）
+
+### 按业务阶段组织 Skill
+
+除了按功能分类（研究/开发/设计），还可以按业务阶段组织:
+
+```
+需求阶段 → vision-builder, question-refiner
+调研阶段 → deep-research, exa-research, literature-mentor
+方案阶段 → plan-review, parallel-explore, spec-writer
+开发阶段 → react-best-practices, collaborating-with-codex
+测试阶段 → (QA 系统)
+沉淀阶段 → observability, 闭环 Skill 提取
+```
+
+此视角帮助识别业务流程中的 Skill 缺口（如需求阶段和沉淀阶段 Skill 较少）。

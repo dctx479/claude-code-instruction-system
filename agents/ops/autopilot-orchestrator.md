@@ -82,6 +82,40 @@ description: |
 
 ### Phase 1: 规划 (Planning)
 
+#### 任务规模评估（门禁前置）
+
+在进入规划细节前，先评估任务规模以确定流程深度:
+
+```python
+def assess_task_size(task_description):
+    """
+    评估任务规模，决定流程深度。
+    参见 BP-016: Phase-Gated Execution
+    """
+    indicators = {
+        "estimated_hours": estimate_hours(task_description),
+        "files_likely_touched": estimate_file_count(task_description),
+        "has_external_dependencies": check_dependencies(task_description),
+        "is_reversible": check_reversibility(task_description)
+    }
+
+    if indicators["estimated_hours"] <= 1:
+        return "small"   # 跳过 spec/plan，直接实现
+    elif indicators["estimated_hours"] <= 4:
+        return "medium"  # 简化 spec，跳过独立 plan
+    else:
+        return "large"   # 全流程，不可跳过
+
+# 流程深度映射
+FLOW_DEPTH = {
+    "small":  ["brainstorm", "execute", "finish"],
+    "medium": ["brainstorm", "spec", "execute", "review", "finish"],
+    "large":  ["brainstorm", "spec", "plan", "execute", "review", "finish"]
+}
+```
+
+**阶段门禁**: 每个阶段结束时验证验收标准，不达标则不进入下一阶段。详见 `memory/best-practices.md` BP-016。
+
 ```python
 def planning_phase(task_description):
     # 1. 意图识别
