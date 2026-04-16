@@ -481,3 +481,176 @@ brainstorm → spec → plan → execute → review → finish
 
 **案例引用**: Superpowers 方法论、spec-writer Agent 的阶段门禁规则、批量股票分析中的格式漂移问题
 
+---
+
+### BP-017: AI 执行安全反模式
+
+**来源**: Vibe Skills 项目实践 + 社区踩坑反馈
+
+**核心洞察**: AI 在执行中容易陷入两类高风险行为，需通过硬性约束（guardrails）而非柔性建议来防治。
+
+**反模式 1: 批量删除**
+
+```
+❌ AI 执行 rm *.log / rm -rf temp/ — 批量删除文件
+✅ 只允许逐个文件删除，每次删除前确认文件内容
+```
+
+**根因**: AI 对文件系统的影响力不对称 — 一次批量删除可瞬间销毁大量数据，而恢复成本极高。AI 在理解"哪些文件可以删"上容易出错（误判临时文件、忽略备份依赖）。
+
+**防治规则**:
+- 禁止 `rm *`、`rm -rf`、`find -delete` 等批量删除命令
+- 删除前必须逐个确认文件路径和内容摘要
+- 特别警惕"清理临时文件"类任务中的误删
+
+**反模式 2: 静默兜底机制**
+
+```
+❌ try: result = main_logic() except: result = default_value  # 静默吞掉错误
+✅ try: result = main_logic() except Exception as e:
+       logger.error(f"⚠️ 兜底机制触发: {e}")  # 必须显式警告
+       result = default_value
+```
+
+**根因**: AI 倾向于写"保险"的兜底逻辑来确保程序不崩溃，但静默兜底会掩盖功能实现度不足的问题。AI 可能自信地报告"功能已完成"，实际上全是兜底在生效，核心逻辑未真正工作。
+
+**防治规则**:
+- 所有兜底机制必须包含 `⚠️ WARNING` 级别的日志输出
+- 代码审查时重点检查 catch-all 异常处理是否隐藏了真实错误
+- 验收测试必须验证主逻辑路径是否真正执行（而非只走 fallback）
+
+**验证方法**: 对 AI 生成的代码做 grep 检查 — `grep -r "except:" --include="*.py"` 和 `grep -r "catch (" --include="*.ts"` 查找静默异常处理
+
+**案例引用**: Vibe Skills 项目社区反馈 — "AI 喜欢写静默的兜底机制，然后早早的自信满满的给你说做好了，实际上全是兜底机制在发力，主要功能实现度很差"
+
+---
+
+### BP-018: 子代理并行时的 Skills 加载机制
+
+**来源**: Vibe Skills 项目多代理并发编排经验 + 太一元系统编排指南缺失补充
+
+**核心问题**: 当多个子代理并行执行时，每个子代理是否能正确加载所需的 Skills？当前编排指南只描述了 Agent 层级架构和渐进式披露，但完全没有子代理级别的 Skills 加载规范。
+
+**问题场景**:
+
+```
+Orchestrator 分解任务为 3 个并行子任务:
+├─ Worker-1: 前端开发 → 需要 frontend-design Skill
+├─ Worker-2: 数据分析 → 需要 data-analysis Skill
+└─ Worker-3: 安全审计 → 需要 security-audit Skill
+
+如果每个 Worker 独立上下文:
+- Worker-1 是否会自动读 INDEX.md 并匹配 frontend-design？
+- 还是只会盲目执行，丢失专业指导？
+```
+
+**规范设计**:
+
+| 层级 | Skills 加载策略 | 说明 |
+|------|----------------|------|
+| **Orchestrator** | 全量 INDEX.md | 需要全局视野来分配任务和 Skills |
+| **Specialist** | 按任务匹配 INDEX + 加载对应 SKILL.md | 在任务分配时由 Orchestrator 指定所需 Skills |
+| **Worker** | 继承 Specialist 指定的 SKILL.md | 只加载与当前任务直接相关的 Skills |
+
+**编排器职责增强**:
+
+1. **任务分解时**: 在子代理 prompt 中明确指定需要加载的 Skills（如 "你需要先读取 `.claude/skills/frontend-design/SKILL.md`"）
+2. **Skills 传递**: 子代理 prompt 应包含 Skills 的关键约束摘要（即使子代理未读 SKILL.md，也能遵循核心规则）
+3. **负向路由**: 明确告知子代理**不需要**加载的 Skills（减少上下文浪费）
+
+**具体做法**:
+
+```
+# Orchestrator 分发任务时的 prompt 模板
+你负责 {task_description}。
+执行前，请先读取以下 Skills:
+1. {skill_path_1} — 原因: {why_needed}
+2. {skill_path_2} — 原因: {why_needed}
+
+你不需要读取: {excluded_skills}（与当前任务无关）
+```
+
+**与上下文工程的协同**: 子代理天然获得独立上下文窗口（见 CONTEXT-ENGINEERING-GUIDE.md 会话管理框架），Skills 加载在独立上下文中进行，不污染父上下文。
+
+**验证方法**: 在下次执行 PARALLEL/HIERARCHICAL 编排时，检查子代理 prompt 是否包含 Skills 指引
+
+**案例引用**: Vibe Skills 项目 "在并行分发任务后，子代理能并行拉起各自任务的skills，实现多代理并发时，skills也会被正确拉起"
+
+---
+
+### BP-019: 长上下文下 Skills 路由失效防护
+
+**来源**: Vibe Skills 项目 4.15 补丁更新 + 太一元系统上下文衰减分析
+
+**核心问题**: 当上下文超过 300-400k tokens（见 CONTEXT-ENGINEERING-GUIDE.md 衰减阈值），Skills 路由匹配的约束力下降 — AI 可能不再按照 Skills 的指导工作，而是退化到"默认行为"。
+
+**失效模式**:
+
+```
+正常: 用户请求 → INDEX.md 匹配 → 加载 SKILL.md → 按指导执行
+失效: 用户请求 → AI 忽略 INDEX.md → 不加载 Skill → 自由发挥（质量下降）
+```
+
+**根因**: Skills 路由依赖 AI 在长上下文中仍然"注意到"路由规则的存在。上下文衰减导致 AI 注意力从系统约束转移到对话内容，路由规则被"挤出"注意力窗口。
+
+**防护策略（三层防御）**:
+
+| 层级 | 策略 | 实现 |
+|------|------|------|
+| **L1: 主动压缩** | 在 ~250k tokens 时 `/compact` 并附上未来方向 | 见会话管理决策框架 |
+| **L2: 路由强化** | 在关键约束中重申 Skills 路由规则 | 关键约束写入 CLAUDE.md（固定上下文） |
+| **L3: 执行验证** | 任务完成后检查是否调用了正确的 Skills | 在 review 阶段验证 |
+
+**具体防护规则**:
+
+1. **/compact 指令**: `/compact 保持 Skills 路由规则，保留待办任务列表和当前阶段`
+2. **CLAUDE.md 中的路由强化**: 在固定上下文税中保留简短的路由提醒（如 "执行任务前先检查 INDEX.md 匹配 Skill"）
+3. **Subagent 隔离**: 大量中间输出的工作交给 Subagent，避免撑大主上下文导致路由失效
+
+**与现有机制的协同**:
+- BP-015 Context Hygiene 的习惯 4（审计固定上下文税）— 确保路由提醒在固定税中
+- BP-016 Phase-Gated 的 review 阶段 — 增加 Skills 调用验证
+- CONTEXT-ENGINEERING-GUIDE.md 的上下文衰减防治 — 量化阈值 + 主动压缩
+
+**验证方法**: 在长会话（>250k tokens）后检查 AI 是否仍然正确匹配和调用 Skills
+
+**案例引用**: Vibe Skills 项目 "防止在超长上下文下，vibe的调用路由因为约束不足而失效的问题"
+
+---
+
+### BP-020: 文件目录语义治理规范
+
+**来源**: Vibe Skills 项目文件语义治理实践 + 太一元系统目录约定散乱现状
+
+**核心问题**: 当前目录结构约定散见于各文件，缺乏统一的语义命名规范。新对话的 AI 需要重新理解"什么目录存什么"，容易遗漏细节导致工作衔接问题。
+
+**Vibe Skills 的四层语义模型**:
+
+| 目录 | 语义层 | 存什么 | 不存什么 |
+|------|--------|--------|---------|
+| `docs/` | 解释层 | 说明文档、指南、架构设计 | 运行时产物、临时文件 |
+| `config/` | 合同层 | 配置文件、路由规则、Agent 定义 | 脚本、代码 |
+| `scripts/` | 执行层 | 可执行脚本、工具、自动化 | 文档、配置 |
+| `references/` | 长期资产层 | 模板、参考数据、知识库 | 运行时状态 |
+| `outputs/runtime/` | 运行证据层 | 日志、执行记录、临时输出 | 源代码、配置 |
+
+**太一元系统现有目录对照**:
+
+| 语义层 | Vibe 目录 | 太一现有目录 | 差距 |
+|--------|----------|-------------|------|
+| 解释层 | `docs/` | `docs/` | ✅ 一致 |
+| 合同层 | `config/` | `config/` + `.claude/settings.json` | ⚠️ Agent 定义在 `agents/`，分散 |
+| 执行层 | `scripts/` | `hooks/` + `scripts/` | ✅ 基本一致 |
+| 长期资产层 | `references/` | `memory/` + `.claude/skills/` | ⚠️ memory 含运行时状态 |
+| 运行证据层 | `outputs/runtime/` | 无统一目录 | ❌ 散落各处 |
+
+**建议改进（低优先级，避免破坏现有结构）**:
+
+1. **运行时产物与长期资产分离**: Vibe 项目的做法 — 工作区运行时文件放到 `.vibeskills/`（或 `.taiyi/runtime/`），和核心项目根目录文档分离
+2. **新增目录时的语义审批**: 确认新目录属于哪一语义层，避免层间混用
+3. **AI 接手工作区时的快速理解**: 在项目根目录的 README 或 CLAUDE.md 中用 5 行说明目录语义
+
+**关键原则**: 文件目录语义治理的核心目标是让**新的 AI 对话**能快速理解工作区结构，减少"重新理解"的成本和遗漏。
+
+**案例引用**: Vibe Skills 项目 "按固定化的架构存储文件，让下一个新的对话的AI明白什么什么目录下存储什么什么文件" + "修复工作区记忆和核心区的文件杂糅的问题"
+

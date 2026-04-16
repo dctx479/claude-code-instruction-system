@@ -181,6 +181,48 @@
 
 ---
 
+## 子代理并行时的 Skills 加载机制
+
+**核心问题**: 多个子代理并行执行时，每个子代理是否能正确加载所需 Skills？
+
+### Skills 加载层级规范
+
+| 层级 | Skills 加载策略 | 说明 |
+|------|----------------|------|
+| **Orchestrator** | 全量 INDEX.md | 需要全局视野来分配任务和 Skills |
+| **Specialist** | 按任务匹配 INDEX + 加载对应 SKILL.md | 由 Orchestrator 在 prompt 中指定 |
+| **Worker** | 继承 Specialist 指定的 SKILL.md | 只加载与当前任务直接相关的 Skills |
+
+### Orchestrator 职责增强
+
+分发任务时，Orchestrator 必须在子代理 prompt 中:
+
+1. **指定所需 Skills**: 明确告知子代理需要读取哪些 SKILL.md
+2. **传递关键约束**: 即使子代理未读完整 SKILL.md，prompt 中也包含核心规则摘要
+3. **负向路由**: 告知子代理不需要加载的 Skills（减少上下文浪费）
+
+```
+# 子代理 prompt 模板
+你负责 {task_description}。
+执行前，请先读取以下 Skills:
+1. {skill_path_1} — 原因: {why_needed}
+2. {skill_path_2} — 原因: {why_needed}
+
+你不需要读取: {excluded_skills}（与当前任务无关）
+```
+
+### 长上下文下的路由失效防护
+
+当上下文超过 ~300-400k tokens（见 CONTEXT-ENGINEERING-GUIDE.md），Skills 路由匹配约束力可能下降。防护:
+
+1. **主动压缩**: ~250k tokens 时 `/compact` 并附上未来方向和路由提醒
+2. **路由强化**: 关键路由规则写入 CLAUDE.md（固定上下文，每次都加载）
+3. **Subagent 隔离**: 大量中间输出交给 Subagent，避免撑大主上下文
+
+> 详见: `memory/best-practices.md` BP-018（子代理 Skills 加载）、BP-019（路由失效防护）
+
+---
+
 ## 监控与异常处理
 
 核心功能: 实时监控 → 异常检测 → 自动恢复 → 结果整合 → 质量验证

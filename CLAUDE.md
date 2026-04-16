@@ -318,11 +318,16 @@ python scripts/port-manager.py conflicts / suggest <service>
 
 > **核心指标**: 信噪比 (SNR) — 每个 token 对任务完成的贡献度。加载精准信息，而非更多信息。
 
-**两大失效模式**:
-- **上下文投毒**: 过时/矛盾信息污染上下文 → 定期审计 CLAUDE.md，废弃规则加标记，同一概念单一事实源
+**三大失效模式**:
+- **上下文投毒**: 过时/矛盾信息污染上下文 → 定期审计 CLAUDE.md，废弃规则加标记，单一事实源
 - **注意力漂移**: 长对话或批量任务中遗忘约束 → 持久化规划文件每轮重读，关键约束写入 CLAUDE.md
+- **上下文衰减**: ~300-400k tokens 起性能退化 → 主动 ~250k 压缩，新任务开新会话
 
 **5 习惯**: ① 精准加载按需注入 ② 压缩终端输出 ③ 单一事实源 ④ 定期审计固定上下文税 ⑤ 避免内容重复
+
+**会话管理规则**:
+- 新任务 → 新会话 | 失败尝试 → /rewind 重试而非纠正
+- /compact 时附上未来方向说明（防坏压缩）| Subagent 隔离大量中间输出
 
 > 详细指南: `docs/CONTEXT-ENGINEERING-GUIDE.md`
 
@@ -335,6 +340,12 @@ python scripts/port-manager.py conflicts / suggest <service>
 
 ### ⚠️ 需要确认
 删除现有功能、修改公共API、引入新依赖、数据库Schema变更、生产环境操作、P0/P1问题修复策略
+
+### 🔴 绝对禁止 (硬性约束)
+- **禁止批量删除文件**: 不允许 `rm *`、`rm -rf`、`find -delete`，必须逐个确认
+- **禁止静默兜底机制**: 所有 fallback/catch-all 必须含 `⚠️ WARNING` 日志，不允许静默吞掉错误
+
+> 详见: `memory/best-practices.md` BP-017
 
 ---
 
