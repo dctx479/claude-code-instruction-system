@@ -110,7 +110,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"./.claude/hooks/pre-compact.sh\"",
+            "command": "bash \"./hooks/pre-compact.sh\"",
             "description": "上下文压缩前自动归档",
             "timeout": 10000
           }
