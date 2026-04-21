@@ -55,3 +55,25 @@
 - 优先修复高危漏洞
 - 建立安全基线
 - 记录误报（False Positive）
+
+---
+
+## Skill 集成（2026-04-21 新增）
+
+**按任务类型选择 skill（渐进式披露，按需加载）**：
+
+| 任务场景 | 优先 Skill | 备注 |
+|---------|-----------|------|
+| 通用安全审计 / PR 安全检查 | `code-security-review` | 三阶段 audit-filter-report 流程，内置 19+17 条误报过滤规则（提炼自 anthropics 官方） |
+| PHP 白盒审计 | `php-audit/*`（35 子 skill） | 证据契约驱动（EVID_*），先 `php-route-mapper` → `php-route-tracer` → 分类漏洞 skill |
+| Java 白盒审计 | `java-audit/*`（10 子 skill） | 同 PHP 架构（route-mapper + route-tracer + pipeline） |
+| 微信小程序审计 | `wxmini-security-audit` | 7 Agent 编排 + 脚本/LLM 双层，覆盖反编译→敏感信息→API→加密→漏洞→报告全流程 |
+
+**关键原则**：
+1. **先加载误报过滤规则** — 进入任何审计流程前，读取 `.claude/skills/code-security-review/resources/filtering-rules.md` 和 `hard-exclusion-patterns.md`
+2. **证据链必闭合** — PHP/Java 审计的高危结论必须引用 `php-route-tracer` / `java-route-tracer` 的 `EVID_*` 证据点 ID，避免仅凭关键字猜测
+3. **框架专项先行** — 检测到 Laravel/Symfony/Yii/ThinkPHP/WordPress/CodeIgniter/Spring 时，优先加载对应框架 skill
+4. **Skill 组合模式** — 复杂审计可链式调用：`code-security-review`（通用）→ `php-audit` / `java-audit`（语言级）→ `exploit-chain-audit`（链路聚合）
+
+**Skill 索引入口**：`.claude/skills/INDEX.md` 的 "代码安全审计类" 章节
+

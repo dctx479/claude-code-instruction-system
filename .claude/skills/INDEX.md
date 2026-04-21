@@ -490,6 +490,73 @@
 触发: CTF Web 安全题目
 ```
 
+#### ctf-ai-ml
+```yaml
+文件: .claude/skills/ctf-ai-ml/SKILL.md
+描述: AI/ML 攻击技术，对抗样本/模型窃取/提示注入/成员推断/LoRA 利用/LLM 越狱
+附加资源: adversarial-ml.md, llm-attacks.md, model-attacks.md
+触发: CTF AI/ML 题目，攻击 ML 模型/LLM
+来源: ljagiello/ctf-skills (1627⭐)
+```
+
+#### ctf-writeup
+```yaml
+文件: .claude/skills/ctf-writeup/SKILL.md
+描述: 标准化 CTF 解题报告生成器，用于赛事提交和组织者复核
+触发: 解决 CTF 挑战后，需要规范化记录解题步骤/工具/经验教训
+来源: ljagiello/ctf-skills (1627⭐)
+```
+
+---
+
+### 代码安全审计类 (Code Security Audit)
+
+#### code-security-review
+```yaml
+文件: .claude/skills/code-security-review/SKILL.md
+描述: 通用代码安全审计，三阶段 audit-filter-report 流程，内置 19 条误报排除规则 + 17 条先例
+适用: 任何语言代码审计、漏洞扫描、PR 安全检查
+资源: audit-prompt.md / filtering-rules.md / hard-exclusion-patterns.md / customization-guide.md
+触发: 安全审计、漏洞扫描、代码安全检查
+集成: 增强 agents/security/security-audit.md 的误报过滤能力
+来源: ez-lbz/claude-code-security-skills (提炼自 anthropics 官方)
+```
+
+#### php-audit (子 skill 集合)
+```yaml
+目录: .claude/skills/php-audit/
+描述: PHP 白盒代码审计 skill 集合，证据契约驱动（EVID_* 证据点）
+核心流水线: php-route-mapper → php-route-tracer → php-*-audit → php-exploit-chain-audit
+漏洞子 skill (30+): sql/nosql/cmd/ssrf/xss/file-read/file-upload/file-write/archive-extract/xxe/deser/tpl/ldap/expr/auth/csrf/open-redirect/crlf/session-cookie/config/crypto/logic/logging
+框架专项: laravel / symfony / yii / thinkphp / wordpress / codeigniter
+证据契约: shared/EVIDENCE_POINT_IDS.md + IO_PATH_CONVENTION.md + PHP_SINK_REFERENCE.md + SEVERITY_RATING.md
+触发: PHP 项目安全审计、上线前评估、修复回归验证
+来源: 0xShe/PHP-Code-Audit-Skill (272⭐)
+```
+
+#### java-audit (子 skill 集合)
+```yaml
+目录: .claude/skills/java-audit/
+描述: Java 白盒代码审计 skill 集合，与 php-audit 同架构（route-mapper + route-tracer + pipeline）
+核心 skill: java-route-mapper / java-route-tracer / java-audit-pipeline
+漏洞子 skill: sql-audit / auth-audit / xxe-audit / file-read-audit / file-upload-audit / vuln-scanner
+共享契约: java-shared/DECOMPILE_STRATEGY.md + OUTPUT_STANDARD.md + SEVERITY_RATING.md
+触发: Java 项目安全审计、Spring/Struts/MyBatis 反序列化链分析
+来源: RuoJi6/java-audit-skills (580⭐)
+```
+
+#### wxmini-security-audit
+```yaml
+文件: .claude/skills/wxmini-security-audit/SKILL.md
+描述: 微信小程序全自动安全审计 Agent Teams，7 Agent 协作 + 脚本/LLM 双层架构 + 4 路并行
+覆盖维度: 敏感信息泄露 / API 接口提取 / 加解密算法 / 漏洞分析（认证/数据/注入/越权/支付/信息泄露/配置）
+Agent 分工: agent-01 反编译 → agent-02~05 并行分析 → agent-06 报告 + agent-07 自定义分析
+工具脚本: tools/scripts/endpoint_extractor.py + secret_scanner.py（正则预扫描）
+依赖: unveilr.exe (wxapkg 反编译，需独立下载) + Windows 平台
+触发: 微信小程序 .wxapkg 安全审计、上线前合规检查
+来源: sssmmmwww/wxmini-security-audit (193⭐)
+```
+
 ---
 
 ## 场景速查：该加载哪个 Skill？
@@ -557,6 +624,14 @@
 ---
 
 ## 更新日志
+
+### 2026-04-21
+- 新增代码安全审计类 (Code Security Audit) 分类，引入 4 个外部 skill
+- `code-security-review`：来自 ez-lbz/claude-code-security-skills（提炼自 anthropics 官方），19+17 条误报过滤规则，三阶段 audit-filter-report 流程
+- `php-audit`：35 子 skill 集合，来自 0xShe/PHP-Code-Audit-Skill (272⭐)，证据契约驱动 + Laravel/Symfony/Yii/ThinkPHP/WordPress/CodeIgniter 框架专项
+- `java-audit`：10 子 skill 集合，来自 RuoJi6/java-audit-skills (580⭐)，route-mapper + route-tracer + pipeline 架构
+- `wxmini-security-audit`：来自 sssmmmwww/wxmini-security-audit (193⭐)，7 Agent 协作 + 脚本/LLM 双层 + 4 路并行，覆盖微信小程序反编译到报告的全流程
+- 补齐 CTF skills：新增 `ctf-ai-ml`（AI/ML 攻击）和 `ctf-writeup`（赛事标准化报告），来自 ljagiello/ctf-skills (1627⭐)
 
 ### 2026-04-15
 - 从全局配置迁入 schedule-analyzer Skill（课表空课分析）
