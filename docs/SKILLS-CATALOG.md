@@ -18,7 +18,8 @@
 
 | Skill | 描述 | 触发词 |
 |-------|------|--------|
-| **deep-research** | Lead Agent + Subagent 并行调研 | `deep-research <主题>` |
+| **deep-research** | Lead Agent + Subagent 并行调研，支持创新组合发现与结构化报告 | `deep-research <主题>` |
+| **question-refiner** | 研究查询精炼器，结构化模糊查询并补足创新 brief | `澄清研究方向`, `结构化研究问题` |
 | **stock-research** | 8阶段股票投资尽调框架，模拟巴菲特式理性投资分析 | `/stock-research <股票代码>`, `分析股票` |
 | **market-insight** | 三段式用户画像与产品机会分析 | `/insight <产品描述>` |
 | **exa-research** | 企业与市场研究，基于 Exa 搜索引擎 | `研究竞争对手`, `分析行业` |
@@ -85,6 +86,7 @@
 | stock-research + data-analysis | 指数成分股批量分析（恒生科技/科创50/创业板50） |
 | stock-research + exa-research | 股票基本面 + 行业竞争格局深度分析 |
 | literature-mentor + paper-writing-assistant | 文献综述写作 |
+| literature-mentor + deep-research | 文献拆解 + 创新组合发现 |
 | literature-mentor + experiment-logger | 实验设计与执行 |
 | seedance-prompt + seedance-storyboard | AI 短剧全流程制作 |
 | frontend-design + ui-ux-pro-max | 专业级 UI 设计系统 |

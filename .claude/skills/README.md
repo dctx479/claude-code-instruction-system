@@ -432,7 +432,7 @@ rm -rf .claude/skills/skill-name
 - **Agent 索引**: `agents/INDEX.md`
 - **编排模式**: `workflows/orchestration/orchestration-patterns.md`
 - **上下文工程**: `workflows/context-engineering.md`
-- **最佳实践**: `memory/best-practices.md`
+- **策展型最佳实践条目库**: `memory/best-practices.md`
 
 ---
 

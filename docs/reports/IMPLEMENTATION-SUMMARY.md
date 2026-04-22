@@ -346,7 +346,8 @@ ls .claude/skills/
 ### 参考文档
 - `CLAUDE.md` - 太一元系统核心配置
 - `workflows/orchestration/orchestration-patterns.md` - 编排模式
-- `memory/best-practices.md` - 最佳实践
+- `memory/best-practices.md` - 策展型最佳实践条目库
+- `docs/BEST-PRACTICES.md` - Claude Code 使用与配置指南
 
 ---
 

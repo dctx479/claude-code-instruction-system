@@ -419,7 +419,7 @@ def generate_cost_optimization_plan():
 
 ### 方案
 1. **移除冗余示例**: 从15个减少到5个核心示例
-2. **提取共享内容**: 将通用规范移至 BEST-PRACTICES.md
+2. **提取共享内容**: 将通用配置与使用规范移至 `docs/BEST-PRACTICES.md`
 3. **精简指令**: 合并相似的指令步骤
 
 ### 预期效果
@@ -500,7 +500,7 @@ def generate_cost_optimization_plan():
 
 ### 后续行动
 1. 将此模式应用于其他Agent
-2. 更新 BEST-PRACTICES.md
+2. 更新 `docs/BEST-PRACTICES.md`
 3. 制定prompt优化标准流程
 ```
 

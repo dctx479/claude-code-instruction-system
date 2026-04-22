@@ -165,6 +165,32 @@
 
 ---
 
+### 3.5 创新组合模式（Research Innovation Explorer）
+
+适用场景：
+- 从多篇论文中寻找可行的新方向
+- 做跨领域机制迁移
+- 从大量候选方案中快速筛选可验证 idea
+
+最小流程：
+1. **抽取机制**：不是只摘录论文结论，而是提炼可迁移机制、前提条件和失败边界。
+2. **跨域映射**：把机制映射到目标问题，生成两两或多维组合假设，排除明显冲突组合。
+3. **快速验证**：用补充检索、开源实现、实验入口或逻辑约束筛掉不靠谱方案，保留 shortlist。
+
+推荐搭配：
+- `literature-mentor`：负责单篇论文精读、机制提炼、研究空白识别
+- `deep-research`：负责广泛检索、组合发现、证据补强和 shortlist 输出
+- `experiment-logger`：负责把 shortlist 转成可执行验证计划
+
+推荐输出结构：
+- 已有发现
+- 可迁移机制
+- 组合假设
+- 风险 / 验证点
+- shortlist
+
+---
+
 ## 快速开始
 
 ### 第一步：安装 Zotero-MCP
@@ -296,7 +322,7 @@
 - **single-cell-rna-qc**：单细胞 RNA-seq 质量控制
 
 ### 社区工具
-- **claude-scientific-skills**：139 个科研技能（生物信息学、药物发现等）
+- **claude-scientific-skills**：140+ 科研技能（生物信息学、药物发现等）
 - **claude-scientific-writer**：假设生成、文献综述、同行评审、基金申请
 - **medical-imaging-review**：医学影像综述生成 skill
 
@@ -367,7 +393,7 @@
 ## 反馈与改进
 
 如有问题或建议，请：
-1. 查看 [FAQ](../docs/faq.md)
+1. 查看 [FAQ](../faq.md)
 2. 提交 Issue 到项目仓库
 3. 参与社区讨论
 

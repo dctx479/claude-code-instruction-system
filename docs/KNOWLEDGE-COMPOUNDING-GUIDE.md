@@ -113,7 +113,7 @@ Agent/Skill 定义 (agents/*.md / SKILL.md)
 ```markdown
 1. 读取 .claude/context/index.json — 是否有匹配的问题签名？
 2. 搜索 memory/error-patterns.md — 是否有类似错误模式？
-3. 搜索 memory/best-practices.md — 是否有适用的最佳实践？
+3. 搜索 memory/best-practices.md — 是否有适用的策展型最佳实践条目？
 ```
 
 太一元系统已有此机制: CLAUDE.md 第九节的"上下文检索协议"。

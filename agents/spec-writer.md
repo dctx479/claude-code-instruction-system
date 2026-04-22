@@ -283,5 +283,5 @@ Layer 3: KB（知识库） — 描述"为什么这样做"
 
 - 规范模板: `specs/SPEC-TEMPLATE.md`
 - 示例规范: `specs/examples/`
-- 最佳实践: `memory/best-practices.md`
+- 策展型最佳实践条目库: `memory/best-practices.md`
 - 知识复利: `docs/KNOWLEDGE-COMPOUNDING-GUIDE.md`

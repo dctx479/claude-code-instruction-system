@@ -344,7 +344,8 @@ grep "P0\|P1\|P2" QA-REPORT-*.md | sort | uniq -c
 
 ### 系统配置
 - 核心配置: `CLAUDE.md` (已集成质量保障系统)
-- 最佳实践: `BEST-PRACTICES.md`
+- Claude Code 配置与使用指南: `docs/BEST-PRACTICES.md`
+- 策展型最佳实践条目库: `memory/best-practices.md`
 
 ## 版本历史
 
@@ -356,7 +357,7 @@ grep "P0\|P1\|P2" QA-REPORT-*.md | sort | uniq -c
 
 如有问题或建议，请参考:
 - 项目文档: `README.md`
-- 最佳实践: `BEST-PRACTICES.md`
+- Claude Code 配置与使用指南: `docs/BEST-PRACTICES.md`
 - 快速参考: `QUICK-REFERENCE.md`
 
 ---

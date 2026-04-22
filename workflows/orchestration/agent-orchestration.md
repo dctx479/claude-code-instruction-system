@@ -231,7 +231,7 @@ commands/*.md:
 memory/:
   - lessons-learned.md  # 经验教训
   - error-patterns.md   # 错误模式
-  - best-practices.md   # 最佳实践
+  - best-practices.md   # 策展型最佳实践条目库
   - agent-performance.md # 性能追踪
 ```
 
@@ -297,7 +297,7 @@ memory/:
 
 5. 经验沉淀
    - 记录成功模式
-   - 更新 best-practices.md
+   - 更新 memory/best-practices.md
 ```
 
 ### 3.2 大规模重构

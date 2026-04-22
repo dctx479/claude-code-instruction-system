@@ -429,7 +429,8 @@ qa-fixer不会自动修复
 - Agent定义: `agents/qa-reviewer.md`
 - Agent定义: `agents/qa-fixer.md`
 - 规范管理: `specs/README.md`
-- 最佳实践: `BEST-PRACTICES.md`
+- Claude Code 配置与使用指南: `docs/BEST-PRACTICES.md`
+- 策展型最佳实践条目库: `memory/best-practices.md`
 
 ## 变更历史
 
