@@ -64,8 +64,10 @@
 | COLLABORATIVE | 2.8-4.4x | 极高 | 高 | 跨领域问题 |
 | COMPETITIVE | 1.5-2x | 最优 | 高 | 探索创新 |
 | SWARM | 5-10x | 中 | 低 | 大规模批量 |
+| **SDD-RIPER** | **2-4x** | **极高** | **中** | **中大型需求开发** |
 
 完整模式定义: `workflows/orchestration/orchestration-patterns.md`
+SDD-RIPER 详解: `docs/SDD-RIPER-GUIDE.md`
 
 ---
 
@@ -73,6 +75,8 @@
 
 ```
 规模>50? ─YES→ SWARM
+    NO↓
+需求开发? ─YES→ SDD-RIPER
     NO↓
 独立任务? ─YES→ PARALLEL
     NO↓
@@ -135,7 +139,26 @@
 结果: 找到5x性能提升方案
 ```
 
-### 示例4：大批量分析 → SWARM + 持久化规划文件
+### 示例4：中大型需求开发 → SDD-RIPER
+
+```
+任务: "开发用户权限管理系统"
+分析: 中大型需求 + 需要质量可控 + 需要知识沉淀
+→ 策略: SDD-RIPER  预期加速: 2-4x
+
+执行:
+1. Pre-Research: 生成 CodeMap + Context Bundle (1小时)
+2. Research: 调研现状，锁定事实 (2小时)
+3. Innovate: 设计 2-3 个方案，人类拍板 (1小时)
+4. Plan: 原子级规划，人类审批 (1小时)
+5. Execute: AI 按图施工 (4小时)
+6. Review: 三角验证 + QA 系统 (1小时)
+
+总时间: 10小时 vs 单Agent无规划 20-30小时
+质量: Bug率降低 18-37%
+```
+
+### 示例5：大批量分析 → SWARM + 持久化规划文件
 
 ```
 任务: "分析恒生科技指数 30 只成分股，逐个生成投资研报"

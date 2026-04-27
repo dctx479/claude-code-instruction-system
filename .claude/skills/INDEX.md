@@ -4,15 +4,28 @@
 
 ## 使用说明
 
-### 加载策略
+### 加载策略（轻重双轨）
 1. **首次阅读**: 仅读取本 INDEX.md，了解可用 Skill 概览（~600 tokens）
 2. **按需加载**: 根据任务需求，读取对应 Skill 的完整 SKILL.md（~2K tokens/个）
 3. **智能匹配**: 根据任务特征和触发条件自动选择最合适的 Skill
+
+### 轻重双轨设计
+- **轻量级 Skill (Light)**: 单文件 SKILL.md，适合简单任务（如格式化、代码片段生成）
+  - 文件大小: 1-2K tokens
+  - 结构: 描述 + 示例 + 触发条件
+  - 适用: 高频、低复杂度任务
+  
+- **重量级 Skill (Heavy)**: 多文件结构，适合复杂流程（如 SDD-RIPER、安全审计）
+  - 文件结构: SKILL.md（入口） + REFERENCE.md（详细文档） + EXAMPLES.md（案例库）
+  - 文件大小: 5-10K tokens（分散在多个文件）
+  - 适用: 低频、高复杂度任务
+  - 加载策略: 先读 SKILL.md（核心流程），需要时再读 REFERENCE.md（详细规范）
 
 ### 性能优化
 - **Token节省**: INDEX 文件 ~600 tokens vs 所有 Skill ~46K tokens，节省 **98%**
 - **精准激活**: 避免无关 Skill 内容干扰上下文
 - **分层文档**: 核心能力在 SKILL.md，详细参考在 REFERENCE.md（部分 Skill）
+- **延迟加载**: 重量级 Skill 的 REFERENCE.md 仅在需要时读取
 
 ---
 
@@ -31,6 +44,67 @@
   - 与 Context Archival、Ralph Loop、Autopilot 深度集成
 触发: 任务开始、遇到决策点、发生错误时自动记录
 集成: [context-archivist, ralph-loop, autopilot]
+```
+
+---
+
+### 开发类 (Development)
+
+#### sdd-riper
+```yaml
+文件: .claude/skills/sdd-riper/SKILL.md
+类型: Heavy（重量级）
+描述: Spec-Driven Development + RIPER 五阶段流程，确保大模型编程质量可控
+适用: 中大型需求开发、复杂功能实现、需要知识沉淀的场景
+专长:
+  - Research（调研与事实锁定）
+  - Innovate（方案设计与对比）
+  - Plan（原子级规划）
+  - Execute（按图施工）
+  - Review（验收闭环）
+输出: 
+  - mydocs/specs/<task>.md（核心 Spec 文档）
+  - mydocs/codemap/<feature>.md（代码地图）
+  - mydocs/archive/<task>_human.md + _llm.md（知识沉淀）
+触发: 中大型需求开发、需要严格质量控制时
+集成: [codemap-builder, qa-reviewer, qa-fixer]
+参考: docs/SDD-RIPER-GUIDE.md
+轻重双轨: 标准版（完整流程） vs sdd-riper-light（快速迭代）
+```
+
+#### sdd-riper-light
+```yaml
+文件: .claude/skills/sdd-riper-light/SKILL.md
+类型: Light（轻量级）
+描述: SDD-RIPER 轻量版，保留核心质量保障，简化流程负担
+适用: 熟练用户、简单任务（<500 行代码或 <3 个文件）、快速迭代
+专长:
+  - Micro-Spec（1-2 段精简文档）
+  - 单方案快速决策（无需多方案对比）
+  - 高层级步骤规划（3-5 步）
+  - 快速验收（核心功能检查）
+输出: 
+  - mydocs/specs/<task>-micro.md（Micro-Spec）
+  - Change Log（修改摘要）
+触发: 简单 Bug 修复、小功能开发、熟练用户快速迭代
+集成: [sdd-riper]（可升级到标准版）
+参考: .claude/skills/sdd-riper-light/SKILL.md
+自动判断: Claude 根据任务复杂度自动选择 Light 或标准版
+```
+
+#### codemap-builder
+```yaml
+文件: agents/codemap-builder.md
+类型: Light（轻量级）
+描述: 构建代码地图，生成结构化的代码库导航文档
+适用: 新人 Onboarding、重构前评估、技术债务审计
+专长:
+  - 架构识别（MVC/微服务/分层架构）
+  - 模块提取（依赖关系、接口定义）
+  - 关键路径标注（调用链、数据流）
+输出: mydocs/codemap/<feature>.md
+触发: 接手新项目、重构前、SDD-RIPER Pre-Research 阶段
+集成: [sdd-riper, architect, debugger]
 ```
 
 ---

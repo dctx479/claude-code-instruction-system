@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p .claude/tmp-flat)",
+      "Bash(mv .claude/tmp-repos/.claude/tmp-repos/.claude/tmp-repos/.claude/tmp-repos/.claude/tmp-repos/ctf-src .claude/tmp-flat/)",
+      "Bash(mv .claude/tmp-repos/.claude/tmp-repos/.claude/tmp-repos/.claude/tmp-repos/review-src .claude/tmp-flat/)",
+      "Bash(mv .claude/tmp-repos/.claude/tmp-repos/.claude/tmp-repos/wxmini-src .claude/tmp-flat/)",
+      "Bash(mv .claude/tmp-repos/.claude/tmp-repos/java-src .claude/tmp-flat/)",
+      "Bash(mkdir -p .claude/skills/wxmini-security-audit/agents .claude/skills/wxmini-security-audit/tools/scripts)",
+      "Bash(cp .claude/tmp-repos/wxmini-src/SKILL.md .claude/skills/wxmini-security-audit/SKILL.md)",
+      "Bash(cp .claude/tmp-repos/wxmini-src/README.md .claude/skills/wxmini-security-audit/README.md)",
+      "Bash(cp .claude/tmp-repos/wxmini-src/agents/*.md .claude/skills/wxmini-security-audit/agents/)",
+      "Bash(cp .claude/tmp-repos/wxmini-src/tools/scripts/*.py .claude/skills/wxmini-security-audit/tools/scripts/)"
+    ]
+  }
+}
