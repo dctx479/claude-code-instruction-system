@@ -50,6 +50,22 @@
 触发: /autopilot 命令
 ```
 
+#### sdd-riper-orchestrator
+```yaml
+文件: agents/sdd-riper-orchestrator.md
+模型: opus
+工具: Read, Write, Edit, Bash, Grep, Glob, Task
+描述: SDD-RIPER 编排者 - 执行 Spec-Driven Development + RIPER 五阶段流程，确保大模型编程质量可控、过程可追溯
+适用: 中大型需求开发（>500行/3+文件）、需要规范驱动的复杂功能实现
+专长:
+  - Research（调研与事实锁定）
+  - Innovate（方案设计与对比）
+  - Plan（原子级规划）
+  - Execute（按图施工）
+  - Review（验收闭环）
+触发: sdd-riper intent 或 @sdd-riper，/riper，/sdd-riper
+```
+
 #### architect
 ```yaml
 文件: agents/architect.md
@@ -604,6 +620,7 @@
 | mentor | tech-mentor | agents/tech-mentor.md | 技术导师/技术方案/架构对比/原理讲解 |
 | architect-senior | senior-code-architect | agents/senior-code-architect.md | 高级架构/框架选型/fastify/pnpm |
 | vitest | vitest-tester | agents/vitest-tester.md | vitest/单元测试/mock/测试框架 |
+| sdd-riper | sdd-riper-orchestrator | agents/sdd-riper-orchestrator.md | /riper//sdd-riper/规范驱动开发/RIPER |
 | git | orchestrator | agents/orchestrator.md | commit/pr/merge/branch |
 | deploy | orchestrator | agents/orchestrator.md | deploy/部署/docker/k8s |
 | general | orchestrator | agents/orchestrator.md | （默认） |
@@ -682,6 +699,10 @@
 ---
 
 ## 更新日志
+
+### 2026-04-30
+- 新增规划类: sdd-riper-orchestrator（SDD-RIPER 编排者，RIPER 五阶段流程）
+- 自动调度映射表补充 sdd-riper intent → sdd-riper-orchestrator
 
 ### 2026-03-02
 - 新增专业类: requirements-analyst（需求分析专家）
