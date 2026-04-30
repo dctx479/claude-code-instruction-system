@@ -1,17 +1,62 @@
 ---
 name: data-analysis
-description: 通用数据分析技能，包括统计分析、数据可视化和洞察提取
-version: 1.0.0
+description: 通用数据分析参考库 - 提供 EDA 流程、统计检验、可视化的惯用写法，输出可解释的洞察而非纯数字
+version: 1.1.0
 license: MIT
 metadata:
   category: data-analysis
   tags: [data-analysis, statistics, visualization, insights]
   python_packages: [pandas, numpy, matplotlib, seaborn, scipy]
+trigger:
+  - "数据分析"
+  - "EDA"
+  - "统计分析"
+  - "数据可视化"
+  - "假设检验"
 ---
 
 # 数据分析 Skill
 
-## 何时使用此 Skill
+> 提供完整 EDA 流程和统计分析惯用写法，输出带解释的洞察，而非只有数字。
+
+## What（输入/输出）
+
+**输入**：数据文件路径或 DataFrame + 分析目标描述
+
+**输出**：EDA 报告（分布/相关性/异常值）+ 可视化代码 + 文字洞察解读
+
+## How（判断框架）
+
+数据分析时，按以下顺序执行：
+1. **先看形状和类型**：`df.info()` + `df.describe()` — 了解数据规模和质量
+2. **再看分布**：单变量分布 → 双变量关系 → 多变量交叉
+3. **识别异常**：缺失值 → 异常值 → 重复值（顺序不能颠倒）
+4. **最后建模**：只有数据质量确认后才做统计检验
+
+**可视化选择原则**：
+- 分布 → 直方图/箱线图
+- 关系 → 散点图/热力图
+- 趋势 → 折线图
+- 比较 → 柱状图（不用饼图，除非份额加和=100%）
+
+## When Done（验收标准）
+
+- 输出包含文字解读，不只是图表和数字
+- 异常值已识别并说明处理策略（删除/保留/标记）
+- 统计检验结果有 p 值解读（不只是"显著"/"不显著"）
+
+## What NOT（边界约束）
+
+🚫 不做的事：
+1. 不替代 `pandas` Skill（本 Skill 做分析流程，pandas 做 API 参考）
+2. 不做机器学习建模（用 `pytorch` 或 `deep-learning` Agent）
+3. 不在数据质量未确认前做统计检验
+
+---
+
+## 核心参考
+
+### 何时使用此 Skill
 
 当用户请求以下任务时自动激活：
 - 探索性数据分析（EDA）

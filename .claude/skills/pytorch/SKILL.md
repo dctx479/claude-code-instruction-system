@@ -1,17 +1,56 @@
 ---
 name: pytorch
-description: PyTorch 深度学习框架，用于构建和训练神经网络模型
-version: 1.0.0
+description: PyTorch 深度学习参考库 - 提供模型定义、训练循环、迁移学习、设备管理的惯用写法和常见陷阱
+version: 1.1.0
 license: MIT
 metadata:
   category: ai-ml
   tags: [pytorch, deep-learning, neural-networks, ai]
   python_package: torch
+trigger:
+  - "pytorch"
+  - "torch"
+  - "神经网络"
+  - "深度学习"
+  - "训练模型"
 ---
 
 # PyTorch Skill
 
-## 何时使用此 Skill
+> 提供 PyTorch 惯用写法，避免常见的梯度管理错误和 CUDA OOM 问题。
+
+## What（输入/输出）
+
+**输入**：用户描述的深度学习任务（模型设计/训练/推理/部署）
+
+**输出**：可直接运行的 PyTorch 代码片段，附带关键注意事项
+
+## How（判断框架）
+
+编写 PyTorch 代码时，优先考虑：
+1. **训练/推理模式分离**：`model.train()` vs `model.eval()` + `torch.no_grad()`
+2. **设备一致性**：模型和数据必须在同一设备
+3. **梯度清零时机**：`optimizer.zero_grad()` 在每个 batch 开始前
+4. **检查点保存**：保存 `state_dict` 而非整个模型（跨版本兼容）
+
+## When Done（验收标准）
+
+- 推理代码有 `model.eval()` + `torch.no_grad()`
+- 训练循环有 `optimizer.zero_grad()` → `loss.backward()` → `optimizer.step()` 顺序
+- 模型保存使用 `state_dict`，不直接 `torch.save(model)`
+
+## What NOT（边界约束）
+
+🚫 不做的事：
+1. 不替代 `deep-learning` Agent（本 Skill 只提供 API 参考，复杂架构设计用 Agent）
+2. 不处理分布式训练细节（DDP 配置复杂，需专项指导）
+3. 不做模型选型建议（用 `architect` Agent）
+
+---
+
+## 核心参考
+
+### 何时使用此 Skill
 
 当用户请求以下任务时自动激活：
 - 设计或实现神经网络模型

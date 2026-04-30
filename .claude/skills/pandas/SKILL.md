@@ -1,17 +1,55 @@
 ---
 name: pandas
-description: pandas 数据分析库，用于数据处理、清洗和分析
-version: 1.0.0
+description: pandas 数据处理参考库 - 提供 DataFrame 操作、数据清洗、分组聚合、时间序列的惯用写法和性能陷阱
+version: 1.1.0
 license: MIT
 metadata:
   category: data-analysis
   tags: [pandas, data-analysis, dataframe, data-processing]
   python_package: pandas
+trigger:
+  - "pandas"
+  - "DataFrame"
+  - "数据清洗"
+  - "数据处理"
 ---
 
 # pandas Skill
 
-## 何时使用此 Skill
+> 提供 pandas 惯用写法和性能陷阱，避免常见的慢循环和 SettingWithCopyWarning。
+
+## What（输入/输出）
+
+**输入**：用户描述的数据处理需求（清洗/聚合/合并/时间序列等）
+
+**输出**：可直接运行的 pandas 代码片段，附带性能说明
+
+## How（判断框架）
+
+选择 pandas 操作时，优先考虑：
+1. **向量化 > 循环**：能用列运算就不用 `iterrows`
+2. **`.loc` > 链式索引**：避免 SettingWithCopyWarning
+3. **合适的数据类型**：`category` 类型可节省 90% 内存
+4. **`query()` > 布尔索引**：大数据集更快
+
+## When Done（验收标准）
+
+- 代码无 `for i in range(len(df))` 循环（应用向量化）
+- 修改 DataFrame 时使用 `.loc`，不用链式赋值
+- 大文件处理时有 `chunksize` 或数据类型优化
+
+## What NOT（边界约束）
+
+🚫 不做的事：
+1. 不替代 `data-analysis` Skill（本 Skill 只提供 API 参考，不做完整 EDA 流程）
+2. 不处理 >10GB 数据（推荐 Dask 或 Polars）
+3. 不做统计检验（用 `data-analysis` Skill）
+
+---
+
+## 核心参考
+
+### 何时使用此 Skill
 
 当用户请求以下任务时自动激活：
 - 读取和写入数据文件（CSV, Excel, JSON 等）
