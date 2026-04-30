@@ -8,6 +8,12 @@ metadata:
   tags: [exa, company-research, competitive-analysis, market-research, intelligence]
   requires: [web_search_advanced]
   mcp: exa-mcp
+trigger:
+  - "/exa-research"
+  - "企业调研"
+  - "竞品分析"
+  - "公司情报"
+  - "市场研究"
 ---
 
 # Exa Research Skill

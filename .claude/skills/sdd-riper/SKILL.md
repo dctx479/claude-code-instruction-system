@@ -2,10 +2,52 @@
 name: sdd-riper
 description: Spec-Driven Development + RIPER 五阶段流程，确保大模型编程质量可控
 type: Heavy（重量级）
-version: 1.0.0
+version: 1.1.0
+trigger:
+  - "/riper"
+  - "/sdd-riper"
+  - "中大型需求开发"
+  - "需要写规范文档"
+  - "复杂功能实现"
 ---
 
 # SDD-RIPER Skill
+
+## What（输入/输出）
+
+**输入**：需求描述（自然语言）+ 可选的背景文档/代码库
+
+**输出**：
+- `mydocs/specs/<task>.md` — 完整 Spec 文档（8章节）
+- `mydocs/codemap/<feature>.md` — 代码地图（可选）
+- `mydocs/archive/<task>_human.md` + `_llm.md` — 知识沉淀
+
+## How（判断框架）
+
+**何时用标准版 vs 轻量版**：
+- 预计 >500 行代码 或 涉及 >3 个文件 → 标准版（本 Skill）
+- 简单 Bug 修复 / 小功能 / 熟练用户快速迭代 → `sdd-riper-light`
+
+**五阶段时间分配**：Research 30% → Innovate 20% → Plan 20% → Execute 25% → Review 5%
+
+**核心门禁**：Plan Approved 前禁止写代码；Spec 与代码冲突时以 Spec 为准
+
+## When Done（验收标准）
+
+- Spec 文档已完成 §1-§8 全部章节
+- Plan Approved 门禁已通过（用户明确批准）
+- Execute 阶段严格按 Plan 实现，无未记录的偏离
+- Review 阶段完成三角验证（功能/测试/文档）
+
+## What NOT（边界约束）
+
+🚫 不做的事：
+1. 不在 Plan Approved 前写任何实现代码
+2. 不跳过 Research 阶段（即使"看起来很简单"）
+3. 不在 Execute 阶段修改 Spec（发现问题先停止，更新 Spec，再继续）
+4. 不替代 `sdd-riper-light`（简单任务用轻量版，不要用标准版增加负担）
+
+---
 
 ## 核心理念
 

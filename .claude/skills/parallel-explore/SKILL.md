@@ -7,6 +7,12 @@ metadata:
   category: development
   tags: [git-worktree, exploration, parallel, decision-making, architecture]
   source: Aha-Loop methodology
+trigger:
+  - "/parallel-explore"
+  - "对比多个方案"
+  - "技术选型"
+  - "不知道选哪个方案"
+  - "并行探索"
 ---
 
 # Parallel Explore Skill

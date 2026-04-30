@@ -7,6 +7,11 @@ metadata:
   category: planning
   tags: [review, planning, quality, validation, risk-assessment]
   integration: [autopilot, spec-writer, qa-reviewer, god-committee]
+trigger:
+  - "/plan-review"
+  - "审查一下计划"
+  - "检查计划有没有漏洞"
+  - "计划评审"
 ---
 
 # 计划审查 Skill (Plan Review)

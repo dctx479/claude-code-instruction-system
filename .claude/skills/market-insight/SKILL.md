@@ -6,6 +6,12 @@ license: MIT
 metadata:
   category: product
   tags: [market, insight, user-research, product, strategy, pmf]
+trigger:
+  - "/market-insight"
+  - "产品方向分析"
+  - "用户画像"
+  - "市场机会"
+  - "产品验证"
 ---
 
 # Market Insight Skill

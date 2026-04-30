@@ -7,6 +7,12 @@ metadata:
   category: planning
   tags: [vision, planning, requirements, strategy, 5w1h]
   integration: [autopilot, architect, spec-writer]
+trigger:
+  - "/vision-builder"
+  - "需求很模糊"
+  - "不知道要做什么"
+  - "帮我梳理需求"
+  - "项目愿景"
 ---
 
 # Vision Builder Skill

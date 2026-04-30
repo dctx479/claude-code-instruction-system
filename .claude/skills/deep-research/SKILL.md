@@ -8,6 +8,12 @@ metadata:
   tags: [research, web-search, analysis, report, parallel, reflection, citation-validation, synthesis, extension-protocol]
   requires: [web_search, web_fetch]
   optional: [playwright-mcp]
+trigger:
+  - "/deep-research"
+  - "深度调研"
+  - "全面研究"
+  - "帮我研究一下"
+  - "需要深入了解"
 ---
 
 # Deep Research Skill

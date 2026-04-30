@@ -2,10 +2,52 @@
 name: sdd-riper-light
 description: SDD-RIPER 轻量版 - 适用于熟练用户和简单任务的快速开发流程
 type: Light（轻量级）
-version: 1.0.0
+version: 1.1.0
+trigger:
+  - "/riper-light"
+  - "/sdd-light"
+  - "简单 bug 修复"
+  - "小功能开发"
+  - "快速迭代"
 ---
 
 # SDD-RIPER Light
+
+## What（输入/输出）
+
+**输入**：需求描述（简单任务，预计 <500 行代码或 <3 个文件）
+
+**输出**：
+- `mydocs/specs/<task>-micro.md` — Micro-Spec（1-2 段精简文档）
+- Change Log（修改摘要）
+
+## How（判断框架）
+
+**自动判断是否用轻量版**：
+- 改动 <3 个文件 且 <500 行 → 轻量版
+- 有架构设计决策 或 多方案对比需求 → 升级到标准版 `sdd-riper`
+- 新手用户 → 建议标准版（流程更清晰）
+
+**简化规则**：
+- Research 可选（自动判断是否需要）
+- Innovate 单方案快速决策（不做多方案对比）
+- Plan Approved 默认自动批准（可选等待）
+- 知识沉淀可选
+
+## When Done（验收标准）
+
+- Micro-Spec 已完成（1-2 段，含目标 + 方案 + 验收标准）
+- 核心功能已验证（不要求完整三角验证）
+- Change Log 已记录修改摘要
+
+## What NOT（边界约束）
+
+🚫 不做的事：
+1. 不用于复杂架构设计（升级到标准版）
+2. 不省略 Micro-Spec（即使是"一行改动"也要有记录）
+3. 不替代标准版 `sdd-riper`（复杂任务不要用轻量版凑合）
+
+---
 
 ## 核心理念
 

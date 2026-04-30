@@ -8,6 +8,11 @@ metadata:
   tags: [research, query-refinement, preprocessing, gateway]
   requires: []
   optional: []
+trigger:
+  - "/question-refiner"
+  - "研究问题太模糊"
+  - "不知道怎么搜"
+  - "帮我精炼查询"
 ---
 
 # Question Refiner Skill
