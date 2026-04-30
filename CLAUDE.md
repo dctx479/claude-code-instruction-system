@@ -273,20 +273,7 @@ npm run build / dev / test / typecheck
 评估当前进展 → 规划本轮工作 → 执行多个操作步骤 → 验证成果 → 标记完成
 ```
 
-**Claude 的职责 — 启动时**：执行 `/ralph` 后立即初始化状态文件：
-
-```json
-// memory/ralph-state.json (项目内) 或 ~/.claude/ralph-state.json (全局)
-{
-  "active": true, "status": "RUNNING",
-  "iteration": 0, "max_iterations": 10,
-  "round_complete": false, "completed": false,
-  "fatal_error": false, "needs_confirmation": false,
-  "current_task": "task-id", "task_description": "用户任务描述",
-  "started_at": "<ISO8601>", "last_updated": "<ISO8601>",
-  "metrics": { "total_runs": 1, "successful_runs": 0, "failed_runs": 0, "total_iterations": 0 }
-}
-```
+**Claude 的职责 — 启动时**：执行 `/ralph` 后立即初始化 `memory/ralph-state.json`（或 `~/.claude/ralph-state.json`），必填字段：`active/status/iteration/max_iterations/round_complete/completed/fatal_error/needs_confirmation/current_task/task_description/started_at/last_updated/metrics`。完整 schema 见 `commands/general/ralph.md`。
 
 **Claude 的职责 — 每轮结束时**写入以下信号之一：
 
@@ -423,20 +410,11 @@ value=$(echo "$JSON" | jq -r '.field' 2>/dev/null || echo "default")
 
 ### StatusLine stdin JSON 规范
 
-| 场景 | 特征 | `total_cost_usd` |
-|------|------|-----------------|
-| 对话启动 | `session_id` + `cwd`，无 cost | 不存在 |
-| Stop 事件 | `model` + `cost` | **> 0** |
-| 初始化调用 | `session_id` + `cost=0` | = 0 |
+**唯一可靠渲染触发条件：`total_cost_usd > 0`**（启动时无 cost，初始化调用 cost=0，Stop 事件 cost>0）
 
-**唯一可靠渲染触发条件：`total_cost_usd > 0`**
+❌ 三个已验证失效的判断：`[[ -z "$HUD_SESSION_JSON" ]]`、`grep -q '"session_id"'`、`! grep -q '"cost"'`
 
-**❌ 错误做法（已验证失效）**：
-- `[[ -z "$HUD_SESSION_JSON" ]]` — 启动时 JSON **不为空**，此判断无效
-- `grep -q '"session_id"'` — Stop 事件 JSON **也可能含 session_id**，会误杀渲染
-- `! grep -q '"cost"'` — cost=0 的初始化调用也含 cost 字段
-
-详细格式样本及 guard 逻辑示例: `docs/hud/statusline-json-formats.md`
+详细格式样本及 guard 逻辑: `docs/hud/statusline-json-formats.md`
 
 ### 配置变更同步
 

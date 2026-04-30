@@ -1,17 +1,64 @@
 ---
 name: observability
 description: AI 思维日志可观测性系统，实时记录推理过程、决策点和执行状态到 logs/ai-thoughts.md，帮助人类理解 AI 决策过程
-version: 1.0.0
+version: 1.1.0
 license: MIT
 metadata:
   category: system
   tags: [observability, logging, transparency, decision-tracking, aha-loop]
   inspired_by: Aha-Loop
+trigger:
+  - "/observe"
+  - "/thought"
+  - "/log-decision"
+  - "记录思考过程"
+  - "思维日志"
+  - "决策理由"
 ---
 
 # Observability Skill - AI 思维日志
 
 > **核心理念**: 让 AI 的推理过程透明可追溯，帮助人类理解决策、发现问题、建立信任
+
+## What（输入/输出）
+
+**输入**：任务描述 + 触发场景（任务开始/决策点/错误/完成）
+
+**输出**：结构化日志条目追加到 `logs/ai-thoughts.md`，包含 Context/Decision/Confidence 三要素
+
+## How（判断框架）
+
+记录时机的选择原则：
+1. **决策点必记**：凡是有 2+ 个可行方案需要选择，必须写 DecisionPoint 条目
+2. **错误必记**：遇到任何错误，先写 Error 条目再修复（不能只修复不记录）
+3. **不确定性必记**：置信度 <70% 时写 Uncertainty 条目，标注需要用户确认的内容
+4. **任务边界必记**：TaskStart 和 TaskComplete 是强制的，其余类型按需
+
+**日志类型选择**：
+- 有多个方案 → `DecisionPoint`
+- 遇到报错 → `Error` + `Recovery`
+- 不确定某个假设 → `Uncertainty`
+- 意外发现影响方向 → `Discovery`
+- 其他推理过程 → `InnerThought`
+
+## When Done（验收标准）
+
+- 每个任务有 TaskStart 和 TaskComplete 条目
+- 所有关键决策有 DecisionPoint 条目（含 Chosen + Reason + Tradeoffs）
+- 错误有 Error 条目，且包含 Recovery 结果
+- 日志文件路径固定为 `logs/ai-thoughts.md`
+
+## What NOT（边界约束）
+
+🚫 不做的事：
+1. 不记录琐碎操作（读文件、运行测试等无决策的步骤）
+2. 不替代 `reflection` Skill（observability 是实时流水日志，reflection 是事后提炼）
+3. 不替代 `context-archivist`（日志是原始记录，归档是结构化沉淀）
+4. 不在日志中写结论性建议（日志记录过程，建议写在任务输出中）
+
+---
+
+## 核心参考
 
 ## 何时使用此 Skill
 
