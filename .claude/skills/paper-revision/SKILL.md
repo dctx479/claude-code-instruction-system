@@ -6,6 +6,13 @@ license: MIT
 metadata:
   category: research
   tags: [writing, paper, revision, academic, technical, outline, de-ai, humanizer]
+trigger:
+  - "/paper-revision"
+  - "论文润色"
+  - "去AI化"
+  - "论文修改"
+  - "学术写作"
+  - "技术文档润色"
 ---
 
 # Paper Revision Skill

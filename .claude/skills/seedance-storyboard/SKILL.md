@@ -8,6 +8,12 @@ metadata:
   tags: [seedance, storyboard, script, drama, video-production, 剧本, 分镜, 短剧]
   requires: []
   optional: [seedance-prompt]
+trigger:
+  - "/seedance-storyboard"
+  - "剧本分镜生成"
+  - "短剧脚本"
+  - "多集视频剧本"
+  - "故事转分镜"
 ---
 
 # Seedance 2.0 剧本分镜生成器

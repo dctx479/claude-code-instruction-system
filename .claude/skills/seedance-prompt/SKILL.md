@@ -8,6 +8,12 @@ metadata:
   tags: [seedance, video, prompt, storyboard, ai-video, 分镜, 提示词]
   requires: []
   optional: [vision]
+trigger:
+  - "/seedance-prompt"
+  - "视频分镜提示词"
+  - "Seedance 视频生成"
+  - "AI 视频提示词"
+  - "分镜脚本"
 ---
 
 # Seedance 2.0 分镜提示词生成专家

@@ -8,6 +8,12 @@ metadata:
   tags: [ecommerce, research, market-intelligence, web-scraping, bright-data, mcp]
   requires: [bright-data-mcp]
   optional: [playwright-mcp]
+trigger:
+  - "/brightdata-research"
+  - "电商市场调研"
+  - "Bright Data 爬取"
+  - "竞品数据采集"
+  - "电商情报收集"
 ---
 
 # Bright Data Research Skill

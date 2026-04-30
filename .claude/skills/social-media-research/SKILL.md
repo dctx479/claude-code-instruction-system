@@ -8,6 +8,13 @@ metadata:
   tags: [social-media, research, tiktok, douyin, xiaohongshu, kol, sentiment, tikhub, mcp]
   requires: [tikhub-mcp]
   optional: [deep-research, market-insight, brightdata-research]
+trigger:
+  - "/social-media-research"
+  - "社交媒体数据分析"
+  - "KOL 分析"
+  - "舆情监控"
+  - "TikTok 数据"
+  - "小红书数据"
 ---
 
 # Social Media Research Skill

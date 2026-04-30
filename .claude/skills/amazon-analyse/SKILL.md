@@ -8,6 +8,12 @@ metadata:
   tags: [amazon, ecommerce, product-selection, competitor-analysis, sorftime, mcp, listing, keyword-research, review-analysis, pain-point]
   requires: [sorftime-mcp]
   source: https://github.com/liangdabiao/amazon-sorftime-research-MCP-skill
+trigger:
+  - "/amazon-analyse"
+  - "亚马逊选品分析"
+  - "Listing 分析"
+  - "亚马逊关键词调研"
+  - "差评痛点分析"
 ---
 
 # Amazon Analyse Skill
