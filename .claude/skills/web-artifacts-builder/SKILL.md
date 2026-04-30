@@ -9,6 +9,12 @@ metadata:
   requires: [bash]
   optional: [frontend-design, ui-ux-pro-max]
   source: anthropics/skills
+trigger:
+  - "/web-artifacts"
+  - "构建交互式 Demo"
+  - "生成单文件 HTML"
+  - "快速原型"
+  - "可交互组件"
 ---
 
 # Web Artifacts Builder Skill

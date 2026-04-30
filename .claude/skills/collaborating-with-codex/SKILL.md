@@ -7,6 +7,12 @@ metadata:
   category: development
   tags: [multi-model, codex, parallel, collaboration, cli]
   source: linux.do community workflow
+trigger:
+  - "/collab-codex"
+  - "调用 Codex"
+  - "让 Codex 实现"
+  - "多模型协作"
+  - "并行实现代码"
 ---
 
 # Collaborating with Codex Skill

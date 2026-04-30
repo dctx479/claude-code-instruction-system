@@ -6,6 +6,12 @@ compatibility: Requires filesystem-based agent (Claude Code or similar) with bas
 allowed-tools: Bash Read Write Edit Glob Grep Task WebFetch WebSearch Skill
 metadata:
   user-invocable: "false"
+trigger:
+  - "/ctf-misc"
+  - "CTF 杂项"
+  - "编码解谜"
+  - "Z3 约束求解"
+  - "Python 沙箱逃逸"
 ---
 
 # CTF Miscellaneous

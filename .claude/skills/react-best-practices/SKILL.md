@@ -9,6 +9,12 @@ metadata:
   requires: []
   optional: [frontend-design]
   source: vercel-labs/agent-skills
+trigger:
+  - "/react-best-practices"
+  - "React 性能优化"
+  - "Next.js 最佳实践"
+  - "消除 waterfall"
+  - "减少 bundle 体积"
 ---
 
 # React Best Practices Skill

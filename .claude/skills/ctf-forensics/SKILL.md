@@ -6,6 +6,12 @@ compatibility: Requires filesystem-based agent (Claude Code or similar) with bas
 allowed-tools: Bash Read Write Edit Glob Grep Task WebFetch WebSearch
 metadata:
   user-invocable: "false"
+trigger:
+  - "/ctf-forensics"
+  - "CTF 取证"
+  - "内存取证"
+  - "磁盘镜像分析"
+  - "隐写术"
 ---
 
 # CTF Forensics & Blockchain

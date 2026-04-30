@@ -7,6 +7,11 @@ allowed-tools: Bash Read Write Edit Glob Grep Task WebFetch WebSearch
 metadata:
   user-invocable: "true"
   argument-hint: "[challenge-name]"
+trigger:
+  - "/ctf-writeup"
+  - "CTF writeup"
+  - "生成解题报告"
+  - "CTF 解题记录"
 ---
 
 # CTF Write-up Generator

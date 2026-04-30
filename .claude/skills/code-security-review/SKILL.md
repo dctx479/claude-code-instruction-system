@@ -1,6 +1,13 @@
 ---
 name: code-security-review
 description: "Scans source code for security vulnerabilities — injection flaws, authentication bypasses, hardcoded secrets, XSS, and more — then filters false positives and ranks findings by severity and confidence. Supports all programming languages. Uses a three-phase audit-filter-report workflow with customizable scan categories and filtering rules. Use when the user asks for a security review, vulnerability scan, security audit, code security check, or wants to find security bugs in their code."
+trigger:
+  - "/code-security-review"
+  - "代码安全审计"
+  - "安全漏洞扫描"
+  - "security review"
+  - "vulnerability scan"
+  - "安全检查"
 ---
 
 # Code Security Review Skill

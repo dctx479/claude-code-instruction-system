@@ -7,6 +7,12 @@ metadata:
   category: development
   tags: [multi-model, gemini, parallel, collaboration, cli, long-context]
   source: linux.do community workflow
+trigger:
+  - "/collab-gemini"
+  - "调用 Gemini"
+  - "让 Gemini 分析"
+  - "超长上下文分析"
+  - "整个代码库扫描"
 ---
 
 # Collaborating with Gemini Skill

@@ -6,6 +6,12 @@ compatibility: Requires filesystem-based agent (Claude Code or similar) with bas
 allowed-tools: Bash Read Write Edit Glob Grep Task WebFetch WebSearch
 metadata:
   user-invocable: "false"
+trigger:
+  - "/ctf-web"
+  - "CTF Web"
+  - "Web 漏洞利用"
+  - "SQL 注入 CTF"
+  - "XSS CTF"
 ---
 
 # CTF Web Exploitation

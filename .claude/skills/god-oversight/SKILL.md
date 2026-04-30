@@ -7,6 +7,12 @@ metadata:
   category: governance
   tags: [oversight, governance, monitoring, safety, intervention]
   requires: [".god/config.json", ".god/directives.json"]
+trigger:
+  - "/god-oversight"
+  - "系统监控"
+  - "治理审议"
+  - "异常检测"
+  - "高风险操作审批"
 ---
 
 # God Committee Oversight Skill

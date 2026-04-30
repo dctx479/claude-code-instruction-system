@@ -6,6 +6,12 @@ compatibility: Requires filesystem-based agent (Claude Code or similar) with bas
 allowed-tools: Bash Read Write Edit Glob Grep Task WebFetch WebSearch
 metadata:
   user-invocable: "false"
+trigger:
+  - "/ctf-ai-ml"
+  - "CTF AI 攻击"
+  - "对抗样本"
+  - "模型窃取"
+  - "提示注入攻击"
 ---
 
 # CTF AI/ML

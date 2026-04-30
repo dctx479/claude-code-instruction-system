@@ -6,6 +6,12 @@ compatibility: Requires filesystem-based agent (Claude Code or similar) with bas
 allowed-tools: Bash Read Write Edit Glob Grep Task WebFetch WebSearch
 metadata:
   user-invocable: "false"
+trigger:
+  - "/ctf-crypto"
+  - "CTF 密码学"
+  - "RSA 攻击"
+  - "AES 破解"
+  - "密码学 CTF"
 ---
 
 # CTF Cryptography

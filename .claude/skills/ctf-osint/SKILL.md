@@ -6,6 +6,12 @@ compatibility: Requires filesystem-based agent (Claude Code or similar) with bas
 allowed-tools: Bash Read Write Edit Glob Grep Task WebFetch WebSearch
 metadata:
   user-invocable: "false"
+trigger:
+  - "/ctf-osint"
+  - "CTF OSINT"
+  - "开源情报收集"
+  - "地理定位"
+  - "社交媒体溯源"
 ---
 
 # CTF OSINT

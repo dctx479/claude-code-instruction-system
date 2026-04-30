@@ -9,6 +9,13 @@ metadata:
   requires: []
   optional: [frontend-design]
   source: nextlevelbuilder/ui-ux-pro-max-skill
+trigger:
+  - "/ui-ux-pro-max"
+  - "专业 UI 设计"
+  - "精确风格控制"
+  - "配色方案"
+  - "Glassmorphism"
+  - "设计系统"
 ---
 
 # UI/UX Pro Max Skill

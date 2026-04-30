@@ -9,6 +9,13 @@ metadata:
   requires: []
   optional: []
   source: anthropics/skills
+trigger:
+  - "/frontend-design"
+  - "UI 设计建议"
+  - "前端布局"
+  - "组件选型"
+  - "可访问性检查"
+  - "交互规范"
 ---
 
 # Frontend Design Skill

@@ -9,6 +9,12 @@ tools_required:
   - Python 3.x (系统环境，仅使用标准库)
   - grep / glob / view (CLI 内置)
   - create / edit (CLI 内置)
+trigger:
+  - "/wxmini-security-audit"
+  - "微信小程序安全审计"
+  - "小程序漏洞分析"
+  - "wxapkg 审计"
+  - "小程序安全检查"
 ---
 
 # Skill: wxmini-security-audit — 微信小程序安全审计

@@ -6,6 +6,12 @@ compatibility: Requires filesystem-based agent (Claude Code or similar) with bas
 allowed-tools: Bash Read Write Edit Glob Grep Task WebFetch WebSearch
 metadata:
   user-invocable: "false"
+trigger:
+  - "/ctf-reverse"
+  - "CTF 逆向"
+  - "二进制逆向分析"
+  - "反调试绕过"
+  - "Ghidra 分析"
 ---
 
 # CTF Reverse Engineering
