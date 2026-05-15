@@ -158,3 +158,45 @@ Layer 3: 执行规则 → CLAUDE.md, agents/*.md, .claude/skills/*/SKILL.md
 ### 置信度标注
 
 `[VERIFIED]` / `[INFERRED]` / `[AMBIGUOUS]` / `[UNVERIFIED]` — AI 参考知识时优先使用高置信度条目。
+
+---
+
+## 上下文注入模式（BP-025）
+
+> 详见 `memory/best-practices.md` BP-025。
+
+### 启动时注入 vs 按需查询
+
+| 注入类型 | 时机 | 典型例子 |
+|---------|------|---------|
+| **启动时注入** | Agent 初始化时自动加载 | CLAUDE.md（高频全局规则）、intent-state.json（当前 intent） |
+| **按需查询** | Agent 自主调用 `search_*` 工具 | `.claude/skills/INDEX.md` 概览 → 按需加载 SKILL.md |
+| **Dependencies 注入** | 程序运行时动态注入 | Hook 环境变量、intent-state.json、上下文检索协议 |
+
+### 何时用哪种
+
+```
+高频、稳定、跨任务都需要的规则     → 启动时注入（CLAUDE.md）
+低频、任务相关、Agent 能判断       → 按需查询（search_* 工具）
+运行时动态值（IP/租户ID/feature flag）→ Dependencies 注入（程序主动抓取）
+```
+
+### 太一元系统现有实现
+
+| 机制 | 类型 | 说明 |
+|------|------|------|
+| `~/.claude/intent-state.json` | 启动时注入 | 每次响应前由 Hook 写入，触发 Agent 路由 |
+| `.claude/skills/INDEX.md` | 按需查询 | 读取 ~600 token 概览后，按需加载具体 SKILL.md |
+| `memory/` 索引协议 | 启动时注入 | 任务开始前读取 index.json，检查历史问题 |
+| `~/.claude/settings.json` env 段 | Dependencies | 运行时动态配置，Hook 可访问 |
+| Subagent 隔离 | 按需查询 | 探索性工作隔离在子上下文，只回传结论 |
+
+### 知识源选择优先级
+
+| 任务类型 | 首选 | 兜底 | 禁止 |
+|---------|------|------|------|
+| 项目内既有规则 | `memory/`、`docs/`、CLAUDE.md | Agent/Skill 回忆 | 直接 WebSearch |
+| 最新外部事实/版本 | WebSearch/WebFetch | 专用 API | 仅靠模型知识 |
+| 学术文献 | Zotero/真实文献库 | LLM 摘要和结构化 | 通用搜索 |
+| 代码定位 | Grep/Glob/Read | Explore Agent | 不读直接猜 |
+| 跨系统实时状态 | Subagent + query_<system> | 直接 API 调用 | 靠记忆 |

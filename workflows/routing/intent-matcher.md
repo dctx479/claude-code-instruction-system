@@ -95,13 +95,41 @@ def route_intent(intent):
     # 推荐 Skills
     skills = intent_config["skills"]
 
+    # 路由证据
+    confidence = intent_config.get("confidence", "medium")
+    reason = intent_config.get("reason", "keyword and pattern match")
+    avoid = intent_config.get("avoid", [])
+    snr = intent_config.get("snr", "recommended capabilities add task-relevant context")
+
     # 设置环境变量
     set_env("CLAUDE_INTENT", intent)
     set_env("CLAUDE_RECOMMENDED_AGENT", agent)
     set_env("CLAUDE_RECOMMENDED_SKILL", ",".join(skills))
+    set_env("CLAUDE_ROUTING_CONFIDENCE", confidence)
+    set_env("CLAUDE_ROUTING_REASON", reason)
+    set_env("CLAUDE_AVOID_CAPABILITIES", ",".join(avoid))
+    set_env("CLAUDE_ROUTING_SNR", snr)
 
-    return agent, skills
+    return {
+        "agent": agent,
+        "skills": skills,
+        "avoid": avoid,
+        "confidence": confidence,
+        "reason": reason,
+        "snr": snr,
+    }
 ```
+
+### 路由输出契约
+
+| 字段 | 含义 | 示例 |
+|------|------|------|
+| `agent` | 推荐主 Agent | `debugger` |
+| `skills` | 推荐按需加载 Skill | `sdd-riper-light` |
+| `avoid` | 不建议加载的能力 | `security-audit`（权限过重） |
+| `confidence` | 路由置信度 | `high / medium / low` |
+| `reason` | 选择原因 | `错误栈 + 测试失败指向调试任务` |
+| `snr` | 信噪比说明 | `只加载 debugger，避免审查类上下文稀释问题定位` |
 
 ## 意图类型
 
