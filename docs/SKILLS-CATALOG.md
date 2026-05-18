@@ -20,7 +20,7 @@
 |-------|------|--------|
 | **deep-research** | Lead Agent + Subagent 并行调研，支持创新组合发现与结构化报告 | `deep-research <主题>` |
 | **question-refiner** | 研究查询精炼器，结构化模糊查询并补足创新 brief | `澄清研究方向`, `结构化研究问题` |
-| **stock-research** | 8阶段股票投资尽调框架，模拟巴菲特式理性投资分析 | `/stock-research <股票代码>`, `分析股票` |
+| **stock-research** *(planned)* | 8阶段股票投资尽调框架，模拟巴菲特式理性投资分析 | `/stock-research <股票代码>`, `分析股票` |
 | **market-insight** | 三段式用户画像与产品机会分析 | `/insight <产品描述>` |
 | **exa-research** | 企业与市场研究，基于 Exa 搜索引擎 | `研究竞争对手`, `分析行业` |
 | **brightdata-research** | 电商平台深度调研，反反爬虫支持 | `电商调研`, `畅销排行` |
@@ -37,7 +37,7 @@
 |-------|------|--------|----------|
 | **seedance-prompt** | Seedance 2.0 分镜提示词生成 | `生成视频提示词`, `分镜提示词` | 15s 内短片分镜 |
 | **seedance-storyboard** | 小说/故事转多集视频剧本 | `写剧本`, `生成分镜`, `/seedance` | 短剧/电影完整制作 |
-| **seedance-prompt-ads** | 视频广告 Seedance 提示词生成 | `视频广告`, `品牌TVC`, `带货广告` | 品牌广告/电商带货 |
+| **seedance-prompt-ads** *(planned)* | 视频广告 Seedance 提示词生成 | `视频广告`, `品牌TVC`, `带货广告` | 品牌广告/电商带货 |
 
 **seedance-prompt-ads 说明**: 上传产品素材和广告诉求，生成结构化视频提示词。支持两种模式:
 - **品牌 TVC 广告**: 16:9 横屏，专业电影感，情感共鸣叙事

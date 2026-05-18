@@ -5,19 +5,18 @@
     "description": "太一元系统 - Claude Code 指令系统",
     "status": "active",
     "created": "2026-01-23",
-    "last_updated": "2026-02-08"
+    "last_updated": "2026-05-18"
   },
   "current_state": {
-    "last_updated": "2026-02-08",
-    "active_tasks": [
-      "集成 literature-mentor skill 双模式支持",
-      "完善项目文档和配置"
-    ],
+    "last_updated": "2026-05-18",
+    "active_tasks": [],
     "verified_facts": [
-      "literature-mentor skill 已成功集成",
-      "文件路径问题已修复",
-      "Git 配置已优化",
-      "所有 P0 优先级问题已修复"
+      "BP-029~040 已完成文档化和实践落地",
+      "Tavily MCP 已接入配置和引导链路",
+      "paper-revision 新增英文学术润色模式",
+      "51 个 Skills 全部有 SKILL.md",
+      "29 个 Agent 路由表全部验证通过",
+      "全局与项目 CLAUDE.md 完全同步"
     ]
   },
   "resolutions": []
