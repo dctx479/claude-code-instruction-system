@@ -27,7 +27,7 @@
 | **amazon-analyse** | 亚马逊竞品 Listing 全维度穿透分析，基于 Sorftime MCP | `/amazon-analyse <ASIN> <市场>` |
 | **social-media-research** | 跨平台社媒研究，12+ 平台覆盖 | `舆情监控`, `KOL 分析` |
 | **literature-mentor** | 文献深度解读，交互/报告双模式 | `解读这篇论文`, `生成精读报告` |
-| **paper-revision** | 论文风格修改，技术准确性保持 | `修改论文风格` |
+| **paper-revision** | 论文风格修改，技术准确性保持，英文 Nature 标准润色 | `修改论文风格`, `英文润色`, `nature-polish` |
 
 ---
 
@@ -135,6 +135,7 @@
 | brightdata-research + amazon-analyse | 双渠道电商情报（平台爬取 + MCP 官方数据） |
 | stock-research + data-analysis | 指数成分股批量分析（恒生科技/科创50/创业板50） |
 | stock-research + exa-research | 股票基本面 + 行业竞争格局深度分析 |
+| deep-research + Tavily MCP | 深度调研增强（域名限定+时间过滤+批量内容提取） |
 | literature-mentor + paper-writing-assistant | 文献综述写作 |
 | literature-mentor + deep-research | 文献拆解 + 创新组合发现 |
 | literature-mentor + experiment-logger | 实验设计与执行 |

@@ -7,7 +7,7 @@ metadata:
   category: research
   tags: [research, web-search, analysis, report, parallel, reflection, citation-validation, synthesis, extension-protocol]
   requires: [web_search, web_fetch]
-  optional: [playwright-mcp]
+  optional: [playwright-mcp, tavily-mcp]
 trigger:
   - "/deep-research"
   - "深度调研"
@@ -397,6 +397,7 @@ Round N：
 |------|------|---------|
 | **Playwright MCP** | 浏览器自动化 | 动态内容（SPA、登录墙） |
 | **Exa** | 高级搜索 | web_search 结果不足时 |
+| **Tavily MCP** | 精确搜索+批量提取 | 需要域名限定、时间过滤或批量 URL 内容提取时 |
 
 ### 升级策略
 
@@ -405,10 +406,20 @@ web_search 返回结果
     ↓
 [结果充足?]
     ├─ 是 → 使用 web_fetch 获取详情
-    └─ 否 → [需要动态内容?]
-              ├─ 是 → 升级到 Playwright MCP
+    └─ 否 → [需要精确过滤?]
+              ├─ 域名限定/时间范围 → Tavily search (include_domains/time_range)
+              ├─ 批量 URL 提取 → Tavily extract (max 20 URLs)
+              ├─ 网站结构发现 → Tavily map
+              ├─ 需要动态内容 → 升级到 Playwright MCP
               └─ 否 → 调整搜索词重试
 ```
+
+**Tavily 未配置时的引导**：当研究任务需要域名限定或时间过滤但 Tavily 不可用时，提示用户：
+
+> Tavily MCP 可以显著提升搜索精度（支持域名限定和时间过滤）。
+> 配置方式：`claude mcp add tavily-remote-mcp --transport http https://mcp.tavily.com/mcp/`
+> 详见：`docs/mcp-configuration-guide.md` Tavily 章节。
+> 注册地址：https://tavily.com（有免费额度）
 
 ---
 

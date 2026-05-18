@@ -26,6 +26,26 @@
       ],
       "description": "企业与市场研究搜索引擎"
     },
+    "tavily": {
+      "name": "Tavily MCP",
+      "transport": "http",
+      "url": "https://mcp.tavily.com/mcp/?tavilyApiKey=${TAVILY_API_KEY}",
+      "env": {
+        "TAVILY_API_KEY": "${TAVILY_API_KEY}"
+      },
+      "required_by": [
+        "deep-research",
+        "exa-research"
+      ],
+      "tools": {
+        "tavily-search": "实时网络搜索（支持 topic/time_range/include_domains 精确过滤）",
+        "tavily-extract": "从指定 URL 提取结构化内容（支持 markdown/text 格式）",
+        "tavily-map": "网站结构发现（URL 列表，不含内容）",
+        "tavily-crawl": "系统性网站爬取（深度内容提取，支持语义过滤）"
+      },
+      "description": "AI 原生搜索引擎，提供搜索+提取+爬取+站点地图四合一能力",
+      "notes": "与 WebSearch/WebFetch 互补：WebSearch 适合快速事实查询，Tavily 适合深度研究（域名过滤、时间范围、结构化提取）"
+    },
     "brightdata": {
       "name": "Bright Data MCP",
       "command": "npx",
@@ -54,6 +74,7 @@
   "setup_instructions": {
     "zotero": "1. 注册 Zotero 账号\n2. 获取 API Key: https://www.zotero.org/settings/keys\n3. 设置环境变量: export ZOTERO_API_KEY=your_key",
     "exa": "1. 访问 https://exa.ai\n2. 无需 API Key，直接使用 HTTP 传输",
+    "tavily": "1. 注册 Tavily 账号: https://tavily.com\n2. 获取 API Key（有免费额度）\n3. 设置环境变量: export TAVILY_API_KEY=tvly-your_key\n4. Claude Code 集成: claude mcp add tavily-remote-mcp --transport http https://mcp.tavily.com/mcp/（支持 OAuth 免密）",
     "brightdata": "1. 注册 Bright Data 账号\n2. 获取 API Token\n3. 设置环境变量: export BRIGHTDATA_API_TOKEN=your_token",
     "tikhub": "1. 注册 TikHub 账号\n2. 获取 API Token\n3. 设置环境变量: export TIKHUB_API_TOKEN=your_token"
   }

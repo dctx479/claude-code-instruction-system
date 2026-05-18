@@ -124,6 +124,31 @@ cp -r claude-scientific-skills/scientific-skills/* .claude/skills/
 
 ---
 
+## Skill 成熟度生命周期
+
+每个 Skill 有明确的成熟度阶段，影响使用策略和维护优先级：
+
+| 阶段 | 标记 | 含义 | 使用策略 |
+|------|------|------|---------|
+| **stable** | `maturity: stable` | 经过 3+ 次实战验证，行为可预测 | 默认激活，无需额外确认 |
+| **beta** | `maturity: beta` | 已完成设计，1-2 次实战，可能有边界情况 | 激活时提示用户"此 Skill 为 beta" |
+| **draft** | `maturity: draft` | 初始版本，未经实战验证 | 仅在用户显式请求时激活 |
+| **deprecated** | `maturity: deprecated` | 已被更优方案替代 | 不再激活，提示替代方案 |
+
+**晋升条件**：
+- draft → beta：完成首次实战 + 用户确认输出质量可接受
+- beta → stable：累计 3+ 次实战无重大问题 + Gotchas 已补全
+- stable → deprecated：出现更优替代方案 + 迁移路径已文档化
+
+**在 frontmatter 中声明**：
+```yaml
+metadata:
+  maturity: stable  # stable | beta | draft | deprecated
+  replaced_by: new-skill-name  # 仅 deprecated 时填写
+```
+
+---
+
 ## Skill 标准格式
 
 每个 Skill 必须包含一个 `SKILL.md` 文件，格式如下：
@@ -138,6 +163,7 @@ compatibility: claude-code-2.0+
 metadata:
   category: development
   tags: [tdd, testing, automation]
+  maturity: stable
 ---
 
 # Skill 完整说明
@@ -468,6 +494,22 @@ Step 5: 注册 — 更新 INDEX.md，添加新 Skill 条目
 2. **Gotchas**: 至少 1 条从实践中发现的陷阱
 3. **验收标准**: 如何判断 Skill 执行成功
 4. **触发条件**: Description 写成触发器而非摘要（参见 BP-012 原则 6）
+
+### 先写规则，再装 Skill
+
+**原则**：在安装或创建新 Skill 之前，先确认 CLAUDE.md 和 memory/ 中的规则体系已覆盖该 Skill 的使用场景。
+
+**理由**：Skill 是能力放大器，但如果底层规则（何时用、怎么判断成功、边界在哪）不清晰，Skill 只会放大混乱。
+
+**检查清单**（安装新 Skill 前）：
+1. CLAUDE.md 中是否有该 Skill 的路由规则（何时激活）？
+2. memory/best-practices.md 中是否有相关场景的最佳实践？
+3. 该 Skill 的输出如何与现有工作流衔接（谁消费它的结果）？
+4. 是否与已有 Skill 功能重叠？如重叠，路由优先级如何？
+
+**反模式**：装了 10 个 Skill 但 CLAUDE.md 没有对应路由 → 激活混乱，多个 Skill 抢同一任务。
+
+---
 
 ### 按业务阶段组织 Skill
 

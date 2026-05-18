@@ -2,6 +2,16 @@
 
 欢迎使用太一元系统！本指南将帮助您快速上手。
 
+## 渐进式上手路线
+
+| 阶段 | 时间 | 目标 | 关键动作 |
+|------|------|------|---------|
+| **Day 1** | 首次使用 | 能跑通基础流程 | 安装验证 + 配置 MCP + 完成第一个任务 |
+| **Week 1** | 日常使用 | 熟悉核心能力 | 使用 `/ralph`、deep-research、文献精读 |
+| **Week 2+** | 深度使用 | 定制化 + 自进化 | 创建自定义 Skill、配置 Hooks、建立记忆体系 |
+
+> 不必一次学完所有功能。系统设计为渐进式披露——你用到哪里，它就展开到哪里。
+
 ---
 
 ## 📋 目录
@@ -98,21 +108,35 @@ python -m json.tool .claude/context/index.json
 
 ### 3. MCP 服务器配置
 
-如果使用 Zotero（推荐）：
+按需配置外部搜索和数据能力：
+
+**Tavily MCP（推荐 — AI 搜索引擎，增强深度研究能力）**：
 
 ```bash
-# 1. 注册 Zotero 账号
-# 访问: https://www.zotero.org/user/register
+# 方法 1: OAuth 认证（最简单，免密）
+claude mcp add tavily-remote-mcp --transport http https://mcp.tavily.com/mcp/
 
-# 2. 获取 API Key
-# 访问: https://www.zotero.org/settings/keys
-
-# 3. 设置环境变量
-export ZOTERO_API_KEY=your_api_key_here
-
-# 4. 验证配置
-cat config/mcp-servers.json | grep zotero
+# 方法 2: API Key 认证
+# 1. 注册: https://tavily.com（有免费额度）
+# 2. 获取 API Key（格式: tvly-xxxxxxxx）
+# 3. 添加服务器:
+claude mcp add tavily --transport http \
+  "https://mcp.tavily.com/mcp/?tavilyApiKey=tvly-YOUR_KEY"
 ```
+
+提供能力：搜索（域名限定+时间过滤）、内容提取（批量 URL）、网站地图、深度爬取。
+
+**Zotero MCP（文献管理）**：
+
+```bash
+# 1. 注册 Zotero 账号: https://www.zotero.org/user/register
+# 2. 获取 API Key: https://www.zotero.org/settings/keys
+# 3. 添加服务器:
+claude mcp add --transport stdio --scope user zotero \
+  --env ZOTERO_API_KEY=your_key -- npx -y mcp-zotero
+```
+
+> 完整 MCP 配置指南见 `docs/mcp-configuration-guide.md`
 
 ---
 
