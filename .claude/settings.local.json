@@ -10,7 +10,16 @@
       "Bash(cp .claude/tmp-repos/wxmini-src/SKILL.md .claude/skills/wxmini-security-audit/SKILL.md)",
       "Bash(cp .claude/tmp-repos/wxmini-src/README.md .claude/skills/wxmini-security-audit/README.md)",
       "Bash(cp .claude/tmp-repos/wxmini-src/agents/*.md .claude/skills/wxmini-security-audit/agents/)",
-      "Bash(cp .claude/tmp-repos/wxmini-src/tools/scripts/*.py .claude/skills/wxmini-security-audit/tools/scripts/)"
+      "Bash(cp .claude/tmp-repos/wxmini-src/tools/scripts/*.py .claude/skills/wxmini-security-audit/tools/scripts/)",
+      "Bash(mkdir -p \"C:/Users/ASUS/.claude/skills\")",
+      "Bash([ -d \"G:/GitHub_local/Self-built/Prompt/ClaudeCodePlan/claude-code-instruction-system/.claude/skills/$skill\" ])",
+      "Bash(cp -r G:/GitHub_local/Self-built/Prompt/ClaudeCodePlan/claude-code-instruction-system/.claude/skills/__TRACKED_VAR__ C:/Users/ASUS/.claude/skills/)",
+      "Bash(mkdir -p \"C:/Users/ASUS/.claude/workflows\")",
+      "Bash([ -d \"G:/GitHub_local/Self-built/Prompt/ClaudeCodePlan/claude-code-instruction-system/workflows/$subdir\" ])",
+      "Bash(mkdir -p C:/Users/ASUS/.claude/workflows/__TRACKED_VAR__)",
+      "Bash(cp -r 'G:/GitHub_local/Self-built/Prompt/ClaudeCodePlan/claude-code-instruction-system/workflows/__TRACKED_VAR__/*' C:/Users/ASUS/.claude/workflows/__TRACKED_VAR__/)",
+      "Bash(mkdir -p \"C:/Users/ASUS/.claude/specs\")",
+      "Bash(cp G:/GitHub_local/Self-built/Prompt/ClaudeCodePlan/claude-code-instruction-system/specs/SPEC-TEMPLATE.md C:/Users/ASUS/.claude/specs/)"
     ]
   }
 }
