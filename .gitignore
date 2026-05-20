@@ -21,6 +21,7 @@ dist/
 .claude/agent-state.json
 .claude/context/sessions/
 .claude/intent-state.json
+.claude/worktrees/
 
 # Rust 编译产物
 tools/hud-render-rust/target/
