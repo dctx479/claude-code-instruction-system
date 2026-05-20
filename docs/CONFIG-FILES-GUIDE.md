@@ -770,17 +770,76 @@ Hooks 配置会合并（不是覆盖）：
 
 ---
 
+## 全局 vs 项目同步策略
+
+> **背景**：跨项目复用 Skills/Agents/Workflows 时，需要约定哪些资产从「项目」流向「全局」，哪些从「全局」流向「项目」，避免双向漂移。
+
+### 分层归属规则
+
+| 资产类型 | 单一事实源 | 流向 | 理由 |
+|---------|-----------|------|------|
+| **Agents** (`agents/`) | 全局 `~/.claude/agents/` | 全局 → 项目（按需 import） | 系统基础设施，所有项目共用 |
+| **Commands** (`commands/`) | 全局 `~/.claude/commands/` | 全局 → 项目 | 同上 |
+| **Hooks** (`hooks/`) | 全局 `~/.claude/hooks/` | 全局 → 项目 | 同上 |
+| **基础 Skills**（CTF/数据/视频等） | 全局 `~/.claude/skills/` | 全局 → 项目 | 通用能力 |
+| **工作流 Skills**（neat/handoff/prime/reflection 等） | 项目 `.claude/skills/` | 项目 → 全局 | 项目孵化后回流到全局以惠及他项目 |
+| **specs/** 模板 | 项目 `specs/SPEC-TEMPLATE.md` | 项目 → 全局 | 项目主导演进 |
+| **运行时状态** (`agent-state.json`, `context/sessions/`, `intent-state.json`) | 各自隔离 | 不同步 | 会话级状态，必须分离 |
+| **临时目录** (`.claude/worktrees/`, `.claude-tmp/`) | 各自隔离 | 不同步 | 已 gitignore |
+
+### 已知冗余清单（待定期清理）
+
+**全局 `~/.claude/agents/` 根目录冗余**（同名文件已存在于子目录，路由表已用子目录路径）：
+- `auto-optimizer.md`（实际位于 `ops/`）
+- `autopilot-orchestrator.md`（实际位于 `ops/`）
+- `context-archivist.md`（实际位于 `ops/`）
+- `performance-monitor.md`（实际位于 `ops/`）
+- `security-analyst.md`（实际位于 `security/`）
+- `strategy-selector.md`（实际位于 `ops/`）
+
+**全局 `~/.claude/skills/` 文档文件**（应迁到 `docs/`）：
+- `API-KEYS-SETUP.md`
+- `CLI-SETUP-SUMMARY.md`
+- `THIRD-PARTY-API-INVESTIGATION-SUMMARY.md`
+
+> 清理操作需逐个确认（参见 CLAUDE.md 第七章：禁止批量删除）。
+
+### 同步执行约束
+
+1. **同步前必须 diff**：用 `diff -q` 比较两边内容，若一致则跳过 cp 操作；避免覆盖更新版本
+2. **时间戳不能作为唯一判断依据**：内容相同但时间戳不同（如 `touch` 或重写）不需要同步
+3. **同步操作的 Bash 权限**应记入 `.claude/settings.local.json`，commit 时保留以备追溯
+4. **大规模同步**：必须事先生成审计报告（参见 `docs/audits/`），完成后归档报告
+5. **不同步的运行时文件**：参见 `.gitignore` 中 `# Claude Code 运行时文件` 块
+
+### 同步触发时机
+
+- 项目孵化出新的工作流 Skill（如 `/neat`、`/prime`）且经实战验证后回流全局
+- 全局新增基础 Agent/Command 后，所有项目自动获得（无需主动 pull）
+- 每季度执行一次完整审计（参见 `memory/best-practices.md` BP-027）
+- 跨机器迁移 Claude Code 配置前
+
+> 详细案例：`memory/best-practices.md` BP-041 — 全局/项目配置同步策略
+> 历史审计报告：`docs/audits/INDEX.md`
+
+---
+
 ## 相关文档
 
 - **核心配置**：`CLAUDE.md` - 配置文件说明章节
 - **快速参考**：`QUICK-REFERENCE.md` - 常用配置示例
 - **Hooks 指南**：`docs/HOOKS-GUIDE.md` - Hooks 详细文档
 - **经验教训**：`memory/lessons-learned.md` - 配置相关问题记录
+- **审计报告**：`docs/audits/INDEX.md` - 历次配置对比与盘点
 
 ---
 
 ## 版本历史
 
+- **v1.1.0** (2026-05-20): 新增「全局 vs 项目同步策略」章节
+  - 分层归属规则表
+  - 已知冗余清单
+  - 同步执行约束与触发时机
 - **v1.0.0** (2026-02-08): 初始版本
   - 完整的配置文件说明
   - 全局和项目配置详解

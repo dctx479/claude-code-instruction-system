@@ -1689,3 +1689,73 @@ CLAUDE.md 的作用不是替代验证。
 **与知识复利的关系**: 一源多产是知识复利在"输出层"的体现——同一份知识投入，产出多份不同形态的价值。
 
 **验证方法**: 检查最近一次需要多格式输出的任务，是否从单一源头生成？还是每种格式独立制作导致不一致？
+
+---
+
+### BP-041: 全局/项目配置同步策略——分层归属 + diff 优先
+
+**实践描述**:
+跨「全局 `~/.claude/`」与「项目 `.claude/`」同步 Skills/Agents/Workflows 时，遵循「分层归属、diff 优先、临时不入库」三原则，避免双向漂移、覆盖更新版本、临时目录污染仓库。
+
+**适用场景**:
+- 跨项目复用 Skills（工作流 Skill 从项目回流全局，基础 Skill 从全局下沉项目）
+- 跨机器迁移 Claude Code 配置
+- 季度配置审计后的清理同步
+
+**三原则**:
+
+1. **分层归属**（流向单向化）
+   - Agents/Commands/Hooks/基础 Skills：全局是单一事实源，流向「全局 → 项目」
+   - 工作流 Skills（neat/handoff/prime 等）：项目是孵化源，流向「项目 → 全局」
+   - 运行时状态文件（`agent-state.json`/`intent-state.json`/`context/sessions/`）：永不同步，必须分离
+   - 临时目录（`.claude/worktrees/`、`.claude-tmp/`）：永不入库，统一 gitignore
+
+2. **diff 优先**（避免覆盖）
+   ```bash
+   # ✅ 同步前必做
+   diff -q "项目/CLAUDE.md" "~/.claude/CLAUDE.md"
+   # 一致 → 跳过 cp
+   # 不一致 → 进一步看时间戳和内容判断方向
+
+   # ❌ 反模式：直接 cp 覆盖
+   cp 项目/CLAUDE.md ~/.claude/CLAUDE.md  # 可能覆盖全局更新
+   ```
+   时间戳不能作为唯一判断依据，必须看内容（`diff -q` 一致即可跳过）
+
+3. **审计 → 归档 → 沉淀**
+   - 大规模同步前生成审计报告（如 `docs/audits/CONFIG-COMPARISON-REPORT-YYYY-MM.md`）
+   - 同步操作的 Bash 权限记入 `.claude/settings.local.json`（便于追溯执行历史）
+   - 同步完成后报告归档到 `docs/audits/INDEX.md`
+   - 永久规则沉淀到 `docs/CONFIG-FILES-GUIDE.md`「全局 vs 项目同步策略」章节
+
+**已知陷阱**:
+- **全局根目录冗余**：旧版 Agent/Skill 副本可能同时存在于全局根目录和子目录（如 `agents/auto-optimizer.md` vs `agents/ops/auto-optimizer.md`），CLAUDE.md 路由表通常用子目录路径，根目录副本是历史遗留，应**逐个**确认后清理（禁止 `rm *`）
+- **文档文件混入 Skills 目录**：`API-KEYS-SETUP.md` 等文档不是真正的 Skill，应迁到 `docs/`
+- **报告/临时文件留在仓库根目录**：80KB+ 诊断报告留根目录会污染 git tree，必须归档到 `docs/audits/`
+
+**案例引用**:
+- `docs/audits/CONFIG-COMPARISON-REPORT-2026-05.md`：2026-05 全局 vs 项目对比报告，盘点出 9 个新 Skill、6 个全局冗余 Agent、3 个混入 Skills 目录的文档
+- commit `42fa7b4`：归档诊断报告 + gitignore worktrees
+- `.claude/settings.local.json` 中的 8 条同步 Bash 权限：记录 2026-05 同步操作的执行痕迹
+- `docs/CONFIG-FILES-GUIDE.md` v1.1.0：永久化的同步策略章节
+
+**验证方法**:
+```bash
+# 1. 验证关键文件已对齐
+diff -q "CLAUDE.md" "C:/Users/ASUS/.claude/CLAUDE.md"   # 应无输出
+
+# 2. 验证运行时文件未入库
+git check-ignore .claude/worktrees/                      # 应返回路径（已 ignored）
+git check-ignore .claude/intent-state.json               # 应返回路径
+
+# 3. 验证审计报告已归档（根目录无残留）
+ls CONFIG-COMPARISON-REPORT.md 2>&1 | grep -q "No such" && echo "OK"
+```
+
+**反模式**:
+- ❌ 在仓库根目录长期保留临时诊断报告（污染 git tree）
+- ❌ 把 `.claude/worktrees/` 直接 commit（10 个临时 agent 目录无意义）
+- ❌ 同步前不 diff，直接 `cp -r` 覆盖（可能覆盖更新版本）
+- ❌ 试图用 `rm -rf` 批量清理冗余（违反 CLAUDE.md 第七章硬性约束）
+
+**标签**: #config #sync #governance [VERIFIED]
