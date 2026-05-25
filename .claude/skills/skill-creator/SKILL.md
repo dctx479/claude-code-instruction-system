@@ -1,12 +1,12 @@
 ---
 name: skill-creator
-description: Skill 元创建器 - 按本项目契约（What/How/When done/What NOT）+ 单一职责 + 方法论优于规则三原则，生成高质量 SKILL.md
-version: 1.0.0
+description: Skill 元创建器 - 按本项目契约（What/How/When done/What NOT）+ 第五要素 Extractable + 单一职责 + 方法论优于规则三原则，生成高质量 SKILL.md
+version: 1.1.0
 license: MIT
 metadata:
   category: system
-  tags: [meta-skill, skill-authoring, contract, template, quality-control]
-  integration: [neat, reflection, knowledge-compounding]
+  tags: [meta-skill, skill-authoring, contract, template, quality-control, extractable]
+  integration: [neat, reflection, knowledge-compounding, claude-agent-sdk]
 trigger:
   - "/skill-creator"
   - "创建一个 Skill"
@@ -51,6 +51,32 @@ trigger:
 | **新 Skill 目录** | `.claude/skills/<name>/SKILL.md` | 完整 SKILL.md 文件 |
 | **INDEX.md 注册条目** | YAML 块追加 | 在合适分类下注册 |
 | **设计决策摘要** | Markdown | 解释职责拆分、方法论选取、What NOT 边界 |
+
+---
+
+## 第五契约要素：Extractable（可提取性评估）
+
+> 适用于目标包含"转为 Web SaaS"、"对外服务"、"发布 Agent" 的 Skill。新增时在 frontmatter 加 `extractable: true`。
+
+### 评估维度
+
+| 维度 | 满足标准 | 缺陷标记 |
+|------|---------|---------|
+| **输入/输出可序列化** | JSON 兼容，无自定义对象 | ❌ → 需包装转换层 |
+| **无 Claude Code 上下文依赖** | 不隐式用 Read/Bash/对话历史 | ❌ → 需显式参数传递 |
+| **逻辑可独立运行** | 每个操作有明确输入输出 | ❌ → 需拆分依赖 |
+| **工具表面可审计** | 每个 MCP 工具映射一个 Skill 操作 | ❌ → 需重构 |
+| **多轮上下文可显式管理** | 需要会话的 Skill 有 session 设计 | ❌ → 需加会话层 |
+
+全部满足 → frontmatter 标记 `extractable: true`，可直接用 `claude-agent-sdk` Skill 五步法转为 Web SaaS。
+
+### 反模式检查
+
+- ❌ 一个 Skill 干太多事 → 评估发散
+- ❌ 只给规则不给方法论 → AI 死板执行
+- ❌ 没有 What NOT → 边界外溢
+- ❌ 缺少验收标准 → 不知道何时算"做完"
+- ❌ Skill 假设上下文存活但无会话设计 → 无法转无状态 API
 
 ---
 

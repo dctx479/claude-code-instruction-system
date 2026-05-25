@@ -2,10 +2,9 @@
 # 发布: 2026-03-01 | 详细文档索引: `docs/`
 
 > 核心能力: **自进化** | **Agent驾驭** | **知识沉淀** | **动态适应**
-> 特性文档: `docs/FEATURES.md` | 编排指南: `docs/ORCHESTRATION-GUIDE.md`
-> Skills目录: `docs/SKILLS-CATALOG.md` | 记忆架构: `docs/MEMORY-SYSTEM.md`
-> 配置指南: `docs/CONFIG-FILES-GUIDE.md` | 上下文工程: `docs/CONTEXT-ENGINEERING-GUIDE.md`
-> 知识复利: `docs/KNOWLEDGE-COMPOUNDING-GUIDE.md` | 端口管理: `docs/port-management/PORT-MANAGEMENT-GUIDE.md`
+> 编排指南: `docs/ORCHESTRATION-GUIDE.md` | Skills目录: `docs/SKILLS-CATALOG.md`
+> Agent 框架决策: `docs/AGENT-FRAMEWORK-DECISION.md` | SDK 生态: `docs/reports/CLAUDE-AGENT-SDK-ECOSYSTEM-2026.md`
+> Agent 部署安全: `docs/agent-deployment/SECURITY-GUIDE.md` | 知识复利: `docs/KNOWLEDGE-COMPOUNDING-GUIDE.md`
 
 ---
 
@@ -363,7 +362,7 @@ python scripts/port-manager.py conflicts / suggest <service>
 ## 七、自主决策授权
 
 ### ✅ 完全自主 (无需确认)
-代码实现/优化、Bug修复、测试编写、Agent调度、配置自动更新、并行任务分配、规范编写、QA审查和自动修复、P2问题处理
+代码实现/优化、Bug修复、测试编写、Agent调度、配置自动更新、并行任务分配、规范编写、QA审查和自动修复、P2问题处理、**基于 `claude-agent-sdk` Skill 的 Skill→SaaS 转换项目**
 
 ### ⚠️ 需要确认
 删除现有功能、修改公共API、引入新依赖、数据库Schema变更、生产环境操作、P0/P1问题修复策略

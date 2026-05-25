@@ -410,6 +410,105 @@ npm install -g mcp-zotero
 - [Zotero MCP](https://github.com/kaliaboi/mcp-zotero)
 - [Exa MCP](https://exa.ai) — 企业与市场研究
 
+---
+
+## SDK 集成：MCP 配置与 claude-agent-sdk 的衔接
+
+> 本节说明 `config/mcp-servers.json` 中的 MCP Server 配置如何映射到 `claude-agent-sdk` SKILL 的 `mcp_servers` 选项。
+
+### Claude Code MCP vs Agent SDK MCP
+
+| 维度 | Claude Code CLI | Claude Agent SDK |
+|------|----------------|-----------------|
+| **配置文件** | `.mcp.json` / `~/.claude.json` | 代码中 `mcp_servers` 参数 |
+| **作用域** | User / Project / Local 三层 | 仅代码级别传入 |
+| **传输方式** | stdio / HTTP（SSE） | stdio / HTTP（通过参数传入） |
+| **多租户隔离** | 无内置机制 | ✅ `strict_mcp_config=True` |
+| **环境变量** | `${VAR}` 替换 | 环境变量或代码中传入 |
+
+### 从 config/mcp-servers.json 迁移到 Agent SDK
+
+**config/mcp-servers.json** 中的每个 Server 可以通过 `mcp_servers` 字典传入 SDK：
+
+```python
+# config/mcp-servers.json 中的定义
+# {
+#   "exa": {"transport": "http", "url": "https://mcp.exa.ai/mcp?tools=web_search_advanced_exa"},
+#   "tavily": {"transport": "http", "url": "https://mcp.tavily.com/mcp/?tavilyApiKey=..."}
+# }
+
+from claude_agent_sdk import ClaudeAgentOptions
+
+# SDK 接收字典形式（与 Claude Code CLI 配置格式一致）
+options = ClaudeAgentOptions(
+    mcp_servers={
+        "exa": {
+            "type": "http",
+            "url": "https://mcp.exa.ai/mcp?tools=web_search_advanced_exa"
+        },
+        "tavily": {
+            "type": "http",
+            "url": "https://mcp.tavily.com/mcp/?tavilyApiKey=${TAVILY_API_KEY}"
+        }
+    },
+    allowed_tools=[
+        "mcp__exa__web_search_advanced_exa",  # 命名空间: mcp__<server>__<tool>
+        "mcp__tavily__tavily_search",
+        "Read", "Bash", "Glob", "Grep"       # 内置工具
+    ],
+    strict_mcp_config=True,  # ✅ 多租户隔离：忽略全局 MCP 配置
+    max_turns=50,
+    permission_mode="fallback"
+)
+```
+
+### strict_mcp_config 的作用
+
+```python
+# ❌ 不加 strict_mcp_config：SDK 可能继承 ~/.claude/ 中的全局 MCP 配置
+#   风险：多租户场景下，租户 A 可能意外访问租户 B 配置的 MCP Server
+options = ClaudeAgentOptions(mcp_servers={"my-tools": server})
+
+# ✅ 加 strict_mcp_config：仅使用显式传入的 MCP Server
+#   全局配置（~/.claude/、项目 .mcp.json）全部忽略
+options = ClaudeAgentOptions(
+    mcp_servers={"my-tools": server},
+    strict_mcp_config=True  # 多租户生产必选
+)
+```
+
+### MCP 工具命名空间冲突处理
+
+多 MCP Server 同名工具 → SDK 自动加命名空间前缀 `mcp__<server>__<tool>`：
+
+```
+Server "exa": tool "web_search"      → mcp__exa__web_search
+Server "tavily": tool "web_search"  → mcp__tavily__web_search
+                                    （不冲突，独立调用）
+```
+
+### MCP 依赖安全（CVE-2025-66416）
+
+```toml
+# requirements.txt — 必须 >=1.23.0
+mcp>=1.23.0
+```
+
+修复 `GHSA-9h52-p55h-vw2f`：旧版 MCP 禁用了 DNS rebinding 保护。Claude Agent SDK v0.2.82+ 自动继承此修复。
+
+### MCP Server 快速参考（config/mcp-servers.json 对应）
+
+| Server | 用途 | 工具数 | 传输 | required_by |
+|--------|------|--------|------|-------------|
+| zotero | 文献访问 | 5+ | stdio | literature-mentor |
+| exa | 企业/市场研究 | 2+ | HTTP | exa-research, deep-research |
+| tavily | 搜索+提取+爬取 | 4 | HTTP | deep-research, exa-research |
+| brightdata | 电商数据采集 | 3+ | stdio | brightdata-research |
+| tikhub | 社媒数据采集 | 12+ | stdio | social-media-research |
+
+> **Tip**: 在 `config/mcp-servers.json` 中维护统一配置源，Agent SDK 代码通过读取该文件注入 `mcp_servers` 参数，实现 Claude Code CLI 和 SDK 的配置一致性。
+
 ## 更新日志
 
 - **2026-01-22**: 创建初始版本，基于 Zotero-MCP 配置经验
+- **2026-05-25**: 新增 SDK 集成章节（`strict_mcp_config`、命名空间、MCP CVE 修复）

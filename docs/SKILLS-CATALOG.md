@@ -58,12 +58,22 @@
 | **handoff** | 上下文交接仪式，/compact 前将进度/决策/下一步写入 memory/handoff.md | `/handoff`, `准备 compact`, `交接一下` |
 | **neat** | 任务收尾洁癖审查，五步法同步 docs/CLAUDE.md/memory 三层知识 | `/neat`, `整理一下`, `收尾` |
 | **reflection** | 任务复盘提炼器，萃取 3-5 条可复用经验，两步链 Ingest 写入知识库 | `/reflection`, `复盘一下`, `总结经验` |
-| **skill-creator** | Skill 元创建器，按契约四要素生成高质量 SKILL.md | `/skill-creator`, `创建一个 Skill`, `封装成 Skill` |
+| **skill-creator** | Skill 元创建器，按契约（五要素：What/How/When Done/What NOT/Extractable）生成高质量 SKILL.md，含 Skill→SaaS 可提取性评估 | `/skill-creator`, `创建一个 Skill`, `封装成 Skill` |
 | **spec-first** | 完整 QA 工作流编排器，串联 spec-writer→开发→qa-reviewer→qa-fixer | `/spec-first`, `先写规范再开发`, `需要质量保障` |
 | **pr-prep** | PR 提交前五步检查仪式，确保每个 PR 一次通过 Review | `/pr-prep`, `准备提 PR`, `PR 检查清单` |
 | **task-decompose** | 任务分解器，三层拆解（Epic→Story→Task）+ 依赖图 + 并行化建议 | `/task-decompose`, `任务拆解`, `需求分解` |
 | **sdd-riper** | Spec-Driven Development + RIPER 五阶段流程，中大型需求（>500行/3+文件） | `/riper`, `/sdd-riper`, `中大型需求开发` |
 | **sdd-riper-light** | SDD-RIPER 轻量版，简单任务（<500行/<3文件），快速迭代 | `/riper-light`, `/sdd-light`, `简单 bug 修复` |
+| **claude-agent-sdk** | 将任何 Skill 封装为 Claude Agent SDK Web 应用，五步法 + 代码模板 + 安全部署 | `用 claude-agent-sdk 建立 webapp`, `把 skill 转为 web 应用` |
+
+---
+
+## Agent 部署安全
+
+| 文档 | 描述 | 触发条件 |
+|-----|------|----------|
+| **agent-deployment/SECURITY-GUIDE.md** | 五层防御方案（L1权限隔离→L5 LlamaFirewall）+ API 网关 + 成本控制 + 上线检查清单 | 对外部署 Agent、开放 Web 服务 |
+| **AGENT-FRAMEWORK-DECISION.md** | 四大框架（Claude Code/LangGraph/CrewAI/DeerFlow）对比 + 决策树 + Skill→SaaS 路径图 + 编排映射 | 框架选型、技术方案对比 |
 
 ---
 

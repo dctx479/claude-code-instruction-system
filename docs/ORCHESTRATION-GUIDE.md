@@ -68,6 +68,7 @@
 
 完整模式定义: `workflows/orchestration/orchestration-patterns.md`
 SDD-RIPER 详解: `docs/SDD-RIPER-GUIDE.md`
+Agent 框架决策: `docs/AGENT-FRAMEWORK-DECISION.md`（Claude Code/LangGraph/CrewAI/DeerFlow 对比 + 框架选型）
 
 ---
 
