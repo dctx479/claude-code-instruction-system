@@ -186,3 +186,152 @@ MCP 集成配置: `.claude/integrations/`
 **x-ai-topic-selector 说明**: 启动后输入 `/select-topics`。需 Chrome 登录推特账号 + Gemini API Key（可换 DeepSeek）。两种模式:
 - **扫描模式**: 批量抓取信息流 → AI 评分 → Top N 精选
 - **书签模式**: 分析已收藏内容 → 生成摘要 + 选题建议（不做排序）
+
+---
+
+## Skill ↔ Agent 职责矩阵
+
+> **原则**: Skill = 方法论/知识库（What to do），Agent = 执行角色（Who does it）。
+> Skill 提供流程和标准，Agent 以特定角色身份执行任务。
+
+### 核心职责边界
+
+| 领域 | Skill（方法论） | Agent（执行者） | 协作模式 |
+|------|----------------|-----------------|---------|
+| **调试** | `debug`（五步工作流） | `debugger`（调试角色） | Skill 定义流程，Agent 执行诊断 |
+| **安全审计** | `code-security-review`（审计规则） | `security-analyst` + `security-audit` | Skill 提供规则库，Agent 执行扫描和报告 |
+| **QA 工作流** | `spec-first`（编排流程） | `spec-writer` + `qa-reviewer` + `qa-fixer` | Skill 串联三个 Agent 的工作 |
+| **需求开发** | `sdd-riper`（五阶段流程） | `sdd-riper-orchestrator` | Skill 定义状态机，Agent 驱动执行 |
+| **代码审查** | `pr-prep`（检查清单） | `code-reviewer` | Skill 做预检，Agent 做深度审查 |
+| **前端设计** | `frontend-design`（设计规范） | —（无对应 Agent） | 纯 Skill，知识库驱动 |
+| **文献研究** | `literature-mentor`（精读流程） | `literature-manager`（导入分类） | Skill 负责解读，Agent 负责管理 |
+| **会话生命周期** | `prime` → `handoff` → `neat` | —（无对应 Agent） | 纯 Skill，系统仪式 |
+
+### 路由决策规则
+
+1. **Intent 检测结果是 Agent** → 加载 Agent 角色执行（CLAUDE.md §0）
+2. **任务匹配到 Skill** → 加载 Skill 方法论指导
+3. **两者都匹配** → Agent 角色 + Skill 方法论同时激活（如 debugger Agent + debug Skill）
+4. **冲突时** → Agent 优先（执行身份），Skill 提供补充知识
+
+---
+
+## 内建 Skill 集成建议
+
+> Claude Code 自带的内建 Skills 中，以下 7 个尚未被项目工作流引用，建议按下表集成。
+
+| 内建 Skill | 能力描述 | 建议集成点 | 集成方式 |
+|------------|---------|-----------|---------|
+| **karpathy-guidelines** | LLM 编码防错准则，减少常见 AI 编码错误 | `code-reviewer` Agent、QA 流程 | Agent 执行审查时自动参考 |
+| **brainstorming** | 创意头脑风暴，将模糊想法转化为经过验证的设计 | `vision-builder` Skill 前置 | 需求模糊时先 brainstorming → 再 vision-builder |
+| **documentation** | 文档生成工作流（API/架构/README） | `pr-prep` Skill Step 4 | PR 文档检查时触发文档生成 |
+| **playwright-skill** | Playwright E2E 测试框架集成 | `automated-testing` Agent | 前端项目测试时自动激活 |
+| **analyze-project** | 分析 Antigravity 会话的根本原因 | `prime` Skill | 新项目初始会话时使用 |
+| **context-compression** | 压缩会话历史以管理 token | `handoff` → `neat` 生命周期 | 上下文 >250K 时自动建议 |
+| **claude-code-guide** | Claude Code 配置和使用参考 | `tech-mentor` Agent | 用户询问 Claude Code 使用时引用 |
+
+### 推荐的增强工作流
+
+```
+# 需求阶段增强
+brainstorming → vision-builder → task-decompose
+
+# 代码审查增强
+karpathy-guidelines + code-reviewer Agent + pr-prep Skill
+
+# 测试增强
+automated-testing Agent + playwright-skill（前端）
+
+# 上下文管理增强
+handoff → neat → context-compression → /compact
+```
+
+---
+
+## 场景速查表
+
+### 按业务阶段
+
+| 阶段 | 可用 Skill | 说明 |
+|------|-----------|------|
+| **需求** | vision-builder, question-refiner | 从模糊需求到清晰目标 |
+| **调研** | deep-research, exa-research, brightdata-research, social-media-research, literature-mentor | 信息收集和分析 |
+| **方案** | plan-review, parallel-explore, spec-writer (Agent) | 方案设计和评审 |
+| **开发** | react-best-practices, web-artifacts-builder, collaborating-with-codex, collaborating-with-gemini | 代码实现 |
+| **测试** | QA 系统 (qa-reviewer + qa-fixer Agent) | 质量验证 |
+| **PR 提交** | pr-prep | 提交前五步检查 |
+| **Agent 封装** | claude-agent-sdk | Skill → Web SaaS 转换 |
+| **复盘** | reflection | 萃取可复用经验 |
+| **收尾** | neat | 三层知识同步 |
+| **Skill 化** | skill-creator | 高频流程封装 |
+| **会话预热** | prime | 建立项目上下文 |
+| **上下文交接** | handoff | /compact 前保存进度 |
+
+### 现象驱动路由
+
+| 我观察到… | 推荐 Skill | 说明 |
+|-----------|-----------|------|
+| 文档和代码对不上，AI 行为越来越奇怪 | **neat** | 三层知识失同步 |
+| 刚完成一个复杂任务，想把经验留下来 | **reflection** | 萃取经验 → 写入 lessons-learned |
+| 同一个流程已经做了 3 次以上 | **skill-creator** | 高频流程值得封装 |
+| 研究问题太模糊，不知道从哪里搜 | **question-refiner** | 先精炼查询再调研 |
+| 需要对比多个技术方案 | **parallel-explore** | 独立 worktree 标准化评估 |
+| 需求描述很模糊 | **vision-builder** | 引导式提问输出 VISION.md |
+| 计划写好了想检查漏洞 | **plan-review** | 10 维度评估 |
+| 上下文快满了（>250K tokens） | **handoff** → **neat** → /compact | 安全收尾三步 |
+| 新会话开始不知道上次做到哪了 | **prime** | git 状态 + 记忆检索 |
+| 遇到报错/异常行为 | **debug** | 五步系统排查 |
+| 新功能开发想确保质量 | **spec-first** | 规范驱动 QA 闭环 |
+| 需求模糊不知道怎么拆任务 | **task-decompose** | 三层拆解 + 依赖图 |
+| 功能写完准备提 PR | **pr-prep** | 五步检查仪式 |
+| 想把 Skill 对外开放成 Web 服务 | **claude-agent-sdk** | 五步法封装 |
+
+---
+
+## 更新日志
+
+### 2026-05-29
+- **P1**: INDEX.md 从 1007 行精简至 116 行（减少 89%），回归纯索引定位
+- **P2**: 确立三文件职责——INDEX.md=轻量索引、SKILLS-CATALOG.md=详细文档、README.md=设计规范
+- **P3**: 新增 Skill↔Agent 职责矩阵，明确方法论 vs 执行角色的边界
+- **P4**: 新增 7 个内建 Skill 集成建议（karpathy-guidelines/brainstorming/documentation/playwright-skill/analyze-project/context-compression/claude-code-guide）
+- Changelog 和场景速查表从 INDEX.md 迁移至本文件
+
+### 2026-04-30
+- 新增 task-decompose、pr-prep Skills
+- 新增 handoff、spec-first Skills
+- sdd-riper/sdd-riper-light 升级至 v1.1
+- 新增 prime、debug、reflection、skill-creator Skills
+- 新增 observability 升级至 v1.1
+
+### 2026-04-21
+- 新增代码安全审计类：code-security-review、php-audit、java-audit、wxmini-security-audit
+- 补齐 CTF skills：ctf-ai-ml、ctf-writeup
+
+### 2026-04-15
+- 迁入 schedule-analyzer 和 8 类 CTF Skills
+
+### 2026-03-17
+- amazon-analyse 升级至 v1.1.0（三模块架构）
+
+### 2026-03-11
+- 新增 stock-research 扩展（deep-research 领域扩展）
+
+### 2026-03-08
+- deep-research 升级至 v1.2.0 + 新增 question-refiner
+
+### 2026-03-06
+- paper-revision 升级至 v1.1.0（四模式）
+
+### 2026-03-01
+- 新增 collaborating-with-codex、collaborating-with-gemini
+- 创建 INDEX.md 渐进式披露机制
+
+### 2026-02-20
+- 新增 seedance-prompt、seedance-storyboard、frontend-design、ui-ux-pro-max、react-best-practices、web-artifacts-builder
+
+### 2026-02-04
+- 新增 vision-builder、plan-review、parallel-explore、observability、deep-research、exa-research、brightdata-research、social-media-research、market-insight
+
+### 2026-01-23
+- 初始版本：pytorch、pandas、data-analysis、literature-mentor、paper-revision、god-oversight
