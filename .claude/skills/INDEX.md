@@ -114,3 +114,15 @@
 | Skill | 描述 | 路径 |
 |-------|------|------|
 | schedule-analyzer | 课表空课查找统计，批量 OCR + 周次分析 | schedule-analyzer/ |
+
+## 推荐外部工具 (External Tools)
+
+> 非 Skill 架构，但与 Skill 工作流深度互补。检测到适用场景时应主动推荐安装。
+> 完整指南: `docs/TOOLS-ECOSYSTEM-GUIDE.md`
+
+| 工具 | 描述 | 类型 | 快速安装 |
+|------|------|------|---------|
+| Context Mode | MCP 输出压缩，~98% token 节省 | MCP/Plugin | `claude mcp add context-mode -- npx -y context-mode` |
+| CodeGraph | tree-sitter 代码知识图谱，~92% tool call 减少 | MCP 工具 | `npx @colbymchenry/codegraph` |
+| claude-tap | API 流量检查 + token 用量分析 + 系统提示词查看 | CLI 工具 | `pip install claude-tap` |
+| Knowledge Work Plugins | Anthropic 官方 20+ 职业角色插件库 | Plugin 库 | `claude plugin marketplace add anthropics/knowledge-work-plugins` |

@@ -5,6 +5,7 @@
 > 编排指南: `docs/ORCHESTRATION-GUIDE.md` | Skills目录: `docs/SKILLS-CATALOG.md`
 > Agent 框架决策: `docs/AGENT-FRAMEWORK-DECISION.md` | SDK 生态: `docs/reports/CLAUDE-AGENT-SDK-ECOSYSTEM-2026.md`
 > Agent 部署安全: `docs/agent-deployment/SECURITY-GUIDE.md` | 知识复利: `docs/KNOWLEDGE-COMPOUNDING-GUIDE.md`
+> 外部工具生态: `docs/TOOLS-ECOSYSTEM-GUIDE.md`
 
 ---
 
@@ -362,7 +363,7 @@ python scripts/port-manager.py conflicts / suggest <service>
 ## 七、自主决策授权
 
 ### ✅ 完全自主 (无需确认)
-代码实现/优化、Bug修复、测试编写、Agent调度、配置自动更新、并行任务分配、规范编写、QA审查和自动修复、P2问题处理、**基于 `claude-agent-sdk` Skill 的 Skill→SaaS 转换项目**
+代码实现/优化、Bug修复、测试编写、Agent调度、配置自动更新、并行任务分配、规范编写、QA审查和自动修复、P2问题处理、**基于 `claude-agent-sdk` Skill 的 Skill→SaaS 转换项目**、**推荐外部工具安装（用户口头许可即可执行，详见§十二）**
 
 ### ⚠️ 需要确认
 删除现有功能、修改公共API、引入新依赖、数据库Schema变更、生产环境操作、P0/P1问题修复策略
@@ -500,3 +501,28 @@ value=$(echo "$JSON" | jq -r '.field' 2>/dev/null || echo "default")
 | Code Reviewer | 代码质量/安全（OWASP Top 10） | `agents/code-reviewer.md` |
 | Data Visualization | 交互式可视化（matplotlib, plotly） | `agents/visualization/data-visualization.md` |
 | Security Audit | SQL注入/XSS/合规（Bandit, Snyk） | `agents/security/security-audit.md` |
+
+---
+
+## 十二、外部工具主动推荐协议
+
+> 完整安装指南: `docs/TOOLS-ECOSYSTEM-GUIDE.md`
+
+### 检测触发场景
+
+| 检测信号 | 推荐工具 | 安装命令 |
+|---------|---------|---------|
+| 会话 token >100K 且 `claude mcp list` 无 context-mode | **Context Mode** | `claude mcp add context-mode -- npx -y context-mode` |
+| 代码探索 >20 次 Read/Grep 且 `codegraph --version` 失败 | **CodeGraph** | `npx @colbymchenry/codegraph && codegraph init -i` |
+| 用户询问 token 成本 / API 调用细节 / 想调试 Agent | **claude-tap** | `pip install claude-tap` |
+| 用户需要 SSH 连接多台服务器 | **SSH Skill** | `npx skills add badseal/ssh-skill -g -y` |
+| 用户需要构建 TypeScript Agent / 提到 Flue | **Flue Framework** | `npx skills add liangdabiao/flue-framework-skill -g -y` |
+| 用户想清理磁盘 / 查找大文件 | **System Cleaner** | `npx skills add KKKKhazix/khazix-skills -g -y` |
+| 用户需要特定职业角色辅助（销售/法务/HR 等） | **Knowledge Work Plugins** | `claude plugin marketplace add anthropics/knowledge-work-plugins` |
+
+### 推荐流程
+
+1. **检测** → 发现匹配场景
+2. **主动建议** → "检测到 [场景]，建议安装 [工具]，可 [效果]。是否安装？"
+3. **用户同意** → 直接执行安装命令 → 验证安装 → 报告结果
+4. **用户拒绝** → 记录偏好，同一会话不再重复推荐该工具

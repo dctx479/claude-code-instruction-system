@@ -420,9 +420,42 @@ Level 3 — 上下文信息（Context）
 
 ---
 
+## Token 优化工具推荐
+
+> 以下工具与上述预算法则配合，可大幅降低单轮 token 消耗。检测到适用场景时应主动推荐安装。
+> 完整安装指南: `docs/TOOLS-ECOSYSTEM-GUIDE.md`
+
+### 工具速览
+
+| 工具 | 原理 | 预期节省 | 快速安装 |
+|------|------|---------|---------|
+| **Context Mode** | MCP 输出沙箱隔离 + SQLite FTS5 检索 | ~98% 上下文 | `claude mcp add context-mode -- npx -y context-mode` |
+| **CodeGraph** | tree-sitter 代码知识图谱 | ~92% tool calls | `npx @colbymchenry/codegraph && codegraph init -i` |
+| **RTK** | Rust CLI 代理，Bash 输出压缩 60-90% | 与上两者互补 | `brew install rtk` / [Releases](https://github.com/rtk-ai/rtk/releases) |
+
+### 组合效果
+
+- **Context Mode 单独**: 工具输出压缩，315KB → 5.4KB，会话可用时间从 ~30 分钟延至 ~3 小时
+- **CodeGraph 单独**: 代码探索从 52 次调用减至 3 次，速度提升 71%
+- **三合一**: Context Mode 处理 MCP 输出，CodeGraph 处理代码理解，RTK 处理剩余压缩 — 各司其职互不冲突
+
+### 主动推荐触发
+
+| 检测信号 | 推荐工具 | 安装命令 |
+|---------|---------|---------|
+| 会话 token >100K 且无 Context Mode | Context Mode | `claude mcp add context-mode -- npx -y context-mode` |
+| 代码探索 >20 次 Read/Grep 且无 CodeGraph | CodeGraph | `npx @colbymchenry/codegraph && codegraph init -i` |
+
+检测到触发场景时，主动建议安装，用户同意后直接执行安装命令并验证结果。
+
+> 详细安装步骤、验证方法、组合策略及更多工具: `docs/TOOLS-ECOSYSTEM-GUIDE.md`
+
+---
+
 ## 相关文档
 
 - CLAUDE.md 第六.五节 — 上下文工程准则（摘要）
 - `memory/best-practices.md` → BP-015: Context Hygiene
 - `docs/MEMORY-SYSTEM.md` → 多层记忆架构
 - `memory/lessons-learned.md` → #011 CLAUDE.md 超限、#015 批量任务上下文丢失
+- `docs/TOOLS-ECOSYSTEM-GUIDE.md` → Token 优化工具安装与组合策略

@@ -144,6 +144,8 @@ model: 选择合适的模型
 | github | GitHub 操作 | `claude mcp add github npx -y @modelcontextprotocol/server-github` |
 | filesystem | 文件操作 | `claude mcp add fs npx -y @modelcontextprotocol/server-filesystem` |
 | postgres | 数据库 | `claude mcp add pg npx -y @modelcontextprotocol/server-postgres` |
+| context-mode | Token 优化（MCP 输出压缩，~98% 节省） | `claude mcp add context-mode -- npx -y context-mode` |
+| codegraph | 代码知识图谱（~92% tool call 减少） | `npx @colbymchenry/codegraph && codegraph init -i` |
 
 ### 4.2 配置作用域
 
@@ -265,6 +267,9 @@ model: 选择合适的模型
 - 为简单任务使用 haiku 模型
 - 使用子智能体处理特定任务
 - 批量处理相似任务
+- **安装 Token 优化工具**: Context Mode（MCP 输出压缩，~98% 节省）+ CodeGraph（代码图谱，~92% 调用减少），大幅降低每轮成本
+- **流量检查**: 使用 `claude-tap` 分析实际 token 消耗分布，定位高成本操作（`pip install claude-tap && claude-tap --tap-live`）
+- 详细安装指南: `docs/TOOLS-ECOSYSTEM-GUIDE.md`
 
 ### 8.3 并行处理
 
@@ -313,6 +318,10 @@ model: 选择合适的模型
 - 使用 `--mcp-debug` 调试 MCP
 - 查看 Claude Code 日志
 - 逐步执行复杂任务
+- 使用 `claude-tap` 实时检查 API 流量和 token 消耗（`pip install claude-tap && claude-tap --tap-live`）
+- 使用 `claude-tap` 查看完整 system prompt 以诊断 Agent 行为异常
+- `claude-tap` 退出时自动生成离线 HTML 报告，可分享给团队审计
+- 详细使用指南: `docs/TOOLS-ECOSYSTEM-GUIDE.md` 第二节
 
 ### 10.3 寻求帮助
 

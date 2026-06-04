@@ -182,10 +182,32 @@ MCP 集成配置: `.claude/integrations/`
 | Skill | 描述 | 安装命令 |
 |-------|------|---------|
 | **x-ai-topic-selector** | 推特信息流选题助手，Chrome CDP 抓取 + AI 评分，支持扫描/书签两种模式 | `npx skills add vigorX777/x-ai-topic-selector -g -y` |
+| **knowledge-work-plugins** | Anthropic 官方 Cowork 插件库，20+ 职业角色（销售/法务/HR/数据等），纯 Markdown+JSON | `claude plugin marketplace add anthropics/knowledge-work-plugins` |
+| **ssh-skill** | 企业级 SSH 管理，长连接守护进程 + 超大文件传输 + Paramiko 密码认证 + 隧道管理 | `npx skills add badseal/ssh-skill -g -y` |
+| **system-cleaner** | 桌面磁盘清理，绿/黄/红安全分级 + 交互式 HTML 报告，Mac/Windows 均支持 | `npx skills add KKKKhazix/khazix-skills -g -y` |
+| **flue-framework** | 轻量 TypeScript Agent 脚手架（createAgent/defineTool/routing/SSE 流式） | `npx skills add liangdabiao/flue-framework-skill -g -y` |
 
-**x-ai-topic-selector 说明**: 启动后输入 `/select-topics`。需 Chrome 登录推特账号 + Gemini API Key（可换 DeepSeek）。两种模式:
-- **扫描模式**: 批量抓取信息流 → AI 评分 → Top N 精选
-- **书签模式**: 分析已收藏内容 → 生成摘要 + 选题建议（不做排序）
+**knowledge-work-plugins 说明**: Anthropic 官方开源，17K+ Stars。每个插件含 Skills（自动调用）+ Commands（斜杠命令）+ Connectors（MCP 协议对接外部工具）。覆盖 engineering、sales、product、data、marketing、legal、finance、HR、design、bio-research 等角色。安装后使用 `claude plugin install <name>@knowledge-work-plugins` 选择性安装具体角色。
+
+**ssh-skill 说明**: 半年实战验证。调用原生 OpenSSH，配置格式兼容终端直接使用（`ssh server1`）。Windows 原生 SSH 适配（自动定位 `%SystemRoot%\System32\OpenSSH\ssh.exe`）。支持 Passphrase 密钥通过 SSH Agent 无感使用。
+
+**system-cleaner 说明**: 全程只读扫描，在浏览器中打开交互式 HTML 报告。绿灯（纯缓存/可安全删除）支持一键操作；黄灯（需人工判断）仅提供"在 Finder 中打开"；红灯（系统文件）仅展示说明。所有删除操作都有二次确认弹窗。
+
+**flue-framework 说明**: 轻量替代 Claude Agent SDK 的 TypeScript 方案。SSE 流式输出内置，适合前端团队主导的 Agent 项目。详细框架对比见 `docs/AGENT-FRAMEWORK-DECISION.md`。
+
+---
+
+## 推荐外部工具（非 Skill）
+
+> 以下工具不是 Skill 架构，而是 Claude Code 的增强工具/插件/MCP 服务器，提升效率和可观测性。
+> 检测到适用场景时应主动推荐安装。完整安装指南: `docs/TOOLS-ECOSYSTEM-GUIDE.md`
+
+| 工具 | 类别 | 核心价值 | 快速安装 | 主动推荐触发 |
+|------|------|---------|---------|-------------|
+| **Context Mode** | Token 优化 | MCP 输出沙箱压缩，~98% 节省 | `claude mcp add context-mode -- npx -y context-mode` | token >100K 且未安装 |
+| **CodeGraph** | Token 优化 | 代码知识图谱，~92% tool call 减少 | `npx @colbymchenry/codegraph` | 代码探索 >20 次且未安装 |
+| **RTK** | Token 优化 | Rust CLI 代理，Bash 输出压缩 60-90% | `brew install rtk` / [Releases](https://github.com/rtk-ai/rtk/releases) | 配合前两者使用 |
+| **claude-tap** | 可观测性 | API 流量检查 + token 用量明细 + 系统提示词查看 | `pip install claude-tap` | 用户询问 token 成本/调试 Agent |
 
 ---
 
@@ -285,10 +307,19 @@ handoff → neat → context-compression → /compact
 | 需求模糊不知道怎么拆任务 | **task-decompose** | 三层拆解 + 依赖图 |
 | 功能写完准备提 PR | **pr-prep** | 五步检查仪式 |
 | 想把 Skill 对外开放成 Web 服务 | **claude-agent-sdk** | 五步法封装 |
+| Token 烧太快 / 成本太高 | **Context Mode** + **CodeGraph** | 安装后自动压缩，详见 `docs/TOOLS-ECOSYSTEM-GUIDE.md` |
+| 不清楚 API 调用细节 / 想调试 Agent | **claude-tap** | `pip install claude-tap && claude-tap --tap-live` |
+| 需要连接多台远程服务器 | **ssh-skill** | 长连接 + 统一 SSH 配置 |
 
 ---
 
 ## 更新日志
+
+### 2026-06-04
+- 新增 4 个社区 Skills（knowledge-work-plugins / ssh-skill / system-cleaner / flue-framework）
+- 新增"推荐外部工具（非 Skill）"节（Context Mode / CodeGraph / RTK / claude-tap）
+- 场景速查表追加 3 个现象驱动路由（Token 成本 / 调试 Agent / 远程服务器）
+- 创建 `docs/TOOLS-ECOSYSTEM-GUIDE.md` 外部工具生态集中指南
 
 ### 2026-05-29
 - **P1**: INDEX.md 从 1007 行精简至 116 行（减少 89%），回归纯索引定位

@@ -13,6 +13,7 @@
 | **LangGraph** | **生产级状态机** | 有向图 = 节点(Agent) + 边(消息流) + 检查点 | 有循环/容错/人机升级的长时工作流 |
 | **CrewAI** | **快速原型** | Role-based Agent + Crew（sequential/hierarchical） | 非工程师快速搭建多角色工作流 |
 | **DeerFlow**（字节） | **深度研究流水线** | 模块化：研究+搜索+爬虫→LLM | 自动化网页研究和报告生成 |
+| **Flue** | **轻量 TS Agent 脚手架** | createAgent/defineTool/routing/SSE | 快速构建 TypeScript Agent + 实时流式推理 |
 
 **关键洞察**：Claude Code 的 Skills 系统和 Auto-Dispatch 协议，在设计哲学上与 LangGraph 的状态机、CrewAI 的 Crew 是对等的。太一元系统的 Orchestrator 编排策略（PARALLEL/SEQUENTIAL/HIERARCHICAL 等）映射到 LangGraph 就是图的边类型。
 
@@ -37,6 +38,9 @@
 │
 ├─ 需要自动化深度网页研究流水线？
 │   └─ ✅ DeerFlow
+│
+├─ 需要轻量 TypeScript Agent 脚手架 + SSE 流式输出？
+│   └─ ✅ Flue Framework
 │
 └─ 需要 Claude Code 的 Skill + LangGraph 的循环支持？
     └─ ✅ Claude Agent SDK 作为 LangGraph 节点（混合架构）
@@ -116,20 +120,21 @@ graph.add_edge("review", "claude", condition=lambda s: s["needs_revision"])
 
 ## 五、生产部署能力矩阵
 
-| 能力 | Claude Agent SDK | LangGraph | CrewAI | DeerFlow |
-|------|-----------------|-----------|--------|----------|
-| **工具调用** | 内置 Read/Write/Bash/Grep 等 | 需手动定义 | 内置 + 自定义 | 内置 + 搜索 |
-| **会话持久化** | ✅ SessionStore (PG/Redis/S3) | ✅ LangGraph Memory | ✅ Crew 记忆 | ✅ 内置 |
-| **多 Agent 编排** | ✅ AgentDefinition | ✅ 图形拓扑 | ✅ Crew 进程 | ✅ 流水线 |
-| **显式循环** | ❌ | ✅ | ❌ | ❌ |
-| **检查点容错** | ❌ | ✅ | ❌ | ❌ |
-| **人机交互** | ❌ | ✅ | ❌ | ❌ |
-| **Skill 系统** | ✅（核心优势） | ❌ | ❌ | ❌ |
-| **Docker 部署** | ✅（自带 CLI） | ✅ | ✅ | ✅ |
-| **Webhook 触发** | ✅ | ✅ | ✅ | ✅ |
-| **成本控制** | ✅ max_budget_usd | ⚠️ | ⚠️ | ⚠️ |
-| **多租户隔离** | ✅ strict_mcp_config | ⚠️ | ⚠️ | ⚠️ |
-| **社区规模** | 7K Stars | 137K Stars | 52K Stars | 69K Stars |
+| 能力 | Claude Agent SDK | LangGraph | CrewAI | DeerFlow | Flue |
+|------|-----------------|-----------|--------|----------|------|
+| **工具调用** | 内置 Read/Write/Bash/Grep 等 | 需手动定义 | 内置 + 自定义 | 内置 + 搜索 | defineTool 自定义 |
+| **会话持久化** | ✅ SessionStore (PG/Redis/S3) | ✅ LangGraph Memory | ✅ Crew 记忆 | ✅ 内置 | ⚠️ 需自行实现 |
+| **多 Agent 编排** | ✅ AgentDefinition | ✅ 图形拓扑 | ✅ Crew 进程 | ✅ 流水线 | ✅ createAgent + routing |
+| **显式循环** | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **检查点容错** | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **人机交互** | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **Skill 系统** | ✅（核心优势） | ❌ | ❌ | ❌ | ❌ |
+| **Docker 部署** | ✅（自带 CLI） | ✅ | ✅ | ✅ | ✅（可自行配置） |
+| **Webhook 触发** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **成本控制** | ✅ max_budget_usd | ⚠️ | ⚠️ | ⚠️ | ⚠️ |
+| **多租户隔离** | ✅ strict_mcp_config | ⚠️ | ⚠️ | ⚠️ | ⚠️ |
+| **社区规模** | 7K Stars | 137K Stars | 52K Stars | 69K Stars | 4K Stars |
+| **流式输出** | WebSocket | 需自行实现 | ❌ | ❌ | ✅ SSE 内置 |
 
 ---
 
@@ -159,6 +164,7 @@ graph.add_edge("review", "claude", condition=lambda s: s["needs_revision"])
 | Claude Code 能力 + LangGraph 循环 | **Claude Agent SDK + LangGraph**（混合架构） |
 | 需要 IDE 上下文感知的多 Agent 推理 | **Claude Code + Agent SDK**（原生） |
 | 对比多个技术方案并选最优 | **parallel-explore Skill**（Worktree 并行） |
+| 轻量 TypeScript Agent + SSE 流式推理 | **Flue Framework** |
 
 ---
 
@@ -170,3 +176,5 @@ graph.add_edge("review", "claude", condition=lambda s: s["needs_revision"])
 - **编排指南**: `docs/ORCHESTRATION-GUIDE.md`
 - **MCP 配置**: `docs/mcp-configuration-guide.md`
 - **太一元编排模式**: `workflows/orchestration/orchestration-patterns.md`
+- **外部工具生态**: `docs/TOOLS-ECOSYSTEM-GUIDE.md`
+- **Flue Framework Skill**: [liangdabiao/flue-framework-skill](https://github.com/liangdabiao/flue-framework-skill)
