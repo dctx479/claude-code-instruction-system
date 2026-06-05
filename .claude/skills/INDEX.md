@@ -52,6 +52,12 @@
 | vision-builder | 模糊需求→清晰愿景文档（5W1H + SMART） | vision-builder/ | architect |
 | plan-review | 计划 10 维度评估，识别风险和改进点 | plan-review/ | — |
 
+## 架构类 (Architecture)
+
+| Skill | 描述 | 路径 | 协作 Agent |
+|-------|------|------|-----------|
+| architecture-copilot | 7 阶段交互式架构设计（六灵魂问题 + 粗算 + ADR） [Heavy] | architecture-copilot/ | architect |
+
 ## 研究类 (Research)
 
 | Skill | 描述 | 路径 | 依赖 MCP |
