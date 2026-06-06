@@ -186,6 +186,7 @@ MCP 集成配置: `.claude/integrations/`
 | **ssh-skill** | 企业级 SSH 管理，长连接守护进程 + 超大文件传输 + Paramiko 密码认证 + 隧道管理 | `npx skills add badseal/ssh-skill -g -y` |
 | **system-cleaner** | 桌面磁盘清理，绿/黄/红安全分级 + 交互式 HTML 报告，Mac/Windows 均支持 | `npx skills add KKKKhazix/khazix-skills -g -y` |
 | **flue-framework** | 轻量 TypeScript Agent 脚手架（createAgent/defineTool/routing/SSE 流式） | `npx skills add liangdabiao/flue-framework-skill -g -y` |
+| **garden-skills** | ConardLi 开源创作工具集（网页视频制作/网页设计/GPT Image2 图片生成），含 25+ 设计主题模板 | `git clone https://github.com/ConardLi/garden-skills && cp -r garden-skills/skills/* ~/.claude/skills/` |
 
 **knowledge-work-plugins 说明**: Anthropic 官方开源，17K+ Stars。每个插件含 Skills（自动调用）+ Commands（斜杠命令）+ Connectors（MCP 协议对接外部工具）。覆盖 engineering、sales、product、data、marketing、legal、finance、HR、design、bio-research 等角色。安装后使用 `claude plugin install <name>@knowledge-work-plugins` 选择性安装具体角色。
 
@@ -194,6 +195,8 @@ MCP 集成配置: `.claude/integrations/`
 **system-cleaner 说明**: 全程只读扫描，在浏览器中打开交互式 HTML 报告。绿灯（纯缓存/可安全删除）支持一键操作；黄灯（需人工判断）仅提供"在 Finder 中打开"；红灯（系统文件）仅展示说明。所有删除操作都有二次确认弹窗。
 
 **flue-framework 说明**: 轻量替代 Claude Agent SDK 的 TypeScript 方案。SSE 流式输出内置，适合前端团队主导的 Agent 项目。详细框架对比见 `docs/AGENT-FRAMEWORK-DECISION.md`。
+
+**garden-skills 说明**: 三个内容创作类 Skill — `web-video-presentation`（把文章/脚本转为网页视频，支持 MiniMax/OpenAI TTS）、`web-design-engineer`（25套设计风格主题，消除 AI 模板感）、`gpt-image-2`（18大类/79个结构化图片生成模板）。建议配合 Opus 4.7 使用，效果最优。在线预览：`https://mmh1.top`
 
 ---
 

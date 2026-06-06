@@ -414,6 +414,7 @@ npx skills add KKKKhazix/khazix-skills -g -y
 | 4 | 用户需要 SSH 连接多台服务器 / 提到远程服务器操作 | **SSH Skill** | `npx skills add badseal/ssh-skill -g -y` | 长连接 + 统一配置 |
 | 5 | 用户需要构建 TypeScript Agent / 提到 Flue | **Flue Framework** | `npx skills add liangdabiao/flue-framework-skill -g -y` | TS Agent 开发指导 |
 | 6 | 用户想清理磁盘 / 查找大文件 / 存储空间不足 | **System Cleaner** | `npx skills add KKKKhazix/khazix-skills -g -y` | 交互式磁盘清理报告 |
+| 7 | 用户提到安全测试 / 漏洞挖掘 / 渗透测试 / 需要代理观察 AI 请求 | **Yakit MCP** | 见下方 §六 | HTTP 流量代理 + 数据包验证 + 防幻觉 |
 
 ### 推荐执行流程
 
@@ -478,6 +479,154 @@ npx skills add KKKKhazix/khazix-skills -g -y
 └─ 想清理磁盘 / 优化存储？
     └─ ✅ System Cleaner Skill
 ```
+
+---
+
+## 多 AI Agent 工具 Skill 共享
+
+> 适用于同时使用 Claude Code、Codex CLI、OpenCode、Hermes、OpenClaw 等多个 Agent 工具的用户。
+
+**核心思路**：选一个工具作为 Skill 中心（推荐 Claude Code），其他工具全部指向它，避免多份维护。
+
+### 各工具接入方式
+
+| 工具 | 共享机制 | 操作 |
+|------|---------|------|
+| **Claude Code** | 中心（`~/.claude/skills/`） | 无需操作，天然主库 |
+| **OpenCode** | 自动扫描 `~/.claude/skills/` | 零配置，直接读取 |
+| **Codex CLI** | 逐个 Skill 软链接 | 见下方脚本 |
+| **Hermes** | `external_dirs` 配置 | 编辑 `~/.hermes/config.yaml` |
+| **OpenClaw** | 独立目录，可选软链接互通 | 按需决定是否统一 |
+
+**Codex 接入（软链接脚本）**:
+```bash
+for skill in ~/.claude/skills/*/; do
+  name=$(basename "$skill")
+  [ -e ~/.codex/skills/"$name" ] || ln -s ~/.claude/skills/"$name" ~/.codex/skills/"$name"
+done
+```
+
+**Hermes 接入（一行配置）**:
+```yaml
+# 编辑 ~/.hermes/config.yaml
+skills:
+  external_dirs: ["~/.claude/skills"]
+```
+
+**注意事项**：
+- Skill 的 YAML frontmatter + Markdown 格式在所有工具间通用，无兼容问题
+- 引用工具专属 API（如 OpenClaw 的 sessions_spawn）的 Skill 在其他工具里只能作参考文档
+- Codex 内置 `~/.codex/skills/.system/` 不受软链接影响，双方共存
+
+---
+
+## 六、安全测试与可观测性工具
+
+### 6.1 Yakit（HTTP 代理 + 数据包验证）
+
+**项目**: [yaklang/yakit](https://github.com/yaklang/yakit)
+
+**核心价值**: 将 Yakit 作为 MCP 代理，让 AI 生成的所有 HTTP 请求都经过 Yakit，实现流量观察、数据包验证、防幻觉。
+
+**适用场景**:
+- 安全测试 / 渗透测试 / 漏洞挖掘
+- 验证 AI 生成的 HTTP 请求是否正确（防止 AI 幻觉生成错误请求）
+- 需要观察 AI Agent 的网络行为
+
+**工作原理**:
+
+```
+用户请求 → Claude Code → 生成 HTTP 请求
+                ↓
+            Yakit 代理（拦截、验证、记录）
+                ↓
+            目标服务器
+```
+
+#### 安装（Windows 示例）
+
+1. 下载 Yakit: https://github.com/yaklang/yakit/releases
+2. 启动 Yakit 并开启代理模式（默认端口 8083）
+3. 配置 Claude Code 使用代理
+
+#### 配置方式
+
+**方法 A — 全局代理（所有 AI 请求走 Yakit）**:
+
+```bash
+# 在 ~/.claude/settings.json 中配置
+{
+  "env": {
+    "HTTP_PROXY": "http://127.0.0.1:8083",
+    "HTTPS_PROXY": "http://127.0.0.1:8083"
+  }
+}
+```
+
+**方法 B — Skill 级代理（仅安全测试 Skill 走 Yakit）**:
+
+在 `.claude/skills/security-testing/SKILL.md` 中指定：
+
+```markdown
+## 执行环境
+
+所有 HTTP 请求必须经过 Yakit 代理验证：
+- 代理地址: http://127.0.0.1:8083
+- 验证方法: 在 Yakit 中查看请求是否符合预期
+- 如发现 AI 幻觉（生成不存在的端点/参数），立即停止并报告
+```
+
+#### 典型工作流
+
+```markdown
+用户: "帮我测试这个 API 的安全性"
+
+Agent:
+1. 加载安全测试 Skill
+2. 生成测试请求（SQL 注入/XSS/未授权访问等）
+3. 所有请求经过 Yakit 代理
+4. 在 Yakit 中观察：
+   - 请求是否符合预期格式？
+   - 是否有 AI 幻觉（编造的 header/参数）？
+   - 响应状态码和内容是否合理？
+5. 根据 Yakit 记录生成安全报告
+```
+
+#### 防幻觉机制
+
+Yakit 作为代理的最大价值：**实时验证 AI 生成的请求**
+
+```
+AI 生成请求 → Yakit 拦截
+           ↓
+  用户在 Yakit 中检查：
+  - 这个端点真的存在吗？
+  - 这个 Authorization header 格式对吗？
+  - 这个参数是文档里有的还是 AI 编的？
+           ↓
+  确认无误 → 放行
+  发现幻觉 → 拒绝 + 反馈给 AI 重新生成
+```
+
+#### 与其他工具的组合
+
+| 工具组合 | 场景 | 效果 |
+|---------|------|------|
+| Yakit + CC Switch + DeepSeek | 成本敏感的安全测试 | DeepSeek 价格低，Yakit 保证质量 |
+| Yakit + CTF Skills | CTF 挑战 | AI 生成 exploit，Yakit 验证请求 |
+| Yakit + code-security-review Skill | 代码安全审计 + 动态验证 | 静态分析 + 动态测试结合 |
+
+#### 注意事项
+
+1. **Yakit 不是 MCP 服务器**：当前需要手动配置代理，未来可能有社区实现 Yakit MCP Server
+2. **代理会增加延迟**：每个请求都经过 Yakit，适合安全测试场景，不适合高频 API 调用
+3. **需要手动验证**：Yakit 只是拦截和记录，最终验证仍需人工判断
+
+#### 相关 Agent
+
+- `agents/security/security-analyst.md` — 安全分析 Agent
+- `agents/security/security-audit.md` — 安全审计 Agent
+- `.claude/skills/ctf-web/SKILL.md` — Web 安全 CTF Skill
 
 ---
 
