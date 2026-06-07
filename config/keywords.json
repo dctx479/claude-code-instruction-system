@@ -1,112 +1,131 @@
 {
-  "version": "1.0.0",
-  "description": "关键词配置 - 用于智能意图识别和 Skill 触发",
-  "skills": {
-    "literature-mentor": {
-      "keywords": [
-        "解读",
-        "精读",
-        "论文解读",
-        "文献解读",
-        "生成精读报告",
-        "快速调研",
-        "文献综述",
-        "论文分析"
-      ],
-      "priority": "high",
-      "category": "research"
-    },
-    "deep-research": {
-      "keywords": [
-        "深度研究",
-        "调研",
-        "研究报告",
-        "市场调研",
-        "行业分析"
-      ],
-      "priority": "high",
-      "category": "research"
-    },
-    "market-insight": {
-      "keywords": [
-        "市场洞察",
-        "用户画像",
-        "产品机会",
-        "需求分析",
-        "竞品分析"
-      ],
-      "priority": "high",
-      "category": "product"
-    },
-    "exa-research": {
-      "keywords": [
-        "企业研究",
-        "竞争对手",
-        "行业研究",
-        "公司分析"
-      ],
-      "priority": "medium",
-      "category": "research"
-    },
-    "brightdata-research": {
-      "keywords": [
-        "电商调研",
-        "畅销排行",
-        "价格监控",
-        "商品分析"
-      ],
-      "priority": "medium",
-      "category": "research"
-    },
-    "social-media-research": {
-      "keywords": [
-        "舆情监控",
-        "KOL分析",
-        "社媒分析",
-        "品牌监测"
-      ],
-      "priority": "medium",
-      "category": "research"
-    },
-    "paper-revision": {
-      "keywords": [
-        "论文修改",
-        "风格修改",
-        "学术润色",
-        "论文优化"
-      ],
-      "priority": "medium",
-      "category": "research"
-    },
-    "data-analysis": {
-      "keywords": [
-        "数据分析",
-        "统计分析",
-        "数据可视化",
-        "数据报告"
-      ],
-      "priority": "high",
-      "category": "analysis"
-    },
-    "pandas": {
-      "keywords": [
-        "pandas",
-        "dataframe",
-        "数据处理",
-        "数据清洗"
-      ],
-      "priority": "medium",
-      "category": "analysis"
-    },
-    "pytorch": {
-      "keywords": [
-        "pytorch",
-        "深度学习",
-        "神经网络",
-        "模型训练"
-      ],
-      "priority": "medium",
-      "category": "ai"
-    }
-  }
+ "version": "1.1.0",
+ "description": "关键词配置 - 用于智能意图识别、Skill 触发和外部工具推荐。v1.1.0 新增 external_tools 分类驱动主动安装引导。",
+ "skills": {
+ "literature-mentor": {
+ "keywords": ["解读", "精读", "论文解读", "文献解读", "生成精读报告", "快速调研", "文献综述", "论文分析"],
+ "priority": "high",
+ "category": "research"
+ },
+ "deep-research": {
+ "keywords": ["深度研究", "调研", "研究报告", "市场调研", "行业分析"],
+ "priority": "high",
+ "category": "research"
+ },
+ "market-insight": {
+ "keywords": ["市场洞察", "用户画像", "产品机会", "需求分析", "竞品分析"],
+ "priority": "high",
+ "category": "product"
+ },
+ "exa-research": {
+ "keywords": ["企业研究", "竞争对手", "行业研究", "公司分析"],
+ "priority": "medium",
+ "category": "research"
+ },
+ "brightdata-research": {
+ "keywords": ["电商调研", "畅销排行", "价格监控", "商品分析"],
+ "priority": "medium",
+ "category": "research"
+ },
+ "social-media-research": {
+ "keywords": ["舆情监控", "KOL分析", "社媒分析", "品牌监测"],
+ "priority": "medium",
+ "category": "research"
+ },
+ "paper-revision": {
+ "keywords": ["论文修改", "风格修改", "学术润色", "论文优化"],
+ "priority": "medium",
+ "category": "research"
+ },
+ "data-analysis": {
+ "keywords": ["数据分析", "统计分析", "数据可视化", "数据报告"],
+ "priority": "high",
+ "category": "analysis"
+ },
+ "pandas": {
+ "keywords": ["pandas", "dataframe", "数据处理", "数据清洗"],
+ "priority": "medium",
+ "category": "analysis"
+ },
+ "pytorch": {
+ "keywords": ["pytorch", "深度学习", "神经网络", "模型训练"],
+ "priority": "medium",
+ "category": "ai"
+ }
+ },
+ "external_tools": {
+ "description": "外部工具推荐触发 - 由 intent-detector.sh 在 UserPromptSubmit 时自动匹配，写入 intent-state.json 的 tool_recommendation 字段。Claude 响应前必须检查并主动建议安装（v1.1.0 新协议）。",
+ "context-mode": {
+ "keywords": ["token消耗", "token 太多", "上下文太长", "成本太高", "mcp输出太大", "节省 token", "context mode", "压缩输出"],
+ "install_cmd": "claude mcp add context-mode -- npx -y context-mode",
+ "verify_cmd": "claude mcp list",
+ "expected": "context-mode 出现在 mcp 列表",
+ "doc": "docs/TOOLS-ECOSYSTEM-GUIDE.md §1.1",
+ "priority": "high"
+ },
+ "codegraph": {
+ "keywords": ["代码理解太慢", "代码搜索慢", "频繁读文件", "重复 read", "重复 grep", "代码调用链", "codegraph", "影响范围"],
+ "install_cmd": "npx @colbymchenry/codegraph && codegraph init -i",
+ "verify_cmd": "codegraph --version",
+ "expected": "输出版本号",
+ "doc": "docs/TOOLS-ECOSYSTEM-GUIDE.md §1.2",
+ "priority": "high"
+ },
+ "rtk": {
+ "keywords": ["命令输出太大", "shell 输出压缩", "bash 输出太长"],
+ "install_cmd": "rtk init -g",
+ "verify_cmd": "rtk --version",
+ "expected": "输出版本号",
+ "doc": "docs/TOOLS-ECOSYSTEM-GUIDE.md §1.3",
+ "priority": "medium"
+ },
+ "claude-tap": {
+ "keywords": ["token 成本", "api 成本", "api 调用明细", "账单分析", "调试 agent 行为", "查看 api 请求", "claude-tap"],
+ "install_cmd": "uv tool install claude-tap",
+ "verify_cmd": "claude-tap --version",
+ "expected": "输出版本号",
+ "doc": "docs/TOOLS-ECOSYSTEM-GUIDE.md §2.1",
+ "priority": "medium"
+ },
+ "ssh-skill": {
+ "keywords": ["连接服务器", "远程服务器", "ssh 长连接", "ssh 配置", "多台服务器", "服务器操作"],
+ "install_cmd": "npx skills add badseal/ssh-skill -g -y",
+ "verify_cmd": "ls ~/.claude/skills/ 2>/dev/null | grep -i ssh",
+ "expected": "存在 ssh 相关 skill 目录",
+ "doc": "docs/TOOLS-ECOSYSTEM-GUIDE.md §5.1",
+ "priority": "medium"
+ },
+ "flue-framework": {
+ "keywords": ["构建 typescript agent", "ts agent 脚手架", "flue 框架", "typescript 智能体", "sse 流式推理"],
+ "install_cmd": "npx skills add liangdabiao/flue-framework-skill -g -y",
+ "verify_cmd": "ls ~/.claude/skills/ 2>/dev/null | grep -i flue",
+ "expected": "存在 flue 相关 skill 目录",
+ "doc": "docs/TOOLS-ECOSYSTEM-GUIDE.md §4.1",
+ "priority": "low"
+ },
+ "system-cleaner": {
+ "keywords": ["清理磁盘", "磁盘空间", "c盘满了", "d盘满了", "存储空间", "大文件", "查找大文件", "磁盘清理", "释放空间", "存储不够"],
+ "install_cmd": "npx skills add KKKKhazix/khazix-skills -g -y",
+ "verify_cmd": "ls ~/.claude/skills/ 2>/dev/null | grep -iE 'khazix|cleaner|storage'",
+ "expected": "存在 khazix/cleaner/storage 相关 skill 目录",
+ "doc": "docs/TOOLS-ECOSYSTEM-GUIDE.md §5.2",
+ "priority": "high"
+ },
+ "knowledge-work-plugins": {
+ "keywords": ["销售协助", "法务审查", "hr 协助", "财务分析", "运营支持", "职业角色"],
+ "install_cmd": "claude plugin marketplace add anthropics/knowledge-work-plugins",
+ "verify_cmd": "claude plugin list",
+ "expected": "列表中包含 knowledge-work-plugins",
+ "doc": "docs/TOOLS-ECOSYSTEM-GUIDE.md §3.1",
+ "priority": "low"
+ },
+ "yakit": {
+ "keywords": ["安全测试", "渗透测试", "漏洞挖掘", "观察 http 请求", "代理测试", "yakit", "数据包验证"],
+ "install_cmd": "见 docs/TOOLS-ECOSYSTEM-GUIDE.md §6.1（手动下载 + 配置代理）",
+ "verify_cmd": "curl -s http://127.0.0.1:8083/ -o /dev/null -w '%{http_code}'",
+ "expected": "Yakit 代理端口响应 200/302",
+ "doc": "docs/TOOLS-ECOSYSTEM-GUIDE.md §6.1",
+ "priority": "medium"
+ }
+ }
 }

@@ -404,6 +404,89 @@ npx skills add KKKKhazix/khazix-skills -g -y
 
 > 本节定义 Claude 何时主动检测并建议安装工具。协议也写入 `CLAUDE.md` §十二。
 
+### 🆕 v1.1 协议升级：自动驱动（不再依赖用户主动提出）
+
+**升级前的问题**：v1.0 协议是被动文档，Claude 只能等用户说"我要清理磁盘"才去查文档并推荐。需要用户**先知道**有这个工具才能获得引导。
+
+**v1.1 协议**：检测信号 → 写 intent-state.json → 强制检查流程，全部自动化。
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 用户消息: "我想清理磁盘空间" │
+└────────────────────┬────────────────────────────────────────┘
+ │
+ ▼
+┌─────────────────────────────────────────────────────────────┐
+│ UserPromptSubmit Hook │
+│ 1. intent-detector.sh 自动运行 │
+│ 2. 关键词匹配 config/keywords.json::external_tools │
+│ 3. 命中 "清理磁盘" → 工具: system-cleaner, priority: high │
+│ 4. 写入 ~/.claude/intent-state.json: │
+│ { │
+│ "intent": "general", │
+│ "agent": "orchestrator", │
+│ "tool_recommendation": { │
+│ "tool": "system-cleaner", │
+│ "priority": "high", │
+│ "install_cmd": "npx skills add ..", │
+│ "verify_cmd": "ls ~/.claude/skills/ ..", │
+│ .. │
+│ } │
+│ } │
+└────────────────────┬────────────────────────────────────────┘
+ │
+ ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Claude 响应前强制检查 (CLAUDE.md §0.2 第 8 步) │
+│ 1. 读取 intent-state.json │
+│ 2. 检测到 tool_recommendation 非空 │
+│ 3. 并行执行 verify_cmd 验证工具是否已安装 │
+│ 4. 未安装 → 输出「外部工具引导话术模板」（install_cmd + │
+│ verify_cmd + expected），等用户口头同意 │
+│ 5. 用户同意 → 自动执行安装 + 验证 │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**关键改进**：
+- 用户**无需**知道工具存在
+- 关键词文件 `config/keywords.json::external_tools` 是**可扩展**的：新增工具只需添加一个 JSON 块
+- 优先级机制（high/medium/low）避免低优先级误抢
+- 优雅降级：辅助脚本/关键词文件缺失时静默跳过，不影响 Agent 调度主流程
+- 触发频率受控：本会话内同一工具仅引导一次
+
+### 协议维护指南
+
+**新增工具的 3 步流程**：
+
+1. **编辑 `config/keywords.json`** 在 `external_tools` 分类下新增条目：
+ ```json
+ "your-tool": {
+ "keywords": ["触发词1", "触发词2"],
+ "install_cmd": "npx skills add xxx/xxx -g -y",
+ "verify_cmd": "which xxx 2>/dev/null || echo 'NOT_INSTALLED'",
+ "expected": "输出xxx",
+ "doc": "docs/TOOLS-ECOSYSTEM-GUIDE.md §X.X",
+ "priority": "high|medium|low"
+ }
+ ```
+
+2. **编辑 `hooks/detect-external-tool.py` 的 `TOOL_PRIORITY` 字典**：
+ ```python
+ TOOL_PRIORITY = {
+ ..,
+ "your-tool": "high", # 顺序决定匹配优先级
+ }
+ ```
+
+3. **在 `docs/TOOLS-ECOSYSTEM-GUIDE.md` 添加工具章节**，包含安装命令、验证方法、典型使用场景。
+
+**测试方法**：
+```bash
+# 单元测试钩子
+echo '{"prompt":"你的测试输入"}' | bash hooks/intent-detector.sh
+cat ~/.claude/intent-state.json | python -c "import json, sys; d=json.load(sys.stdin); print(d['tool_recommendation'])"
+```
+
 ### 检测触发场景
 
 | # | 检测信号 | 推荐工具 | 安装命令 | 预期效果 |

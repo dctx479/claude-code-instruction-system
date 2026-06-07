@@ -1,6 +1,6 @@
 #!/bin/bash
 # Intent Detector Hook - 意图识别系统
-# 版本: 2.0.0
+# 版本: 2.1.0
 # 触发时机: UserPromptSubmit - 在用户提交消息时分析意图
 #
 # 功能:
@@ -325,29 +325,75 @@ recommend_skill() {
     esac
 }
 
+# === v2.1.0 新增：外部工具需求检测 ===
+# 功能: 匹配 config/keywords.json 的 external_tools 分类关键词
+# 输出: JSON 字符串 {tool, priority, install_cmd, verify_cmd, expected, doc}
+# 无匹配时输出空字符串 ""
+detect_external_tool() {
+ local message="$1"
+ local message_lower=$(echo "$message" | tr '[:upper:]' '[:lower:]')
+ local script_dir="$(cd "$(dirname "$0")" && pwd)"
+ local helper="${script_dir}/detect-external-tool.py"
+
+ # 辅助脚本不存在时静默降级（不影响 Agent 调度主流程）
+ [[ -f "$helper" ]] || { echo ""; return; }
+ [[ -f "$KEYWORDS_FILE" ]] || { echo ""; return; }
+
+ # 调用单文件 Python 助手完成检测和 JSON 构建
+ python "$helper" "$KEYWORDS_FILE" "$message_lower" 2>/dev/null || echo ""
+}
+
+
 # 主逻辑
 if [[ -n "$USER_MESSAGE" ]]; then
-    intent=$(detect_intent "$USER_MESSAGE")
-    agent=$(recommend_agent "$intent")
-    skill=$(recommend_skill "$intent")
+ intent=$(detect_intent "$USER_MESSAGE")
+ agent=$(recommend_agent "$intent")
+ skill=$(recommend_skill "$intent")
+ tool_rec=$(detect_external_tool "$USER_MESSAGE")
 
-    log "INFO" "Intent: $intent, Agent: $agent, Skill: $skill"
+ log "INFO" "Intent: $intent, Agent: $agent, Skill: $skill, Tool: ${tool_rec:-<none>}"
 
-    # 注意: 子进程 export 无法传递到父进程
-    # 将推荐结果写入文件供 HUD 和 Auto-Dispatch 读取
-    INTENT_STATE_FILE="${HOME}/.claude/intent-state.json"
-    mkdir -p "$(dirname "$INTENT_STATE_FILE")" 2>/dev/null
-    printf '{"intent":"%s","agent":"%s","skill":"%s"}\n' \
-        "$intent" "$agent" "$skill" > "$INTENT_STATE_FILE"
+ # 注意: 子进程 export 无法传递到父进程
+ # 将推荐结果写入文件供 HUD 和 Auto-Dispatch 读取
+ # v2.1.0: 新增 tool_recommendation 字段（外部工具推荐），由 CLAUDE.md §零.2 强制检查
+ INTENT_STATE_FILE="${HOME}/.claude/intent-state.json"
+ mkdir -p "$(dirname "$INTENT_STATE_FILE")" 2>/dev/null
 
-    # 输出建议 (可选，供调试)
-    if [[ "${INTENT_VERBOSE:-false}" == "true" ]]; then
-        echo "Intent detected: $intent"
-        echo "Recommended agent: $agent"
-        if [[ -n "$skill" ]]; then
-            echo "Recommended skills: $skill"
-        fi
-    fi
+ # 通过 Python 统一写出 JSON，保证 UTF-8 编码和引号转义安全
+ # 工具推荐为空时传空字符串，Python 端置 None
+ python -c "
+import json, sys
+intent = sys.argv[1]
+agent = sys.argv[2]
+skill = sys.argv[3]
+tool_raw = sys.argv[4]
+out_file = sys.argv[5]
+try:
+ tool_rec = json.loads(tool_raw) if tool_raw else None
+except Exception:
+ tool_rec = None
+data = {
+ 'intent': intent,
+ 'agent': agent,
+ 'skill': skill,
+ 'tool_recommendation': tool_rec,
+}
+with open(out_file, 'w', encoding='utf-8') as f:
+ json.dump(data, f, ensure_ascii=False, indent=2)
+" "$intent" "$agent" "$skill" "$tool_rec" "$INTENT_STATE_FILE" 2>/dev/null \
+ || printf '{"intent":"%s","agent":"%s","skill":"%s","tool_recommendation":null}\n' "$intent" "$agent" "$skill" > "$INTENT_STATE_FILE"
+
+ # 输出建议 (可选，供调试)
+ if [[ "${INTENT_VERBOSE:-false}" == "true" ]]; then
+ echo "Intent detected: $intent"
+ echo "Recommended agent: $agent"
+ if [[ -n "$skill" ]]; then
+ echo "Recommended skills: $skill"
+ fi
+ if [[ -n "$tool_rec" ]]; then
+ echo "Tool recommendation: $tool_rec"
+ fi
+ fi
 fi
 
 # 允许继续执行
