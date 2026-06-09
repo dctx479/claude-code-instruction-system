@@ -400,7 +400,134 @@ npx skills add KKKKhazix/khazix-skills -g -y
 
 ---
 
-## 主动推荐协议
+## 七、端侧模型接入（本地/云端混合推理）
+
+> 来源：`docs/reports/AGENT-OS-LANDSCAPE-2026.md` § 本地/云端混合推理研究
+
+### 核心理念
+
+**端侧模型**（在用户本地设备运行）+ **云端主模型**（Claude / GPT-4）混合使用，实现：
+- 敏感数据保护（数据不出本机）
+- 成本控制（简单任务用免费本地模型）
+- 离线可用（网络断开时降级到本地）
+
+### 端侧模型对比
+
+| 模型/框架 | 适用场景 | 资源要求 | 质量水平 | 接入复杂度 |
+|----------|---------|---------|---------|-----------|
+| **Ollama** | 通用本地推理（代码补全、文本生成） | 8GB+ RAM，推荐 GPU | 中（7B-13B 模型） | ⭐ 一条命令 |
+| **VoxCPM** | 中文对话、知识问答（清华 CPM 系列） | 16GB+ RAM，GPU 推荐 | 中-高（中文优势） | ⭐⭐ 需手动部署 |
+| **LM Studio** | 图形界面本地模型管理 | 同 Ollama | 中 | ⭐ 一键安装 |
+| **LocalAI** | OpenAI API 兼容层（支持多种模型） | 可变（取决于模型） | 可变 | ⭐⭐ Docker 部署 |
+
+### Ollama 接入指南（推荐）
+
+#### 安装 Ollama
+
+**macOS / Linux**:
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+**Windows**:
+下载安装包：<https://ollama.com/download/windows>
+
+#### 下载模型
+
+```bash
+# 推荐：CodeLlama 7B（代码任务）
+ollama pull codellama:7b
+
+# 推荐：Llama 3.2 3B（轻量通用）
+ollama pull llama3.2:3b
+
+# 推荐：Qwen2.5 Coder 7B（中文代码）
+ollama pull qwen2.5-coder:7b
+```
+
+#### 配置 Claude Code
+
+在 `~/.config/claude/config.toml`（Linux/macOS）或 `%APPDATA%\claude\config.toml`（Windows）添加：
+
+```toml
+[auth]
+api_key = "not-needed"
+base_url = "http://localhost:11434/v1"
+
+[model]
+default = "codellama:7b"
+```
+
+#### 验证
+
+```bash
+# 启动 Ollama 服务
+ollama serve
+
+# 测试模型
+ollama run codellama:7b "Write a Python function to sort a list"
+```
+
+### 使用场景决策树
+
+```
+任务需要最高质量？
+├── 是 → 云端主模型（Claude Opus / Sonnet）
+└── 否 → 任务涉及敏感数据？
+         ├── 是 → 端侧模型（数据不出本机）
+         └── 否 → 任务复杂度？
+                  ├── 简单（代码补全、格式化） → 端侧模型（成本 0）
+                  └── 复杂（架构设计、调试） → 云端模型
+```
+
+### PilotDeck 的任务驱动自动部署模式（参考）
+
+**原理**：系统自动判断任务类型，决定是否启动端侧模型。
+
+**优势**：
+- 用户无需手动切换模型
+- 任务完成后自动卸载模型（节省资源）
+
+**风险**：
+- 算力预算控制（避免无限制启动模型）
+- 模型质量基线（端侧模型失败时需 fallback 到云端）
+- 初次部署时间长（模型下载可能数 GB）
+
+**当前不建议借鉴原因**：
+- 本项目 Agent 路由已通过 `intent-state.json` 实现
+- 手动配置端侧模型（通过 `config.toml`）已满足需求
+- 自动部署增加系统复杂度，暂无明确收益
+
+### 成本对比
+
+| 场景 | 云端模型（Claude Sonnet） | 端侧模型（Ollama） | 节省 |
+|------|-------------------------|-------------------|------|
+| 代码补全（1000 次/天） | ~$2/天 | $0 | 100% |
+| 简单查询（500 次/天） | ~$1/天 | $0 | 100% |
+| 复杂推理（100 次/天） | ~$5/天 | 质量不足，需云端 | 0% |
+
+### 最佳实践
+
+**推荐策略**：
+1. **默认云端**：保证任务质量，使用 Claude Sonnet / Opus
+2. **敏感数据场景**：强制本地（如代码审查包含 API Key、内部文档分析）
+3. **开发测试**：用端侧模型快速迭代（prompt 调试、Skill 开发）
+
+**不推荐**：
+- 关键任务（生产部署、安全审计）使用端侧小模型
+- 复杂多步骤任务（架构设计、SDD-RIPER）用端侧模型
+
+### 验证清单
+
+端侧模型接入后检查：
+- [ ] 模型推理速度可接受（<5 秒首 token）
+- [ ] 输出质量满足场景需求（代码可运行、逻辑正确）
+- [ ] 资源消耗在预算内（RAM <16GB，GPU 利用率 <80%）
+- [ ] 云端 fallback 机制可用（端侧失败时自动切换）
+
+> 相关：`docs/API-KEYS-SETUP.md`（模型配置）、`docs/reports/AGENT-OS-LANDSCAPE-2026.md`（研究来源）
+
+---
 
 > 本节定义 Claude 何时主动检测并建议安装工具。协议也写入 `CLAUDE.md` §十二。
 

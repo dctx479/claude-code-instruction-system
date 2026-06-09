@@ -21,6 +21,7 @@
 | debug | 结构化调试五步工作流（复现→隔离→假设→验证→防复发） | debug/ | debugger |
 | observability | AI 思维日志，记录推理过程和决策点 | observability/ | context-archivist |
 | handoff | 上下文交接，/compact 前写入进度和下一步 | handoff/ | — |
+| source-evaluator | 信息源评估器（伯乐），五维度评估学习材料质量 | source-evaluator/ | reflection, neat, literature-mentor |
 
 ## 开发类 (Development)
 
@@ -51,6 +52,7 @@
 |-------|------|------|-----------|
 | vision-builder | 模糊需求→清晰愿景文档（5W1H + SMART） | vision-builder/ | architect |
 | plan-review | 计划 10 维度评估，识别风险和改进点 | plan-review/ | — |
+| hv-analysis-enhanced | 增强版横纵分析法，延迟收敛式多视角决策支持 | hv-analysis-enhanced/ | vision-builder, plan-review, architect |
 
 ## 架构类 (Architecture)
 

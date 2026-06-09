@@ -371,6 +371,213 @@ Step 5: 注册 — 更新 INDEX.md，添加新 Skill 条目
 
 ---
 
+## Agent → Skill 标准化生成方法
+
+> 来源：Task #4 (P1-4) 集成成果，实现 Agent 能力向 Skill 的可复用转换
+
+### 何时将 Agent 转为 Skill
+
+**触发条件**（满足任一即可）：
+
+| 触发信号 | 说明 | 示例 |
+|---------|------|------|
+| **跨项目复用** | Agent 的核心逻辑在多个项目中可用 | debugger Agent → debug Skill |
+| **知识密集型** | Agent 主要价值在于领域知识而非执行逻辑 | pytorch Agent → pytorch Skill |
+| **流程模板化** | Agent 的工作流可抽象为标准化步骤 | spec-writer Agent → spec-first Skill |
+| **轻量增强** | Agent 功能简单但通用性强，作为 Skill 更灵活 | — |
+
+**不适合转换的情况**：
+- Agent 依赖复杂的状态管理（如 God Committee）
+- Agent 需要动态决策和多轮交互
+- Agent 是编排器类型（如 orchestrator）
+
+### 转换标准模板
+
+使用以下模板将 Agent 转为 Skill：
+
+```markdown
+---
+name: [skill-name]
+description: [Agent 核心能力的一句话描述，作为触发器]
+version: 1.0.0
+license: MIT
+metadata:
+  category: [development|planning|research|security|...]
+  tags: [标签1, 标签2, 标签3]
+  maturity: draft  # 转换后从 draft 开始
+  agent_source: [source-agent-name]  # 标注来源 Agent
+  integration: [协作 Agent 列表]
+trigger:
+  - "[触发词1]"
+  - "[触发词2]"
+  - "[用户典型表述]"
+---
+
+# [Skill 名称]
+
+> 转换自 Agent: `agents/[agent-name].md`
+
+## 契约定义
+
+### What（输入/输出）
+
+**输入**：
+- [输入项 1]（必需/可选）
+- [输入项 2]（必需/可选）
+
+**输出**：
+- [输出项 1]
+- [输出项 2]
+
+### When Done（验收标准）
+
+- [ ] [验收标准 1]
+- [ ] [验收标准 2]
+- [ ] [验收标准 3]
+
+### What NOT（边界约束）
+
+- ❌ **禁止 [行为1]** - [理由]
+- ❌ **禁止 [行为2]** - [理由]
+
+---
+
+## 核心能力
+
+[从 Agent 的"专长"部分提取，重写为 Skill 格式]
+
+### 能力 1: [名称]
+
+[描述]
+
+### 能力 2: [名称]
+
+[描述]
+
+---
+
+## How（执行步骤）
+
+### 阶段 1: [名称]
+
+```
+[步骤描述]
+```
+
+[从 Agent 的"工作流程"提取并标准化]
+
+### 阶段 2: [名称]
+
+```
+[步骤描述]
+```
+
+---
+
+## 系统集成
+
+### 与 Agents 的协作
+
+| Agent | 协作方式 | 典型场景 |
+|-------|----------|----------|
+| **[Agent 1]** | [关系] | [场景] |
+| **[Agent 2]** | [关系] | [场景] |
+
+### 典型工作流
+
+```
+[前置步骤]
+    ↓
+[本 Skill 执行]
+    ↓
+[后续步骤]
+```
+
+---
+
+## Gotchas（已知陷阱）
+
+[从 Agent 的实战经验中提取，这是 Skill 价值的核心]
+
+1. **[陷阱 1]** - [如何避免]
+2. **[陷阱 2]** - [如何避免]
+
+---
+
+## 使用示例
+
+### 示例 1: [场景名称]
+
+**用户输入**:
+> "[用户问题]"
+
+**Skill 执行**:
+```markdown
+[执行过程简述]
+```
+
+**输出摘要**:
+```markdown
+[输出内容]
+```
+
+---
+
+## 最佳实践
+
+### 何时使用此 Skill
+
+**适合场景**:
+- [场景 1]
+- [场景 2]
+
+**不适合场景**:
+- [场景 1]
+- [场景 2]
+
+### 提高执行质量的技巧
+
+1. **[技巧 1]** - [说明]
+2. **[技巧 2]** - [说明]
+
+---
+
+## 相关文档
+
+- **源 Agent**: `agents/[agent-name].md`
+- **协作 Agents**: `agents/[other-agent].md`
+- **相关 Skills**: `.claude/skills/[related-skill]/`
+- **最佳实践**: `memory/best-practices.md` BP-XXX
+
+---
+
+## 版本历史
+
+### v1.0.0 (YYYY-MM-DD)
+- 初始版本，从 Agent `[agent-name]` 转换而来
+- 核心能力：[列举]
+```
+
+### 转换检查清单
+
+转换完成后，执行以下检查：
+
+- [ ] **契约完整性**：What/When Done/What NOT 三要素齐全
+- [ ] **Gotchas 提取**：至少包含 2 条从 Agent 实战中发现的陷阱
+- [ ] **触发器优化**：Description 写成触发条件而非能力摘要
+- [ ] **示例充分性**：至少 2 个使用示例覆盖典型场景
+- [ ] **集成声明**：明确与哪些 Agents 协作，工作流如何衔接
+- [ ] **索引更新**：在 `.claude/skills/INDEX.md` 中注册新 Skill
+- [ ] **路由规则**：确认 `CLAUDE.md` 或 `agents/router.md` 中有路由规则
+
+### 转换后维护
+
+- **Maturity 晋升**：按照成熟度生命周期（draft → beta → stable）逐步验证
+- **双向同步**：如果 Agent 仍在使用，Agent 和 Skill 的 Gotchas 需双向同步
+- **废弃策略**：如果 Skill 完全替代 Agent，在 Agent 文件中标记 `deprecated` 并引导到 Skill
+
+---
+
 ## 知识域 Skill 增强规范
 
 > 来源: Anthropic 数据分析系统设计（2026-06-05），适用于任何需要将用户问题映射到特定知识源的 Skill（数据查询/API 文档/产品知识库/代码库导航）

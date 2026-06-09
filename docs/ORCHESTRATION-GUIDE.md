@@ -247,7 +247,243 @@ Agent 框架决策: `docs/AGENT-FRAMEWORK-DECISION.md`（Claude Code/LangGraph/C
 
 ---
 
-## 监控与异常处理
+## 路由器 Agent 设计模式
+
+**来源**: "我给 AI 装了 80 多个 Skill，最后只保留了这一个" 实践总结
+
+### 核心理念
+
+路由器不是工具，而是一个**分发层**。你只需要跟路由器说话，它来调度具体的 Agent/Skill。
+
+```
+用户请求
+    ↓
+路由器 Agent（理解意图 + 匹配能力）
+    ↓
+分发给对应的 Specialist Agent
+    ↓
+Specialist 调用具体 Skill/Tool 执行
+    ↓
+结果返回用户
+```
+
+### 路由器 vs 直接调用
+
+| 维度 | 直接调用 80 个 Skill | 路由器模式 |
+|------|---------------------|-----------|
+| 用户认知负担 | 需要记住每个 Skill 名称和用法 | 只需说意图 |
+| 上下文消耗 | 每次加载所有 Skill 说明（~46K tokens） | 按需加载（~600 tokens INDEX + ~2K 单个 Skill） |
+| 调用一致性 | Agent 可能选错 Skill 或跳过 | 路由器统一判断，不遗漏 |
+| 扩展性 | 新增 Skill 需要更新所有 prompt | 新增 Skill 只更新路由表 |
+
+### 路由器的三大职责
+
+#### 1. 意图识别
+
+将用户自然语言请求映射到具体的任务类型：
+
+```
+"这篇我想写，做成小红书图文" → 内容创作任务 → 运营 Agent
+"帮我把这个素材整理进知识库" → 知识管理任务 → 知识库 Agent
+"上次那个选题推进到哪了" → 任务追踪 → 系统 Agent
+```
+
+#### 2. 能力路由
+
+根据任务类型选择最合适的 Agent/Skill 组合：
+
+| 任务类型 | 路由目标 | 理由 |
+|---------|---------|------|
+| 选题调研 | 运营 Agent + deep-research Skill | 需要外部搜索 + 内容策划能力 |
+| 代码审查 | code-reviewer Agent | 专注代码质量和安全 |
+| 架构设计 | architect Agent | 需要系统设计经验 |
+| 文献整理 | literature-manager Agent + Zotero MCP | 学术研究专用工具链 |
+
+#### 3. 上下文传递
+
+确保被路由的 Agent 获得足够的上下文：
+
+```
+路由器传递给 Specialist:
+- 原始用户请求
+- 已识别的意图类型
+- 需要加载的 Skills 清单
+- 关键约束（deadline、格式要求等）
+```
+
+### 实现方式
+
+#### 方式 1: Intent-State 文件路由（当前系统）
+
+```
+UserPromptSubmit Hook → 分析意图 → 写入 intent-state.json
+    ↓
+Claude 读取 intent-state.json → 加载对应 Agent
+    ↓
+Agent 执行任务
+```
+
+优点：零认知负担，全自动  
+缺点：依赖 Hook 系统，调试较复杂
+
+#### 方式 2: 显式路由器 Agent
+
+创建独立的 `router.md` Agent 定义：
+
+```markdown
+# Router Agent
+
+## 职责
+你是路由器，负责理解用户意图并分发到正确的 Agent。
+
+## 工作流程
+1. 分析用户请求，识别任务类型
+2. 查询 agents/INDEX.md，匹配最合适的 Agent
+3. 如果需要多个 Agent 协作，选择编排模式（PARALLEL/SEQUENTIAL/HIERARCHICAL）
+4. 构造子 Agent 的 prompt（包含任务描述 + 需要的 Skills + 约束）
+5. 调用 Agent 工具启动子 Agent
+6. 整合结果返回用户
+
+## 路由决策表
+[插入具体的路由规则]
+```
+
+优点：显式可控，易于调试和扩展  
+缺点：需要用户手动触发（或通过 @router 前缀）
+
+#### 方式 3: 混合模式（推荐）
+
+- 常见场景：自动路由（intent-state.json）
+- 复杂场景：用户显式调用 @router 让路由器做决策
+- 调试场景：直接 @{agent-id} 跳过路由
+
+### 路由器设计的关键原则
+
+1. **单一入口，统一分发** — 用户不需要知道底层有多少个 Agent/Skill
+2. **负向路由同样重要** — 明确告诉 Agent"不需要加载哪些 Skill"
+3. **路由器本身要轻量** — 不承担具体执行，只做分发决策
+4. **可观测性** — 每次路由决策都应该可追溯（日志/状态文件）
+5. **失败优雅降级** — 路由匹配失败时，回退到通用 orchestrator 而非报错
+
+### 与现有系统的关系
+
+| 机制 | 作用 | 与路由器的关系 |
+|------|------|--------------|
+| intent-state.json | 自动意图识别 | 是路由器的输入源 |
+| agents/INDEX.md | Agent 元数据索引 | 是路由器的查询表 |
+| Agent 工具 | 启动子 Agent | 是路由器的执行手段 |
+| Skills INDEX.md | Skill 元数据索引 | 路由器用于分配 Skill 给 Agent |
+
+### 案例：多 Agent 路由实战
+
+**场景**: 用户说"帮我写一篇关于 AI Agent 的技术博客"
+
+#### 传统方式（无路由器）
+```
+用户 → Claude（加载所有 80 个 Skill 说明）
+     → Claude 自己判断该用哪些 Skill
+     → 可能选错，可能遗漏，可能冲突
+```
+
+#### 路由器方式
+```
+用户 → Router Agent
+     ↓ 意图识别：技术写作任务
+     ↓ 能力匹配：
+     ├─ 需要 deep-research（调研 AI Agent 现状）
+     ├─ 需要 paper-writing-assistant（结构化写作）
+     └─ 需要 frontend-design（如果需要配图）
+     ↓ 编排决策：SEQUENTIAL（先调研，再写作，最后配图）
+     ↓ 分发执行：
+     ├─ Step 1: research agent + deep-research skill
+     ├─ Step 2: paper-writing agent + 调研结果
+     └─ Step 3: design agent（如果需要）
+     ↓
+结果返回用户（完整博客 + 配图）
+```
+
+### 验证方法
+
+对比有无路由器的体验差异：
+- Token 消耗：路由器模式应节省 60-80%
+- 任务成功率：路由器模式不应漏掉必要的 Skill
+- 用户认知负担：用户是否需要记住 Skill 名称？
+
+> 相关最佳实践: `memory/best-practices.md` BP-024（能力路由优先于工具堆叠）
+
+---
+
+## 路由粒度原则
+
+> 来源：`docs/reports/AGENT-OS-LANDSCAPE-2026.md` § 路由粒度对比研究
+
+### 核心问题
+
+**路由粒度**决定了模型切换的频率，直接影响 KV-cache 命中率和推理成本。
+
+### 三种路由粒度
+
+| 粒度 | 决策频率 | KV-cache 友好性 | 成本优化 | 适用场景 |
+|------|---------|----------------|----------|----------|
+| **request 级** | 每次请求评估 | ❌ 频繁切换，缓存失效 | ❌ 重复计算 | 简单任务分发 |
+| **session 级** | 每个会话固定 | ✅ 同 session 连续请求命中 | ✅ 减少路由开销 | 对话式任务 |
+| **sub-agent 级** | 子 Agent 独立路由 | ✅ 主/子分离，不互相污染 | ✅ 精细控制 | 复杂多 Agent 协作 |
+
+### PilotDeck 的 session 级路由实现
+
+**核心设计**：路由决策按 `sessionId` 缓存，子 Agent 用 `sessionId:sub` 区分。
+
+```typescript
+function makeKey(sessionId: string, isSubagent: boolean): string {
+  return isSubagent ? `${sessionId}:sub` : sessionId;
+}
+```
+
+**优势**：
+- 同 session 内连续请求复用路由决策，避免每次重新评估
+- 子 Agent 派生时用独立 key，不污染主 session 路由状态
+- 减少 KV-cache 失效（同一 session 同模型概率高）
+
+### 本项目当前实现
+
+**现状**：
+- 路由粒度：**request 级** + Hook 中间层
+- 路由机制：`intent-state.json` → Agent 定义 → 隐含模型
+- 缓存策略：依赖 Anthropic Prompt Cache（TTL 5 分钟）
+
+**潜在优化**：
+1. **session 级路由缓存**：在 `~/.claude/intent-state.json` 增加 `lastRouteDecision` 字段，同 session 复用
+2. **sub-agent 路由隔离**：子 Agent 启动时写入 `intent-state-{task_id}.json`，避免污染主会话
+3. **路由决策 TTL**：设置路由缓存过期时间（建议 10-30 分钟），过期后重新评估
+
+### 最佳实践
+
+**原则 1：优先 session 级路由**
+- 对话式任务（如调试、代码审查）应在 session 开始时确定 Agent，中途不切换
+- 避免"每个 message 都重新路由"的反模式
+
+**原则 2：子 Agent 路由隔离**
+- 并行执行的子 Agent 应有独立路由状态
+- 参考 PilotDeck 的 `sessionId:sub` 模式
+
+**原则 3：关联 Prompt Cache TTL**
+- Anthropic Prompt Cache 默认 TTL 5 分钟
+- 路由缓存 TTL 应 ≥ Prompt Cache TTL，避免缓存失效后仍用旧路由
+
+### 验证方法
+
+**监控指标**：
+- 路由切换频率（次/会话）
+- KV-cache 命中率（通过 claude-tap 观察）
+- 平均每会话 token 消耗
+
+**目标**：
+- 路由切换频率 ≤ 1 次/会话（单一任务场景）
+- KV-cache 命中率 ≥ 80%（同 session 连续请求）
+
+> 相关：`memory/best-practices.md` BP-024（能力路由）、`docs/CONTEXT-ENGINEERING-GUIDE.md`（缓存优化）
+
+---
 
 核心功能: 实时监控 → 异常检测 → 自动恢复 → 结果整合 → 质量验证
 
