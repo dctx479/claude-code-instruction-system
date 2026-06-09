@@ -698,7 +698,60 @@
 
 ---
 
+### 工具类 (Utility)
+
+#### router
+```yaml
+文件: agents/router.md
+模型: sonnet
+工具: Read, Grep, Glob
+描述: 智能路由分发器 - 统一入口，意图识别，动态Agent选择
+适用: 复杂任务的入口路由、多Agent协作的统一调度
+专长:
+  - 意图识别（代码开发/架构设计/数据分析/内容创作）
+  - 能力路由（查询INDEX匹配最合适Agent/Skill组合）
+  - 上下文构造（传递任务描述+约束+依赖）
+  - 编排决策（SINGLE/SEQUENTIAL/PARALLEL）
+触发: 手动调用 @router 或作为路由粒度优化的备选方案
+```
+
+#### codemap-builder
+```yaml
+文件: agents/codemap-builder.md
+模型: sonnet
+工具: Read, Glob, Grep, Bash
+描述: 代码地图构建器 - 生成结构化代码库导航文档
+适用: 新项目上手、代码库架构梳理、文档生成
+专长:
+  - 架构识别（MVC/微服务/分层架构）
+  - 模块分析（边界/依赖/接口）
+  - 关键路径标注（业务流程/数据流向/调用链路）
+  - CodeMap文档生成（Markdown格式）
+触发: /codemap 命令或代码库导航需求
+```
+
+#### data-warehouse-analyst
+```yaml
+文件: agents/data/data-warehouse-analyst.md
+模型: opus
+工具: Bash, Read, Write, Grep
+描述: 数据仓库查询分析师 - 将用户问题精确映射到数据仓库实体（Anthropic Pairwise Skills模式）
+适用: 数据平台/BI系统/多维分析场景
+专长:
+  - 需求澄清（消除"用户"/"活跃"/"收入"等歧义词）
+  - 数据源查找（语义层优先，表结构次之）
+  - 查询构造（路由到正确实体，确保数据新鲜度）
+  - 结果验证（数量级检查，异常值标注）
+触发: 数据仓库查询需求，需结合对应业务的Skill使用
+```
+
+---
+
 ## 更新日志
+
+### 2026-06-09
+- 补充3个未注册Agent: router/codemap-builder/data-warehouse-analyst
+- 修复agents/INDEX.md注册完整性问题
 
 ### 2026-04-30
 - 新增规划类: sdd-riper-orchestrator（SDD-RIPER 编排者，RIPER 五阶段流程）
