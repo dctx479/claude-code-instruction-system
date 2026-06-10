@@ -4,7 +4,7 @@
 
 ## 加载协议
 
-1. 读本文件匹配 Skill（~80 行）
+1. 读本文件匹配 Skill（~137 行，~1500 tokens）
 2. 按需读取对应 `SKILL.md`（~2K tokens/个）
 3. Heavy 类型 Skill 需要时再读 `REFERENCE.md`
 
