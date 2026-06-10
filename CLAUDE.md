@@ -1,10 +1,5 @@
 # 太一元系统核心配置 v1.1
 # 发布: 2026-03-01 | 最后更新: 2026-06-10
-# 版本历史: docs/CHANGELOG.md | 配置同步: 项目 ⇄ 全局 (~/.claude/CLAUDE.md)
-#
-# 同步记录:
-# - 2026-06-09: 项目→全局 (584行) - 新增§0.2步骤8外部工具推荐 + §六.六Karpathy规则
-# - 配置差异检测: diff ./CLAUDE.md ~/.claude/CLAUDE.md
 
 > 核心能力: **自进化** | **Agent驾驭** | **知识沉淀** | **动态适应**
 > 编排指南: `docs/ORCHESTRATION-GUIDE.md` | Skills目录: `docs/SKILLS-CATALOG.md`
