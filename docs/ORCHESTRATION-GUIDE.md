@@ -65,6 +65,31 @@
 | COMPETITIVE | 1.5-2x | 最优 | 高 | 探索创新 |
 | SWARM | 5-10x | 中 | 低 | 大规模批量 |
 | **SDD-RIPER** | **2-4x** | **极高** | **中** | **中大型需求开发** |
+| **ADAPTIVE** | **1.5-2x** | **高** | **最优** | **任务难度多变，需动态路由** |
+
+**ADAPTIVE 模式说明**：
+
+不预先指定执行步骤，而是给 Agent 提供：① 可用 Skills/工具集合 ② 目标约束 ③ 成功标准，让 Agent 根据任务实际复杂度自行选择模型、组合 Skills、决定执行路径。
+
+**核心机制**：
+- **智能模型路由**：简单任务（格式化/补全）→ 本地/便宜模型；复杂任务（架构设计/调试）→ 最强模型
+- **MetaSkill 自组织**：目标描述 → Agent 自动匹配相关 Skills → 排列依赖 → 生成执行流水线
+- **成本优化**：同类任务，简单版（mini/flash）与复杂版（opus）成本差异可达 **16-50 倍**
+
+**适用场景**：
+- 用户输入的任务复杂度不可预测（如"优化这段代码"可能是简单重命名也可能是架构重构）
+- 需要在成本和质量间自动平衡（长期运行的监控 Agent）
+- Skills 已相对稳定，主要挑战在于如何组合（而非单个 Skill 不稳定）
+
+**与其他模式的区别**：
+- vs **HIERARCHICAL**：HIERARCHICAL 由人预先指定谁领导谁；ADAPTIVE 由 Agent 自己判断是否需要专家
+- vs **COMPETITIVE**：COMPETITIVE 同时跑多方案再选最优；ADAPTIVE 是单条路径但动态调整执行策略
+
+**实现建议**：
+1. 定义清晰的任务复杂度判断规则（如代码行数、涉及文件数、是否跨模块）
+2. 为每个模型/厂商标注擅长场景和成本系数
+3. 在 prompt 中显式列出"可用 Skills + 前提条件"，让 Agent 自行匹配
+4. 记录每次路由决策（模型选择/Skill 组合），用于后续优化
 
 完整模式定义: `workflows/orchestration/orchestration-patterns.md`
 SDD-RIPER 详解: `docs/SDD-RIPER-GUIDE.md`
@@ -79,6 +104,8 @@ Agent 框架决策: `docs/AGENT-FRAMEWORK-DECISION.md`（Claude Code/LangGraph/C
     NO↓
 需求开发? ─YES→ SDD-RIPER
     NO↓
+任务复杂度多变? ─YES→ ADAPTIVE
+    NO↓
 独立任务? ─YES→ PARALLEL
     NO↓
 强依赖? ─YES→ SEQUENTIAL
@@ -91,6 +118,49 @@ Agent 框架决策: `docs/AGENT-FRAMEWORK-DECISION.md`（Claude Code/LangGraph/C
     NO↓
 默认: PARALLEL
 ```
+
+---
+
+## Agent 按模型分级策略
+
+**原则**：不让单个 Agent 干所有事，按专业职责和复杂度分级配置模型和权限。
+
+| 层级 | 模型选择 | 权限范围 | 典型 Agent | 成本倍数 |
+|------|---------|---------|-----------|---------|
+| **决策层** | Opus 4.7 / GPT-4 | 全权限 + 审批流 | architect, sdd-riper-orchestrator | 16-50x |
+| **执行层** | Sonnet 4.6 / GPT-4 mini | 受限权限 + 日志留痕 | debugger, code-reviewer | 4-8x |
+| **监控层** | Haiku 4.5 / DeepSeek-flash | 只读权限 + 异常上报 | performance-monitor, schedule-analyzer | 1x（基准）|
+
+**配置示例**：
+```toml
+# architect Agent（决策层）
+[agent.architect]
+model = "claude-opus-4-7"
+permissions = ["read", "write", "execute", "approve"]
+approval_required = ["database_schema_change", "api_breaking_change"]
+
+# debugger Agent（执行层）
+[agent.debugger]
+model = "claude-sonnet-4-6"
+permissions = ["read", "write", "execute"]
+approval_required = ["destructive_operations"]
+
+# performance-monitor（监控层）
+[agent.performance-monitor]
+model = "claude-haiku-4-5"
+permissions = ["read"]
+approval_required = []  # 纯观察，无需审批
+```
+
+**决策规则**：
+- 涉及架构设计、技术方案、安全决策 → 决策层（用最强模型）
+- 执行明确任务（写代码/修 bug/审查）→ 执行层（用中等模型）
+- 定时检查/数据统计/日志扫描 → 监控层（用最便宜模型，成本趋近于零）
+
+**避免的反模式**：
+- ❌ 所有 Agent 都用 Opus → 监控类任务白烧钱
+- ❌ 所有 Agent 都用 Haiku → 架构决策质量不足
+- ❌ 决策层 Agent 无审批流 → 高权限 + 高智能 = 高风险
 
 ---
 

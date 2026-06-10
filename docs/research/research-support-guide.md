@@ -165,6 +165,77 @@
 
 ---
 
+### 5. 统计检验选择（Statistical Audit）
+
+**常见误用导致审稿被毙的场景**：
+
+| 误用 | 正确方式 |
+|------|---------|
+| 两组比较直接用 t-test，未检查正态性 | 先跑 Shapiro-Wilk；不满足正态 → Mann-Whitney U |
+| 不平衡多分类用单次 t-test | Kruskal-Wallis + post-hoc（Dunn/Bonferroni）|
+| 事件计数用普通线性回归 | 泊松回归或负二项回归 |
+| 只报告 p 值 | 同时报告效应量（Cohen's d / η²）+ 置信区间 + 功效分析 |
+| 忘记多重比较校正 | Bonferroni / FDR（Benjamini-Hochberg）|
+
+**AI 辅助统计检验流程**：
+1. 描述实验设计：组数、配对/独立、连续/离散、样本量
+2. AI 列出候选检验 + 前提假设
+3. 自动跑前提假设检查（正态性、方差齐性、独立性）
+4. 输出最合适的检验 + APA 风格 results 段（可直接进论文）
+
+---
+
+### 6. 引用审计（Citation Audit）
+
+**问题背景**：AI 辅助写作的学术文本中约 40% 的参考文献存在伪造或错引（作者/年份/DOI 错误，或文献真实但不支撑正文论断）。
+
+**审计流程**：
+1. 稿件 + 参考文献列表一起输入
+2. 按 DOI / CrossRef / Semantic Scholar / arXiv 逐条核对元数据
+3. 回查正文中"该文献支持 X 结论"的原文，验证实际是否支撑
+4. 输出分级报告：✅ 无误 / ⚠️ 元数据有误 / ❌ 文献不存在 / 🔄 引用不支撑论断
+
+**集成方式**：交给 data-analyst Agent 或 paper-writing-assistant 的预投稿检查环节执行。
+
+---
+
+### 7. 反驳信写作（Rebuttal）
+
+**场景**：收到审稿意见后，既要承认合理性，又要捍卫论文，语气需要精确把控。
+
+**AI 辅助 Rebuttal 流程**：
+1. 解析意见，按"重大问题 / 次要问题 / 笔误"分类
+2. 对每条意见生成两种草稿：
+   - "完全接受"版（意见站得住时）
+   - "礼貌但坚定反驳"版（意见基于误解时）
+3. 强制覆盖每一条（不允许漏回）
+4. 检查回应是否有实验依据（"我们补做了 X"需确实做了）
+5. 输出带逐条对照表的纯文本 rebuttal letter
+
+**使用**：
+```bash
+/agents paper-writing-assistant "帮我起草 rebuttal，审稿意见如下：[粘贴意见]"
+```
+
+---
+
+### 8. 论文转演示（Paper to Deck）
+
+**场景**：同一篇论文需要生成多种交付形式（组会 PPT / 会议海报 / 答辩 PPT / 精简汇报），每次手动重排耗时极大。
+
+**自动化流程**：
+1. 输入论文 PDF + 目标场景（slides 20min / poster A0 / talk 45min / brief 10min）
+2. 自动抽取核心叙事线：motivation → method → results → discussion
+3. 按目标时长/尺寸分配页数/面板
+4. 输出可编辑 .pptx + .tex（Beamer）+ 演讲者备注
+
+**使用**：
+```bash
+/agents paper-writing-assistant "把这篇论文转成 20 分钟组会 PPT，附演讲者备注"
+```
+
+---
+
 ### 3.5 创新组合模式（Research Innovation Explorer）
 
 适用场景：
@@ -285,7 +356,42 @@
 
 ---
 
-## 真实案例
+## 论文完整生命周期工作流
+
+按论文从零到投稿答辩的实际顺序，串联所有 AI 支持环节：
+
+```
+[前期找方向]
+  literature-mentor + deep-research → 形成领域地图和研究论证
+  Local RAG（本地论文库问答）       → 基于已有文献精准检索
+  research-innovation-explorer      → 跨论文组合发现新方向
+
+[研究方案]
+  /agents requirements-analyst      → 把粗糙方向细化为可执行 proposal
+  统计检验选择（§5）                → 实验设计阶段先确定检验方法
+
+[实验阶段]
+  experiment-logger                  → 记录配置/结果/随机种子
+  data-analyst                       → 统计分析 + 期刊适配可视化
+
+[写作阶段]
+  paper-writing-assistant            → 大纲 → 逐节草稿（含 LaTeX）
+  引用审计（§6）                     → 投稿前每条引用过一遍
+
+[投稿前]
+  /agents qa-reviewer                → 模拟主编/评审/魔鬼代言人对抗审查
+  反驳信预演                         → 提前准备"最弱论点"的辩护
+
+[投稿后]
+  Rebuttal（§7）                     → 逐条回应 + 礼貌反驳草稿
+
+[交付]
+  Paper to Deck（§8）                → 组会/答辩/海报/精简版，一键生成
+```
+
+**核心原则**：前 80% 时间的体力活（找文献、改格式、查统计、做 PPT）交给 AI；真正的 5%（提出新问题）和 5%（设计验证实验）保留给人。
+
+---
 
 ### 案例 1：医学影像 AI 综述
 

@@ -59,6 +59,17 @@
 | **neat** | 任务收尾洁癖审查，五步法同步 docs/CLAUDE.md/memory 三层知识 | `/neat`, `整理一下`, `收尾` |
 | **reflection** | 任务复盘提炼器，萃取 3-5 条可复用经验，两步链 Ingest 写入知识库 | `/reflection`, `复盘一下`, `总结经验` |
 | **skill-creator** | Skill 元创建器，按契约（五要素：What/How/When Done/What NOT/Extractable）生成高质量 SKILL.md，含 Skill→SaaS 可提取性评估 | `/skill-creator`, `创建一个 Skill`, `封装成 Skill` |
+
+**Skill 提取量化阈值**（何时该封装成 Skill）：
+- ✅ **重复模式 ≥3 次**：同类任务执行 3 次以上
+- ✅ **复杂流程 ≥5 步**：流程超过 5 步且有顺序依赖
+- ✅ **领域知识密集**：涉及特定术语、规则、约束（避免每次重新喂上下文）
+- ✅ **需要向 AI 解释两遍**（Sharbel 法则）：如果同一个工作流你得跟 AI 说第二遍，就该封装
+
+**不该封装成 Skill 的场景**：
+- ❌ 一次性任务（如"把这 10 个文件重命名"）
+- ❌ 高度上下文依赖（每次执行都要结合当时具体情况判断）
+- ❌ 规则还在快速变化中（先稳定规则，再封装）
 | **spec-first** | 完整 QA 工作流编排器，串联 spec-writer→开发→qa-reviewer→qa-fixer | `/spec-first`, `先写规范再开发`, `需要质量保障` |
 | **pr-prep** | PR 提交前五步检查仪式，确保每个 PR 一次通过 Review | `/pr-prep`, `准备提 PR`, `PR 检查清单` |
 | **task-decompose** | 任务分解器，三层拆解（Epic→Story→Task）+ 依赖图 + 并行化建议 | `/task-decompose`, `任务拆解`, `需求分解` |
@@ -85,6 +96,36 @@
 | **ui-ux-pro-max** | 57+风格/97配色/57字体知识库 | `推荐UI风格`, `配色方案` |
 | **react-best-practices** | Vercel 官方 React 性能优化 45+ 规则 | `优化React`, `消除waterfall` |
 | **web-artifacts-builder** | React+TypeScript+Tailwind 单页应用 | `构建Web应用`, `创建Artifact` |
+
+---
+
+## Anthropic 官方 Skills（插件市场）
+
+通过 `claude plugin marketplace add anthropics/skills` 安装后，用 `claude /plugin install <name>` 选装：
+
+| Skill | Install name | 描述 | 触发词 |
+|-------|-------------|------|--------|
+| **document-skills** | `document-skills` | Word/Excel/PPT/PDF 带格式生成，含公式 Excel、样式 Word、可填写 PDF，下载即用 | `帮我做一份 Excel`, `生成 Word 报告` |
+| **find-skills** | `find-skills` | 从已安装 Skill 中精准匹配，描述需求即可找到对应 Skill | `我想做 X，用哪个 Skill` |
+| **agent-browser** | `agent-browser` | AI 代理浏览器，自动打开网页/抓取信息/填表单/比价 | `帮我对比这三款产品`, `抓取联系方式` |
+| **skill-creator（官方）** | `skill-creator` | 用自然语言描述需求，自动生成新 Skill SKILL.md 文件 | `创建一个处理 X 的 Skill` |
+| **frontend-design（官方）** | `frontend-design` | 描述样式和功能，生成 React/Next.js/Vue/Tailwind 代码 | `做一个带导航栏的页面` |
+
+**安装方式**：
+```bash
+# 添加官方插件市场
+claude plugin marketplace add anthropics/skills
+
+# 选装具体 Skill（例）
+claude /plugin install document-skills
+claude /plugin install find-skills
+claude /plugin install agent-browser
+```
+
+**说明**：
+- `document-skills` — 专为 Office 文档场景设计，生成物是文件而非代码片段，适合非技术用户
+- `agent-browser` — 与 Camoufox 定位不同：agent-browser 是 Skill 级封装（对话驱动），Camoufox 是底层浏览器引擎（代码/脚本驱动）
+- `find-skills` — 技能索引超过 50 个时尤为有用，避免记名字的认知负担
 
 ---
 
@@ -158,6 +199,33 @@
 | spec-first + code-security-review | 规范驱动开发 + 安全审计双保险 |
 | ctf-reverse + ctf-pwn | 逆向分析 + 漏洞利用联合攻击 |
 | ctf-web + ctf-crypto | Web 漏洞 + 密码学联合 CTF 解题 |
+| taste-skill + frontend-design + ui-ux-pro-max | 设计-代码全链路：设计语言推断 → 布局审查 → 风格知识库 |
+| hack-skills + code-security-review | 渗透测试 + 代码审计双向安全覆盖 |
+
+### Skill 封装触发法则（Sharbel 法则）
+
+> **任何需要向 AI 解释两遍的工作流，就应该封装成 Skill。**
+
+实操判断：
+- 同类任务执行 3 次以上 → 封装成 Skill
+- 流程超过 5 步且有顺序依赖 → 封装成 Skill
+- 涉及领域特定规则/术语 → 封装成 Skill（避免每次重新喂上下文）
+
+封装后的好处：下次触发只需一句话，Skill 带上全部方法论和约束，不用重新解释。
+
+### MetaSkill：目标驱动的 Skill 自组织
+
+当需要把多个 Skill 串成工作流时，可以用**目标描述**代替手动配置：
+
+> "我需要对中文初稿做事实核查，再改写去 AI 腔，最后输出修改清单。"
+
+AI 自动：推断相关 Skill → 排列依赖顺序 → 生成可执行流水线
+
+对比传统方式：
+- **传统**：我手动想清楚步骤 → 手动配置 Skill 调用顺序
+- **MetaSkill**：我说目标 → AI 自组织流水线（每步输出传给下步）
+
+适用条件：底层各 Skill 已相对稳定，只需组合编排时使用；单个 Skill 还不稳定时优先打磨单 Skill，而非先做编排。
 
 ---
 
@@ -182,6 +250,8 @@ MCP 集成配置: `.claude/integrations/`
 | Skill | 描述 | 安装命令 |
 |-------|------|---------|
 | **x-ai-topic-selector** | 推特信息流选题助手，Chrome CDP 抓取 + AI 评分，支持扫描/书签两种模式 | `npx skills add vigorX777/x-ai-topic-selector -g -y` |
+| **taste-skill** | 前端设计「去模板感」，自动推断设计语言，调节 VARIANCE/MOTION/DENSITY 三维，GSAP 骨架、WAF绕过 anti-slop | `npx skills add Leonxlnx/taste-skill -g -y` |
+| **hack-skills** | 渗透测试全栈技能库，101个 Skill，三级路由（总入口→14类攻击面→94个深度专题），覆盖 Web/API/AD/二进制/密码学/区块链/AI安全 | `npx skills add yaklang/hack-skills` |
 | **knowledge-work-plugins** | Anthropic 官方 Cowork 插件库，20+ 职业角色（销售/法务/HR/数据等），纯 Markdown+JSON | `claude plugin marketplace add anthropics/knowledge-work-plugins` |
 | **ssh-skill** | 企业级 SSH 管理，长连接守护进程 + 超大文件传输 + Paramiko 密码认证 + 隧道管理 | `npx skills add badseal/ssh-skill -g -y` |
 | **system-cleaner** | 桌面磁盘清理，绿/黄/红安全分级 + 交互式 HTML 报告，Mac/Windows 均支持 | `npx skills add KKKKhazix/khazix-skills -g -y` |
@@ -196,11 +266,62 @@ MCP 集成配置: `.claude/integrations/`
 
 **flue-framework 说明**: 轻量替代 Claude Agent SDK 的 TypeScript 方案。SSE 流式输出内置，适合前端团队主导的 Agent 项目。详细框架对比见 `docs/AGENT-FRAMEWORK-DECISION.md`。
 
+**taste-skill 说明**: 40K+ Stars 高热度前端设计 Skill。读取设计简报后自动推断设计语言，围绕三个维度调节输出：VARIANCE（版式变化度）/ MOTION（动效强度）/ DENSITY（信息密度）。内置 GSAP 动画骨架模板、重设计审计协议、严格飞行前检查，强制禁止 em dash。多版本：`design-taste-frontend`（v2 默认）、`design-taste-frontend-v1`（原始版）、`high-end-visual-design`（柔美高端风）。
+
+**hack-skills 说明**: 长亭科技 YAK 团队开源，1K+ Stars，MIT 协议。三级路由设计：`hack`（总入口，按症状路由）→ 6 个分类入口（recon / api-sec / auth-sec / injection-checking / file-access-vuln / business-logic-vuln）→ 94 个深度专题（sqli / xss / ssrf / ssti / cmdi / 反序列化 / AD / Linux提权 / Windows提权 / 区块链 / LLM提示注入 / AI安全等）。Agent 按需加载，不会一次性注入全部 101 个 Skill 导致上下文爆炸。来源：[yaklang/hack-skills](https://github.com/yaklang/hack-skills)
+
+**hack-skills 优先阅读 Top 10**（按实战价值排序）：
+
+| 优先级 | Skill | 重点 |
+|--------|-------|------|
+| 1 | `sqli-sql-injection` | 475 行正文+575 行场景，DB2/Cassandra/BigQuery/SQLite RCE/WAF绕过矩阵 |
+| 2 | `xss-cross-site-scripting` | Polyglot Payload + 按厂商（Cloudflare/Akamai）WAF绕过 + DOM Clobbering |
+| 3 | `authbypass-authentication-flaws` | 22 种密码重置绕过模式矩阵，验证码绕过 20 方法 |
+| 4 | `deserialization-insecure` | 714 行，Java/PHP/Python/.NET/Node.js 五语言覆盖 |
+| 5 | `ssrf-server-side-request-forgery` | 6 平台云元数据矩阵，DNS重绑定，Gopher/Redis RCE链 |
+| 6 | `ssti-server-side-template-injection` | 15+ 引擎，含 Flask PIN 计算 |
+| 7 | `path-traversal-lfi` | 603 行，LFI→RCE 7 条路径 |
+| 8 | `active-directory-kerberos-attacks` | 域渗透必读，含 ESC1-8 证书攻击 |
+| 9 | `linux-privilege-escalation` | SUID/SGID/Capabilities/cron劫持/LD_PRELOAD |
+| 10 | `ghost-bits-cast-attack` | Black Hat Asia 2026 最新：Java char→byte 截断 WAF 绕过 |
+
+**garden-skills 说明**: 三个内容创作类 Skill — `web-video-presentation`（把文章/脚本转为网页视频，支持 MiniMax/OpenAI TTS）、`web-design-engineer`（25套设计风格主题，消除 AI 模板感）、`gpt-image-2`（18大类/79个结构化图片生成模板）。建议配合 Opus 4.7 使用，效果最优。在线预览：`https://mmh1.top`
+
 **garden-skills 说明**: 三个内容创作类 Skill — `web-video-presentation`（把文章/脚本转为网页视频，支持 MiniMax/OpenAI TTS）、`web-design-engineer`（25套设计风格主题，消除 AI 模板感）、`gpt-image-2`（18大类/79个结构化图片生成模板）。建议配合 Opus 4.7 使用，效果最优。在线预览：`https://mmh1.top`
 
 ---
 
-## 推荐外部工具（非 Skill）
+## 社区 Skills 版本管理（skills-lock.json）
+
+通过 `npx skills add` 安装的社区 Skill，使用 `skills-lock.json` 锁定版本，确保团队/CI 环境可复现。
+
+```json
+{
+  "version": 1,
+  "skills": {
+    "taste-skill": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "taste-skill/SKILL.md",
+      "computedHash": "<sha256>"
+    }
+  }
+}
+```
+
+**三条命令**:
+```bash
+npx skills add <owner>/<repo>         # 安装并写入锁文件
+npx skills check                      # 对比本地 hash 与上游（检查更新）
+npx skills experimental_install       # 按锁文件精确还原（等价 npm ci）
+```
+
+**实践原则**:
+- `skills-lock.json` 提交进 git，Skills 变更只通过 CLI 产生，不手动改锁文件
+- 子项目仅在有独立、不重叠 Skill 集合时才单独建锁文件，否则根目录一份即可
+- 升级流程：先 `check` 查差异 → 确认后 `add` 重装 → 锁文件自动更新
+
+---
 
 > 以下工具不是 Skill 架构，而是 Claude Code 的增强工具/插件/MCP 服务器，提升效率和可观测性。
 > 检测到适用场景时应主动推荐安装。完整安装指南: `docs/TOOLS-ECOSYSTEM-GUIDE.md`
@@ -210,7 +331,10 @@ MCP 集成配置: `.claude/integrations/`
 | **Context Mode** | Token 优化 | MCP 输出沙箱压缩，~98% 节省 | `claude mcp add context-mode -- npx -y context-mode` | token >100K 且未安装 |
 | **CodeGraph** | Token 优化 | 代码知识图谱，~92% tool call 减少 | `npx @colbymchenry/codegraph` | 代码探索 >20 次且未安装 |
 | **RTK** | Token 优化 | Rust CLI 代理，Bash 输出压缩 60-90% | `brew install rtk` / [Releases](https://github.com/rtk-ai/rtk/releases) | 配合前两者使用 |
+| **Headroom** | Token 优化 | Agent 全链路输入预压缩（工具输出/RAG/日志/对话历史），CCR 可逆 | `pip install "headroom-ai[all]"` | Agent 工具输出/RAG 大量堆积 |
 | **claude-tap** | 可观测性 | API 流量检查 + token 用量明细 + 系统提示词查看 | `pip install claude-tap` | 用户询问 token 成本/调试 Agent |
+| **Tokscale** | 可观测性 | 跨 20+ 工具 token 用量汇总统计，GitHub 热力图 | `npx tokscale@latest` | 想跨工具统计 token 总用量 |
+| **Camoufox** | 浏览器自动化 | AI Agent 专用反指纹 Firefox，Playwright 兼容 | `pip install -U "camoufox[geoip]"` | Agent 需要操作浏览器 |
 
 ---
 
