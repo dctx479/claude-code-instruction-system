@@ -71,6 +71,50 @@ detect_intent() {
         return
     fi
 
+    # === 角色专用意图 (高优先级：须在 test/architect/analysis 等通用规则之前，模式须足够精确以免误截通用消息) ===
+
+    # Vitest 测试 (须在通用 test 规则之前，否则 "vitest" 被 "test" 子串截获)
+    if echo "$message_lower" | grep -qE 'vitest'; then
+        echo "vitest"
+        return
+    fi
+
+    # SDD-RIPER 规范驱动开发流程
+    if echo "$message_lower" | grep -qE 'sdd-riper|sdd riper|\briper\b|规范驱动开发|spec-driven'; then
+        echo "sdd-riper"
+        return
+    fi
+
+    # 高级代码架构师 (须在通用 architect 规则之前)
+    if echo "$message_lower" | grep -qE 'senior.*architect|资深架构|高级架构师|senior.*code.*architect'; then
+        echo "architect-senior"
+        return
+    fi
+
+    # 技术导师 (须在通用 architect 规则之前)
+    if echo "$message_lower" | grep -qE 'mentor|技术导师|手把手|带我学|带我入门'; then
+        echo "mentor"
+        return
+    fi
+
+    # 需求分析 (须在通用 analysis "分析" 规则之前)
+    if echo "$message_lower" | grep -qE '需求分析|需求拆解|需求评审|用户故事|user.*story|requirement.*analy|功能拆解'; then
+        echo "requirements"
+        return
+    fi
+
+    # 数据仓库/数仓分析 (须在通用 data/analysis 规则之前)
+    if echo "$message_lower" | grep -qE 'data.*warehouse|数据仓库|数仓|数据平台|olap|多维分析'; then
+        echo "data-warehouse"
+        return
+    fi
+
+    # 代码地图/代码库导航
+    if echo "$message_lower" | grep -qE 'code.*map|代码地图|代码库导航|codebase.*nav'; then
+        echo "codemap"
+        return
+    fi
+
     # === 代码相关意图 ===
 
     if echo "$message_lower" | grep -qE 'debug|调试|bug|错误|fix|修复|报错|崩溃|异常|traceback|stack.*trace'; then
@@ -275,6 +319,27 @@ recommend_agent() {
             ;;
         "archive")
             echo "context-archivist"
+            ;;
+        "requirements")
+            echo "requirements-analyst"
+            ;;
+        "mentor")
+            echo "tech-mentor"
+            ;;
+        "architect-senior")
+            echo "senior-code-architect"
+            ;;
+        "vitest")
+            echo "vitest-tester"
+            ;;
+        "sdd-riper")
+            echo "sdd-riper-orchestrator"
+            ;;
+        "data-warehouse")
+            echo "data-warehouse-analyst"
+            ;;
+        "codemap")
+            echo "codemap-builder"
             ;;
         "git")
             echo "orchestrator"

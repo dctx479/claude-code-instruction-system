@@ -349,7 +349,7 @@ EOF
 
 2. **探索 Agent 和 Skills**
    - [Agent 索引](../agents/INDEX.md) - 所有可用 Agent
-   - [Skills 索引](../skills/INDEX.md) - 所有可用 Skills
+   - [Skills 索引](../.claude/skills/INDEX.md) - 所有可用 Skills
 
 3. **查看示例**
    - [科研工作流示例](../examples/research-workflow-example.md)

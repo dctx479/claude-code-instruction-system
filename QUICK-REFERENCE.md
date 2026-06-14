@@ -91,17 +91,17 @@ permissionMode: default | acceptEdits | dontAsk
   "hooks": {
     "PreToolUse": [{
       "matcher": "Write",
-      "hooks": [{"type": "command", "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./script.sh\""}]
+      "hooks": [{"type": "command", "command": "bash \"./scripts/validate/validate-command.sh\""}]
     }],
     "PostToolUse": [{
       "matcher": "Edit",
-      "hooks": [{"type": "command", "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./post-edit.sh\""}]
+      "hooks": [{"type": "command", "command": "bash \"./scripts/hooks/post-edit.sh\""}]
     }],
     "UserPromptSubmit": [{
-      "hooks": [{"type": "command", "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./intent-detector.sh\""}]
+      "hooks": [{"type": "command", "command": "bash \"./hooks/intent-detector.sh\""}]
     }],
     "Stop": [{
-      "hooks": [{"type": "command", "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./on-stop.sh\""}]
+      "hooks": [{"type": "command", "command": "bash \"./scripts/hooks/on-stop.sh\""}]
     }]
   }
 }

@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"./scripts/validate-command.sh\"",
+            "command": "bash \"./scripts/validate/validate-command.sh\"",
             "description": "验证 Bash 命令安全性",
             "timeout": 5000
           },
@@ -58,7 +58,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"./scripts/post-edit.sh\"",
+            "command": "bash \"./scripts/hooks/post-edit.sh\"",
             "description": "编辑后运行 lint 检查",
             "timeout": 30000
           }
@@ -82,7 +82,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"./scripts/notify.sh\"",
+            "command": "bash \"./scripts/hooks/notify.sh\"",
             "description": "发送通知到外部系统"
           }
         ]
@@ -99,7 +99,7 @@
           },
           {
             "type": "command",
-            "command": "bash \"./scripts/on-stop.sh\"",
+            "command": "bash \"./scripts/hooks/on-stop.sh\"",
             "description": "会话结束时的清理操作"
           }
         ]
