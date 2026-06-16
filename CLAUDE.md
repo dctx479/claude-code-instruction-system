@@ -1,5 +1,5 @@
-# 太一元系统核心配置 v1.1
-# 发布: 2026-03-01 | 最后更新: 2026-06-10
+# 太一元系统核心配置 v1.3
+# 发布: 2026-03-01 | 最后更新: 2026-06-16
 
 > 核心能力: **自进化** | **Agent驾驭** | **知识沉淀** | **动态适应**
 > 编排指南: `docs/ORCHESTRATION-GUIDE.md` | Skills目录: `docs/SKILLS-CATALOG.md`
@@ -485,7 +485,20 @@ python scripts/port-manager.py conflicts / suggest <service>
 
 CLAUDE.md 是保障栈最轻的一层（L0 软提醒），不能替代 lint(L1)、测试(L2)、hooks(L3)、CI/Review(L4)。规则放对层级比多写规则更重要。
 
-> 详见: `memory/best-practices.md` BP-036（防御纵深）、BP-037（事故驱动规则增长）
+**根因六分类（R1-R6）** — 每次任务偏差必须归因后再决定是否改规范：
+
+| 根因 | 含义 | 动作 |
+|------|------|------|
+| **R1** 规范缺失 | 该情况没有对应约定 | 补充 Skill / CLAUDE.md 规则 |
+| **R2** 规范冗余 | 规则太多互相矛盾或无法遵守 | 精简 / 合并条目 |
+| **R3** 规范过时 | 工具/环境已变但规则未更新 | 同步更新，旧版加废弃标记 |
+| **R4** Review 漏洞 | 检查项不完整导致问题流出 | 补 review 清单项 |
+| **R5** 代码 bug | 代码逻辑错误，非规范问题 | 修代码，不动规范 |
+| **R6** 外部因素 | 网络/API/第三方变更 | 记录，不一定改规范 |
+
+**铁律**：R5 / R6 不触发规范进化；R1-R4 才是补规则的合法依据。
+
+> 详见: `memory/best-practices.md` BP-036（防御纵深）、BP-037（事故驱动规则增长）、BP-051（R1-R6 根因闭环）
 
 ### 当遇到问题时
 1. 分析错误根因 → 2. 检查是否重复问题 → 3. 生成解决方案 → 4. 更新相关配置 → 5. 记录到 `memory/lessons-learned.md` → 6. 验证效果
@@ -659,6 +672,11 @@ value=$(echo "$JSON" | jq -r '.field' 2>/dev/null || echo "default")
 | 用户需要特定职业角色辅助（销售/法务/HR 等） | **Knowledge Work Plugins** | `claude plugin marketplace add anthropics/knowledge-work-plugins` |
 | 用户做前端开发/想消除 AI 模板感/要高质量 UI | **taste-skill** | `npx skills add Leonxlnx/taste-skill -g -y` |
 | 用户做渗透测试 / CTF / 安全研究 | **hack-skills** | `npx skills add yaklang/hack-skills` |
+| 用户希望从手机/微信远程调用本地 Claude Code | **WeChat Claude Code** | 参见 [wechat-claude-code](https://github.com/Wechat-ggGitHub/wechat-claude-code) README 安装 |
+| 用户做中文文献综述、知网检索、Zotero 导入 | **CNKI Research Toolkit** | 参见 [cnki-skills](https://github.com/okclaw/cnki-skills) 项目仓库安装 |
+| 用户想深度追问一个问题 / 伴读文章 / 多视角圆桌讨论 | **ljg-skills** | `npx skills add https://github.com/lijigang/ljg-skills --all` |
+| 用户想蒸馏某人/某书的思维框架变成可用顾问 | **nuwa-skill** | `npx skills add https://github.com/alchaincyf/nuwa-skill` |
+| 用户是 CS/AI 研究生 / 需要投稿前 AI 模拟审稿 | **Supervisor-Skills** | 参见 [HKUSTDial/Supervisor-Skills](https://github.com/HKUSTDial/Supervisor-Skills) README 安装 |
 
 ### 推荐流程
 

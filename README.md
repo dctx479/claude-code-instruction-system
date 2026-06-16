@@ -1,6 +1,6 @@
 # 太一元系统 · Claude Code 指令体系
 
-> 版本: 1.0 Taiyi (太一) — 道之演化 | 发布日期: 2026-03-01
+> 版本: 1.2 Taiyi (太一) — 道之演化 | 发布日期: 2026-03-01 | 最后更新: 2026-06-15
 
 太一元系统是一套完善的 Claude Code CLI 配置与指令体系，覆盖软件开发、AI/ML 科研、数据分析、网络安全等专业领域。系统具备自进化、Agent 编排、并行科研、全自主执行等核心能力。
 
@@ -243,3 +243,6 @@ Windows 用户配置详见 [docs/CONFIG-FILES-GUIDE.md](docs/CONFIG-FILES-GUIDE.
 - [Claude Code 最佳实践](https://www.anthropic.com/engineering/claude-code-best-practices)
 - [Awesome Claude Code](https://github.com/hesreallyhim/awesome-claude-code)
 - [claude-scientific-skills](https://github.com/K-Dense-AI/claude-scientific-skills)（140+ 科研技能）
+- [claude-code-best-practice](https://github.com/anthropics/claude-code-best-practice) — Claude Code 核心能力、热门功能、工作流、83 条实战技巧系统整理（57k+ Star）
+- [agent-designer](https://github.com/appautomaton/agent-designer) — 可移植 skills 工作空间，跨 Claude Code / Codex / Gemini 协作，支持 issue-driven 工作流
+- [wechat-claude-code](https://github.com/Wechat-ggGitHub/wechat-claude-code) — 微信→CLI Claude Code 桥接，移动端体验与桌面端一致

@@ -1513,5 +1513,31 @@ AI 上下文窗口有限，大批量同质任务（>50 项）逐步压缩早期�
 
 ---
 
+## [2026-06-16] 二次审视学习价值：避免「快筛」丢失中等价值信号 #016
+
+### 问题描述
+第一轮审视混合资料包（11 个片段）时，对 wechat-claude-code / claude-code-best-practice / CNKI / agent-designer 给了 ⭐ 低价值评分，差点全部丢弃。用户反馈「进一步全面审视」后，二次扫描发现这些项目恰恰填补了本项目核心空白点（移动端接入、中文文献、跨 Agent 桥接、`.claude/rules` 模式）。
+
+### 根因分析
+「快筛」心态导致只看标题印象打分，没把每个项目的「关键能力」与本项目自身的空白点对齐。标题不吸引人 ≠ 与项目无关。
+
+### 解决方案（二次审视强制走 3 步）
+1. **列出本项目现有地图**：Skill/Agent/工具/文档覆盖范围
+2. **列出候选项目的关键能力**：不看标题，看核心功能
+3. **找交集**：交集处即补点，无交集才真正放弃
+
+**已融入项目以下位置**：
+- `docs/SKILLS-CATALOG.md` §核心研究 Skills → 新增「学术 PPT 一源多产链」子段
+- `docs/SKILLS-CATALOG.md` §CTF Skills → 新增「移动端与 IM 接入 Skills」段
+- `docs/SKILLS-CATALOG.md` §claude-scientific-skills → 补充「CNKI Research Toolkit」
+- `docs/BEST-PRACTICES.md` §六 → 新增「6.4 跨模型工作流」段
+- `docs/BEST-PRACTICES.md` §一 → 新增「1.5 分层加载规则（.claude/rules/ 机制）」
+- `docs/TOOLS-ECOSYSTEM-GUIDE.md` 工具总览表 → 补充 WeChat Claude Code / CNKI Research Toolkit
+- `CLAUDE.md` §十二 检测触发表 → 补充 2 行
+- `README.md` 参考资源段 → 补充 3 个链接
+
+### 标签
+#learning-curation #second-pass #gap-analysis #content-evaluation
+
 <!-- 新的经验条目将自动添加在这里 -->
 

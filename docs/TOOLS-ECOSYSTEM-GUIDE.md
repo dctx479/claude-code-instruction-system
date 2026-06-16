@@ -22,6 +22,8 @@
 | **Headroom** | Token 优化 | Agent 全链路输入预压缩，CCR 可逆，跨 Agent 记忆 | ⭐ pip install | Agent 工具输出/日志/RAG 大量堆积 |
 | **Tokscale** | 可观测性 | 跨 20+ AI 编程工具 token 用量汇总可视化 | ⭐ 零安装 npx | 想跨工具统计 token 总用量 |
 | **Camoufox** | 浏览器自动化 | Firefox 指纹伪装，AI Agent 专用浏览器，Playwright 兼容 | ⭐⭐ pip + fetch | Agent 需要操作浏览器/网页自动化 |
+| **WeChat Claude Code** | 移动端接入 | 微信扫码→CLI Claude Code 桥接，手机与电脑端体验一致 | ⭐⭐ 项目级安装 | 用户希望从手机/微信远程调用本地 Claude Code |
+| **CNKI Research Toolkit** | 科研自动化 | 知网检索/筛选/解析/下载/Zotero 导入/期刊收录查询 | ⭐ npm/skill 安装 | 用户做中文文献综述、课题申报、期刊调研 |
 
 ---
 

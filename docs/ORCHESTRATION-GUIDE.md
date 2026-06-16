@@ -164,6 +164,98 @@ approval_required = []  # 纯观察，无需审批
 
 ---
 
+## 自我改进 Agent 复利栈
+
+> 自我改进 ≠ 自我学习。模型权重不变，外面那层（STATE/Skill/eval/grader）每轮变聪明——复利的是系统，不是模型。
+> 参考：Anthropic Continual Learning Bench 的五阶段记忆框架 + Dynamic Workflows (Claude Code, 2026-05)。
+
+### 四层栈结构
+
+```
+        ┌──────────────────────────────────────────┐
+ Layer 4 │  Eval & Distill  (eval 集 + 蒸馏回写)   │   ← 每轮打分、收规则、写回 Skill
+        ├──────────────────────────────────────────┤
+ Layer 3 │  Memory & Skill   (STATE.md + SKILL.md) │   ← 跨会话复利的承载体
+        ├──────────────────────────────────────────┤
+ Layer 2 │  Orchestration    (路由 + 派活 + 验活)   │   ← Orchestrator / Dynamic Workflows
+        ├──────────────────────────────────────────┤
+ Layer 1 │  Model            (Opus/Sonnet/Haiku)   │   ← 模型本身不变
+        └──────────────────────────────────────────┘
+```
+
+### 记忆五阶段（从失败到规则）
+
+| 阶段 | 动作 | 项目对应 |
+|------|------|---------|
+| ① Fail | 记录失败 | `/reflection` 输出到 `memory/lessons-learned.md` |
+| ② Investigate | 查根因 | `/debug` 五步法 |
+| ③ Verify | 变成可核对的事实 | 落到具体文件 + 行号 + 验证步骤 |
+| ④ Distill | 收成通用规则 | 写入 `memory/best-practices.md` (BP-xxx) |
+| ⑤ Consult | 下次会话先读规则，别重推一遍 | `/prime` 会话预热时加载 |
+
+**反模式**：停在第 1 步（一堆「可能是 xxx？」的猜测）→ 复利断裂。
+
+### 独立 verifier（核心原则）
+
+> 写的人和验的人**不能共享上下文**。否则 maker 会偏向自己刚写下的结论，"再检查一遍"形同虚设。
+
+| 角色 | 模型 | 上下文 | 职责 |
+|------|------|--------|------|
+| **Maker** | Sonnet/Opus | 完整推理链 | 写代码、写 Skill |
+| **Verifier** | Haiku 4.5 | **只看产物，不看 maker 推理** | 按 rubric 打分，PASS/FAIL |
+
+**实现要点**：
+- Verifier 通过 Sub-agent 隔离调用（`subagent_type` 选独立 Agent）
+- Verifier 的 prompt 只贴：产物 + rubric + 通过条件，不复述 maker 的思路
+- 一个 maker 至少配一个 verifier；UI 类任务额外配 vision verifier
+
+### 模型分工（不要全家 Opus）
+
+| 角色 | 模型 | 干什么 | 何时用 |
+|------|------|--------|-------|
+| 总编排 | Opus 4.7 | 多日规划、派活、验活、蒸馏 | `/autopilot` 长跑 |
+| 难但有限的子任务 | Sonnet 4.6 | 架构、深 debug、复杂 Skill | `/ralph` 主循环 |
+| 大量工人 | Haiku 4.5 | lint、小重构、脚手架、文档 | 平行 Worker |
+| 判官/打分 | Haiku 4.5 | 独立 grader，便宜、上下文干净 | 每次 verifier 调用 |
+
+**成本约束**：Opus 调用次数 × 单价是主要账单项。一个 `/goal` 跑 20 轮 = 20 次 Opus = 几十美元。日常 lint / 文档 / 小修 → 强制走 Haiku。
+
+### Skill 长胖机制
+
+复利合同：**确认过的教训写进 Skill，不只留在当次对话**。
+
+- 跑两周的 CI 分拣 Skill 会多出 `Known failure modes`、`Anti-patterns` 段——那是真刀真枪踩出来的
+- 第一天写的静态说明 vs 运行一个月后的"已知失败模式清单"，后者值钱十倍
+- `/skill-creator` 首次封装 → 使用若干次 → `/reflection` 收集失败 → SkillOpt 六阶段管线优化
+
+### Vision 验 UI
+
+UI 任务必须用 vision，不能用纯文本 grader：
+
+1. Maker 改完 UI 代码 → 自动截图（headless browser / Playwright）
+2. Verifier 用 vision 对比 Skill 里登记的 design token + 上轮 STATE 里的基准图
+3. 不过 → 退回 maker 改 → 再次截图 → 直到 PASS
+
+### 安全 fallback 显式化
+
+遇到网络安全 / 模型蒸馏 / 生物化学等敏感领域时，模型可能自动切到 fallback 模型（不一定报错，可能直接降智）。自我改进系统要：
+
+- **显式声明**："这类任务预期走 [fallback 模型]，需人工审核"
+- **不静默失败** — fallback 后产出物要标 `⚠️ WARNING: 降级模式产物，需人工确认`
+- 落到 `memory/error-patterns.md` 单独跟踪
+
+### 与 Ralph / Autopilot 的衔接
+
+| 能力 | Ralph（本地循环） | Autopilot（五阶段） |
+|------|------------------|-------------------|
+| 独立 verifier | ✅ 单文件级 | ✅ 全项目级 |
+| STATE.md 强制读写 | ✅ 单文件 | ✅ 多文件持久化 |
+| SkillOpt 优化 | ✅ 单 Skill | ✅ 全 Skill 体系 |
+| Vision 验 UI | ⚠️ 需 hook 截图 | ✅ Playwright 集成 |
+| Fallback 显式化 | ✅ error-patterns | ✅ error-patterns + audit |
+
+---
+
 ## 使用示例
 
 ### 示例1：复杂功能开发 → HIERARCHICAL

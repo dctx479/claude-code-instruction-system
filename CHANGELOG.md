@@ -7,6 +7,107 @@
 
 ---
 
+## [1.3.0] - 2026-06-16
+
+### 新增功能
+
+#### 思维工具链 Skills（ljg-skills / nuwa-skill / Supervisor-Skills）
+- `CLAUDE.md` §十二 新增三条工具触发场景
+  - **ljg-skills**（深度追问 / 伴读 / 圆桌讨论）
+  - **nuwa-skill**（人物思维框架蒸馏 → 可用顾问）
+  - **Supervisor-Skills**（CS/AI 研究生投稿前 AI 模拟审稿）
+- `docs/SKILLS-CATALOG.md` 新增 §Supervisor-Skills 章节
+  - AI Pre-Review 说明（投稿前模拟 reviewer 视角，初筛工具定位）
+  - Vibe Research 理念与本项目科研支持系统对接表
+
+#### 任务偏差根因六分类（R1-R6）
+- `CLAUDE.md` §八 规则增长策略新增 R1-R6 根因分类表
+  - R1-R4 触发规范进化；R5（代码 bug）/ R6（外部因素）不动规范
+  - 返工 ≥2 次自动升级 D2 检查项规则
+- `memory/best-practices.md` 新增 **BP-051**（VFM 88，本项目迄今最高频适用条目）
+
+### 改进
+
+- CLAUDE.md §十 科研支持：Vibe Researching 理念与 Supervisor-Skills 衔接
+- 全局 `~/.claude/CLAUDE.md` 同步至 v1.3.0，补齐三条新工具触发规则和 R1-R6 表格
+
+### BP 关系图（新增）
+
+- BP-037（事故驱动增长）= "什么情况下加规则"
+- BP-051（R1-R6 根因六分类）= "判断是否该加规则的方法"（操作手册）
+
+---
+
+## [1.2.0] - 2026-06-15
+
+### 新增功能
+
+#### Round 1：自我改进 Agent 体系（基于 Anthropic / SkillOpt 提炼）
+- `docs/ORCHESTRATION-GUIDE.md` §自我改进 Agent 复利栈
+  - 四层栈结构（Eval / Memory / Orchestration / Model）
+  - 记忆五阶段（Fail → Investigate → Verify → Distill → Consult）
+  - 独立 verifier 原则（maker 与 verifier 隔离上下文）
+  - 模型分工表（Opus 决策 / Sonnet 主循环 / Haiku 工人 + 判官）
+  - Vision 验 UI / Fallback 显式化（不静默失败）
+- `docs/SKILLS-CATALOG.md` §Skill 优化六阶段管线（SkillOpt 借鉴）
+  - Rollout → 反思 → 补丁 → 合并 → 排序 → 验证门控
+  - 铁律：每次只改一个变量 / 候选必须过验证门
+- `docs/QUICK-START.md` §Harness 渐进式搭建（五步增量法）
+  - CLAUDE.md → SessionStart Hook → Skill → MCP → Sub-agent
+  - 核心原则：规则放 CLAUDE.md，工作流放 Skill；每 Agent 限 3-5 个 MCP
+- `memory/best-practices.md` 新增三条 BP 条目
+  - **BP-047** 自我改进 Agent 复利栈（VFM 80）
+  - **BP-048** SkillOpt 六阶段管线（VFM 72）
+  - **BP-049** Harness 五步增量法（VFM 80）
+
+#### Round 2：移动端接入 + 跨模型工作流 + 中文科研工具链
+- `CLAUDE.md` §十二 新增两条工具触发场景
+  - WeChat Claude Code（微信→CLI 桥接，移动端远程调用）
+  - CNKI Research Toolkit（中文知网检索/Zotero 导入自动化）
+- `README.md` 参考资源新增三条
+  - claude-code-best-practice（57k+ Star 官方最佳实践集）
+  - agent-designer（便携式 Skills 工作空间）
+  - wechat-claude-code（微信→CLI 桥接方案）
+- `docs/SKILLS-CATALOG.md` 三处扩展
+  - §学术 PPT 一源多产链（单篇论文 → PPT / 海报 / 幻灯片 / polish / pptx）
+  - §移动端与 IM 接入 Skills（WeChat Claude Code 五维评估表）
+  - CNKI 科研工具补充至 claude-scientific-skills 小节
+- `docs/BEST-PRACTICES.md` 两处扩展
+  - §6.4 跨模型工作流（Plugin / MCP / Router 三模式对比表）
+  - §1.5 分层加载规则（.claude/rules/ 机制说明）
+- `docs/TOOLS-ECOSYSTEM-GUIDE.md` 概览表新增两行
+  - WeChat Claude Code（移动端接入分类）
+  - CNKI Research Toolkit（科研自动化分类）
+- `memory/lessons-learned.md` 新增 #016
+  - 二次审视学习价值：避免快筛丢失中等价值信号（含三步复盘协议）
+
+#### Round 3：Skill 发布质量四阶梯
+- `docs/SKILLS-CATALOG.md` 新增"Skill 发布质量四阶梯"章节
+  - 四阶梯：能用 → 看懂 → 愿意安装 → 三分钟跑出闭环
+  - 横向 6 维自检清单（命名钩子 / 首屏信任 / 安装摩擦 / 可验证产物 / 安全边界 / 生态兼容）
+  - Darwin 评分铁律（实测表现权重最高）
+- `.claude/skills/skill-creator/SKILL.md` Step 6 自检新增"发布质量"条目
+- `memory/best-practices.md` 新增 BP-050
+  - **BP-050** Skill 发布质量四阶梯（VFM 64）
+
+### 改进
+
+- 编排指南：从"六模式策略矩阵"扩展到"自我改进复利栈"，与 Ralph/Autopilot 互补
+- Skill 目录：从"四要素契约化"扩展到"六阶段验证化 + 发布质量保障"，覆盖完整 Skill 生命周期
+- 快速入门：新增 Harness 渐进式搭建，强化"按错误驱动补层"原则
+- 工具生态：新增移动端（WeChat）和中文科研（CNKI）两个工具触发场景
+- 最佳实践工程化：§6.4 跨模型协作 + §1.5 规则分层加载的工程化配套文档
+
+### BP 关系图（本版本新增四条）
+
+- BP-046（Karpathy 四原则）= "AI 做什么"
+- BP-049（Harness 五步法）= "用什么工具做"
+- BP-047（自我改进复利栈）= "怎么越用越聪明"
+- BP-048（SkillOpt 六阶段管线）= "Skill 怎么持续优化"
+- BP-050（发布质量四阶梯）= "Skill 怎么让别人也能用"
+
+---
+
 ## [1.0.0] - 2026-03-01
 
 ### 首次公开发布

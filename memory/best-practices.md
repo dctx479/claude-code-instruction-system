@@ -2055,6 +2055,11 @@ ls CONFIG-COMPARISON-REPORT.md 2>&1 | grep -q "No such" && echo "OK"
 | BP-044 | 主动知识库自修复（定时 Agent） | 3 | 2 | 3 | 24+16+12=**52** | ✅（边缘，监控） |
 | BP-045 | 创作类长任务 Skill 工作流 | 2 | 2 | 3 | 16+16+12=**44** | ⚠️ 低分（场景窄） |
 | BP-046 | Karpathy 规则（四条行为约束） | 5 | 5 | 1 | 40+40+20=**100** | ✅ 满分 |
+| BP-047 | 自我改进 Agent 复利栈 | 4 | 4 | 2 | 32+32+16=**80** | ✅ |
+| BP-048 | SkillOpt 六阶段管线 | 3 | 4 | 2 | 24+32+16=**72** | ✅ |
+| BP-049 | Harness 五步增量法 | 4 | 4 | 2 | 32+32+16=**80** | ✅ |
+| BP-050 | Skill 发布质量四阶梯 | 3 | 3 | 2 | 24+24+16=**64** | ✅ |
+| BP-051 | 任务偏差根因六分类 R1-R6 | 4 | 5 | 2 | 32+40+16=**88** | ✅ |
 
 **低分条目（VFM < 50）处理建议**:
 
@@ -2073,3 +2078,198 @@ ls CONFIG-COMPARISON-REPORT.md 2>&1 | grep -q "No such" && echo "OK"
 **案例引用**: Andrej Karpathy GitHub CLAUDE.md（github.com/karpathy/claude-md），17w+ Stars，百万级用户验证。
 
 **标签**: #behavior #constraints #agent-collaboration [VERIFIED]
+
+---
+
+### BP-047: 自我改进 Agent 复利栈——模型不变，环境变聪明
+
+**来源**: Anthropic Continual Learning Bench + Claude Code Dynamic Workflows (2026-05) + 微软 SkillOpt 实验结果
+
+**核心问题**: 长跑 Agent 总是"聊五分钟就关"，每轮从零开始，没有复利。真正决定上限的不是模型，是外面那层"记忆 + Skill + 判官 + eval"是否每轮都比上一轮聪明一点。
+
+**四层栈结构**：
+
+```
+Layer 4  Eval & Distill  (eval 集 + 蒸馏回写)
+Layer 3  Memory & Skill   (STATE.md + SKILL.md)
+Layer 2  Orchestration    (路由 + 派活 + 验活)
+Layer 1  Model            (Opus/Sonnet/Haiku 不变)
+```
+
+**记忆五阶段（Fail→Investigate→Verify→Distill→Consult）**：
+- 停在第 1 步（一堆"可能是 xxx？"的猜测）→ 复利断裂
+- 必须走完 5 步才能让教训变成下次能用的规则
+
+**核心机制**：
+- **独立 verifier**：maker 与 verifier 不能共享上下文（Verifier 只看产物，不看 maker 推理链），用 Haiku 4.5 跑分
+- **STATE.md 五块**：Verified facts / General rules / Open failures / Lessons learned / Last session
+- **Skill 长胖**：跑两周后多出 `Known failure modes`、`Anti-patterns` 段
+- **模型分工**：Opus = 决策；Sonnet = 主循环；Haiku = 工人 + 判官
+- **Vision 验 UI**：纯文本 grader 验不了"按钮挤没挤歪"
+- **Fallback 显式化**：敏感领域自动切 fallback 模型时要标 `⚠️ WARNING`，不静默失败
+
+**与本项目衔接**：
+- `docs/ORCHESTRATION-GUIDE.md` §自我改进 Agent 复利栈
+- `commands/general/ralph.md` / `commands/general/autopilot.md` 已有 verifier 雏形
+- `/reflection` 输出对应阶段①；`/debug` 对应阶段②
+
+**案例引用**:
+- Anthropic 实验：Sonnet 停在第 1 步，Opus 到第 3 步，强模型（Mythos 档）走完全程
+- 微软 SkillOpt：52 个评测单元全部领先，最高提升 +39 分
+
+**标签**: #self-evolution #orchestration #memory [VERIFIED]
+
+---
+
+### BP-048: SkillOpt 六阶段管线——把 Skill 当神经网络权重训练
+
+**来源**: 微软 SkillOpt（github.com/microsoft/SkillOpt，5000+ Stars）
+
+**核心问题**: 改 Skill.md 全凭手感——"改改 prompt 跑跑看，好就算了"。没有验证集，没有门控，不知道变好是因为哪一步。
+
+**六阶段管线**：
+
+| 阶段 | 动作 | 本项目对应 |
+|------|------|-----------|
+| ① Rollout | 用当前 Skill 跑一批任务，收集执行轨迹与得分 | `/qa-reviewer` 或自建测试 prompt |
+| ② 反思分析 | 独立优化器分析"哪段 Skill 文档导致了错误" | qa-reviewer 单独看 Skill 文本（隔离上下文） |
+| ③ 生成补丁 | 基于反思生成针对性文本编辑 | 只改与失败模式直接相关的段落 |
+| ④ 合并 | 多条补丁合并成候选 Skill 文档 | 一次只保留一个主要方向的改动 |
+| ⑤ 排序筛选 | 编辑数超预算时按优先级保留最重要的 | 砍掉"看起来不错但无验证证据"的修饰 |
+| ⑥ 验证门控 | 候选 Skill 在 held-out 验证集跑分，严格优于当前版本才接受 | `bash scripts/test-integrations.sh` 或自建 eval |
+
+**两条铁律**：
+- **每次只改一个变量**：这一轮只修触发词，就不要顺手重写 README；否则归因不到改动效果
+- **候选必须过验证门**：在验证集上得分未严格优于当前 Skill 的修改一律丢弃，不靠主观判断
+
+**与本项目衔接**：
+- `docs/SKILLS-CATALOG.md` §Skill 优化六阶段管线
+- `/skill-creator`（首次封装）→ 使用若干次 → `/reflection`（收集失败）→ 六阶段管线优化 → 提交新版本
+
+**案例引用**: 微软 SkillOpt 实验：6 个 benchmark × 7 个目标模型 × 3 种执行方式 = 52 个评测单元，全部领先 TextGrad / GEPA / Trace2Skill / EvoSkill 与人类专家手写 Skill。GPT-5.5 平均提升 +23.5 分，最高 +39 分。
+
+**标签**: #skill-optimization #verification #methodology [VERIFIED]
+
+---
+
+### BP-049: Harness 五步增量法——按错误驱动补层，不要一次搭满
+
+**来源**: Pulumi 团队 14 周 9 个生产级 Agent 实战经验 + Claude Code 官方分层架构
+
+**核心问题**: 拿到 Claude Code 第一件事就搭完整 Harness——CLAUDE.md 写 300 行、装 8 个 MCP、配所有 Hook、创建所有 Sub-agent。代价是上下文臃肿、工具选择质量下降、规则没人遵守。**正确的顺序是反过来：犯了错才加层。**
+
+**五步（每步 3-5 分钟）**：
+
+1. **写对 `CLAUDE.md`**（5 分钟，必做第一步）— ≤150 行，只放 AI 开口前必须知道的事
+2. **加 `SessionStart` Hook**（3 分钟）— 自动注入 git 状态，不再重复回答"我在哪个分支"
+3. **封装第一个 Skill**（5 分钟）— 重复执行 ≥3 次的工作流
+4. **接一个低风险 MCP**（3 分钟）— 如 GitHub，每 Agent 限 3-5 个
+5. **创建第一个 Sub-agent**（5 分钟）— 只读 code-reviewer，独立上下文
+
+**核心原则**：
+- **规则放 `CLAUDE.md`，工作流放 Skill** — CLAUDE.md 是操作系统（每字每回合付 token），Skill 是按需加载的工具书
+- **Hooks 是硬护栏，不是 AI** — 退出码 2 直接阻断工具调用
+- **每 Agent 限 3-5 个 MCP** — 超过此阈值工具选择质量显著下降
+
+**判断下一步的口诀**：
+```
+Agent 犯了错？→ 把修复写进 CLAUDE.md
+需要操作外部系统？→ 加 MCP
+需要硬护栏？→ 加 Hook
+任务复杂到需要分工？→ 加 Sub-agent
+```
+
+**与本项目衔接**：
+- `docs/QUICK-START.md` §Harness 渐进式搭建
+- 与 BP-046（Karpathy 规则）配合：四原则是"做什么"，Harness 是"用什么工具做"
+
+**案例引用**: 同样的 Claude Opus 4.5 模型，裸跑成功率 20%，套上完整 Harness 后成功率 100%（验证循环多花 $191，但每次后续对话自动对齐约定）。
+
+**标签**: #harness #setup #best-practice [VERIFIED]
+
+---
+
+### BP-050: Skill 发布质量四阶梯——从"能用"到"能发布"
+
+**来源**: 鲁班 Skill 发布标准 / claude-fable-5 生态 / luban-skill 项目实践
+
+**核心问题**: 封装好的 Skill 自己用没问题，但一发给别人或上传到 Skill 市场就"跑不起来"。原因不是 Skill 逻辑错了，而是**在发布链路上的用户体验断裂**。四阶梯是诊断断在哪一级的框架。
+
+**四阶梯（每一级都有对应的"坎"）**：
+
+```
+① 能用（自己电脑跑通）
+  ↓ 坎：别人看不懂你在解决什么问题
+② 看懂（阅读者理解价值）
+  ↓ 坎：不知道为什么要装、安装步骤不明确
+③ 愿意安装（安装路径摩擦低）
+  ↓ 坎：装上了，但第一次触发跑不出闭环
+④ 三分钟跑出闭环（首次体验成功）
+```
+
+**横向自检清单（6 维度）**：
+
+| 维度 | 检查项 | 常见缺陷 |
+|------|-------|---------|
+| **命名钩子** | 触发词是否贴近真实用户语境？ | 触发词是技术术语，用户想不到 |
+| **首屏信任** | README 首屏是否有可截图的真实输出样例？ | 只有代码，没有"它能做什么"的直观展示 |
+| **安装摩擦** | 安装路径是否 ≤2 步？ | 5步配置，中途需要手动改配置文件 |
+| **可验证产物** | 第一次执行是否有明确的"成功标志"？ | 输出是内部 log，用户不知道是否生效 |
+| **安全边界** | 是否说明"不会修改什么/不发外部请求"？ | 用户担心数据安全，不敢安装 |
+| **生态兼容** | 是否测试过 Windows/macOS/Linux 三平台？ | 只在 macOS 上跑过，Windows 路径问题崩溃 |
+
+**纵向诊断框架（卡在哪级就补哪级）**：
+- 卡在①→② — 补 README 价值主张（一句话说清"它能解决你的什么问题"）
+- 卡在②→③ — 补安装步骤（用 `npx skills add` 一行命令代替手动操作）
+- 卡在③→④ — 补"首次体验成功场景"（提供一个 3 分钟跑出结果的 demo 输入）
+
+**Darwin 评分铁律**：
+9 维度评分中，"实测表现"（有没有真实测试 prompt + 前后对比截图）权重最高。一个有真实测试记录的 Skill 胜过一个逻辑完整但没有实测的 Skill。
+
+**与本项目衔接**：
+- 本条目是 BP-048（SkillOpt 六阶段管线）的"发布阶段"补充，覆盖了 Validation Gate 之后的用户体验链路
+- `skill-creator` SKILL.md Step 6 自检清单已新增"发布质量"维度（当对外分享时触发）
+- 参见 `docs/SKILLS-CATALOG.md` §Skill发布质量四阶梯
+
+**案例引用**: 多个 Skill 卡在"③→④"坎——`npx skills add` 安装成功但触发词不对，用户发现不了，导致弃用率高。解决方案：在 README 首屏加"快速验证：输入 `/skill-name` 看到 XX 输出即说明成功"。
+
+**标签**: #skill-publish #quality #user-experience [VERIFIED]
+
+---
+
+### BP-051: 任务偏差根因六分类（R1-R6）——规范进化的合法依据
+
+**来源**: [wucn/AIDistillation](https://github.com/wucn/AIDistillation/tree/main) 任务复盘进化框架
+
+**核心问题**: 任务完成后发现偏差，习惯性地"补规则"——无论根因是代码 bug、网络问题还是真正的规范缺失，都往 CLAUDE.md 塞条目。结果规范越来越臃肿，真正缺的规则反而淹没在噪声里。**正确做法：先归因，后决定是否改规范。**
+
+**六分类（R1-R6）**：
+
+| 类型 | 含义 | 触发动作 | 触发规范进化？ |
+|------|------|---------|-------------|
+| **R1** 规范缺失 | 该情况从未有对应约定 | 补充 Skill / 规则 | ✅ |
+| **R2** 规范冗余 | 规则过多互相矛盾，或细节到无法遵守 | 精简 / 合并 | ✅ |
+| **R3** 规范过时 | 工具 / 环境已变，规则未更新 | 同步更新，旧版加废弃标记 | ✅ |
+| **R4** Review 漏洞 | 检查清单不完整，问题流出 | 补 review 清单项 | ✅ |
+| **R5** 代码 bug | 逻辑错误，与规范无关 | 修代码 | ❌ 不动规范 |
+| **R6** 外部因素 | 网络/API/第三方变更 | 记录存档 | ❌ 不一定改 |
+
+**铁律**：R5/R6 不触发规范进化，R1-R4 才是补规则的合法依据。
+
+**执行流程（完成任务后五步）**：
+1. 收集基线：方案 + 相关 Skill + 实际结果
+2. 对照复盘：实际 vs 预期（哪里偏了？）
+3. **根因分析（核心）**：把偏差归入 R1-R6
+4. 规范体检：归因为 R1-R4 → 进入进化流程；R5/R6 → 记录存档
+5. 用户确认后执行，写入 ADR（Architecture Decision Record）
+
+**与本项目衔接**：
+- CLAUDE.md §八"规则增长策略"新增 R1-R6 表格，作为事故驱动规则增长的操作手册
+- 与 BP-037（事故驱动增长）互补：BP-037 说"什么时候加规则"，BP-051 说"判断是否该加规则的方法"
+- 与 SkillOpt BP-048 互补：BP-048 管 Skill 优化周期，BP-051 管单次任务偏差归因
+
+**返工自动升级规则**（来自同框架）：同一处修改 ≥2 次，自动升级为 D2 检查项，反查规范本身——往往是 R1（缺约定）或 R2（规则矛盾）的信号。
+
+**案例引用**: AIDistillation 项目收录 8000+ 商业问题诊断经验，发现 99.1% 的问题是"问题本身错了"——根因归因的同一逻辑：先确认你在解决正确的问题，再解决问题。
+
+**标签**: #rule-evolution #root-cause #incident-driven [VERIFIED]

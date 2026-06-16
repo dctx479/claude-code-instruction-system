@@ -29,6 +29,47 @@
 | **literature-mentor** | 文献深度解读，交互/报告双模式 | `解读这篇论文`, `生成精读报告` |
 | **paper-revision** | 论文风格修改，技术准确性保持，英文 Nature 标准润色 | `修改论文风格`, `英文润色`, `nature-polish` |
 
+### 学术 PPT 一源多产链
+
+> 来源：[ycjcl/claude-skills-ppt](https://github.com/ycjcl/claude-skills-ppt)。把同一篇论文生产不同格式的展示物，体现「一源多产」Skill 组合范式。
+
+| Skill | 产物 | 与本项目的衔接 |
+|-------|------|--------------|
+| **paper-slides** | 论文 → 会议演讲 PPT（Beamer/.pptx + 口播脚本，按时长分配页数） | 适合 `paper-writing-assistant` 输出后调用；20 分/45 分/10 分版本自动切换 |
+| **paper-poster** | 论文 → A0/A1 海报（tcbposter LaTeX + 可编辑 .pptx + SVG 矢量） | 会议 poster session；视觉动线设计自动对齐 |
+| **paper-slide-deck** | 论文图表 → 单张幻灯片图像（1920×1080 视觉一致） | 公众号 / 小红书 / 推特论文图解 |
+| **slides-polish** | 已有 PPT → 逐页改完的新版本（字号/配色/对齐/错别字） | 适合任何 `/autopilot` 生成的 PPT 后处理 |
+| **pptx-generation** | 数据/大纲/一句话需求 → 原生 .pptx（python-pptx，非图片） | 科研组会汇报；从 Excel 数据直出 PPT |
+
+**组合串联**：`paper-writing-assistant` 输出论文 → `paper-slides`（演讲）→ `paper-poster`（海报）→ `paper-slide-deck`（公众号图解）→ `slides-polish`（精修）。
+
+**注意**：本段 Skills 在 Claude Code 生态中是第三方社区项目，按需安装，不在项目默认 Skill 路径内。
+
+---
+
+### Supervisor-Skills — AI 博导经验包（HKUST）
+
+> 来源：[HKUSTDial/Supervisor-Skills](https://github.com/HKUSTDial/Supervisor-Skills)。香港科技大学研究组将博导十年科研经验结构化为可执行 Skill，覆盖计算机/数据科学方向论文全生命周期。
+
+**双轨架构**：
+- **理论指南**：选题、实验设计、写作、related work、投稿方法论（基于顶会实战）
+- **可执行 Skills**：对应科研流程每个环节的结构化 Prompt，直接导入 Claude / GPT-4
+
+**核心亮点 — AI Pre-Review（投稿前模拟审稿）**：提交前模拟顶会 reviewer 视角审一遍论文，识别"明显硬伤"（motivation 逻辑断裂 / 缺关键 baseline / contribution 表述模糊），在提交前拿到一版反馈。**定位**：初筛工具，不能替代真实审稿人的主观判断；用来发现结构性缺陷而非创造性评价。
+
+**Vibe Research 理念**：让 AI 承担科研流程中耗时但低创造力的环节（文献搜索、related work 整理、实验参数检查、引用格式化），研究者把精力集中在"提好问题、做正确判断"上。与本项目 `Vibe Researching` 理念（§十科研支持系统）完全吻合。
+
+**与本项目衔接**：
+
+| 场景 | Supervisor-Skills | 本项目对应 Agent/Skill |
+|------|-------------------|-----------------------|
+| 论文写作 | 写作指南 + 风格 Skill | `paper-writing-assistant` |
+| 文献综述 | literature review Skill | `literature-manager` |
+| 实验记录 | 实验设计指南 | `experiment-logger` |
+| **投稿前审查** | **AI Pre-Review** | ⬅ 本项目缺口，补充来源 |
+
+**适用范围**：计算机、数据科学、AI 方向研究生；其他学科范式差异大，谨慎参考。
+
 ---
 
 ## AI 视频创作 Skills
@@ -70,7 +111,75 @@
 - ❌ 一次性任务（如"把这 10 个文件重命名"）
 - ❌ 高度上下文依赖（每次执行都要结合当时具体情况判断）
 - ❌ 规则还在快速变化中（先稳定规则，再封装）
-| **spec-first** | 完整 QA 工作流编排器，串联 spec-writer→开发→qa-reviewer→qa-fixer | `/spec-first`, `先写规范再开发`, `需要质量保障` |
+
+### Skill 优化六阶段管线（SkillOpt 借鉴）
+
+> 来源参考：微软研究院 SkillOpt（`https://github.com/microsoft/SkillOpt`）。把"改 Skill.md → 跑跑看 → 好就算了"的手感式优化，转成可验证的多轮循环。
+
+| 阶段 | 做法 | 对应项目动作 |
+|------|------|-------------|
+| ① Rollout | 用当前 Skill 跑一批任务，收集执行轨迹与得分 | 调用 `/reflection` 或 `/qa-reviewer` 跑测试 prompt |
+| ② 反思分析 | 由独立优化模型分析轨迹，找出"哪段 Skill 文档导致了错误" | 让 qa-reviewer 单独看 Skill 文本（与 maker 上下文隔离） |
+| ③ 生成补丁 | 基于反思生成针对性文本编辑（增/删/替换段落） | 只改与失败模式直接相关的段落，避免顺手翻新 |
+| ④ 合并 | 多条补丁合并成候选 Skill 文档 | 一次只保留一个主要方向的改动 |
+| ⑤ 排序筛选 | 编辑数超预算时按优先级保留最重要的几条 | 砍掉"看起来不错但无验证证据"的修饰 |
+| ⑥ 验证门控 | 候选 Skill 在 held-out 验证集跑分，严格优于当前版本才接受 | 通过 `bash scripts/test-integrations.sh` 或自建 eval 集验证 |
+
+**两条铁律**（从 SkillOpt 实验结果提炼）：
+- **每次只改一个变量**：这一轮只修触发词，就不要顺手重写 README；否则归因不到改动效果
+- **候选必须过验证门**：在验证集上得分未严格优于当前 Skill 的修改一律丢弃，不靠主观判断
+
+**与现有 Skill 的衔接**：`/skill-creator`（首次封装）→ 实际使用若干次 → `/reflection` 收集失败 → 按本表六阶段优化 → 提交新版本。
+
+### Skill 发布质量四阶梯（从"能用"到"能发布"）
+
+> 来源：鲁班 Skill（claude-fable-5 提炼，github.com/LearnPrompt/luban-skill）。填补了 SkillOpt 管线的前置诊断环节：改之前先判断问题出在哪层。
+
+**核心认知**：能用 ≠ 能发布。中间隔着三道坎：
+
+```
+① 能用（自己电脑跑通）
+  ↓  坎：别人看不懂你在解决什么问题
+② 看懂（阅读者理解价值）
+  ↓  坎：不知道为什么要装、用什么触发
+③ 愿意安装（安装路径摩擦低）
+  ↓  坎：装上了不知道怎么用、跑不出效果
+④ 三分钟跑出闭环（首次体验成功）
+```
+
+**横向检查清单**（对照同类 Skill，找差距）：
+
+| 维度 | 健康信号 | 常见缺陷 |
+|------|---------|---------|
+| **命名钩子** | 名字有记忆点，一听就知道解决什么 | 名字泛化（"research-tool"、"helper"） |
+| **首屏信任** | README 首屏有 GIF/截图/真实数据/徽章 | 第一眼看到的是文字墙 |
+| **安装摩擦** | 一条命令能装，前置条件 ≤2 个 | 需要配置 5 个环境变量才能跑 |
+| **可验证产物** | 跑完有"看得见"的输出（HTML/PDF/diff/报告） | 输出是一段文字，无法截图展示 |
+| **安全边界** | 明确声明"不会乱删 / 不发外部请求" | 没有说明会不会修改文件 |
+| **生态兼容** | 兼容 ≥2 个 Agent runtime | 只在自己的配置下跑通 |
+
+**纵向诊断**（判断下一版该往哪演进）：
+
+- 它最初解决什么痛点？现在还是同一个吗？
+- 它是工具、方法论、工作流，还是展示效果？
+- 从"私用"变"公开可用"还差哪一步？
+- 下一版优先方向：更强功能 / 更好展示 / 更稳安装 / 更通用适配？
+
+**与 SkillOpt 管线的位置关系**：
+
+```
+横纵诊断（判断生态位）
+    ↓
+Darwin 评分（9 维度，实测表现权重最高）
+    ↓
+确定当轮改哪一个主要方向（单变量原则）
+    ↓
+SkillOpt 六阶段管线（候选→验证门）
+    ↓
+提交新版本
+```
+
+**评分铁律**：`实测表现`（有没有真实测试 prompt + 前后对比）权重最高。写得再漂亮，没有实测样例的 Skill 在 Darwin 评分里永远不算完成。
 | **pr-prep** | PR 提交前五步检查仪式，确保每个 PR 一次通过 Review | `/pr-prep`, `准备提 PR`, `PR 检查清单` |
 | **task-decompose** | 任务分解器，三层拆解（Epic→Story→Task）+ 依赖图 + 并行化建议 | `/task-decompose`, `任务拆解`, `需求分解` |
 | **sdd-riper** | Spec-Driven Development + RIPER 五阶段流程，中大型需求（>500行/3+文件） | `/riper`, `/sdd-riper`, `中大型需求开发` |
@@ -159,6 +268,22 @@ claude /plugin install agent-browser
 
 ---
 
+## 移动端与 IM 接入 Skills
+
+### WeChat Claude Code — 微信→CLI 桥接
+
+> 来源：[Wechat-ggGitHub/wechat-claude-code](https://github.com/Wechat-ggGitHub/wechat-claude-code)
+
+| 维度 | 说明 |
+|------|------|
+| **核心能力** | 微信扫码绑定后，微信消息直通本地 Claude Code CLI；双向文件收发；5 分钟超时安抚话术；消息队列顺序处理 |
+| **关键设计** | **CLI 模式而非 SDK 模式**——与项目 `/ralph` / `/autopilot` 完全兼容，体验与桌面端一致 |
+| **适用场景** | 外出时从手机发起长任务 / 移动端远程触发本地 Agent / 不带电脑时继续工作 |
+| **已知限制** | 电脑休眠会中断会话；并发消息排队；暂不支持"接着上次聊" |
+| **演进方向** | 可作为 `/ralph` 移动端入口（触发 → 挂后台 → 完成后微信推送） |
+
+---
+
 ## claude-scientific-skills（140+ 科研技能）
 
 来源: [K-Dense-AI/claude-scientific-skills](https://github.com/K-Dense-AI/claude-scientific-skills)
@@ -172,6 +297,10 @@ claude /plugin install agent-browser
 | Interpretability | SHAP、LIME、Captum、Fairlearn |
 | Data Analysis | pandas、numpy、matplotlib、plotly |
 | Python Packages (55+) | PyTorch、scikit-learn、TensorFlow |
+
+**补充 — 中文文献科研工具链**：
+
+- **CNKI Research Toolkit**（来源：[okclaw/cnki-skills](https://github.com/okclaw/cnki-skills)）— 知网全流程自动化：关键词检索 / 高级筛选（年份/CSSCI/北大核心）/ 摘要提取 / PDF & CAJ 下载 / GB/T 7714 引用导出 / Zotero 导入 / 期刊收录与影响因子查询。适合中文文献综述、课题申报、投稿前期刊调研。需配合 OKClaw 浏览器插件使用；需登录知网账号，下载权限取决于机构订阅。
 
 ---
 
