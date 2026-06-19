@@ -229,7 +229,7 @@ Windows 用户配置详见 [docs/CONFIG-FILES-GUIDE.md](docs/CONFIG-FILES-GUIDE.
 | [docs/QUICK-START.md](docs/QUICK-START.md) | 新手入门指南 |
 | [docs/CONFIG-FILES-GUIDE.md](docs/CONFIG-FILES-GUIDE.md) | 配置文件完整说明 |
 | [docs/ORCHESTRATION-GUIDE.md](docs/ORCHESTRATION-GUIDE.md) | 编排系统与策略 |
-| [docs/SKILLS-CATALOG.md](docs/SKILLS-CATALOG.md) | 140+ Skills 目录 |
+| [docs/SKILLS-CATALOG.md](docs/SKILLS-CATALOG.md) | 58 Skills 目录 |
 | [docs/MEMORY-SYSTEM.md](docs/MEMORY-SYSTEM.md) | 多层记忆架构 |
 | [docs/audits/INDEX.md](docs/audits/INDEX.md) | 历次配置/知识盘点审计报告 |
 | [docs/hud/HUD-STATUSLINE-GUIDE.md](docs/hud/HUD-STATUSLINE-GUIDE.md) | HUD 状态栏配置 |

@@ -214,3 +214,4 @@ PR Prep Report — feat/my-feature → main
 - **code-reviewer**: PR Prep 完成后可调用进行深度代码审查
 - **sdd-riper**: 规范驱动开发流程的最后一步
 - **spec-first**: QA 流程的收尾环节
+- **ai-pr-review**（Step 3.5 互补）: 本 Skill 管"PR 提交前仪式"（检查清单 + 描述生成），`ai-pr-review` 管"AI 时代 Review 策略"（风险分层 + Human-on-the-loop + 意图恢复）。详见 `memory/best-practices.md` BP-052/053。

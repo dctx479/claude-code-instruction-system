@@ -32,6 +32,7 @@
 | spec-first | QA 工作流编排：spec-writer→开发→qa-reviewer→qa-fixer | spec-first/ | spec-writer, qa-reviewer, qa-fixer |
 | task-decompose | 任务分解器，三层拆解 + 依赖图 + 并行化建议 | task-decompose/ | — |
 | pr-prep | PR 提交前五步检查仪式 | pr-prep/ | code-reviewer |
+| ai-pr-review | AI 时代 PR Review 策略器——按风险分层 + 5 条规则 + Human-on-the-loop 协议 | ai-pr-review/ | code-reviewer |
 | parallel-explore | Git Worktree 多方案并行实现 + 标准化评估 | parallel-explore/ | — |
 | collaborating-with-codex | 多模型协作，后台调用 Codex CLI 并行实现 | collaborating-with-codex/ | — |
 | collaborating-with-gemini | 多模型协作，利用 Gemini 超长上下文窗口 | collaborating-with-gemini/ | — |
@@ -51,6 +52,8 @@
 | Skill | 描述 | 路径 | 协作 Agent |
 |-------|------|------|-----------|
 | vision-builder | 模糊需求→清晰愿景文档（5W1H + SMART） | vision-builder/ | architect |
+| brainstorming | PM 头脑风暴——4 模式（问题探索/方案发散/假设验证/策略探索）+ 4 框架（HMW/JTBD/SCAMPER/OODA）+ 5 步会话结构 | brainstorming/ | vision-builder, demand-detective, plan-review |
+| demand-detective | 业务需求前置澄清器——一句话需求 → A/B 决策题清单 + 分级任务单 | demand-detective/ | spec-writer, spec-first |
 | plan-review | 计划 10 维度评估，识别风险和改进点 | plan-review/ | — |
 | hv-analysis-enhanced | 增强版横纵分析法，延迟收敛式多视角决策支持 | hv-analysis-enhanced/ | vision-builder, plan-review, architect |
 

@@ -305,7 +305,21 @@ Intent Detector (UserPromptSubmit Hook) 在每次用户消息提交时自动运�
 
 **规则放置优先级**：新增规则优先挂靠现有模块（`CLAUDE.md` / `.claude/reference/` / `.claude/prompts/` / 对应 `SKILL.md`），避免跨层重复定义同一规则。
 
-> 完整 Skills 目录（研究/视频/前端/科研 140+）及触发词、组合模式: `docs/SKILLS-CATALOG.md`
+> 完整 Skills 目录（**58 个 Skills**）及触发词、组合模式: `docs/SKILLS-CATALOG.md`
+
+### 必读 Skills（项目核心流程链）
+
+三个 Skills 构成项目核心流程链，**所有会话默认熟悉**：
+
+| Skill | 角色 | 何时必读 | 配合 BP |
+|-------|------|---------|---------|
+| **brainstorming** | 发散探索 + 思考伙伴 | PM 探索 / "想不清楚" / "一起想想" | BP-055 |
+| **demand-detective** | 业务决策清单 + A/B 决策 | 一句话需求 / "做个 X 功能" | — |
+| **ai-pr-review** | Review 策略 + Human-on-the-loop | Agent 写完 PR / Review 阶段 | BP-052/053 |
+
+**典型链路**：`brainstorming`（发散收敛方向）→ `demand-detective`（挖业务决策）→ `spec-first` → 开发 → `ai-pr-review`（Review）→ `pr-prep`（提 PR）。
+
+> 与 `pr-prep` 的关系：BP-052/053 与 pr-prep Step 3.5 **双向互补**——前者负责 AI 时代策略，后者负责流程仪式。
 
 ---
 
@@ -410,6 +424,87 @@ python scripts/port-manager.py conflicts / suggest <service>
 - **/compact 之前 / 关闭窗口之前**：调用 `/neat` 执行三层知识同步（docs/CLAUDE.md/memory），防止跨会话失同步
 
 > 详细指南: `docs/CONTEXT-ENGINEERING-GUIDE.md`
+
+---
+
+## 六.七、知识资产稀缺性原则 — "写代码便宜了，理解还是原价格"
+
+> **核心命题**：Agent 写代码的速度按月涨，人眼读代码的速度还是老样子。瓶颈从「写」挪到了「验证」。未来两三年跑赢的不是生成代码最多的团队，是**建了一套自己敢信的 Review + 知识系统的团队**。
+
+### 三层判断框架
+
+在任何「用 AI 干活」的场景，先回答三个问题：
+
+**1. 爆炸半径（blast radius）**
+- 一端：挂了没人疼（solo side project / 内部 demo）
+- 另一端：挂了用户、钱、个人敏感信息全在线上
+
+**2. 代码寿命**
+- 一端：下周可能重写（PoC / 一次性脚本）
+- 另一端：维护十年（支付/合规/核心数据）
+
+**3. 接手难度**
+- 一端：只有你懂
+- 另一端：整个团队要接力同一坨 diff
+
+跑完这三条，**「好的 Review」「好的文档」「好的测试」含义完全不同**。把企业的多 Agent 证据链硬套两人原型，纯添摩擦；在支付系统上搞"测试绿了就行"，等于造事故生成器。
+
+### 四条核心约束
+
+**约束 1：意图显式化（Intent Must Be External）**
+- 人写代码，意图在作者脑子里；Agent 写代码，**意图在推理链里**——但 diff 生成完，推理通常就扔了
+- **强制**：PR 必须带变更目的 + 关键决策日志（"为什么用 X 不用 Y"）+ 测试证据 + 未验证项声明
+- 详见 `memory/best-practices.md` BP-053 + `.claude/skills/ai-pr-review/SKILL.md`
+
+**约束 2：风险分层（Not All Diffs Are Equal）**
+- 样板代码 / 通用业务 / 核心交易路径 投入的 Review 工时相差 100 倍
+- **强制**：PR 显式标 P0/P1/P2，Reviewer 按档位抽检
+- 详见 `memory/best-practices.md` BP-052 + `.claude/skills/ai-pr-review/SKILL.md` §核心方法论
+
+**约束 3：人类拥有合并按钮（Human on the Loop）**
+- AI Review 是传感器不是判决，模型不能被叫醒也不能为上线背锅
+- **强制**：Owner 字段必填 / 合并后 24h 强监控 / 禁止"AI 都说好了"作为合并理由
+- 详见 `.claude/skills/ai-pr-review/SKILL.md` §Human-on-the-loop 协议
+
+**约束 4：验证纪律独立于生成速度**
+- Agent 出 PR 的速度按月涨，验证纪律**不能**同步降速
+- **强制**：单 PR ≤400 行 / 测试变更占比 > 40% 自动警告 / 合并前必须有人深读 P0
+- 详见 `.claude/skills/ai-pr-review/SKILL.md` §5 条 Review 规则
+
+### 与现有体系的衔接
+
+| 体系 | 体现 | 落地文件 |
+|------|------|---------|
+| **自进化协议** §一 | "证明"从副业变主业，复杂任务完成必走 /neat 同步三层 | `memory/best-practices.md` BP-052/053/055/056/057 |
+| **质量保障系统** §三 | Spec-First + qa-reviewer 在 AI 时代更关键 | `agents/qa-reviewer.md` + `.claude/skills/spec-first/` |
+| **Skills 系统** §四 | 流程编排决定"做什么"，模型编排决定"怎么用模型"（多模型 Fusion 模式） | `docs/TOOLS-ECOSYSTEM-GUIDE.md` §九 + `memory/best-practices.md` BP-056 |
+| **上下文工程** §六.五 | 知识资产 = 高 SNR 的内容，不是更多信息 | 本节 + BP-027 季度审计 |
+| **Karpathy 规则** §六.六 | "想清楚再写"在 AI 时代 = "想清楚再提 PR" | `memory/best-practices.md` BP-046 |
+| **自主决策授权** §七 | P0 改动修复策略需确认（爆炸半径高） | 本节约束 3 |
+| **进化指令** §八 | R1-R4 才触发规范进化，事故驱动 | `memory/best-practices.md` BP-051 |
+
+### 反模式（黑名单）
+
+- ❌ 用「企业级 Review 标准」绑架 solo side project（添摩擦）
+- ❌ 用「solo 速度」处理 P0 核心改动（造事故）
+- ❌ 拿「AI 都说好了」当合并理由（违反约束 3）
+- ❌ 拿「测试都过了」当敢合理由（违反约束 1+2）
+- ❌ 用「看起来差不多了」替代显式决策日志（违反约束 1）
+- ❌ 让 Agent 看到测试集反馈后再调参（违反 BP-054 样本隔离）
+
+### 量化指标（月度自检）
+
+| 指标 | 红色阈值 | 依据 |
+|------|---------|------|
+| 零 Review 合并率 | > 20% | Faros AI 2026 报告 |
+| 单 PR > 400 行占比 | > 30% | BP-052 规则 3 |
+| 测试代码变更 > 40% 的 PR 占比 | > 10% | BP-052 规则 4 |
+| Owner 字段缺失率 | > 5% | BP-052 规则 5 |
+| 验证集改善 / 测试集改善 | 比值 > 2 | BP-054 样本隔离 |
+| Skill 激活率 | < 50% | BP-027 知识资产审计 |
+| Spec 复用率 | < 30% | BP-027 知识资产审计 |
+
+> 完整论据与数据：见 `memory/best-practices.md` BP-052 ~ BP-057 + `.claude/skills/ai-pr-review/SKILL.md` + `.claude/skills/brainstorming/SKILL.md`（PM 探索层，BP-055 黑名单）
 
 ---
 
@@ -677,6 +772,7 @@ value=$(echo "$JSON" | jq -r '.field' 2>/dev/null || echo "default")
 | 用户想深度追问一个问题 / 伴读文章 / 多视角圆桌讨论 | **ljg-skills** | `npx skills add https://github.com/lijigang/ljg-skills --all` |
 | 用户想蒸馏某人/某书的思维框架变成可用顾问 | **nuwa-skill** | `npx skills add https://github.com/alchaincyf/nuwa-skill` |
 | 用户是 CS/AI 研究生 / 需要投稿前 AI 模拟审稿 | **Supervisor-Skills** | 参见 [HKUSTDial/Supervisor-Skills](https://github.com/HKUSTDial/Supervisor-Skills) README 安装 |
+| 团队级 Agent 部署 / 敏感数据 / 成本敏感 / 询问多模型 Fusion | **agentfw（本地 Fusion）** | `git clone https://github.com/openguardrails/agentfw`（详见 `docs/TOOLS-ECOSYSTEM-GUIDE.md` §九） |
 
 ### 推荐流程
 

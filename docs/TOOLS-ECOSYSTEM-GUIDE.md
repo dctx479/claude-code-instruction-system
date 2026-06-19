@@ -16,6 +16,7 @@
 | **RTK** | Token 优化 | 额外上下文压缩层 | ⭐ 一条命令 | 配合 Context Mode 使用 |
 | **claude-tap** | 可观测性 | API 流量检查 + token 用量分析 | ⭐ 一条命令 | 用户询问 token 成本/API 细节 |
 | **Knowledge Work Plugins** | 插件生态 | Anthropic 官方 20+ 职业角色 | ⭐ 一条命令 | 用户需要特定职业角色辅助 |
+| **agentfw** | 模型编排 | 本地多模型 Fusion（Qwen3.6 + Kimi K2.6 + DeepSeek V4），逼近前沿模型水平且成本减半 | ⭐⭐ 仓库安装 | 团队级 Agent 部署 / 敏感数据 / 成本敏感 |
 | **Flue Framework** | Agent 框架 | 轻量 TS Agent 脚手架 + SSE | ⭐⭐ 项目初始化 | 用户构建 TypeScript Agent |
 | **SSH Skill** | 基础设施 | 企业 SSH 长连接 + 大文件传输 | ⭐ 一条命令 | 用户需要连接多台服务器 |
 | **System Cleaner** | 运维工具 | 桌面清理 + 安全分级 + HTML 报告 | ⭐ 一条命令 | 用户想清理磁盘/查找大文件 |
@@ -804,6 +805,105 @@ cat ~/.claude/intent-state.json | python -c "import json, sys; d=json.load(sys.s
 | Flue Framework | 检查 `.claude/skills/` 目录 | 存在 flue-framework 相关文件 |
 | System Cleaner | 检查 `.claude/skills/` 目录 | 存在相关文件 |
 | Knowledge Work Plugins | `claude plugin list` | 列表中包含已安装插件 |
+| agentfw | `agentfw --version` 或检查 `~/.agentfw/` 目录 | 输出版本号或目录存在 |
+
+---
+
+## 九、多模型 Fusion（编排层）
+
+> 单模型不是终点。多模型并行 + 融合裁决 在 DRACO 基准上能稳定逼近甚至超过前沿单模型，且成本更低。本章给**本地 Fusion** 方案（云端 Fusion 见 OpenRouter Fusion，本项目不直接集成）。
+
+### 9.1 概念：什么是 Fusion
+
+```
+                  ┌─ Model A (Qwen3.6)   ─┐
+                  ├─ Model B (Kimi K2.6)  ─┤──→ [本地 Judge] ──→ [Synthesizer] ──→ 融合答案
+                  └─ Model C (DeepSeek V4)─┘
+```
+
+- **并行分发**：同一个 prompt 同时发给多个异质模型
+- **冲突分析**：本地 Judge 对答案交叉检查（共识/冲突/遗漏）
+- **融合裁决**：Synthesizer 统一答案
+- **可审计**：所有调用轨迹本地存储
+
+### 9.2 agentfw：本地 AI Agent Firewall
+
+**项目**: [openguardrails/agentfw](https://github.com/openguardrails/agentfw)
+
+**定位**: 本地 AI agent firewall，**站在 agent 和模型服务之间**。看到请求、路由模型、保护敏感信息，并在本地对 agent 的模型调用做编排。Fusion 是其能力之一。
+
+**为什么选本地 Fusion 而不是 OpenRouter Fusion**：
+- 模型可换、供应商可换、路由策略可改
+- 敏感信息在本地先被处理（合规）
+- 所有调用路径有迹可查（审计）
+- 无需 GPU 训练（与 SkillEvolver 思路一致）
+
+**核心特性**：
+- 在 agent 和模型服务之间作为统一接入层
+- 路由策略可配置（按任务/成本/风险切分）
+- 敏感信息保护（输入先过脱敏/规则引擎）
+- 完整调用轨迹（每个 prompt/response 落地）
+
+#### 安装
+
+```bash
+# 1. 克隆仓库
+git clone https://github.com/openguardrails/agentfw
+cd agentfw
+
+# 2. 按项目 README 安装依赖
+# （具体命令随版本变化，以仓库 README 为准）
+```
+
+#### 推荐 Fusion 阵容
+
+| 模型 | 强项 | 角色 |
+|------|------|------|
+| **Qwen3.6** | 稳定输出、结构化、多模态 | 整合输出 |
+| **Kimi K2.6** | 代码、长上下文、中文理解、复杂文档 | 信息消化 |
+| **DeepSeek V4 Pro** | 推理、问题拆解、低成本高强度思考 | 推理核心 |
+
+**关键数据（OpenRouter DRACO 2026 实测）**：
+- Claude Fable 5 单跑：65.3%
+- Gemini 3 Flash + Kimi K2.6 + DeepSeek V4 Pro Fusion：64.7%（**仅差 0.6 个百分点，成本约 1/2**）
+- Opus 4.8 自融合：58.8% → 65.5%（**+6.7%**）
+
+#### 适用场景
+
+| 场景 | 是否推荐 | 理由 |
+|------|---------|------|
+| 调研/综述 | ✅ 强推 | 多视角覆盖价值高 |
+| 代码 Review | ✅ 强推 | 不同先验抓不同 bug |
+| 方案设计 | ✅ 强推 | 多视角方案对比 |
+| 长文归纳 | ✅ 推荐 | 不同模型归纳重点不同 |
+| 投研摘要 | ✅ 推荐 | 减少单点错误 |
+| 法律条款初筛 | ✅ 推荐 | 减少幻觉 |
+| 短对话/闲聊 | ❌ 不推荐 | Fusion 收益 < 成本 |
+| 实时性极高场景 | ❌ 不推荐 | Fusion 增加延迟 |
+| 关键安全/支付路径 | ⚠️ 慎用 | 升级到前沿模型单跑更稳 |
+
+#### 与本项目协同
+
+- agentfw 作为本地 agent 的"模型编排层"
+- 本项目的 Skills（spec-first、plan-review、ai-pr-review 等）作为"流程编排层"
+- **两层叠加**：流程编排决定做什么，模型编排决定怎么用模型
+
+### 9.3 反模式
+
+- ❌ 把"用 Fusion"当"省钱借口"忽略质量差异
+- ❌ 选 4 个同质模型（= 1 个 Reviewer 4 张发票）
+- ❌ Fusion 后不做冲突分析直接投票
+- ❌ 用 Fusion 处理实时性极高任务（延迟代价 > 质量收益）
+- ❌ 所有任务都走 Fusion（短对话/闲聊 Fusion 收益 < 成本）
+
+### 9.4 主动推荐触发场景
+
+| 检测信号 | 推荐动作 |
+|---------|---------|
+| 用户询问 token 成本/单模型价格 | 介绍 Fusion 节省 + 质量持平 |
+| 用户提到"用平价模型做高质量任务" | 介绍 Fusion 阵容 |
+| 用户问"多模型协作" / "模型路由" | 直接介绍 agentfw |
+| 团队级 Agent 部署 + 敏感数据 | 强推本地 Fusion（agentfw） |
 
 ---
 

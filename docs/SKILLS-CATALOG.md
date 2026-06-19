@@ -181,6 +181,7 @@ SkillOpt 六阶段管线（候选→验证门）
 
 **评分铁律**：`实测表现`（有没有真实测试 prompt + 前后对比）权重最高。写得再漂亮，没有实测样例的 Skill 在 Darwin 评分里永远不算完成。
 | **pr-prep** | PR 提交前五步检查仪式，确保每个 PR 一次通过 Review | `/pr-prep`, `准备提 PR`, `PR 检查清单` |
+| **ai-pr-review** | AI 时代 PR Review 策略器——按风险分层（P0/P1/P2）+ 5 条规则 + Human-on-the-loop 协议，填补 Agent 高速产出 vs 人眼读速度的 Review 端空白 | `/ai-pr-review`, `AI 时代怎么 Review`, `PR 风险分层`, `Agent PR 怎么审` |
 | **task-decompose** | 任务分解器，三层拆解（Epic→Story→Task）+ 依赖图 + 并行化建议 | `/task-decompose`, `任务拆解`, `需求分解` |
 | **sdd-riper** | Spec-Driven Development + RIPER 五阶段流程，中大型需求（>500行/3+文件） | `/riper`, `/sdd-riper`, `中大型需求开发` |
 | **sdd-riper-light** | SDD-RIPER 轻量版，简单任务（<500行/<3文件），快速迭代 | `/riper-light`, `/sdd-light`, `简单 bug 修复` |
@@ -324,7 +325,7 @@ claude /plugin install agent-browser
 | react-best-practices + web-artifacts-builder | 高性能 Web 应用 |
 | prime → 执行 → reflection → neat | 完整会话生命周期（知识不丢失） |
 | handoff → neat → /compact | 上下文压缩前的安全收尾三步 |
-| task-decompose → sdd-riper → pr-prep | 需求到 PR 的完整开发闭环 |
+| task-decompose → sdd-riper → pr-prep → ai-pr-review | 需求到 PR 落地的完整开发闭环（含 AI 时代 Review 策略） |
 | spec-first + code-security-review | 规范驱动开发 + 安全审计双保险 |
 | ctf-reverse + ctf-pwn | 逆向分析 + 漏洞利用联合攻击 |
 | ctf-web + ctf-crypto | Web 漏洞 + 密码学联合 CTF 解题 |
@@ -480,7 +481,7 @@ npx skills experimental_install       # 按锁文件精确还原（等价 npm ci
 | **安全审计** | `code-security-review`（审计规则） | `security-analyst` + `security-audit` | Skill 提供规则库，Agent 执行扫描和报告 |
 | **QA 工作流** | `spec-first`（编排流程） | `spec-writer` + `qa-reviewer` + `qa-fixer` | Skill 串联三个 Agent 的工作 |
 | **需求开发** | `sdd-riper`（五阶段流程） | `sdd-riper-orchestrator` | Skill 定义状态机，Agent 驱动执行 |
-| **代码审查** | `pr-prep`（检查清单） | `code-reviewer` | Skill 做预检，Agent 做深度审查 |
+| **代码审查** | `pr-prep`（提交方预检）+ `ai-pr-review`（Reviewer 策略） | `code-reviewer` | pr-prep 把工程卫生，ai-pr-review 把分层策略与 Human-on-the-loop 协议，code-reviewer 做深度代码审查 |
 | **前端设计** | `frontend-design`（设计规范） | —（无对应 Agent） | 纯 Skill，知识库驱动 |
 | **文献研究** | `literature-mentor`（精读流程） | `literature-manager`（导入分类） | Skill 负责解读，Agent 负责管理 |
 | **会话生命周期** | `prime` → `handoff` → `neat` | —（无对应 Agent） | 纯 Skill，系统仪式 |
@@ -512,7 +513,7 @@ npx skills experimental_install       # 按锁文件精确还原（等价 npm ci
 
 ```
 # 需求阶段增强
-brainstorming → vision-builder → task-decompose
+brainstorming → vision-builder → demand-detective → spec-writer → task-decompose
 
 # 代码审查增强
 karpathy-guidelines + code-reviewer Agent + pr-prep Skill
@@ -532,12 +533,13 @@ handoff → neat → context-compression → /compact
 
 | 阶段 | 可用 Skill | 说明 |
 |------|-----------|------|
-| **需求** | vision-builder, question-refiner | 从模糊需求到清晰目标 |
+| **需求** | vision-builder, brainstorming, demand-detective, question-refiner | 从模糊需求 → 发散探索 → 业务决策 → 清晰目标 |
 | **调研** | deep-research, exa-research, brightdata-research, social-media-research, literature-mentor | 信息收集和分析 |
 | **方案** | plan-review, parallel-explore, spec-writer (Agent) | 方案设计和评审 |
 | **开发** | react-best-practices, web-artifacts-builder, collaborating-with-codex, collaborating-with-gemini | 代码实现 |
 | **测试** | QA 系统 (qa-reviewer + qa-fixer Agent) | 质量验证 |
 | **PR 提交** | pr-prep | 提交前五步检查 |
+| **PR Review 策略** | ai-pr-review | AI 时代按风险分层 + Human-on-the-loop |
 | **Agent 封装** | claude-agent-sdk | Skill → Web SaaS 转换 |
 | **复盘** | reflection | 萃取可复用经验 |
 | **收尾** | neat | 三层知识同步 |
@@ -555,6 +557,8 @@ handoff → neat → context-compression → /compact
 | 研究问题太模糊，不知道从哪里搜 | **question-refiner** | 先精炼查询再调研 |
 | 需要对比多个技术方案 | **parallel-explore** | 独立 worktree 标准化评估 |
 | 需求描述很模糊 | **vision-builder** | 引导式提问输出 VISION.md |
+| 想探索方向、还没收敛 | **brainstorming** | 4 模式 + 4 框架，PM 思考伙伴 |
+| 一句话需求不知道从哪开始（"做个借出功能"） | **demand-detective** | A/B 决策题 + 分级任务单 |
 | 计划写好了想检查漏洞 | **plan-review** | 10 维度评估 |
 | 上下文快满了（>250K tokens） | **handoff** → **neat** → /compact | 安全收尾三步 |
 | 新会话开始不知道上次做到哪了 | **prime** | git 状态 + 记忆检索 |
@@ -562,6 +566,7 @@ handoff → neat → context-compression → /compact
 | 新功能开发想确保质量 | **spec-first** | 规范驱动 QA 闭环 |
 | 需求模糊不知道怎么拆任务 | **task-decompose** | 三层拆解 + 依赖图 |
 | 功能写完准备提 PR | **pr-prep** | 五步检查仪式 |
+| PR 落地后怎么审 / Agent 写的一堆 PR 看不完 | **ai-pr-review** | 风险分层 + 5 条规则 + Human-on-the-loop 协议 |
 | 想把 Skill 对外开放成 Web 服务 | **claude-agent-sdk** | 五步法封装 |
 | Token 烧太快 / 成本太高 | **Context Mode** + **CodeGraph** | 安装后自动压缩，详见 `docs/TOOLS-ECOSYSTEM-GUIDE.md` |
 | 不清楚 API 调用细节 / 想调试 Agent | **claude-tap** | `pip install claude-tap && claude-tap --tap-live` |
