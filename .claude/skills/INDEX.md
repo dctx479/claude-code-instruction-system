@@ -4,7 +4,7 @@
 
 ## 加载协议
 
-1. 读本文件匹配 Skill（~137 行，~1500 tokens）
+1. 读本文件匹配 Skill（~140 行，~1600 tokens）
 2. 按需读取对应 `SKILL.md`（~2K tokens/个）
 3. Heavy 类型 Skill 需要时再读 `REFERENCE.md`
 
@@ -20,7 +20,7 @@
 | prime | 会话预热仪式，git 状态 + 记忆检索 + 状态摘要 | prime/ | — |
 | debug | 结构化调试五步工作流（复现→隔离→假设→验证→防复发） | debug/ | debugger |
 | observability | AI 思维日志，记录推理过程和决策点 | observability/ | context-archivist |
-| handoff | 上下文交接，/compact 前写入进度和下一步 | handoff/ | — |
+| handoff | 上下文交接：compact模式写入 memory/handoff.md；new-window模式生成可复制续接prompt用于开新对话 | handoff/ | — |
 | source-evaluator | 信息源评估器（伯乐），五维度评估学习材料质量 | source-evaluator/ | reflection, neat, literature-mentor |
 
 ## 开发类 (Development)
@@ -76,6 +76,7 @@
 | literature-mentor | 文献深度解读，交互式论文精读 | literature-mentor/ | Zotero |
 | paper-revision | 论文四模式（润色/大纲审核/去AI化/仿写） | paper-revision/ | — |
 | market-insight | 三段式用户画像与产品机会分析 | market-insight/ | — |
+| llm-wiki | 多源内容→结构化 Wiki→静态知识库站点，支持 Quartz 发布和 RAG API | llm-wiki/ | claude-agent-sdk |
 
 ## AI/ML 类 (AI/ML)
 

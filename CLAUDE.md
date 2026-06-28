@@ -305,7 +305,7 @@ Intent Detector (UserPromptSubmit Hook) 在每次用户消息提交时自动运�
 
 **规则放置优先级**：新增规则优先挂靠现有模块（`CLAUDE.md` / `.claude/reference/` / `.claude/prompts/` / 对应 `SKILL.md`），避免跨层重复定义同一规则。
 
-> 完整 Skills 目录（**58 个 Skills**）及触发词、组合模式: `docs/SKILLS-CATALOG.md`
+> 完整 Skills 目录（**59 个 Skills**）及触发词、组合模式: `docs/SKILLS-CATALOG.md`
 
 ### 必读 Skills（项目核心流程链）
 

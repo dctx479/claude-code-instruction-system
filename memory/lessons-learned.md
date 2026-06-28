@@ -1541,3 +1541,46 @@ AI 上下文窗口有限，大批量同质任务（>50 项）逐步压缩早期�
 
 <!-- 新的经验条目将自动添加在这里 -->
 
+## 2026-06-28 经验条目 #compass-handoff
+### 外部 Skill 评估：COMPASS 司南 $session-handoff-prompt
+**问题描述**: 评估 dongshuyan/compass-skills 开源项目的学习价值。
+
+**根因分析**: 原 `/handoff` Skill 只服务 `/compact` 场景（上下文压缩后续接），但用户直接关闭窗口、切换到 Codex/Gemini/新对话窗口的场景没有覆盖。COMPASS 的 `$session-handoff-prompt` 明确针对"开新窗口续接"，填补了这个空白。
+
+**解决方案**: 将 `handoff` v1.0 升级为 v1.1，新增 `new-window` 模式：
+- 输出可复制的结构化续接 prompt（不写文件）
+- 增加置信度标注规范：`[已验证]` / `[推断]` / `[已排除]`
+- 新增触发词："开新窗口继续"、"生成续接 prompt"
+
+**已融入位置**:
+- `.claude/skills/handoff/SKILL.md` v1.1.0
+- `.claude/skills/INDEX.md` 更新描述
+
+**验证方法**: 用户说"帮我生成续接 prompt 给新窗口" → 触发 new-window 模式 → 输出带置信度标注的 40 行内可复制 prompt。
+
+**案例引用**: COMPASS 司南 github.com/dongshuyan/compass-skills，2026-06-28 评估
+
+**标签**: #skill-upgrade #handoff #context-engineering #session-management
+
+## 2026-06-28 经验条目 #llm-wiki
+### 新增 Skill：多源内容→结构化 Wiki→静态知识库站点
+**问题描述**: 评估 liangdabiao/llm-wiki + Karpathy llm-wiki 方法论的学习价值，确认项目中无现有 Skill 覆盖「内容摄入→结构化 Wiki→可发布站点」全链路。
+
+**根因分析**: 原有 Skills 中 `deep-research` 产出调研报告、`literature-mentor` 产出文献解读，但两者的输出都是一次性文档，无法自动组织成可检索、可发布、可 API 化的知识库。`llm-wiki` 填补了这条链路的末端：将散落的素材结构化存档并对外发布。
+
+**核心设计决策**:
+- 四阶段流程：Ingest → Structure → Organize → Publish
+- 三种输出模式：`wiki`（仅 Markdown）/ `site`（Quartz 静态站）/ `api`（claude-agent-sdk RAG）
+- 标签体系从内容归纳，不预设分类（避免强套 taxonomy）
+- ≥20 条素材时先出清单让用户确认范围，分批处理
+
+**已融入位置**:
+- `.claude/skills/llm-wiki/SKILL.md` v1.0.0（新建）
+- `.claude/skills/INDEX.md` 研究类新增一行
+
+**验证方法**: 用户说「把阮一峰周报整理成知识库」→ 触发 llm-wiki → 四阶段流程输出 `wiki/index.md` + 分类条目树。
+
+**案例引用**: github.com/liangdabiao/llm-wiki + Karpathy llm-wiki 方法论，2026-06-28 评估
+
+**标签**: #new-skill #llm-wiki #knowledge-base #content-pipeline #quartz #rag
+

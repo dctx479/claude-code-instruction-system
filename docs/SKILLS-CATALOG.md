@@ -27,6 +27,7 @@
 | **amazon-analyse** | 亚马逊竞品 Listing 全维度穿透分析，基于 Sorftime MCP | `/amazon-analyse <ASIN> <市场>` |
 | **social-media-research** | 跨平台社媒研究，12+ 平台覆盖 | `舆情监控`, `KOL 分析` |
 | **literature-mentor** | 文献深度解读，交互/报告双模式 | `解读这篇论文`, `生成精读报告` |
+| **llm-wiki** | 多源内容（网页/PDF/本地文件）→ 结构化 Markdown Wiki → Quartz 静态站点或 RAG API，四阶段流程（Ingest→Structure→Organize→Publish） | `/llm-wiki`, `建知识库`, `wiki化`, `把资料整理成知识库` |
 | **paper-revision** | 论文风格修改，技术准确性保持，英文 Nature 标准润色 | `修改论文风格`, `英文润色`, `nature-polish` |
 
 ### 学术 PPT 一源多产链
@@ -96,10 +97,11 @@
 |-------|------|--------|
 | **prime** | 会话预热仪式，读取 git 状态 + 检索记忆 + 输出状态摘要 | `/prime`, `新会话开始`, `上次做到哪了` |
 | **debug** | 结构化调试五步工作流（复现→隔离→假设→验证→防复发） | `/debug`, `帮我调试`, `这个报错怎么回事` |
-| **handoff** | 上下文交接仪式，/compact 前将进度/决策/下一步写入 memory/handoff.md | `/handoff`, `准备 compact`, `交接一下` |
+| **handoff** | 上下文交接：compact 模式写入 memory/handoff.md；new-window 模式生成带置信度标注的可复制续接 prompt，用于开新对话窗口 | `/handoff`, `准备 compact`, `交接一下`, `开新窗口继续`, `生成续接 prompt` |
 | **neat** | 任务收尾洁癖审查，五步法同步 docs/CLAUDE.md/memory 三层知识 | `/neat`, `整理一下`, `收尾` |
 | **reflection** | 任务复盘提炼器，萃取 3-5 条可复用经验，两步链 Ingest 写入知识库 | `/reflection`, `复盘一下`, `总结经验` |
 | **skill-creator** | Skill 元创建器，按契约（五要素：What/How/When Done/What NOT/Extractable）生成高质量 SKILL.md，含 Skill→SaaS 可提取性评估 | `/skill-creator`, `创建一个 Skill`, `封装成 Skill` |
+| **source-evaluator** | 信息源评估器（伯乐），五维度评估学习材料质量，输出取舍建议 | `/source-evaluator`, `评估这个资料`, `值得学吗` |
 
 **Skill 提取量化阈值**（何时该封装成 Skill）：
 - ✅ **重复模式 ≥3 次**：同类任务执行 3 次以上
@@ -182,7 +184,7 @@ SkillOpt 六阶段管线（候选→验证门）
 **评分铁律**：`实测表现`（有没有真实测试 prompt + 前后对比）权重最高。写得再漂亮，没有实测样例的 Skill 在 Darwin 评分里永远不算完成。
 | **pr-prep** | PR 提交前五步检查仪式，确保每个 PR 一次通过 Review | `/pr-prep`, `准备提 PR`, `PR 检查清单` |
 | **ai-pr-review** | AI 时代 PR Review 策略器——按风险分层（P0/P1/P2）+ 5 条规则 + Human-on-the-loop 协议，填补 Agent 高速产出 vs 人眼读速度的 Review 端空白 | `/ai-pr-review`, `AI 时代怎么 Review`, `PR 风险分层`, `Agent PR 怎么审` |
-| **task-decompose** | 任务分解器，三层拆解（Epic→Story→Task）+ 依赖图 + 并行化建议 | `/task-decompose`, `任务拆解`, `需求分解` |
+| **task-decompose** | 任务分解器，三层拆解（Epic→Story→Task）+ 依赖图 + 并行化建议；≥5 个任务时写入 memory/task-forest.md 跨会话持久化 | `/task-decompose`, `任务拆解`, `需求分解`, `原子任务` |
 | **sdd-riper** | Spec-Driven Development + RIPER 五阶段流程，中大型需求（>500行/3+文件） | `/riper`, `/sdd-riper`, `中大型需求开发` |
 | **sdd-riper-light** | SDD-RIPER 轻量版，简单任务（<500行/<3文件），快速迭代 | `/riper-light`, `/sdd-light`, `简单 bug 修复` |
 | **claude-agent-sdk** | 将任何 Skill 封装为 Claude Agent SDK Web 应用，五步法 + 代码模板 + 安全部署 | `用 claude-agent-sdk 建立 webapp`, `把 skill 转为 web 应用` |
@@ -556,9 +558,12 @@ handoff → neat → context-compression → /compact
 | 同一个流程已经做了 3 次以上 | **skill-creator** | 高频流程值得封装 |
 | 研究问题太模糊，不知道从哪里搜 | **question-refiner** | 先精炼查询再调研 |
 | 需要对比多个技术方案 | **parallel-explore** | 独立 worktree 标准化评估 |
+| 多维度复杂决策，不想过早收敛 | **hv-analysis-enhanced** | 延迟收敛式横纵分析，多视角决策支持 |
 | 需求描述很模糊 | **vision-builder** | 引导式提问输出 VISION.md |
 | 想探索方向、还没收敛 | **brainstorming** | 4 模式 + 4 框架，PM 思考伙伴 |
-| 一句话需求不知道从哪开始（"做个借出功能"） | **demand-detective** | A/B 决策题 + 分级任务单 |
+| 一句话需求不知道从哪开始（"做个借出功能"） | **demand-detective** | A/B 决策题 + 分级任务单 + 理解确认摘要闭环 |
+| 想开新窗口或切换到其他 AI 工具继续工作 | **handoff** (new-window 模式) | 生成带 [已验证]/[推断] 标注的可复制续接 prompt |
+| 把散落的网页/PDF/笔记整理成可检索知识库 | **llm-wiki** | 四阶段流程，支持 Quartz 静态站或 RAG API |
 | 计划写好了想检查漏洞 | **plan-review** | 10 维度评估 |
 | 上下文快满了（>250K tokens） | **handoff** → **neat** → /compact | 安全收尾三步 |
 | 新会话开始不知道上次做到哪了 | **prime** | git 状态 + 记忆检索 |
@@ -575,6 +580,13 @@ handoff → neat → context-compression → /compact
 ---
 
 ## 更新日志
+
+### 2026-06-28
+- 新增 **llm-wiki** v1.0.0（研究类）——多源内容→结构化 Wiki→Quartz 静态站/RAG API 四阶段流程
+- **handoff** 升级至 v1.1：新增 new-window 模式，生成带 `[已验证]/[推断]/[已排除]` 置信度标注的可复制续接 prompt
+- **demand-detective** 升级至 v1.1：新增 Step 4「理解确认摘要」闭环验证
+- **task-decompose** 升级至 v1.1：新增跨会话持久化，≥5 个任务时写入 `memory/task-forest.md`
+- 场景速查表新增 3 条路由（demand-detective v1.1 / handoff new-window / llm-wiki）
 
 ### 2026-06-04
 - 新增 4 个社区 Skills（knowledge-work-plugins / ssh-skill / system-cleaner / flue-framework）
