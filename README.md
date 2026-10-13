@@ -4,6 +4,8 @@
 
 太一元系统是一套完善的 Claude Code CLI 配置与指令体系，覆盖软件开发、AI/ML 科研、数据分析、网络安全等专业领域。系统具备自进化、Agent 编排、并行科研、全自主执行等核心能力。
 
+同时提供 **Codex 兼容层**：`AGENTS.md` 项目指令、原生 Skills 入口，以及保留资源路径的安装器。Claude 专用 Hook、HUD 和后台循环的兼容边界见 [Codex 使用指南](docs/CODEX-GUIDE.md)。
+
 ---
 
 ## 核心特性
@@ -26,6 +28,8 @@
 ```
 claude-code-instruction-system/
 ├── CLAUDE.md                    # 核心配置
+├── AGENTS.md                    # Codex 项目指令
+├── codex/                       # Codex 运行协议与核心 Skill
 ├── QUICK-REFERENCE.md           # 快速参考手册
 ├── CHANGELOG.md                 # 更新记录
 ├── CONTRIBUTING.md              # 贡献指南
@@ -110,6 +114,27 @@ claude-code-instruction-system/
 ---
 
 ## 快速开始
+
+### Codex 用户
+
+需要已安装并登录的 Codex CLI、Git 和 Python 3.8+。克隆本仓库后执行：
+
+```bash
+python3 scripts/codex/install.py
+codex
+```
+
+在 Codex 中输入 `$taiyi-review 审查当前更改`，或 `$taiyi-core 列出适合当前任务的工作流`。默认安装核心 Skill 与 31 个命令；安装到其他项目、用户级目录及可选领域 Skills 的方法见 [docs/CODEX-GUIDE.md](docs/CODEX-GUIDE.md)。
+
+要在所有项目中启用太一规则与全部入口：
+
+```bash
+python3 scripts/codex/install.py --global --with-agents --with-skills
+```
+
+全局安装保留并备份现有 Codex 指令，重新启动会话后生效。
+
+以下步骤适用于 Claude Code。
 
 ### 1. 克隆仓库
 

@@ -2,6 +2,8 @@
 
 欢迎使用太一元系统！本指南将帮助您快速上手。
 
+**Codex 用户**请先阅读 [Codex 使用指南](CODEX-GUIDE.md)，使用 `AGENTS.md` 和 `$taiyi-…` Skills。本页其余安装配置面向 Claude Code。
+
 ## 渐进式上手路线
 
 | 阶段 | 时间 | 目标 | 关键动作 |

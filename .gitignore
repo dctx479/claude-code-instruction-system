@@ -49,3 +49,8 @@ Desktop.ini
 .env.local
 .env.*.local
 credentials.json
+
+# Codex 安装器生成的资源、Skills 与备份（源文件位于 codex/）
+/.agents/taiyi-system/
+/.agents/skills/taiyi-*/
+/.agents/taiyi-backups/

@@ -7,6 +7,18 @@
 
 ---
 
+## [Unreleased]
+
+### Codex 兼容支持（2026-10-13）
+
+- 新增 `AGENTS.md`、`codex/runtime.md` 和 `taiyi-core` Skill，独立适配 Codex 的指令与工具机制。
+- 新增 Python 标准库安装器：31 个命令转换为 Codex Skills，可选安装专家角色与领域 Skills；支持项目级、用户级、dry-run、幂等安装及覆盖前备份。
+- 保留原始资源路径，明确 Claude Hook、HUD、后台循环和 MCP 的兼容边界。
+- 新增 Codex 安装测试与 `docs/CODEX-GUIDE.md` 使用指南。
+- 新增 `--global` 一键全局安装：保留原有指令并自动备份，支持 `CODEX_HOME` 与全局 override，重复安装不追加重复区块。
+
+---
+
 ## [1.3.0] - 2026-06-16
 
 ### 新增功能
