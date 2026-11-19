@@ -164,7 +164,7 @@ def generate_hooks_config(bash_path: str) -> Dict:
                 "hooks": [{
                     "type": "command",
                     "command": f'"{escaped_path}" "./your-script.sh"',
-                    "timeout": 5000
+                    "timeout": 5
                 }]
             }],
             "Stop": [{

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Intent Detector Hook - 意图识别系统
-# 版本: 2.1.0
+# 版本: 2.2.0
 # 触发时机: UserPromptSubmit - 在用户提交消息时分析意图
 #
 # 功能:
@@ -25,7 +25,8 @@ log() {
 INPUT=$(cat)
 
 # 提取用户消息 (UserPromptSubmit hook 的 stdin JSON 字段是 "prompt")
-USER_MESSAGE=$(echo "$INPUT" | grep -o '"prompt":"[^"]*"' | cut -d'"' -f4 || echo "")
+# 正则允许转义字符（\" 等），否则带引号的消息会在第一个引号处被截断
+USER_MESSAGE=$(printf '%s' "$INPUT" | grep -o '"prompt"[[:space:]]*:[[:space:]]*"\(\\.\|[^"\\]\)*"' | head -1 | sed -e 's/^"prompt"[[:space:]]*:[[:space:]]*"//' -e 's/"$//' || echo "")
 
 # 如果没有用户消息，尝试从工具输入中提取
 if [[ -z "$USER_MESSAGE" ]]; then
@@ -47,15 +48,15 @@ detect_intent() {
         return
     fi
 
-    # QA 质量审查
-    if echo "$message_lower" | grep -qE 'qa|质量审查|质量检查|验收|qa-review|qa report'; then
-        echo "qa-review"
+    # QA 自动修复 (须在 qa-review 之前，否则被其中的 "qa" 关键词截获)
+    if echo "$message_lower" | grep -qE 'qa.*fix|qa.*修复|自动修复|autofix|qa-fix'; then
+        echo "qa-fix"
         return
     fi
 
-    # QA 自动修复
-    if echo "$message_lower" | grep -qE 'qa.*fix|qa.*修复|自动修复|autofix|qa-fix'; then
-        echo "qa-fix"
+    # QA 质量审查
+    if echo "$message_lower" | grep -qE 'qa|质量审查|质量检查|验收|qa-review|qa report'; then
+        echo "qa-review"
         return
     fi
 

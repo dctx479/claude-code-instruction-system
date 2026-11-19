@@ -1,66 +1,42 @@
 {
-  "version": "3.2.0",
-  "description": "Taiyi System Hooks Configuration",
+  "version": "4.0.0",
+  "description": "Taiyi System global hooks. scripts/install-global.py copies the scripts to ~/.claude/ and merges the `hooks` block below into ~/.claude/settings.json. Claude Code does NOT auto-load this file: hooks only take effect from a settings.json (or an enabled plugin).",
   "hooks": {
     "PreToolUse": [
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo 'Writing file...'",
-            "description": "文件写入前通知"
-          }
-        ]
-      },
       {
         "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"./scripts/validate/validate-command.sh\"",
-            "description": "验证 Bash 命令安全性",
-            "timeout": 5000
+            "command": "bash \"$HOME/.claude/scripts/validate/validate-command.sh\"",
+            "timeout": 5
           },
           {
             "type": "command",
-            "command": "python ./scripts/port-management/port-check-hook.py",
-            "description": "检查 Docker 端口冲突",
-            "timeout": 3000
+            "command": "python \"$HOME/.claude/scripts/port-management/port-check-hook.py\"",
+            "timeout": 5
           }
         ]
       },
       {
-        "matcher": "Task",
+        "matcher": "Agent|Task",
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"./hooks/agent-tracker.sh\"",
-            "description": "跟踪当前活动的 Agent",
-            "timeout": 2000
+            "command": "bash \"$HOME/.claude/hooks/agent-tracker.sh\"",
+            "timeout": 5
           }
         ]
       }
     ],
     "PostToolUse": [
       {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo 'File write completed'",
-            "description": "文件写入后通知"
-          }
-        ]
-      },
-      {
         "matcher": "Edit",
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"./scripts/hooks/post-edit.sh\"",
-            "description": "编辑后运行 lint 检查",
-            "timeout": 30000
+            "command": "bash \"$HOME/.claude/scripts/hooks/post-edit.sh\"",
+            "timeout": 30
           }
         ]
       }
@@ -70,9 +46,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"./hooks/intent-detector.sh\"",
-            "description": "Intent Detector - 智能意图识别",
-            "timeout": 3000
+            "command": "bash \"$HOME/.claude/hooks/intent-detector.sh\"",
+            "timeout": 10
           }
         ]
       }
@@ -82,8 +57,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"./scripts/hooks/notify.sh\"",
-            "description": "发送通知到外部系统"
+            "command": "bash \"$HOME/.claude/scripts/hooks/notify.sh\"",
+            "timeout": 15
           }
         ]
       }
@@ -93,14 +68,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"./hooks/ralph-stop-interceptor.sh\"",
-            "description": "Ralph Loop 停止拦截器 - 检查是否继续执行",
-            "timeout": 5000
-          },
+            "command": "bash \"$HOME/.claude/hooks/ralph-stop-interceptor.sh\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
           {
             "type": "command",
-            "command": "bash \"./scripts/hooks/on-stop.sh\"",
-            "description": "会话结束时的清理操作"
+            "command": "bash \"$HOME/.claude/scripts/hooks/on-stop.sh\"",
+            "timeout": 15
           }
         ]
       }
@@ -110,28 +90,45 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"./hooks/pre-compact.sh\"",
-            "description": "上下文压缩前自动归档",
-            "timeout": 10000
+            "command": "bash \"$HOME/.claude/hooks/pre-compact.sh\"",
+            "timeout": 10
           }
         ]
       }
     ]
   },
   "notes": {
+    "handlers": {
+      "validate-command.sh": "PreToolUse(Bash) - 验证 Bash 命令安全性",
+      "port-check-hook.py": "PreToolUse(Bash) - 检查 Docker 端口冲突",
+      "agent-tracker.sh": "PreToolUse(Agent|Task) - 跟踪当前活动的子代理",
+      "post-edit.sh": "PostToolUse(Edit) - 编辑后运行 lint 检查",
+      "intent-detector.sh": "UserPromptSubmit - 意图识别，写入 ~/.claude/intent-state.json",
+      "notify.sh": "Notification - 发送通知到外部系统",
+      "ralph-stop-interceptor.sh": "Stop - Ralph Loop 停止拦截器，决定是否继续下一轮",
+      "on-stop.sh": "SessionEnd - 会话结束时保存统计与未提交改动备份",
+      "pre-compact.sh": "PreCompact - 上下文压缩前提示归档"
+    },
+    "timeout_unit": "秒（不是毫秒）。command hook 默认 600；SessionEnd 默认共用 1.5 秒预算，需显式 timeout 才能跑更久",
     "exit_codes": {
-      "0": "继续执行",
-      "1": "记录错误并继续",
-      "2": "阻止工具执行"
+      "0": "成功 / 放行",
+      "2": "阻塞：PreToolUse 阻止工具执行；Stop 阻止停止并继续对话。stderr 反馈给 Claude",
+      "other": "非阻塞错误，操作照常进行（包括 exit 1 和 exit 3）"
+    },
+    "stdin_json": {
+      "common": "session_id, transcript_path, cwd, permission_mode, hook_event_name",
+      "UserPromptSubmit": "prompt",
+      "PreToolUse": "tool_name, tool_input",
+      "PostToolUse": "tool_name, tool_input, tool_response",
+      "Stop": "stop_hook_active, last_assistant_message",
+      "Notification": "message"
     },
     "environment_variables": {
-      "TOOL_NAME": "工具名称",
-      "TOOL_INPUT": "工具输入 (JSON, via stdin)",
-      "TOOL_OUTPUT": "工具输出 (PostToolUse, via stdin)",
-      "SESSION_ID": "会话 ID"
+      "CLAUDE_PROJECT_DIR": "项目根目录（hook 的 cwd 会跟随 Claude 的 cd 变化，定位项目文件应使用该变量）"
     },
+    "handler_fields": "handler 对象里不要加 description 等自定义字段：官方 schema 不允许未知字段。说明统一写在 notes.handlers。",
     "platform": {
-      "windows": "需要在 PATH 中有 bash (Git Bash)。如系统未识别 bash 命令，可用绝对路径替代。",
+      "windows": "需要 Git Bash，hook 命令在 Git Bash 中执行，$HOME 展开为 /c/Users/<name>。命令以 bash 开头即可，不要写 bash.exe 的绝对路径。",
       "macos_linux": "直接使用 bash 命令即可"
     }
   }

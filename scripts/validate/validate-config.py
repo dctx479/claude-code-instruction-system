@@ -7,6 +7,7 @@
 """
 
 import os
+import re
 import sys
 import io
 import json
@@ -226,17 +227,47 @@ class HooksDiagnostic:
                                 'message': f'{event_name}[{idx}].hooks[{hidx}] 使用相对路径脚本',
                                 'location': f'hooks.{event_name}[{idx}].hooks[{hidx}].command',
                                 'current': command,
-                                'fix': f'使用 Git Bash: "\\"C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe\\" \\"{command}\\""'
+                                'fix': '以 bash 开头并使用确定位置: bash "$HOME/.claude/hooks/<script>.sh" 或 bash "$CLAUDE_PROJECT_DIR/<script>.sh"'
                             })
 
-                        # 检查 bash 命令
-                        if command.startswith('bash '):
-                            self.warnings.append({
-                                'type': 'bash_without_path',
-                                'message': f'{event_name}[{idx}].hooks[{hidx}] 直接使用 bash 命令',
+                        # bash.exe 绝对路径会被 Claude Code 再包一层 bash，报 cannot execute binary file
+                        if 'bash.exe' in command.lower():
+                            self.errors.append({
+                                'type': 'bash_exe_absolute_path',
+                                'message': f'{event_name}[{idx}].hooks[{hidx}] 使用了 bash.exe 绝对路径',
                                 'location': f'hooks.{event_name}[{idx}].hooks[{hidx}].command',
-                                'fix': '建议使用完整路径: "C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe"'
+                                'current': command,
+                                'fix': '命令直接以 bash 开头: bash "<script>.sh"'
                             })
+
+                    # timeout 单位是秒（command hook 默认 600），四位数以上基本是把毫秒写了进来
+                    timeout = hook.get('timeout')
+                    if isinstance(timeout, (int, float)) and timeout > 600:
+                        self.warnings.append({
+                            'type': 'timeout_looks_like_ms',
+                            'message': f'{event_name}[{idx}].hooks[{hidx}] timeout={timeout}，单位是秒而不是毫秒',
+                            'location': f'hooks.{event_name}[{idx}].hooks[{hidx}].timeout',
+                            'fix': f'改为秒，例如 {max(1, int(timeout / 1000))}'
+                        })
+
+                    # 官方 schema 不允许 handler 对象出现未知字段
+                    if 'description' in hook:
+                        self.warnings.append({
+                            'type': 'unknown_handler_field',
+                            'message': f'{event_name}[{idx}].hooks[{hidx}] 含自定义字段 description',
+                            'location': f'hooks.{event_name}[{idx}].hooks[{hidx}].description',
+                            'fix': '移除该字段，说明写到 notes 中'
+                        })
+
+                    # 相对路径依赖 hook 的 cwd，而 cwd 会跟随 Claude 的 cd 变化
+                    if re.search(r'"\./|\s\./', command):
+                        self.warnings.append({
+                            'type': 'relative_script_path',
+                            'message': f'{event_name}[{idx}].hooks[{hidx}] 使用相对路径 ./',
+                            'location': f'hooks.{event_name}[{idx}].hooks[{hidx}].command',
+                            'fix': '改用 $HOME/.claude/... 或 $CLAUDE_PROJECT_DIR/...'
+                        })
+
 
     def check_script_files(self) -> None:
         """检查脚本文件是否存在"""
@@ -268,6 +299,11 @@ class HooksDiagnostic:
                                 script_path = part.strip()
                                 if script_path.startswith('./'):
                                     script_path = script_path[2:]
+                                # hooks.json 中的命令指向安装位置 $HOME/.claude/<path>，
+                                # 仓库内对应 <path>（scripts/install-global.py 按同名目录复制）
+                                for prefix in ('$HOME/.claude/', '~/.claude/'):
+                                    if script_path.startswith(prefix):
+                                        script_path = script_path[len(prefix):]
 
                                 if script_path not in checked_scripts:
                                     checked_scripts.add(script_path)

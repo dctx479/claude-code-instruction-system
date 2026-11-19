@@ -102,7 +102,7 @@ def main():
         for c in conflicts:
             print(f"  Port {c['port']}: used by {c['project']}/{c['service']}", file=sys.stderr)
             print(f"  Registry: {c['registry']}", file=sys.stderr)
-        print("\nRun: python scripts/port-manager.py conflicts", file=sys.stderr)
+        print("\nRun: python scripts/port-management/port-manager.py conflicts", file=sys.stderr)
         # 返回 1 表示警告但继续
         sys.exit(1)
 

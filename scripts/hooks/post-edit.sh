@@ -8,8 +8,12 @@ set -uo pipefail
 # 从 stdin 读取工具输出（Claude Code PostToolUse hook 通过 stdin 传入）
 TOOL_DATA=$(cat 2>/dev/null || echo "{}")
 
-# 获取编辑的文件路径
+# 获取编辑的文件路径（jq 优先；没有 jq 时退回文本匹配，JSON 中的 \\ 还原为 \）
 FILE_PATH=$(echo "$TOOL_DATA" | jq -r '.tool_input.file_path // empty' 2>/dev/null || echo "")
+if [ -z "$FILE_PATH" ]; then
+    FILE_PATH=$(printf '%s' "$TOOL_DATA" | grep -o '"file_path"[[:space:]]*:[[:space:]]*"\(\\.\|[^"\\]\)*"' | head -1 \
+        | sed -e 's/^"file_path"[[:space:]]*:[[:space:]]*"//' -e 's/"$//' -e 's/\\\\/\\/g' || echo "")
+fi
 
 # 如果无法从 stdin 获取，尝试环境变量
 if [ -z "$FILE_PATH" ]; then
@@ -28,7 +32,7 @@ echo "[$(date)] Post-edit hook triggered" >> "$LOG_FILE"
 # ============================================================
 
 # 检测项目类型并运行相应的 linter
-if [ -f "package.json" ]; then
+if [ -n "$FILE_PATH" ] && [ -f "package.json" ]; then
     # Node.js 项目
     if [ -f ".eslintrc.js" ] || [ -f ".eslintrc.json" ] || [ -f "eslint.config.js" ]; then
         echo "  Running ESLint..." >> "$LOG_FILE"
@@ -43,7 +47,7 @@ if [ -f "package.json" ]; then
 fi
 
 # Python 项目
-if [ -f "pyproject.toml" ] || [ -f "setup.py" ]; then
+if [ -n "$FILE_PATH" ] && { [ -f "pyproject.toml" ] || [ -f "setup.py" ]; }; then
     if command -v black >/dev/null 2>&1; then
         echo "  Running Black..." >> "$LOG_FILE"
         black "$FILE_PATH" 2>/dev/null || true
@@ -56,12 +60,10 @@ if [ -f "pyproject.toml" ] || [ -f "setup.py" ]; then
 fi
 
 # ============================================================
-# 2. 更新文件修改时间戳（可选）
+# 2. （已移除）更新文件修改时间戳
 # ============================================================
-
-if [ -n "$FILE_PATH" ] && [ -f "$FILE_PATH" ]; then
-    touch "$FILE_PATH" 2>/dev/null || true
-fi
+# 原先这里会 touch 被编辑的文件。编辑刚结束就改 mtime 会让 Claude Code 认为
+# 文件在读取之后被外部修改，导致下一次 Edit 被拒绝，因此不再执行。
 
 # ============================================================
 # 3. Git 自动暂存（可选，需谨慎使用）

@@ -426,7 +426,8 @@ get_agent() {
     local intent_state="${HOME}/.claude/intent-state.json"
     if [[ -f "$intent_state" ]]; then
         local agent
-        agent=$(grep -o '"agent":"[^"]*"' "$intent_state" | cut -d'"' -f4 || echo "")
+        # intent-state.json 由 json.dump(indent=2) 写出，冒号后有空格
+        agent=$(grep -o '"agent"[[:space:]]*:[[:space:]]*"[^"]*"' "$intent_state" | cut -d'"' -f4 || echo "")
         echo "${agent:-orchestrator}"
     else
         echo "${CLAUDE_AGENT:-orchestrator}"
@@ -457,7 +458,9 @@ get_progress() {
 
 # Get Ralph status
 get_ralph_status() {
-    local ralph_file="${HOME}/.claude/memory/ralph-state.json"
+    # 与 hooks/ralph-stop-interceptor.sh 的查找顺序一致：项目级优先，其次全局
+    local ralph_file="${CLAUDE_PROJECT_DIR:-.}/memory/ralph-state.json"
+    [[ -f "$ralph_file" ]] || ralph_file="${HOME}/.claude/ralph-state.json"
     if [[ -f "$ralph_file" ]]; then
         local content
         content=$(cat "$ralph_file" 2>/dev/null) || return
@@ -710,7 +713,7 @@ show_help() {
     cat <<EOF
 HUD Statusline Renderer v$HUD_VERSION
 
-Usage: hud-v2.sh [command] [options]
+Usage: hud.sh [command] [options]
 
 Commands:
   render              Render statusline (default)
@@ -729,10 +732,10 @@ Environment Variables:
   HUD_SESSION_JSON    JSON session data from Claude Code
 
 Examples:
-  hud-v2.sh render
-  hud-v2.sh theme nerd
-  HUD_THEME=unicode hud-v2.sh render
-  echo '{"session":{"contextUsed":50000}}' | HUD_SESSION_JSON="\$(cat)" hud-v2.sh render
+  hud.sh render
+  hud.sh theme nerd
+  HUD_THEME=unicode hud.sh render
+  echo '{"session":{"contextUsed":50000}}' | HUD_SESSION_JSON="\$(cat)" hud.sh render
 
 EOF
 }
@@ -773,7 +776,7 @@ main() {
                 cat "$HUD_CONFIG_FILE"
             else
                 echo "No configuration file found at: $HUD_CONFIG_FILE"
-                echo "Run 'hud-v2.sh init' to create default configuration"
+                echo "Run 'hud.sh init' to create default configuration"
             fi
             ;;
         "theme")
@@ -791,7 +794,7 @@ main() {
             ;;
         *)
             echo "Unknown command: $action"
-            echo "Run 'hud-v2.sh help' for usage information"
+            echo "Run 'hud.sh help' for usage information"
             exit 1
             ;;
     esac

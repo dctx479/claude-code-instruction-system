@@ -404,7 +404,7 @@ class PortManager:
                 print(f"端口范围: {start}-{end}")
 
             print("\n注册命令:")
-            print(f"  python scripts/port-manager.py register {port} <项目名> {service_type}")
+            print(f"  python scripts/port-management/port-manager.py register {port} <项目名> {service_type}")
         else:
             print_error(f"未找到可用的 {service_type} 端口")
             print("建议:")

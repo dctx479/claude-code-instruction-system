@@ -1,6 +1,6 @@
 #!/bin/bash
 # 全量 Intent 路由验证脚本
-# 覆盖 intent-detector.sh 中定义的全部 27 个 intent
+# 覆盖 intent-detector.sh 的全部路由 intent，外加回归用例
 # 用法: bash scripts/test-all-intents.sh
 
 INTENT_DETECTOR="$HOME/.claude/hooks/intent-detector.sh"
@@ -30,7 +30,7 @@ run_test() {
 }
 
 echo "═══════════════════════════════════════════════════════"
-echo " Agent 自动调度全量测试（27 个 intent）"
+echo " Agent 自动调度全量测试"
 echo "═══════════════════════════════════════════════════════"
 echo
 
@@ -83,6 +83,23 @@ run_test "perf-monitor"   "性能监控报告生成"                   "performa
 run_test "optimize"       "系统配置优化token优化"              "auto-optimizer"
 run_test "autopilot"      "全自主autopilot执行"                "autopilot-orchestrator"
 run_test "archive"        "保存上下文归档"                     "context-archivist"
+echo
+
+echo "── 角色专用类 ─────────────────────────────────────────"
+run_test "vitest"         "用vitest写mock用例"                 "vitest-tester"
+run_test "sdd-riper"      "按sdd-riper流程开发这个需求"        "sdd-riper-orchestrator"
+run_test "architect-senior" "请资深架构师看看这个框架"         "senior-code-architect"
+run_test "mentor"         "技术导师带我入门这个领域"           "tech-mentor"
+run_test "requirements"   "做一下需求拆解和用户故事"           "requirements-analyst"
+run_test "data-warehouse" "数仓多维分析查询"                   "data-warehouse-analyst"
+run_test "codemap"        "生成代码地图方便导航"               "codemap-builder"
+echo
+
+echo "── 回归用例 ───────────────────────────────────────────"
+# "qa" 关键词曾经抢在 qa-fix 规则之前命中
+run_test "qa-fix(qa词)"   "对这个模块做qa修复"                 "qa-fixer"
+# 提示词含引号时（JSON 中写作 \"）曾在第一个引号处被截断
+run_test "escaped-quote"  '他说 \"你好\" 然后帮我调试这个报错'   "debugger"
 echo
 
 echo "── 通用类 ─────────────────────────────────────────────"

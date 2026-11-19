@@ -109,7 +109,7 @@ generate_hooks_config() {
       "hooks": [{
         "type": "command",
         "command": "\"$escaped_path\" \"./your-script.sh\"",
-        "timeout": 5000
+        "timeout": 5
       }]
     }],
     "Stop": [{

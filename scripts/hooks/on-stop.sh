@@ -1,7 +1,8 @@
 #!/bin/bash
-# 会话停止清理脚本
-# 版本: 1.1.0
-# 用途: 在 Claude Code 会话结束时执行清理和保存操作
+# 会话结束清理脚本
+# 版本: 1.2.0
+# 触发时机: SessionEnd（不是 Stop —— Stop 每轮对话结束都会触发，会把每一轮都记成一次会话）
+# 用途: 在 Claude Code 会话结束时保存统计和未提交改动的备份
 
 set -uo pipefail
 
@@ -26,24 +27,11 @@ echo "Working directory: $SAFE_PWD" >> "$LOG_FILE"
 echo "========================================" >> "$LOG_FILE"
 
 # ============================================================
-# 1. 清理临时文件
+# 1. （已移除）清理临时文件
 # ============================================================
-
-echo "Cleaning temporary files..." >> "$LOG_FILE"
-
-# 清理 Claude Code 临时文件
-rm -f /tmp/claude-* 2>/dev/null || true
-rm -f /tmp/cc-* 2>/dev/null || true
-
-# 清理项目临时文件（如果存在）
-if [ -d ".claude-tmp" ]; then
-    rm -rf .claude-tmp 2>/dev/null || true
-    echo "  Removed .claude-tmp directory" >> "$LOG_FILE"
-fi
-
-# 清理编译产物（可选，谨慎使用）
-# rm -rf node_modules/.cache 2>/dev/null || true
-# rm -rf .pytest_cache 2>/dev/null || true
+# 原先这里会执行 rm -f /tmp/claude-* 和 rm -rf .claude-tmp。
+# 通配删除违反 CLAUDE.md §七「禁止批量删除文件」，而且 /tmp/claude-* 里有
+# 其他仍在运行的 Claude Code 会话的工作文件，因此不再自动清理。
 
 # ============================================================
 # 2. 保存会话统计
@@ -53,7 +41,10 @@ STATS_FILE="${CLAUDE_DIR}/session-stats.json"
 
 # 如果统计文件存在，更新计数
 if [ -f "$STATS_FILE" ]; then
-    TOTAL_SESSIONS=$(jq -r '.total_sessions // 0' "$STATS_FILE" 2>/dev/null || echo "0")
+    TOTAL_SESSIONS=$(jq -r '.total_sessions // 0' "$STATS_FILE" 2>/dev/null \
+        || grep -o '"total_sessions"[[:space:]]*:[[:space:]]*[0-9]*' "$STATS_FILE" 2>/dev/null | grep -o '[0-9]*$' \
+        || echo "0")
+    [[ "$TOTAL_SESSIONS" =~ ^[0-9]+$ ]] || TOTAL_SESSIONS=0
     TOTAL_SESSIONS=$((TOTAL_SESSIONS + 1))
 else
     TOTAL_SESSIONS=1
@@ -118,10 +109,11 @@ fi
 # 5. 触发通知（如果配置）
 # ============================================================
 
-if [ -f "./scripts/notify.sh" ]; then
+NOTIFY_SCRIPT="$(dirname "$0")/notify.sh"
+if [ -f "$NOTIFY_SCRIPT" ]; then
     export NOTIFICATION_TYPE="session_end"
     export NOTIFICATION_MESSAGE="Claude Code session ended at $TIMESTAMP"
-    ./scripts/notify.sh >/dev/null 2>&1 || true
+    bash "$NOTIFY_SCRIPT" </dev/null >/dev/null 2>&1 || true
 fi
 
 # ============================================================

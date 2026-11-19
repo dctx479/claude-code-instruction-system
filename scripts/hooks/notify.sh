@@ -1,6 +1,6 @@
 #!/bin/bash
 # 通知系统脚本
-# 版本: 1.1.0
+# 版本: 1.2.0
 # 用途: 发送 Claude Code 事件通知到外部系统
 
 set -euo pipefail
@@ -16,9 +16,16 @@ mkdir -p "$NOTIFICATION_DIR" 2>/dev/null
 # 获取通知内容
 # ============================================================
 
-# 从环境变量获取通知信息
+# 通知内容来源优先级：环境变量（on-stop.sh 调用时设置）> Notification hook 的 stdin JSON > 默认值
 EVENT_TYPE="${NOTIFICATION_TYPE:-general}"
-MESSAGE="${NOTIFICATION_MESSAGE:-Claude Code notification}"
+MESSAGE="${NOTIFICATION_MESSAGE:-}"
+
+if [ -z "$MESSAGE" ] && [ ! -t 0 ]; then
+    HOOK_INPUT=$(cat 2>/dev/null || echo "")
+    MESSAGE=$(printf '%s' "$HOOK_INPUT" | grep -o '"message"[[:space:]]*:[[:space:]]*"\(\\.\|[^"\\]\)*"' | head -1 \
+        | sed -e 's/^"message"[[:space:]]*:[[:space:]]*"//' -e 's/"$//' -e 's/\\"/"/g' || echo "")
+fi
+MESSAGE="${MESSAGE:-Claude Code notification}"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 
 # 安全: 对变量进行转义，防止注入

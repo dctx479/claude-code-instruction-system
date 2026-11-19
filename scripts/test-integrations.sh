@@ -3,7 +3,9 @@
 # 版本: 1.0.0
 # 日期: 2026-02-08
 
-set -e  # 遇到错误立即退出
+# 不使用 set -e：test_file/test_dir 失败时返回 1，set -e 会让脚本在第一个失败项就退出，
+# 后面的检查和汇总都不会执行。失败由 FAILED_TESTS 计数并在结尾统一报告。
+set -u
 
 echo "========================================="
 echo "  太一元系统集成测试"
@@ -67,7 +69,7 @@ echo ""
 # 3. 测试索引文件
 echo "3. 测试索引文件..."
 test_file "agents/INDEX.md" "Agent 索引"
-test_file "skills/INDEX.md" "Skills 索引"
+test_file ".claude/skills/INDEX.md" "Skills 索引"
 echo ""
 
 # 4. 测试配置文件
@@ -103,11 +105,19 @@ echo ""
 
 # 8. 测试 JSON 文件格式
 echo "8. 测试 JSON 文件格式..."
-if command -v python3 > /dev/null 2>&1; then
-    for json_file in config/*.json .claude/context/index.json; do
+# Windows 上通常只有 python（python3 可能是 Microsoft Store 的占位别名），逐个实测
+PYTHON_BIN=""
+for candidate in python3 python py; do
+    if "$candidate" -c "import json" > /dev/null 2>&1; then
+        PYTHON_BIN="$candidate"
+        break
+    fi
+done
+if [ -n "$PYTHON_BIN" ]; then
+    for json_file in config/*.json hooks/hooks.json .claude/context/index.json; do
         if [ -f "$json_file" ]; then
             TOTAL_TESTS=$((TOTAL_TESTS + 1))
-            if python3 -m json.tool "$json_file" > /dev/null 2>&1; then
+            if "$PYTHON_BIN" -m json.tool "$json_file" > /dev/null 2>&1; then
                 echo -e "${GREEN}✅${NC} $json_file 格式正确"
                 PASSED_TESTS=$((PASSED_TESTS + 1))
             else
@@ -117,7 +127,7 @@ if command -v python3 > /dev/null 2>&1; then
         fi
     done
 else
-    echo -e "${YELLOW}⚠️${NC}  Python3 未安装，跳过 JSON 格式验证"
+    echo -e "${YELLOW}⚠️${NC}  未找到可用的 Python，跳过 JSON 格式验证"
 fi
 echo ""
 
