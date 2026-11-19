@@ -85,13 +85,22 @@ python -m json.tool .claude/context/index.json
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "your-api-key-here"
   },
-  "model": "claude-sonnet-4-6",
+  "model": "claude-sonnet-5-5",
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/statusline/hud.sh render"
   }
 }
 ```
+
+然后在仓库根目录运行安装脚本，把 hooks、commands、agents、skills、statusline 等同步到 `~/.claude/`（`hooks` 和 `statusLine` 会被自动写入上面的 settings.json，无需手写）：
+
+```bash
+python scripts/install-global.py --dry-run   # 先看计划
+python scripts/install-global.py             # 安装，可重复执行
+```
+
+安装后重启 Claude Code 会话，用 `/hooks` 确认已加载。
 
 ### 2. 项目配置
 

@@ -59,7 +59,7 @@ windows_incompatible_path
 "command": "./hooks/script.sh"
 
 ✅ 正确:
-"command": "\"C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe\" \"./hooks/script.sh\""
+"command": "bash \"./hooks/script.sh\""
 ```
 
 **快速获取 Git Bash 路径**:
@@ -130,8 +130,8 @@ python -m json.tool hooks/hooks.json
         "hooks": [
           {
             "type": "command",
-            "command": "\"C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe\" \"./scripts/validate-command.sh\"",
-            "timeout": 5000
+            "command": "bash \"./scripts/validate-command.sh\"",
+            "timeout": 5
           }
         ]
       }
@@ -151,8 +151,8 @@ python -m json.tool hooks/hooks.json
         "hooks": [
           {
             "type": "command",
-            "command": "\"C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe\" \"./hooks/post-edit.sh\"",
-            "timeout": 3000
+            "command": "bash \"./hooks/post-edit.sh\"",
+            "timeout": 3
           }
         ]
       }
@@ -171,8 +171,8 @@ python -m json.tool hooks/hooks.json
         "hooks": [
           {
             "type": "command",
-            "command": "\"C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe\" \"./hooks/on-stop.sh\"",
-            "timeout": 10000
+            "command": "bash \"./hooks/on-stop.sh\"",
+            "timeout": 10
           }
         ]
       }

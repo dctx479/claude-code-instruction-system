@@ -1,6 +1,6 @@
 # 太一元系统 · Claude Code 指令体系
 
-> 版本: 1.2 Taiyi (太一) — 道之演化 | 发布日期: 2026-03-01 | 最后更新: 2026-06-15
+> 版本: 1.4 Taiyi (太一) — 道之演化 | 发布日期: 2026-03-01 | 最后更新: 2026-11-19
 
 太一元系统是一套完善的 Claude Code CLI 配置与指令体系，覆盖软件开发、AI/ML 科研、数据分析、网络安全等专业领域。系统具备自进化、Agent 编排、并行科研、全自主执行等核心能力。
 
@@ -10,7 +10,7 @@
 
 | 特性 | 说明 |
 |------|------|
-| **Agent 自动调度** | 27 种意图 → 22 个专家 Agent 自动路由 |
+| **Agent 自动调度** | 34 种意图 → 30 个专家 Agent 自动路由 |
 | **Ralph Loop** | 自主循环执行直到任务完成 |
 | **Autopilot** | 5 阶段端到端全自主执行（Planning→Delivery） |
 | **HUD Statusline** | 实时状态可视化（模型/Agent/进度/费用） |
@@ -75,6 +75,7 @@ claude-code-instruction-system/
 │   └── data-analysis/           # 数据分析命令
 │
 ├── scripts/                     # 工具脚本
+│   ├── install-global.py        # 全局安装/同步（仓库 → ~/.claude）
 │   ├── test-integrations.sh     # 集成测试入口
 │   ├── validate/                # 配置验证与诊断（7个）
 │   ├── context/                 # 上下文管理脚本（4个）
@@ -83,14 +84,14 @@ claude-code-instruction-system/
 │   └── port-management/         # 端口管理脚本
 │
 ├── .claude/                     # Claude Code 项目配置
-│   ├── settings.json            # 项目级设置
+│   ├── settings.json.example    # settings.json 示例（env / statusLine）
 │   ├── statusline/              # HUD 状态栏脚本
 │   ├── skills/                  # Skills 知识包
 │   └── context/                 # 上下文归档
 │
 ├── hooks/                       # 全局钩子配置
-│   ├── hooks.json               # 钩子入口配置
-│   ├── intent-detector.sh       # 意图识别（27种意图）
+│   ├── hooks.json               # 钩子模板（由 install-global.py 合并进 ~/.claude/settings.json）
+│   ├── intent-detector.sh       # 意图识别（34 种意图）
 │   └── ralph-stop-interceptor.sh
 │
 ├── config/                      # 系统配置文件
@@ -120,39 +121,41 @@ cd claude-code-instruction-system
 
 ### 2. 全局配置（`~/.claude/settings.json`）
 
+只需要自己填 API 相关的 `env`；`hooks` 和 `statusLine` 由下一步的安装脚本写入。
+
 ```json
 {
-  "model": "claude-sonnet-4-6",
+  "model": "claude-sonnet-5-5",
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "your-api-key",
-    "ANTHROPIC_BASE_URL": "https://api.anthropic.com/",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
-    "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
-    "DISABLE_INSTALLATION_CHECKS": "1"
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "bash \"~/.claude/statusline/hud.sh\" render"
-  },
-  "permissions": {
-    "defaultMode": "default"
+    "ANTHROPIC_BASE_URL": "https://api.anthropic.com/"
   }
 }
 ```
 
-### 3. 安装自定义命令和 Agent
+### 3. 安装到全局（`~/.claude/`）
+
+前置条件：Python 3、bash（Windows 需要 Git Bash）。`jq` 可选。
 
 ```bash
-# 复制到全局目录（所有项目可用）
-cp -r commands/* ~/.claude/commands/
-cp -r agents/* ~/.claude/agents/
+python scripts/install-global.py --dry-run   # 先看会改什么
+python scripts/install-global.py             # 安装；之后每次更新仓库重跑即可
 ```
+
+脚本会把 CLAUDE.md、agents、commands、hooks、scripts、skills、statusline、memory、docs 等同步到 `~/.claude/`，并把 `hooks/hooks.json` 合并进 `~/.claude/settings.json`：
+
+- 可重复执行；被覆盖的文件先备份到 `~/.claude/backups/taiyi-install-<时间戳>/`
+- 不删除任何文件，不改动 `settings.json` 里 `hooks` / `statusLine` 以外的键
+- `memory/` 等有状态文件只在目标不存在时复制
+- 安装后需重启 Claude Code 会话，hooks 才会加载（`/hooks` 可查看）
+
+> 为什么必须安装：Claude Code 只从 `settings.json` 加载 hooks，只在 `~/.claude/`（或项目 `.claude/`）下发现 commands 和 agents。仓库根的 `hooks/hooks.json`、`commands/`、`agents/` 本身不会生效。
 
 ### 4. 验证安装
 
 ```bash
-bash scripts/test-integrations.sh
-# 预期: 总测试数 24，通过 24 ✅
+bash scripts/test-all-intents.sh        # 意图路由：预期 34/34 通过
+python scripts/validate/validate-config.py   # 配置校验：预期 0 错误
 ```
 
 详细安装说明见 [docs/QUICK-START.md](docs/QUICK-START.md)。

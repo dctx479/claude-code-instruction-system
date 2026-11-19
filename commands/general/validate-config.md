@@ -110,7 +110,7 @@ $ /validate-config hooks
   消息: Stop[0].hooks[0] 使用相对路径脚本
   位置: hooks.Stop[0].hooks[0].command
   当前值: ./hooks/ralph-stop-interceptor.sh
-  🔧 修复方案: 使用 Git Bash: "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./hooks/ralph-stop-interceptor.sh\""
+  🔧 修复方案: 使用 Git Bash: "bash \"./hooks/ralph-stop-interceptor.sh\""
 
 总计: 2 个错误, 0 个警告
 

@@ -1584,3 +1584,36 @@ AI 上下文窗口有限，大批量同质任务（>50 项）逐步压缩早期�
 
 **标签**: #new-skill #llm-wiki #knowledge-base #content-pipeline #quartz #rag
 
+## 2026-11-19 经验条目 #hooks-spec-drift
+### Hooks 规范漂移：自动化层"看起来配好了"但从未生效
+**问题描述**: 换到新 Windows 机器后评估可用性，发现自动调度、Ralph 循环、`/ralph` 等命令全部没有生效，且 Ralph 即使安装也无法续跑。
+
+**根因分析**（R3 规范过时 + R4 Review 漏洞）:
+- `hooks/hooks.json` 位于仓库根，Claude Code 只从 `settings.json`（或已启用插件）加载 hooks；根目录 `commands/`、`agents/` 同理不会被发现
+- Ralph Stop Hook 用 `exit 3` + stdout 续跑。Stop hook 只有 `exit 2` 才阻止停止，且反馈走 stderr
+- hook `timeout` 按毫秒写（2000~30000），实际单位是秒
+- `on-stop.sh` 挂在 Stop 事件，Stop 每轮对话都触发，"会话结束"应挂 SessionEnd
+- `validate-command.sh` 无 jq 时用 `[^"]*` 提取命令，遇到 `\"` 截断：`echo "x" && rm -rf /` 被放行；警告规则（exit 1）排在阻塞规则前，`sudo mkfs` 只警告不拦截
+- `ralph-stop-interceptor.sh` 把 `/c/Users/...` 路径拼进 Python 代码，Windows 原生 Python 打不开，静默判定"未激活"
+- 以上问题都没被测试发现：`test-all-intents.sh` 只测脚本的输入输出，没有任何一步验证"Claude Code 真的加载并执行了 hook"
+
+**解决方案**:
+- 新增 `scripts/install-global.py`（规范 `specs/SPEC-global-install.md`）：同步到 `~/.claude/`，把 hooks 合并进 `settings.json`，命令目录拍平
+- Stop Hook 改 `exit 2` + stderr；路径经 `cygpath -m` 转换并用 argv 传给 Python；全局状态文件用 `project_dir` 限定项目
+- `hooks/hooks.json` v4.0.0：timeout 改秒、路径用 `$HOME/.claude/...`、`Agent|Task` matcher、SessionEnd
+- CLAUDE.md §八 重写 Hook stdin 字段表，新增「退出码与 timeout 规范」
+
+**验证方法**（必须在真实会话里验证，不能只跑脚本）:
+```bash
+# 沙箱安装后用 claude -p 验证 hook 确实被加载
+python scripts/install-global.py --target "$SB/.claude" --components core,agents,commands,hooks
+HOME="$SB" CLAUDE_CONFIG_DIR="$SB/.claude" claude -p "帮我调试这个报错"   # → $SB/.claude/intent-state.json 出现 agent=debugger
+# Ralph：memory/ralph-state.json 置 active=true,max_iterations=2 后运行 claude -p
+# → ralph.log 依次出现 "starting iteration 1/2"、"2/2"、"Max iterations (2) reached"
+```
+
+**案例引用**: 2026-11-19 可用性评估会话；`hooks/ralph-stop-interceptor.sh` v1.2.0→v2.0.0；`hooks/hooks.json` 3.2.0→4.0.0；沙箱实测 `claude -p` 2.1.328 下 Stop hook 两次 exit 2 续跑、第三次放行
+
+**可复用模式**: 写 hook 相关规则前先对照官方 hooks reference 核实退出码/字段/加载位置；hook 的验收标准是"在真实 Claude Code 会话中观察到副作用"，脚本单测通过不算。
+
+**标签**: #hooks #ralph #install #windows #spec-drift #R3 #R4

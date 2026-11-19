@@ -12,7 +12,7 @@
 |------|-----------|------|
 | **Ralph Loop** | `/ralph "任务"` | 自主循环执行直到完成 |
 | **HUD Statusline** | `.claude/statusline/hud.sh` | 实时状态可视化 |
-| **Intent Detector** | `hooks/intent-detector.sh` | 27种意图→22个Agent自动调度 |
+| **Intent Detector** | `hooks/intent-detector.sh` | 34 种意图→30 个 Agent 自动调度 |
 | **Agent Auto-Dispatch** | `~/.claude/intent-state.json` | 自动加载Agent定义切换角色 |
 | **Model Router** | `workflows/routing/model-router.md` | 根据任务复杂度自动选模型 |
 | **Plan-Scoped Memory** | `workflows/research/plan-scoped-memory.md` | 计划级知识隔离 |

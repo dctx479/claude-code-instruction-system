@@ -135,19 +135,19 @@ Agent 框架决策: `docs/AGENT-FRAMEWORK-DECISION.md`（Claude Code/LangGraph/C
 ```toml
 # architect Agent（决策层）
 [agent.architect]
-model = "claude-opus-4-7"
+model = "claude-opus-5-5"
 permissions = ["read", "write", "execute", "approve"]
 approval_required = ["database_schema_change", "api_breaking_change"]
 
 # debugger Agent（执行层）
 [agent.debugger]
-model = "claude-sonnet-4-6"
+model = "claude-sonnet-5-5"
 permissions = ["read", "write", "execute"]
 approval_required = ["destructive_operations"]
 
 # performance-monitor（监控层）
 [agent.performance-monitor]
-model = "claude-haiku-4-5"
+model = "claude-haiku-5-5"
 permissions = ["read"]
 approval_required = []  # 纯观察，无需审批
 ```

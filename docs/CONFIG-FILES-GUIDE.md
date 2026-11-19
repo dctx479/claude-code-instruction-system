@@ -1,5 +1,10 @@
 # 配置文件完整指南
 
+> [!IMPORTANT] 2026-11-19 更正（对照 Claude Code 官方 hooks 规范）
+> - **hooks 只从 `settings.json` 加载**（`~/.claude/settings.json`、`.claude/settings.json`、`.claude/settings.local.json`，或已启用的插件）。仓库根的 `hooks/hooks.json` **不会**被自动加载，它是 `scripts/install-global.py` 的输入模板，由脚本合并进 `~/.claude/settings.json`。本文中把 `hooks/hooks.json` 描述为"项目级 hooks 配置 / 参与优先级覆盖"的段落均以此为准。
+> - `timeout` 单位是**秒**；命令以 `bash` 开头即可，不要写 `bash.exe` 绝对路径；引号内的 `~` 不会展开，用 `$HOME`。
+> - Stop hook 只有 **exit 2** 才阻止停止；"会话结束"逻辑用 **SessionEnd**。完整规范见 `CLAUDE.md` §八。
+
 ## 目录
 
 1. [配置文件概述](#配置文件概述)
@@ -48,7 +53,7 @@
 
 ```json
 {
-  "model": "claude-sonnet-4-6",
+  "model": "claude-sonnet-5-5",
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "your-token",
     "ANTHROPIC_BASE_URL": "https://api.anthropic.com/"
@@ -87,7 +92,7 @@
 {
   "statusLine": {
     "type": "command",
-    "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"~/.claude/statusline/hud.sh\" render"
+    "command": "bash \"$HOME/.claude/statusline/hud.sh\" render"
   }
 }
 ```
@@ -103,8 +108,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python \"~/.claude/hooks/pre-bash.py\"",
-            "timeout": 3000
+            "command": "python \"$HOME/.claude/hooks/pre-bash.py\"",
+            "timeout": 3
           }
         ]
       }
@@ -114,7 +119,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"~/.claude/hooks/on-stop.sh\""
+            "command": "bash \"$HOME/.claude/hooks/on-stop.sh\""
           }
         ]
       }
@@ -238,7 +243,7 @@
           {
             "type": "command",
             "command": "bash ./scripts/validate-write.sh",
-            "timeout": 5000
+            "timeout": 5
           }
         ]
       }
@@ -249,7 +254,7 @@
 
 ### 2. `hooks/hooks.json`
 
-**用途**：项目特定的 hooks 配置
+**用途**：全局 hooks 模板。Claude Code 不会自动加载它；运行 `python scripts/install-global.py` 后其中的 `hooks` 块被合并进 `~/.claude/settings.json` 才生效。项目特定的 hooks 请写在 `.claude/settings.json` 的 `hooks` 键里（格式相同）。
 
 **是否提交到 Git**：✅ 推荐
 
@@ -265,7 +270,7 @@
           {
             "type": "command",
             "command": "bash ./hooks/pre-bash.sh",
-            "timeout": 3000
+            "timeout": 3
           }
         ]
       }
@@ -299,8 +304,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./hooks/validate.sh\"",
-            "timeout": 5000
+            "command": "bash \"./hooks/validate.sh\"",
+            "timeout": 5
           }
         ]
       }
@@ -317,8 +322,6 @@
 
 ```
 项目级 .claude/settings.json (最高优先级)
-    ↓ 覆盖
-项目级 hooks/hooks.json
     ↓ 覆盖
 全局级 ~/.claude/settings.json
     ↓ 覆盖
@@ -411,7 +414,7 @@ Hooks 配置会合并（不是覆盖）：
 
 ```json
 {
-  "model": "claude-sonnet-4-6",
+  "model": "claude-sonnet-5-5",
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "sk-ant-xxx"
   },
@@ -443,7 +446,7 @@ Hooks 配置会合并（不是覆盖）：
           {
             "type": "command",
             "command": "bash ./hooks/validate-research-output.sh",
-            "timeout": 5000
+            "timeout": 5
           }
         ]
       }
@@ -464,7 +467,7 @@ Hooks 配置会合并（不是覆盖）：
           {
             "type": "command",
             "command": "bash ./hooks/check-experiment-env.sh",
-            "timeout": 3000
+            "timeout": 3
           }
         ]
       }
@@ -520,7 +523,7 @@ Hooks 配置会合并（不是覆盖）：
 {
   "statusLine": {
     "type": "command",
-    "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"~/.claude/statusline/hud.sh\" render"
+    "command": "bash \"$HOME/.claude/statusline/hud.sh\" render"
   },
   "hooks": {
     "PreToolUse": [
@@ -529,8 +532,8 @@ Hooks 配置会合并（不是覆盖）：
         "hooks": [
           {
             "type": "command",
-            "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"~/.claude/hooks/pre-bash.sh\"",
-            "timeout": 3000
+            "command": "bash \"$HOME/.claude/hooks/pre-bash.sh\"",
+            "timeout": 3
           }
         ]
       }
@@ -553,7 +556,7 @@ Hooks 配置会合并（不是覆盖）：
           {
             "type": "command",
             "command": "python ./scripts/port-management/port-manager.py check-docker-command",
-            "timeout": 3000
+            "timeout": 3
           }
         ]
       }
@@ -622,7 +625,7 @@ Hooks 配置会合并（不是覆盖）：
 3. **检查超时设置**：
    ```json
    {
-     "timeout": 3000  // 3 秒超时
+     "timeout": 3  // 3 秒超时
    }
    ```
 
@@ -639,7 +642,7 @@ Hooks 配置会合并（不是覆盖）：
 1. **使用 Git Bash 绝对路径**：
    ```json
    {
-     "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./script.sh\""
+     "command": "bash \"./script.sh\""
    }
    ```
 
@@ -649,7 +652,7 @@ Hooks 配置会合并（不是覆盖）：
    "command": "./script.sh"
 
    // ✅ 正确
-   "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./script.sh\""
+   "command": "bash \"./script.sh\""
    ```
 
 3. **⚠️ 不建议使用 WSL**：
@@ -696,9 +699,7 @@ Hooks 配置会合并（不是覆盖）：
    ```
    项目级 .claude/settings.json (最高)
        ↓
-   项目级 hooks/hooks.json
-       ↓
-   全局级 ~/.claude/settings.json (最低)
+   全局级 ~/.claude/settings.json (最低；其中的 hooks 由 hooks/hooks.json 经 install-global.py 合并而来)
    ```
 
 2. **检查配置合并**：

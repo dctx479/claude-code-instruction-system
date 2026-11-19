@@ -87,8 +87,12 @@ Ralph Manager 负责管理 Claude 的自主循环执行，确保任务能够持�
   fatal_error == true         → 允许停止，写入 status=FAILED
   iteration >= max_iterations → 允许停止，写入 max_iterations_reached=true
   needs_confirmation == true  → 允许停止（等待用户确认），写入 status=PAUSED
-  round_complete == true      → 递增 iteration，重置 round_complete，继续（exit 3）
-  round_complete == false     → 续跑当前轮，不递增（exit 3）
+  round_complete == true      → 递增 iteration，重置 round_complete，继续（exit 2 + stderr 指令）
+  round_complete == false     → 续跑当前轮，不递增（exit 2 + stderr 指令）
+
+Claude Code 的 Stop hook 只有 exit 2 才会阻止停止并把 stderr 反馈给 Claude；
+其他非零退出码（包括早期版本使用的 exit 3）都是非阻塞错误，循环不会继续。
+全局状态文件（~/.claude/ralph-state.json）带 project_dir 且与当前项目不符时直接放行。
 ```
 
 > Stop Handler 使用 Python 进行原子 JSON 更新，避免 sed 多步操作中途失败破坏状态文件。

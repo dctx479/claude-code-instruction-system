@@ -1,5 +1,5 @@
-# 太一元系统核心配置 v1.3
-# 发布: 2026-03-01 | 最后更新: 2026-06-16
+# 太一元系统核心配置 v1.4
+# 发布: 2026-03-01 | 最后更新: 2026-11-19
 
 > 核心能力: **自进化** | **Agent驾驭** | **知识沉淀** | **动态适应**
 > 编排指南: `docs/ORCHESTRATION-GUIDE.md` | Skills目录: `docs/SKILLS-CATALOG.md`
@@ -17,6 +17,11 @@
 | **.claude.json** | `~/.claude.json` | 启动次数、项目历史（自动管理） | ❌ |
 
 配置优先级: 项目 `.claude/settings.json` → 全局 `~/.claude/settings.json` → 默认
+
+**全局安装/同步**: `python scripts/install-global.py`（`--dry-run` 先看计划）。本仓库是"源"，生效位置是 `~/.claude/`：
+- hooks 只从 `settings.json` 加载，`hooks/hooks.json` 是模板，由安装脚本合并进全局 settings
+- `commands/`、`agents/` 只有位于 `~/.claude/`（或项目 `.claude/`）下才会被 Claude Code 发现
+- 规范: `specs/SPEC-global-install.md`
 
 ---
 
@@ -351,7 +356,7 @@ npm run build / dev / test / typecheck
 评估当前进展 → 规划本轮工作 → 执行多个操作步骤 → 验证成果 → 标记完成
 ```
 
-**Claude 的职责 — 启动时**：执行 `/ralph` 后立即初始化 `memory/ralph-state.json`（或 `~/.claude/ralph-state.json`），必填字段：`active/status/iteration/max_iterations/round_complete/completed/fatal_error/needs_confirmation/current_task/task_description/started_at/last_updated/metrics`。完整 schema 见 `commands/general/ralph.md`。
+**Claude 的职责 — 启动时**：执行 `/ralph` 后立即初始化 `memory/ralph-state.json`（或 `~/.claude/ralph-state.json`），必填字段：`active/status/iteration/max_iterations/round_complete/completed/fatal_error/needs_confirmation/current_task/task_description/started_at/last_updated/metrics`。使用全局状态文件时**必须**同时写入 `project_dir`（当前项目根目录），否则 Stop Hook 会拦住本机所有项目的会话。完整 schema 见 `commands/general/ralph.md`。
 
 **Claude 的职责 — 每轮结束时**写入以下信号之一：
 
@@ -368,8 +373,9 @@ npm run build / dev / test / typecheck
 - `fatal_error = true` → 允许停止，写入 `status: FAILED`
 - `iteration ≥ max_iterations` → 允许停止
 - `needs_confirmation = true` → 允许停止，写入 `status: PAUSED`（用户确认后重置该字段）
-- `round_complete = true` → 递增 `iteration`，重置标志，启动下一轮（exit 3）
-- `round_complete = false` → 续跑当前轮，**不**递增计数（exit 3）
+- `round_complete = true` → 递增 `iteration`，重置标志，启动下一轮（exit 2，指令经 stderr 反馈给 Claude）
+- `round_complete = false` → 续跑当前轮，**不**递增计数（exit 2）
+- 全局状态文件的 `project_dir` 与当前项目不符 → 允许停止
 
 > 详见: `commands/general/ralph.md`, `workflows/execution/ralph-manager.md`
 
@@ -382,8 +388,8 @@ npm run build / dev / test / typecheck
 
 ### 端口管理 (全局)
 ```bash
-python scripts/port-manager.py register <port> <project> <service>
-python scripts/port-manager.py conflicts / suggest <service>
+python scripts/port-management/port-manager.py register <port> <project> <service>
+python scripts/port-management/port-manager.py conflicts / suggest <service>
 ```
 > PreToolUse Hook 自动检测 Docker 端口冲突。详见: `docs/port-management/PORT-MANAGEMENT-GUIDE.md`
 
@@ -411,8 +417,6 @@ python scripts/port-manager.py conflicts / suggest <service>
 **失败归因**：任务失败时必须分清原因（需求不明确 / Spec 错误 / Plan 执行偏差 / 外部依赖），归因后必须制定预防措施并写入对应文件（详见 `memory/best-practices.md` BP-028）。
 
 **任务终止标准**：测试通过 ≠ 完成。必须同时满足：需求对齐 + 验收通过 + 质量达标（≥80分）+ 结果同步 + 未验证项已声明（详见 `agents/qa-reviewer.md`）。
-
-**知识资产审计**（每季度一次）：Skill 激活率目标 ≥50%，Spec 复用率目标 ≥30%，详见 `memory/best-practices.md` BP-027。
 
 **知识资产利用率审计**（每季度一次）：Skill 激活率目标 ≥50%，Spec 复用率目标 ≥30%，详见 `memory/best-practices.md` BP-027。
 
@@ -619,12 +623,28 @@ value=$(echo "$JSON" | jq -r '.field' 2>/dev/null || echo "default")
 
 ### Hook stdin JSON 字段名规范
 
-| Hook 事件 | stdin JSON 字段 |
+| Hook 事件 | stdin JSON 字段（另有公共字段 `session_id` / `transcript_path` / `cwd` / `hook_event_name`） |
 |-----------|----------------|
 | UserPromptSubmit | `"prompt"` |
 | PreToolUse | `"tool_name"`, `"tool_input"` |
-| PostToolUse | `"tool_name"`, `"tool_output"` |
-| Stop | （无 stdin JSON） |
+| PostToolUse | `"tool_name"`, `"tool_input"`, `"tool_response"` |
+| Stop | `"stop_hook_active"`, `"last_assistant_message"` |
+| Notification | `"message"` |
+
+Claude Code **不提供** `TOOL_NAME` / `TOOL_INPUT` 之类的环境变量，工具信息只在 stdin JSON 里；定位项目文件用 `$CLAUDE_PROJECT_DIR`。
+
+### Hook 退出码与 timeout 规范
+
+| 退出码 | 含义 |
+|--------|------|
+| `0` | 成功 / 放行（UserPromptSubmit 的 stdout 会加入 Claude 上下文） |
+| `2` | 阻塞：PreToolUse 阻止工具执行；**Stop 阻止停止并继续对话**；stderr 反馈给 Claude |
+| 其他（含 `1`、`3`） | 非阻塞错误，操作照常进行 |
+
+- `timeout` 单位是**秒**（command hook 默认 600）。写成 `5000` 等于 83 分钟，起不到超时保护作用
+- "会话结束时做一次"的逻辑用 **SessionEnd**，不是 Stop —— Stop 在每轮对话结束时都会触发
+- handler 对象只写官方字段（`type` / `command` / `timeout` 等），不要加 `description`
+- 2.1.63 起子代理工具由 `Task` 更名为 `Agent`，matcher 写 `"Agent|Task"`
 
 ### 事件驱动 vs 时间驱动触发决策
 
@@ -666,7 +686,11 @@ value=$(echo "$JSON" | jq -r '.field' 2>/dev/null || echo "default")
 
 ### Hooks 配置规范
 
-**Matcher 格式**（全局和项目级别统一）：字符串 `"matcher": "Bash"`
+**加载位置**：hooks 只从 `~/.claude/settings.json`、`.claude/settings.json`、`.claude/settings.local.json`（或已启用的插件）加载。仓库根的 `hooks/hooks.json` **不会**被自动加载，它是 `scripts/install-global.py` 的输入模板。
+
+**Matcher 格式**（全局和项目级别统一）：字符串 `"matcher": "Bash"`，支持正则 `"Agent|Task"`
+
+**脚本路径**：全局 hook 用 `bash "$HOME/.claude/hooks/x.sh"`，项目 hook 用 `bash "$CLAUDE_PROJECT_DIR/x.sh"`。不要用 `./x.sh` —— hook 的 cwd 会跟随 Claude 的 `cd` 变化。
 
 **Windows 环境兼容性**:
 - ✅ `bash "C:\\path\\to\\script.sh"`（以 `bash` 开头）
@@ -688,7 +712,7 @@ value=$(echo "$JSON" | jq -r '.field' 2>/dev/null || echo "default")
 
 ### 配置变更同步
 
-修改 hooks 配置后同步更新: `hooks/hooks.json` + `QUICK-REFERENCE.md` + `CLAUDE.md`
+修改 hooks 配置后同步更新: `hooks/hooks.json` + `QUICK-REFERENCE.md` + `CLAUDE.md`，然后运行 `python scripts/install-global.py --components hooks` 使其在全局生效，并重启 Claude Code 会话（已运行的会话不会热加载 hooks）
 
 ### 跨会话 Edit 规则
 

@@ -240,21 +240,21 @@ import anyio
 # 1. 定义子 Agent（程序化生成，非命令行）
 researcher = AgentDefinition(
     name="researcher",
-    model="claude-haiku-4-5",         # 轻量模型节省成本
+    model="claude-haiku-5-5",         # 轻量模型节省成本
     system_prompt="你是一个研究助手，负责搜索和总结信息。",
     allowed_tools=["WebSearch", "Read", "Write"],
 )
 
 data_analyst = AgentDefinition(
     name="data-analyst",
-    model="claude-haiku-4-5",
+    model="claude-haiku-5-5",
     system_prompt="你是一个数据分析师，负责处理数据和生成图表。",
     allowed_tools=["Read", "Bash", "Glob"],
 )
 
 writer = AgentDefinition(
     name="writer",
-    model="claude-sonnet-4-7",         # 主力模型
+    model="claude-sonnet-5-5",         # 主力模型
     system_prompt="你是一个报告撰写助手，负责生成最终报告。",
     allowed_tools=["Read", "Write"],
 )

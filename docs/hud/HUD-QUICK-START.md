@@ -13,8 +13,8 @@
 cd /path/to/claude-code-instruction-system
 
 # Copy HUD script to Claude directory
-cp .claude/statusline/hud-v2.sh ~/.claude/statusline/hud-v2.sh
-chmod +x ~/.claude/statusline/hud-v2.sh
+cp .claude/statusline/hud.sh ~/.claude/statusline/hud.sh
+chmod +x ~/.claude/statusline/hud.sh
 
 # Copy configuration file
 cp memory/hud-config-v2.json ~/.claude/hud-config.json
@@ -31,7 +31,7 @@ Edit `~/.claude/settings.json`:
 {
   "statusLine": {
     "type": "command",
-    "command": "bash ~/.claude/statusline/hud-v2.sh render"
+    "command": "bash ~/.claude/statusline/hud.sh render"
   }
 }
 ```
@@ -40,7 +40,7 @@ Edit `~/.claude/settings.json`:
 
 ```bash
 # Test basic rendering
-bash ~/.claude/statusline/hud-v2.sh render
+bash ~/.claude/statusline/hud.sh render
 
 # Expected output:
 # 00:24:28 | Sonnet | my-project | master ✓ | 45% | $0.150 | @architect | 0i/0o
@@ -155,25 +155,25 @@ To hide specific information:
 
 ```bash
 # Render statusline
-hud-v2.sh render
+hud.sh render
 
 # Render with border
-hud-v2.sh full
+hud.sh full
 
 # Use specific theme
-hud-v2.sh theme nerd
+hud.sh theme nerd
 
 # Show configuration
-hud-v2.sh config
+hud.sh config
 
 # Clear cache (if statusline seems stuck)
-hud-v2.sh cache-clear
+hud.sh cache-clear
 
 # Show version
-hud-v2.sh version
+hud.sh version
 
 # Show help
-hud-v2.sh help
+hud.sh help
 ```
 
 ---
@@ -194,7 +194,7 @@ git init
 
 ```bash
 # Clear cache
-hud-v2.sh cache-clear
+hud.sh cache-clear
 
 # Restart Claude Code
 ```

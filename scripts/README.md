@@ -1,8 +1,10 @@
 # Hooks 脚本使用指南
 
-**版本**: 1.0.0
-**更新日期**: 2026-01-24
-**适用系统**: 太一元系统 v3.1.0
+**版本**: 1.1.0
+**更新日期**: 2026-11-19
+**适用系统**: 太一元系统 v1.4
+
+> 这些脚本通过 `python scripts/install-global.py` 安装到 `~/.claude/scripts/`，对应的 hook 条目来自 `hooks/hooks.json`（合并进 `~/.claude/settings.json`）。下文的配置片段仅作格式示意：`timeout` 单位是秒；全局 hook 的脚本路径写 `$HOME/.claude/scripts/...`。
 
 ---
 
@@ -14,8 +16,8 @@
 |------|----------|------|----------|
 | validate-command.sh | PreToolUse (Bash) | 验证 Bash 命令安全性 | 5秒 |
 | post-edit.sh | PostToolUse (Edit) | 编辑后运行 lint 检查 | 30秒 |
-| notify.sh | Notification | 发送通知到外部系统 | 无限制 |
-| on-stop.sh | Stop | 会话结束清理操作 | 无限制 |
+| notify.sh | Notification | 发送通知到外部系统 | 15秒 |
+| on-stop.sh | SessionEnd | 会话结束时保存统计与未提交改动备份 | 15秒 |
 
 ---
 
@@ -47,8 +49,8 @@
   "matcher": "Bash",
   "hooks": [{
     "type": "command",
-    "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./scripts/validate-command.sh\"",
-    "timeout": 5000
+    "command": "bash \"./scripts/validate-command.sh\"",
+    "timeout": 5
   }]
 }
 ```
@@ -102,8 +104,8 @@ fi
   "matcher": "Edit",
   "hooks": [{
     "type": "command",
-    "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./scripts/post-edit.sh\"",
-    "timeout": 30000
+    "command": "bash \"./scripts/post-edit.sh\"",
+    "timeout": 30
   }]
 }
 ```
@@ -203,7 +205,7 @@ export NOTIFICATION_MESSAGE="任务已完成"
 {
   "hooks": [{
     "type": "command",
-    "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" \"./scripts/on-stop.sh\""
+    "command": "bash \"./scripts/on-stop.sh\""
   }]
 }
 ```
@@ -224,24 +226,27 @@ export CLAUDE_GENERATE_SESSION_SUMMARY=true
 
 ## 🔧 通用配置
 
-### 环境变量
+### 输入数据
 
-所有脚本可以访问以下 Claude Code 环境变量：
+Claude Code 通过 **stdin JSON** 把事件数据传给脚本，没有 `TOOL_NAME` / `TOOL_INPUT` 之类的环境变量：
 
-| 变量 | 说明 | 示例 |
-|------|------|------|
-| `TOOL_NAME` | 工具名称 | `"Bash"`, `"Edit"` |
-| `TOOL_INPUT` | 工具输入 (JSON) | `{"command": "ls"}` |
-| `TOOL_OUTPUT` | 工具输出 (PostToolUse) | 命令的标准输出 |
-| `SESSION_ID` | 会话 ID | UUID 字符串 |
+| stdin 字段 | 说明 | 出现的事件 |
+|------------|------|-----------|
+| `session_id` / `cwd` / `hook_event_name` | 公共字段 | 全部 |
+| `tool_name` / `tool_input` | 工具名称与参数 | PreToolUse、PostToolUse |
+| `tool_response` | 工具返回结果 | PostToolUse |
+| `prompt` | 用户输入 | UserPromptSubmit |
+| `message` | 通知内容 | Notification |
+
+环境变量只有 `CLAUDE_PROJECT_DIR`（项目根目录）可依赖。
 
 ### 退出状态码
 
 | 状态码 | 含义 | 行为 |
 |--------|------|------|
-| 0 | 成功 | 继续执行工具 |
-| 1 | 警告 | 记录警告并继续 |
-| 2 | 阻止 | 阻止工具执行 |
+| 0 | 成功 | 继续执行 |
+| 2 | 阻塞 | PreToolUse 阻止工具执行；Stop 阻止停止并继续对话；stderr 反馈给 Claude |
+| 其他 | 非阻塞错误 | 记录后照常继续（包括 1 和 3） |
 
 ### 脚本权限
 
@@ -350,7 +355,7 @@ fi
 
 **A**: 确保使用完整的 Git Bash 路径和正确的转义：
 ```json
-"command": "\"C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe\" \"./scripts/script.sh\""
+"command": "bash \"./scripts/script.sh\""
 ```
 
 ### Q: 如何禁用某个脚本？
@@ -361,7 +366,7 @@ fi
 
 **A**: 增加 timeout 值或优化脚本性能：
 ```json
-"timeout": 60000  // 60秒
+"timeout": 60  // 60秒
 ```
 
 ### Q: 如何查看脚本执行结果？

@@ -865,13 +865,13 @@ Sonnet | my-project | master ✓
 
 ```bash
 # Test with your configuration
-HUD_CONFIG_FILE=~/.claude/hud-config.json bash ~/.claude/statusline/hud-v2.sh render
+HUD_CONFIG_FILE=~/.claude/hud-config.json bash ~/.claude/statusline/hud.sh render
 
 # Test with custom configuration
-HUD_CONFIG_FILE=/path/to/custom-config.json bash ~/.claude/statusline/hud-v2.sh render
+HUD_CONFIG_FILE=/path/to/custom-config.json bash ~/.claude/statusline/hud.sh render
 
 # Test performance
-time bash ~/.claude/statusline/hud-v2.sh render
+time bash ~/.claude/statusline/hud.sh render
 ```
 
 ### Validation

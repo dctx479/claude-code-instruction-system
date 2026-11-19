@@ -2,9 +2,9 @@
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "sk-your-api-key-here",
     "ANTHROPIC_BASE_URL": "https://api.anthropomorph.ic",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-6",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4-6",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4-5-20251001",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-5-5",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5-5",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-5-5",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE": "193000",
     "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
@@ -22,6 +22,6 @@
   "alwaysThinkingEnabled": true,
   "statusLine": {
     "type": "command",
-    "command": "bash \"./.claude/statusline/hud-v2.sh\" render"
+    "command": "bash \"./.claude/statusline/hud.sh\" render"
   }
 }

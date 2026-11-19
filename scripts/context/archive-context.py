@@ -64,7 +64,7 @@ def archive_conversation(conversation_text: str):
     print("🧠 Analyzing conversation...")
 
     response = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-5-5",
         max_tokens=8000,
         messages=[{"role": "user", "content": f"{ARCHIVAL_PROMPT}\n\n对话内容：\n{conversation_text}"}]
     )

@@ -7,6 +7,43 @@
 
 ---
 
+## [1.4.0] - 2026-11-19
+
+对照 Claude Code 官方 hooks 规范（CLI 2.1.x）做的一次可用性修复：此前自动化层（自动调度、Ralph 循环、自定义命令）在新机器上不会生效。
+
+### 新增
+
+- `scripts/install-global.py`：把仓库同步到 `~/.claude/` 并将 `hooks/hooks.json` 合并进 `~/.claude/settings.json`。可重复执行、覆盖前备份、不删除文件、保留用户自己的 hooks 和其他 settings 键；`commands/` 拍平安装以保证 `/ralph` 而不是 `/general:ralph`。规范见 `specs/SPEC-global-install.md`
+- `.claude/context/resolutions/`：`test-integrations.sh` 检查的归档目录（此前因空目录未被 git 跟踪而缺失）
+
+### 修复
+
+- **Ralph 循环无法续跑**：Stop Hook 由 `exit 3` + stdout 改为 `exit 2` + stderr（`hooks/ralph-stop-interceptor.sh` v2.0.0）
+- **Ralph 全局状态文件在 Windows 上读不到**：Git Bash 路径经 `cygpath -m` 转换后通过 argv 传给 Python，不再拼进代码；解析失败时显式告警而不是静默放行
+- **全局 Ralph 状态拦住所有项目**：状态文件新增 `project_dir`，与当前项目不符时放行
+- **命令安全校验可绕过**（`scripts/validate/validate-command.sh` v1.2.0）：无 jq 时命令在第一个转义引号处被截断；警告规则排在阻塞规则之前导致 `sudo mkfs ...` 只警告不拦截；格式化规则按子串匹配误拦 `grep fdisk`
+- **`hooks/hooks.json` v4.0.0**：`timeout` 由毫秒值改为秒；脚本路径由 `./` 改为 `$HOME/.claude/...`；子代理 matcher 改为 `Agent|Task`；会话清理由 Stop 移到 SessionEnd；移除 handler 上的非标准 `description` 字段和无意义的 `echo` hooks
+- `hooks/intent-detector.sh` v2.2.0：提示词含引号时不再被截断；`qa-fix` 规则不再被 `qa` 关键词抢先命中
+- `hooks/agent-tracker.sh` v2.0.0：从 stdin 读取 `tool_name`（原先依赖不存在的 `TOOL_NAME` 环境变量，从未生效）
+- `scripts/hooks/on-stop.sh`：移除 `rm -f /tmp/claude-*`、`rm -rf .claude-tmp`（违反 §七 禁止批量删除，且会删掉其他会话的文件）；通知脚本路径修正
+- `scripts/hooks/post-edit.sh`：无 jq 时也能取到文件路径；不再 `touch` 刚编辑的文件
+- `.claude/statusline/hud.sh`：Agent 名读取兼容带空格的 JSON；Ralph 状态路径与 Stop Hook 一致
+- `scripts/test-integrations.sh`：`set -e` 使脚本在第一个失败项即退出；Skills 索引路径错误
+- `scripts/validate/validate-config.py`：不再建议使用 `bash.exe` 绝对路径（该写法本身会失败），新增毫秒 timeout / 相对路径 / 非标准字段检查
+
+### 文档
+
+- `CLAUDE.md` v1.4：重写 Hook stdin 字段表（`tool_response`、Stop 有 stdin JSON），新增「Hook 退出码与 timeout 规范」和 hooks 加载位置说明；修正端口管理脚本路径；删除重复的知识资产审计条目
+- `README.md` / `docs/QUICK-START.md` / `QUICK-REFERENCE.md` / `docs/CONFIG-FILES-GUIDE.md` / `scripts/README.md`：安装步骤改为使用安装脚本，示例中的 timeout、bash 路径、模型 ID 同步更新
+- `docs/hud/*`：脚本名 `hud-v2.sh` 统一为实际存在的 `hud.sh`
+
+### 清理
+
+- `.claude/settings.local.json`：清空指向另一台机器（`C:/Users/ASUS`、`G:/`）的 19 条一次性权限
+- 取消跟踪误提交的 8 个 `graph/__pycache__/*.pyc`
+
+---
+
 ## [1.3.0] - 2026-06-16
 
 ### 新增功能

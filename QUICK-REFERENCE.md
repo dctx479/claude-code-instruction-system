@@ -82,30 +82,44 @@ permissionMode: default | acceptEdits | dontAsk
 2. 步骤二
 ```
 
-使用: `/project:命令名 参数`
+使用: `/命令名 参数`
 
 ## Hooks 配置
+
+hooks 只从 `settings.json` 加载。本系统的全局 hooks 定义在 `hooks/hooks.json`，用 `python scripts/install-global.py` 合并进 `~/.claude/settings.json`：
 
 ```json
 {
   "hooks": {
-    "PreToolUse": [{
-      "matcher": "Write",
-      "hooks": [{"type": "command", "command": "bash \"./scripts/validate/validate-command.sh\""}]
-    }],
-    "PostToolUse": [{
-      "matcher": "Edit",
-      "hooks": [{"type": "command", "command": "bash \"./scripts/hooks/post-edit.sh\""}]
-    }],
-    "UserPromptSubmit": [{
-      "hooks": [{"type": "command", "command": "bash \"./hooks/intent-detector.sh\""}]
-    }],
-    "Stop": [{
-      "hooks": [{"type": "command", "command": "bash \"./scripts/hooks/on-stop.sh\""}]
-    }]
+    "PreToolUse": [
+      {"matcher": "Bash", "hooks": [
+        {"type": "command", "command": "bash \"$HOME/.claude/scripts/validate/validate-command.sh\"", "timeout": 5},
+        {"type": "command", "command": "python \"$HOME/.claude/scripts/port-management/port-check-hook.py\"", "timeout": 5}]},
+      {"matcher": "Agent|Task", "hooks": [
+        {"type": "command", "command": "bash \"$HOME/.claude/hooks/agent-tracker.sh\"", "timeout": 5}]}
+    ],
+    "PostToolUse": [{"matcher": "Edit", "hooks": [
+      {"type": "command", "command": "bash \"$HOME/.claude/scripts/hooks/post-edit.sh\"", "timeout": 30}]}],
+    "UserPromptSubmit": [{"hooks": [
+      {"type": "command", "command": "bash \"$HOME/.claude/hooks/intent-detector.sh\"", "timeout": 10}]}],
+    "Notification": [{"hooks": [
+      {"type": "command", "command": "bash \"$HOME/.claude/scripts/hooks/notify.sh\"", "timeout": 15}]}],
+    "Stop": [{"hooks": [
+      {"type": "command", "command": "bash \"$HOME/.claude/hooks/ralph-stop-interceptor.sh\"", "timeout": 15}]}],
+    "SessionEnd": [{"hooks": [
+      {"type": "command", "command": "bash \"$HOME/.claude/scripts/hooks/on-stop.sh\"", "timeout": 15}]}],
+    "PreCompact": [{"hooks": [
+      {"type": "command", "command": "bash \"$HOME/.claude/hooks/pre-compact.sh\"", "timeout": 10}]}]
   }
 }
 ```
+
+| 规则 | 说明 |
+|------|------|
+| `timeout` | 单位是秒 |
+| 退出码 | `0` 放行；`2` 阻塞（Stop 时 = 继续对话，stderr 反馈给 Claude）；其他为非阻塞错误 |
+| 输入 | stdin JSON（`prompt` / `tool_name` / `tool_input` / `tool_response`） |
+| 路径 | 全局用 `$HOME/.claude/...`，项目用 `$CLAUDE_PROJECT_DIR/...`，不用 `./` |
 
 ## 权限配置
 

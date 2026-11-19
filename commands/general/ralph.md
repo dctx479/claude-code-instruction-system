@@ -182,7 +182,7 @@ Ralph 使用两层状态文件，HUD 按对应层级读取：
 | 层级 | 路径 | 读取方 | 说明 |
 |------|------|--------|------|
 | **项目级** | `memory/ralph-state.json` | 项目 `hud.sh` | 项目内 ralph 执行状态 |
-| **全局级** | `~/.claude/memory/ralph-state.json` | 全局 `hud.sh` | 跨项目 ralph 执行状态 |
+| **全局级** | `~/.claude/ralph-state.json` | 全局 `hud.sh` | 项目内没有 `memory/ralph-state.json` 时使用；必须写入 `project_dir` |
 
 Ralph 写入哪个路径取决于调用上下文：在项目内调用写项目路径，全局模式写全局路径。
 
@@ -233,6 +233,7 @@ Ralph 写入哪个路径取决于调用上下文：在项目内调用写项目�
 | `fatal_error` | bool | **Claude 写入**：是否遇到不可恢复错误 |
 | `needs_confirmation` | bool | **Claude 写入**：是否需要人工确认 |
 | `paused_reason` | string | 暂停原因说明 |
+| `project_dir` | string | **Claude 写入**：发起 Ralph 的项目根目录。使用全局状态文件 `~/.claude/ralph-state.json` 时必填——Stop Hook 据此只拦截该项目的会话，缺失时会拦住本机所有项目 |
 | `last_updated` | ISO8601 | Stop Hook 自动更新 |
 | `metrics.total_iterations` | int | Stop Hook 每次递增迭代时累计 |
 

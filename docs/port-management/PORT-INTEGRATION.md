@@ -133,7 +133,7 @@ chmod +x .git/hooks/pre-commit
           "type": "command",
           "command": "python scripts/port-management/port-check-hook.py",
           "description": "检查 Docker/Compose 命令的端口冲突",
-          "timeout": 5000
+          "timeout": 5
         }
       ]
     }

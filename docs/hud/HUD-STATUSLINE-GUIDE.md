@@ -95,8 +95,8 @@ HUD StatusLine v2.0 is an enhanced, high-performance statusline renderer for Cla
 
 ```bash
 # Copy the new HUD script
-cp .claude/statusline/hud-v2.sh ~/.claude/statusline/hud-v2.sh
-chmod +x ~/.claude/statusline/hud-v2.sh
+cp .claude/statusline/hud.sh ~/.claude/statusline/hud.sh
+chmod +x ~/.claude/statusline/hud.sh
 
 # Copy the configuration file
 cp memory/hud-config-v2.json ~/.claude/hud-config.json
@@ -110,7 +110,7 @@ Edit your Claude Code settings file (`.claude/settings.json` or `~/.claude/setti
 {
   "statusLine": {
     "type": "command",
-    "command": "bash ~/.claude/statusline/hud-v2.sh render"
+    "command": "bash ~/.claude/statusline/hud.sh render"
   }
 }
 ```
@@ -125,13 +125,13 @@ mkdir -p ~/.claude/cache
 
 ```bash
 # Test basic rendering
-bash ~/.claude/statusline/hud-v2.sh render
+bash ~/.claude/statusline/hud.sh render
 
 # Test with theme
-bash ~/.claude/statusline/hud-v2.sh theme nerd
+bash ~/.claude/statusline/hud.sh theme nerd
 
 # Check version
-bash ~/.claude/statusline/hud-v2.sh version
+bash ~/.claude/statusline/hud.sh version
 ```
 
 ---
@@ -144,19 +144,19 @@ The statusline automatically updates when Claude Code refreshes. You can also ru
 
 ```bash
 # Render statusline
-hud-v2.sh render
+hud.sh render
 
 # Render with border
-hud-v2.sh full
+hud.sh full
 
 # Use specific theme
-hud-v2.sh theme nerd
+hud.sh theme nerd
 
 # Show configuration
-hud-v2.sh config
+hud.sh config
 
 # Clear cache
-hud-v2.sh cache-clear
+hud.sh cache-clear
 ```
 
 ### Example Output
@@ -559,7 +559,7 @@ Each module can be configured with:
 
 #### 1. Default Theme
 ```bash
-HUD_THEME=default hud-v2.sh render
+HUD_THEME=default hud.sh render
 ```
 - Border: `-`
 - Progress: `#` and `.`
@@ -573,7 +573,7 @@ HUD_THEME=default hud-v2.sh render
 
 #### 2. Minimal Theme
 ```bash
-HUD_THEME=minimal hud-v2.sh render
+HUD_THEME=minimal hud.sh render
 ```
 - Border: ` ` (space)
 - Progress: `=` and `-`
@@ -587,7 +587,7 @@ HUD_THEME=minimal hud-v2.sh render
 
 #### 3. Unicode Theme
 ```bash
-HUD_THEME=unicode hud-v2.sh render
+HUD_THEME=unicode hud.sh render
 ```
 - Border: `─`
 - Progress: `█` and `░`
@@ -601,7 +601,7 @@ HUD_THEME=unicode hud-v2.sh render
 
 #### 4. Nerd Theme (Recommended)
 ```bash
-HUD_THEME=nerd hud-v2.sh render
+HUD_THEME=nerd hud.sh render
 ```
 - Border: `━`
 - Progress: `█` and `▒`
@@ -663,7 +663,7 @@ export HUD_THEME=nerd
 **Cache Management**:
 ```bash
 # Clear all caches
-hud-v2.sh cache-clear
+hud.sh cache-clear
 
 # View cache directory
 ls -lh ~/.claude/cache/
@@ -740,10 +740,10 @@ git diff --quiet
 
 ```bash
 # Measure execution time
-time hud-v2.sh render
+time hud.sh render
 
 # Profile with detailed timing
-bash -x hud-v2.sh render 2>&1 | grep "^+"
+bash -x hud.sh render 2>&1 | grep "^+"
 
 # Check cache effectiveness
 ls -lh ~/.claude/cache/
@@ -763,13 +763,13 @@ stat ~/.claude/cache/git-status.cache
 **Solutions**:
 ```bash
 # Clear cache
-hud-v2.sh cache-clear
+hud.sh cache-clear
 
 # Check Claude Code settings
 cat .claude/settings.json | grep statusLine
 
 # Test manually
-bash ~/.claude/statusline/hud-v2.sh render
+bash ~/.claude/statusline/hud.sh render
 ```
 
 #### 2. Git Information Not Showing
@@ -796,7 +796,7 @@ cat ~/.claude/hud-config.json | grep -A5 '"git"'
 **Solutions**:
 ```bash
 # Profile execution
-time hud-v2.sh render
+time hud.sh render
 
 # Check cache
 ls -lh ~/.claude/cache/
@@ -819,7 +819,7 @@ ls -lh ~/.claude/cache/
 2. Configure terminal to use Nerd Font
 3. Use a different theme:
    ```bash
-   HUD_THEME=default hud-v2.sh render
+   HUD_THEME=default hud.sh render
    ```
 
 #### 5. Context/Cost Information Not Showing
@@ -834,7 +834,7 @@ ls -lh ~/.claude/cache/
 - Test with mock data:
   ```bash
   echo '{"session":{"contextUsed":50000,"contextLimit":200000,"estimatedCost":0.15}}' | \
-    HUD_SESSION_JSON="$(cat)" hud-v2.sh render
+    HUD_SESSION_JSON="$(cat)" hud.sh render
   ```
 
 ### Debug Mode
@@ -845,16 +845,16 @@ Enable verbose output:
 set -x
 
 # Run with debug
-bash -x ~/.claude/statusline/hud-v2.sh render
+bash -x ~/.claude/statusline/hud.sh render
 ```
 
 ### Getting Help
 
-1. Check configuration: `hud-v2.sh config`
-2. Check version: `hud-v2.sh version`
-3. Clear cache: `hud-v2.sh cache-clear`
+1. Check configuration: `hud.sh config`
+2. Check version: `hud.sh version`
+3. Clear cache: `hud.sh cache-clear`
 4. Review logs: Check Claude Code output
-5. Test manually: `hud-v2.sh render`
+5. Test manually: `hud.sh render`
 
 ---
 
@@ -923,17 +923,17 @@ cat > /tmp/mock-session.json <<EOF
 EOF
 
 # Test with mock data
-cat /tmp/mock-session.json | HUD_SESSION_JSON="$(cat)" hud-v2.sh render
+cat /tmp/mock-session.json | HUD_SESSION_JSON="$(cat)" hud.sh render
 ```
 
 ### Scripting and Automation
 
 ```bash
 # Render to file
-hud-v2.sh render > /tmp/statusline.txt
+hud.sh render > /tmp/statusline.txt
 
 # Use in other scripts
-STATUS=$(hud-v2.sh render)
+STATUS=$(hud.sh render)
 echo "Current status: $STATUS"
 
 # Conditional rendering
@@ -944,7 +944,7 @@ fi
 
 ### Creating Custom Themes
 
-Edit the `load_theme()` function in `hud-v2.sh`:
+Edit the `load_theme()` function in `hud.sh`:
 
 ```bash
 load_theme() {
@@ -971,7 +971,7 @@ load_theme() {
 
 ### Breaking Changes
 
-1. **Script Name**: `hud.sh` → `hud-v2.sh`
+1. **Script Name**: unchanged — the v2 script ships as `hud.sh` (it was briefly named `hud-v2.sh` during development)
 2. **Configuration Format**: Enhanced JSON schema
 3. **Cache System**: New cache directory required
 
@@ -984,8 +984,8 @@ load_theme() {
 
 2. **Install v2.0**:
    ```bash
-   cp .claude/statusline/hud-v2.sh ~/.claude/statusline/
-   chmod +x ~/.claude/statusline/hud-v2.sh
+   cp .claude/statusline/hud.sh ~/.claude/statusline/
+   chmod +x ~/.claude/statusline/hud.sh
    ```
 
 3. **Update Configuration**:
@@ -999,14 +999,14 @@ load_theme() {
    {
      "statusLine": {
        "type": "command",
-       "command": "bash ~/.claude/statusline/hud-v2.sh render"
+       "command": "bash ~/.claude/statusline/hud.sh render"
      }
    }
    ```
 
 5. **Test**:
    ```bash
-   hud-v2.sh render
+   hud.sh render
    ```
 
 ### Compatibility
@@ -1035,7 +1035,7 @@ A: Disable expensive modules (git ahead/behind), increase cache TTL, or disable 
 A: Yes, with Git Bash or WSL. Ensure bash is available.
 
 **Q: How do I add a custom module?**
-A: Edit `hud-v2.sh` and add a new `get_*()` function and rendering logic. See [Advanced Usage](#advanced-usage).
+A: Edit `hud.sh` and add a new `get_*()` function and rendering logic. See [Advanced Usage](#advanced-usage).
 
 **Q: Why does cost show $0.000?**
 A: Cost information comes from Claude Code session data. When running manually, it defaults to 0.
