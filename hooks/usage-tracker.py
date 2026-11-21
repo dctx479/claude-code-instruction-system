@@ -12,10 +12,26 @@ import time
 
 def record(event, directory):
     tool = event.get("tool_name")
-    if tool not in {"Skill", "Agent", "Task"}:
+    if event.get("hook_event_name") == "UserPromptSubmit":
+        prompt = event.get("prompt")
+        if not isinstance(prompt, str):
+            raise ValueError("prompt must be a string")
+        explicit = re.match(r"^/([a-z][a-z0-9-]*)(?=\s|$)", prompt.strip())
+        if not explicit:
+            return
+        name = explicit[1]
+        config = directory.parent
+        # Slash expansion is not a Skill tool call. Only count registered personal capabilities,
+        # not arbitrary slash text, prompt arguments, or built-in CLI commands.
+        if not ((config / "skills" / name / "SKILL.md").is_file() or (config / "commands" / (name + ".md")).is_file()):
+            return
+        tool = "Skill" if (config / "skills" / name / "SKILL.md").is_file() else "Command"
+        args = {}
+    else:
+        args = event.get("tool_input", {})
+        name = args.get("skill") if tool == "Skill" else args.get("subagent_type")
+    if tool not in {"Skill", "Agent", "Task", "Command"}:
         return
-    args = event.get("tool_input", {})
-    name = args.get("skill") if tool == "Skill" else args.get("subagent_type")
     if not isinstance(name, str) or not re.fullmatch(r"[\w.:-]{1,128}", name):
         raise ValueError("missing/invalid invocation name")
     directory.mkdir(parents=True, exist_ok=True)

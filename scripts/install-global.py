@@ -170,14 +170,32 @@ def same_content(a: Path, b: Path) -> bool:
         return False
 
 
+def safe_files(directory):
+    """Enumerate owned trees without traversing symlinks or Windows junctions."""
+    stack = [directory]
+    while stack:
+        parent = stack.pop()
+        if parent.is_symlink() or getattr(parent, "is_junction", lambda: False)():
+            raise ValueError("linked directory")
+        for path in parent.iterdir():
+            if path.is_symlink() or getattr(path, "is_junction", lambda: False)():
+                raise ValueError("linked content")
+            if path.is_dir():
+                stack.append(path)
+            elif path.is_file():
+                yield path
+
+
 class Installer:
     def __init__(self, target: Path, dry_run: bool, replace_global_rules: bool = False,
-                 profiles="core", with_guardrails=False):
-        self.target = target
+                 profiles="core", with_guardrails=False, backup_retention=5):
+        self.target = Path(target).resolve()
         self.dry_run = dry_run
         self.replace_global_rules = replace_global_rules
         self.selected = profile_names(profiles)
         self.with_guardrails = with_guardrails
+        self.backup_retention = backup_retention
+        self.backup_files = {}
         self.backup_dir = target / "backups" / ("taiyi-install-" + time.strftime("%Y%m%d-%H%M%S") + f"-{time.time_ns()}")
         self.stats = {"copied": 0, "updated": 0, "unchanged": 0, "kept": 0, "failed": 0}
         self.problems = []
@@ -188,6 +206,61 @@ class Installer:
         bak = self.backup_dir / rel
         bak.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(dest, bak)
+        self.backup_files[rel] = hashlib.sha256(bak.read_bytes()).hexdigest()
+        self.write_backup_manifest(False)
+
+    def write_backup_manifest(self, completed):
+        if not self.backup_files or self.dry_run:
+            return
+        data = dict(version=1, owner="taiyi-install", target=str(self.target), completed=completed,
+                    files=self.backup_files)
+        (self.backup_dir / ".taiyi-backup.json").write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+    def prune_backups(self):
+        """Expire only completed, hash-verified snapshots owned by this installer."""
+        if self.dry_run:
+            return []
+        directory = (self.target / "backups").resolve()
+        original = self.target / "backups"
+        if not directory.is_relative_to(self.target) or original.is_symlink() or getattr(original, "is_junction", lambda: False)():
+            raise ValueError("backup directory escapes installation target")
+        snapshots = []
+        for candidate in sorted(directory.glob("taiyi-install-*")):
+            marker = candidate / ".taiyi-backup.json"
+            if not marker.is_file():
+                continue  # Historical or personal backups are never implicitly expired.
+            try:
+                if candidate.is_symlink() or getattr(candidate, "is_junction", lambda: False)():
+                    raise ValueError("linked snapshot")
+                files = list(safe_files(candidate))
+                data = json.loads(marker.read_text(encoding="utf-8"))
+                if data.get("owner") != "taiyi-install" or data.get("version") != 1 or not data.get("completed"):
+                    continue
+                if Path(data["target"]).resolve() != self.target:
+                    raise ValueError("snapshot belongs to a different target")
+                expected = data["files"]
+                if not isinstance(expected, dict) or not expected:
+                    raise ValueError("missing backup manifest")
+                actual = {p.relative_to(candidate).as_posix() for p in files if p != marker}
+                if actual != set(expected):
+                    raise ValueError("unexpected or missing backup content")
+                for rel, digest in expected.items():
+                    file = (candidate / rel).resolve()
+                    if not file.is_relative_to(candidate.resolve()) or hashlib.sha256(file.read_bytes()).hexdigest() != digest:
+                        raise ValueError("backup integrity mismatch")
+                snapshots.append((candidate, files))
+            except (OSError, ValueError, KeyError, TypeError) as exc:
+                print(f"WARNING: backup retained without expiry: {candidate.name}: {exc}", file=sys.stderr)
+        expired = []
+        for candidate, files in snapshots[:-self.backup_retention]:
+            # Exact verified files only; no recursive delete, globs, personal files, or linked directories.
+            for file in files:
+                file.unlink()
+            for child in sorted((p for p in candidate.rglob("*") if p.is_dir()), key=lambda p: len(p.parts), reverse=True):
+                child.rmdir()
+            candidate.rmdir()
+            expired.append(candidate.name)
+        return expired
 
     def copy_file(self, src: Path, rel: str, policy: str) -> None:
         dest = self.target / rel
@@ -279,8 +352,8 @@ class Installer:
     def merge_settings(self, settings: dict, components) -> dict:
         merged = json.loads(json.dumps(settings))  # 深拷贝
 
-        if "hooks" in components:
-            ours = json.loads((REPO / "hooks" / "hooks.json").read_text(encoding="utf-8"))["hooks"]
+        if "hooks" in components or set(components).intersection(OPTIONAL_HOOKS):
+            ours = json.loads((REPO / "hooks" / "hooks.json").read_text(encoding="utf-8"))["hooks"] if "hooks" in components else {}
             hooks = merged.get("hooks")
             if not isinstance(hooks, dict):
                 hooks = {}
@@ -292,7 +365,12 @@ class Installer:
                     if not isinstance(group, dict) or not self.is_own_group(group):
                         remaining.append(group)
                         continue
-                    kept = [h for h in group.get("hooks", []) if not self.is_own_handler(h)]
+                    def replace(handler):
+                        if "hooks" in components:
+                            return self.is_own_handler(handler)
+                        return any(component in components and script in str(handler.get("command", ""))
+                                   for component, (_, _, script, _) in OPTIONAL_HOOKS.items())
+                    kept = [h for h in group.get("hooks", []) if not replace(h)]
                     if kept:
                         remaining.append(dict(group, hooks=kept))
                 if remaining:
@@ -313,6 +391,10 @@ class Installer:
             groups = merged.setdefault("hooks", {}).setdefault(event, [])
             groups[:] = [g for g in groups if not any(h.get("command") == command for h in g.get("hooks", []))]
             groups.append(group)
+            if component == "usage":
+                prompt_groups = merged.setdefault("hooks", {}).setdefault("UserPromptSubmit", [])
+                prompt_groups[:] = [g for g in prompt_groups if not any(h.get("command") == command for h in g.get("hooks", []))]
+                prompt_groups.append({"hooks": [{"type": "command", "command": command, "timeout": timeout}]})
 
         if self.with_guardrails:
             template = json.loads((REPO / "config/settings-guardrails.json").read_text(encoding="utf-8"))["permissions"]
@@ -384,9 +466,12 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="只打印计划，不写入")
     parser.add_argument("--profile", default="core", help="core,ctf,research,ecommerce,media,data,frontend,multi-model or all")
     parser.add_argument("--with-guardrails", action="store_true", help="opt-in permissions template (disables bypass)")
+    parser.add_argument("--backup-retention", type=int, default=5, help="completed managed backup snapshots to keep (minimum 1)")
     parser.add_argument("--replace-global-rules", action="store_true",
                         help="显式授权备份并替换自定义全局 CLAUDE.md（仅 core 组件）")
     args = parser.parse_args()
+    if args.backup_retention < 1:
+        parser.error("--backup-retention must be at least 1")
 
     components = [c.strip() for c in args.components.split(",") if c.strip()]
     unknown = [c for c in components if c not in COMPONENTS]
@@ -395,7 +480,7 @@ def main() -> int:
 
     target = Path(args.target).expanduser().resolve()
     try:
-        installer = Installer(target, args.dry_run, args.replace_global_rules, args.profile, args.with_guardrails)
+        installer = Installer(target, args.dry_run, args.replace_global_rules, args.profile, args.with_guardrails, args.backup_retention)
     except ValueError as exc:
         parser.error(str(exc))
 
@@ -425,6 +510,14 @@ def main() -> int:
     print("\n[3/3] 自检")
     if not args.dry_run:
         installer.verify(installer.load_settings())
+        if not installer.problems:
+            try:
+                installer.write_backup_manifest(True)
+                for expired in installer.prune_backups():
+                    print(f"  [expired managed backup] {expired}")
+            except (OSError, ValueError) as exc:
+                installer.problems.append(f"backup retention failed: {exc}")
+                print(f"WARNING: backup retention failed: {exc}", file=sys.stderr)
         if {"skills", "agents"}.intersection(components):
             extras = profile_extras(target, installer.selected)
             if extras:

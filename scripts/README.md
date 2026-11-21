@@ -31,13 +31,16 @@ python scripts/install-global.py --components hooks,notifications
 
 - lint-feedback：Edit/Write/MultiEdit 后只运行本地 ESLint 或 Ruff，显式禁止 fix；不运行 npm scripts、npx、Black 或 Prettier。
 - session-backup：只备份受跟踪文件相对 HEAD 的 diff，不含未跟踪文件；保留 14 天、总量 50 MiB，只轮转自有补丁。补丁可能包含敏感内容，按需启用。
-- usage：只记 `{ts, tool, name}`，保留 90 天；不记提示词、参数、响应或项目路径。`python scripts/usage-report.py --days 28` 统计。锁冲突/损坏输出 WARNING，不冒充成功。
+- usage：只记 `{ts, tool, name}`，保留 90 天；包括 Skill/Agent 工具调用，以及注册 Skill/命令的显式 slash 展开；不记提示词、参数、响应或项目路径。`python scripts/usage-report.py --days 28` 统计。锁冲突/损坏输出 WARNING，不冒充成功。
 - notifications：只有明确启用才发送通知；测试不得启用真实通知。
 
 `--with-guardrails` 单独合并 `config/settings-guardrails.json`，保留个人 allow/ask/deny。冲突在复制前报错，不覆盖个人权限。
 模板禁用 bypass；ask 在 bypass 下不是保证。边界和回滚见 `specs/SPEC-vnext-guardrails.md`。
-覆盖前保留安装备份，不自动批量删除备份；恢复对应 settings 后重启会话。
+覆盖前保留安装备份。新备份有完成标记与文件哈希，默认保留最近 5 份，可用 `--backup-retention N` 调整。只逐项过期完整且未被改写的托管快照；历史无标记、未知文件、链接或改写过的备份保留并报告。恢复对应 settings 后重启会话。
 `tools/cc-patcher.sh hooks` 只是兼容转交，不独立写 settings。
+
+旧全量安装可运行 `python scripts/migrate-install.py` 审阅计划，确认后加 `--apply`。仅将与当前/历史托管源码一致的 profile 外能力移入目标的 `.taiyi-migrations/`；个人改写、未知文件或链接不迁移。`--restore <manifest.json>` 可恢复，存在活动文件冲突则停止，不覆盖。该命令不清理项目源码或历史记忆。
+`python scripts/discover-capabilities.py` 校验实际安装的发现元数据与描述体积。
 
 ## 验证
 

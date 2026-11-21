@@ -5,7 +5,15 @@
       "Bash(git push --force *)",
       "Bash(git push -f *)",
       "Bash(rm -rf /)",
-      "Bash(rm -rf ~)"
+      "Bash(rm -rf ~)",
+      "Bash(git push * -f *)",
+      "Bash(git push * --force *)",
+      "Bash(git * push *-f*)",
+      "Bash(git * push *--force*)",
+      "PowerShell(git push * -f *)",
+      "PowerShell(git push * --force *)",
+      "PowerShell(git * push *-f*)",
+      "PowerShell(git * push *--force*)"
     ],
     "ask": [
       "Bash(git push *)",
@@ -23,7 +31,35 @@
       "PowerShell(git checkout *)",
       "PowerShell(git restore *)",
       "PowerShell(git clean *)",
-      "PowerShell(Remove-Item *)"
+      "PowerShell(Remove-Item *)",
+      "Bash(git * push *)",
+      "Bash(git * commit *)",
+      "Bash(git * reset --hard *)",
+      "Bash(git * checkout *)",
+      "Bash(git * restore *)",
+      "Bash(git * clean *)",
+      "Bash(git * rebase *)",
+      "PowerShell(git * push *)",
+      "PowerShell(git * commit *)",
+      "PowerShell(git * reset --hard *)",
+      "PowerShell(git * checkout *)",
+      "PowerShell(git * restore *)",
+      "PowerShell(git * clean *)",
+      "PowerShell(git * rebase *)",
+      "Bash(git * push)",
+      "Bash(git * commit)",
+      "Bash(git * reset --hard)",
+      "Bash(git * checkout .)",
+      "Bash(git * restore)",
+      "Bash(git * clean)",
+      "Bash(git * rebase)",
+      "PowerShell(git * push)",
+      "PowerShell(git * commit)",
+      "PowerShell(git * reset --hard)",
+      "PowerShell(git * checkout .)",
+      "PowerShell(git * restore)",
+      "PowerShell(git * clean)",
+      "PowerShell(git * rebase)"
     ]
   }
 }
