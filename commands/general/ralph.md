@@ -92,6 +92,7 @@
 {
   "active": true,
   "status": "RUNNING",
+  "session_id": "当前 Hook/会话提供的真实 session_id（可用时填写）",
   "iteration": 0,
   "max_iterations": 10,
   "round_complete": false,
@@ -110,6 +111,12 @@
   "metrics": { "total_runs": 1, "successful_runs": 0, "failed_runs": 0, "total_iterations": 0 }
 }
 ```
+
+全局状态必须有真实 `project_dir`；缺少归属时 Hook 警告并放行，不能拦住所有项目。
+填写 session_id 后仅该会话能续跑。启动时若已有其他会话的 active 状态，不覆盖它；使用独立状态路径或先由用户结束旧任务。
+状态解析/写入失败不能宣称 COMPLETED，也不能返回继续信号造成无上限重试。
+Stop 状态机位于 hooks/ralph-state.py，Bash 入口只负责解释器与路径参数。
+iteration 从 0 开始；完成第 max_iterations 个周期仍未完成任务时立即停止，不能先启动额外一轮。
 
 **每轮结束时**，Claude 必须更新以下字段之一：
 
