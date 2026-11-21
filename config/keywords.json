@@ -54,7 +54,7 @@
  }
  },
  "external_tools": {
- "description": "外部工具推荐触发 - 由 intent-detector.sh 在 UserPromptSubmit 时自动匹配，写入 intent-state.json 的 tool_recommendation 字段。Claude 响应前必须检查并主动建议安装（v1.1.0 新协议）。",
+ "description": "外部工具推荐触发：intent-detector.sh 在 UserPromptSubmit 的本轮 stdout 提供 tool_recommendation 建议。先核对任务与安装状态，安装需符合用户授权；全局 intent-state.json 仅供旧 HUD 展示。",
  "context-mode": {
  "keywords": ["token消耗", "token 太多", "上下文太长", "成本太高", "mcp输出太大", "节省 token", "context mode", "压缩输出"],
  "install_cmd": "claude mcp add context-mode -- npx -y context-mode",

@@ -1,41 +1,30 @@
 #!/bin/bash
 # Intent Detector Hook - 意图识别系统
-# 版本: 2.2.0
+# Version: 2.3.0
 # 触发时机: UserPromptSubmit - 在用户提交消息时分析意图
 #
 # 功能:
 # 1. 检测用户输入中的关键词和意图
 # 2. 自动激活相关的 Agent 或 Skill
-# 3. 写入 intent-state.json 驱动 Agent 自动调度
+# 3. Publish advisory context and isolated session state
 
 set -euo pipefail
 
 # 配置
 KEYWORDS_FILE="${KEYWORDS_FILE:-$(dirname "$0")/../config/keywords.json}"
-INTENT_LOG="${INTENT_LOG:-$HOME/.claude/intent.log}"
 
-# 日志函数
-log() {
-    local level="$1"
-    shift
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $*" >> "$INTENT_LOG"
-}
-
-# 读取输入
+# Parse actual JSON, then strip quoted material before applying keyword routing.
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+CONTEXT_HELPER="$SCRIPT_DIR/intent-context.py"
 INPUT=$(cat)
-
-# 提取用户消息 (UserPromptSubmit hook 的 stdin JSON 字段是 "prompt")
-# 正则允许转义字符（\" 等），否则带引号的消息会在第一个引号处被截断
-USER_MESSAGE=$(printf '%s' "$INPUT" | grep -o '"prompt"[[:space:]]*:[[:space:]]*"\(\\.\|[^"\\]\)*"' | head -1 | sed -e 's/^"prompt"[[:space:]]*:[[:space:]]*"//' -e 's/"$//' || echo "")
-
-# 如果没有用户消息，尝试从工具输入中提取
-if [[ -z "$USER_MESSAGE" ]]; then
-    USER_MESSAGE=$(echo "$INPUT" | grep -o '"content":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
+if ! command -v python >/dev/null 2>&1; then
+    echo "WARNING: intent routing skipped: python is unavailable" >&2
+    exit 0
+fi
+if ! USER_MESSAGE=$(printf '%s' "$INPUT" | python "$CONTEXT_HELPER" select); then
+    exit 0  # advisory routing must not block the user's request
 fi
 
-log "DEBUG" "Analyzing intent for: $USER_MESSAGE"
-
-# 意图检测函数
 detect_intent() {
     local message="$1"
     local message_lower=$(echo "$message" | tr '[:upper:]' '[:lower:]')
@@ -55,7 +44,7 @@ detect_intent() {
     fi
 
     # QA 质量审查
-    if echo "$message_lower" | grep -qE 'qa|质量审查|质量检查|验收|qa-review|qa report'; then
+    if echo "$message_lower" | grep -qE '\bqa\b|质量审查|质量检查|验收|qa-review|qa report'; then
         echo "qa-review"
         return
     fi
@@ -191,7 +180,8 @@ detect_intent() {
         return
     fi
 
-    if echo "$message_lower" | grep -qE 'analyze|分析|statistics|统计|预测'; then
+    # Generic project/workflow analysis is not necessarily data analysis.
+    if echo "$message_lower" | grep -qE 'statistics|统计|数据分析|数据.*分析|分析.*数据|analy[sz]e.*data|data.*analy[sz]|趋势预测'; then
         echo "analysis"
         return
     fi
@@ -401,66 +391,30 @@ detect_external_tool() {
  local script_dir="$(cd "$(dirname "$0")" && pwd)"
  local helper="${script_dir}/detect-external-tool.py"
 
- # 辅助脚本不存在时静默降级（不影响 Agent 调度主流程）
- [[ -f "$helper" ]] || { echo ""; return; }
- [[ -f "$KEYWORDS_FILE" ]] || { echo ""; return; }
-
- # 调用单文件 Python 助手完成检测和 JSON 构建
- python "$helper" "$KEYWORDS_FILE" "$message_lower" 2>/dev/null || echo ""
+ if [[ ! -f "$helper" || ! -f "$KEYWORDS_FILE" ]]; then
+     echo "WARNING: optional tool recommendation unavailable: helper/config missing" >&2
+     return 0
+ fi
+ if ! python "$helper" "$KEYWORDS_FILE" "$message_lower"; then
+     echo "WARNING: optional tool recommendation failed" >&2
+ fi
 }
 
 
-# 主逻辑
-if [[ -n "$USER_MESSAGE" ]]; then
- intent=$(detect_intent "$USER_MESSAGE")
- agent=$(recommend_agent "$intent")
- skill=$(recommend_skill "$intent")
- tool_rec=$(detect_external_tool "$USER_MESSAGE")
-
- log "INFO" "Intent: $intent, Agent: $agent, Skill: $skill, Tool: ${tool_rec:-<none>}"
-
- # 注意: 子进程 export 无法传递到父进程
- # 将推荐结果写入文件供 HUD 和 Auto-Dispatch 读取
- # v2.1.0: 新增 tool_recommendation 字段（外部工具推荐），由 CLAUDE.md §零.2 强制检查
- INTENT_STATE_FILE="${HOME}/.claude/intent-state.json"
- mkdir -p "$(dirname "$INTENT_STATE_FILE")" 2>/dev/null
-
- # 通过 Python 统一写出 JSON，保证 UTF-8 编码和引号转义安全
- # 工具推荐为空时传空字符串，Python 端置 None
- python -c "
-import json, sys
-intent = sys.argv[1]
-agent = sys.argv[2]
-skill = sys.argv[3]
-tool_raw = sys.argv[4]
-out_file = sys.argv[5]
-try:
- tool_rec = json.loads(tool_raw) if tool_raw else None
-except Exception:
- tool_rec = None
-data = {
- 'intent': intent,
- 'agent': agent,
- 'skill': skill,
- 'tool_recommendation': tool_rec,
-}
-with open(out_file, 'w', encoding='utf-8') as f:
- json.dump(data, f, ensure_ascii=False, indent=2)
-" "$intent" "$agent" "$skill" "$tool_rec" "$INTENT_STATE_FILE" 2>/dev/null \
- || printf '{"intent":"%s","agent":"%s","skill":"%s","tool_recommendation":null}\n' "$intent" "$agent" "$skill" > "$INTENT_STATE_FILE"
-
- # 输出建议 (可选，供调试)
- if [[ "${INTENT_VERBOSE:-false}" == "true" ]]; then
- echo "Intent detected: $intent"
- echo "Recommended agent: $agent"
- if [[ -n "$skill" ]]; then
- echo "Recommended skills: $skill"
- fi
- if [[ -n "$tool_rec" ]]; then
- echo "Tool recommendation: $tool_rec"
- fi
- fi
+# Main: current-turn stdout is authoritative; disk state is diagnostic only.
+if [[ "$USER_MESSAGE" =~ ^@([a-z][a-z0-9-]*)($|[[:space:]]) ]]; then
+    intent="manual"
+    agent="${BASH_REMATCH[1]}"
+    skill=""
+else
+    intent=$(detect_intent "$USER_MESSAGE")
+    agent=$(recommend_agent "$intent")
+    skill=$(recommend_skill "$intent")
 fi
-
-# 允许继续执行
+tool_rec=$(detect_external_tool "$USER_MESSAGE")
+if ! printf '%s' "$INPUT" | python "$CONTEXT_HELPER" publish \
+    --state-dir "$HOME/.claude" --intent "$intent" --agent "$agent" \
+    --skill "$skill" --tool "$tool_rec"; then
+    echo "WARNING: intent context could not be published" >&2
+fi
 exit 0

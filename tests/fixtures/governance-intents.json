@@ -1,0 +1,9 @@
+{
+  "provenance": "User requests in this task; command excerpts only, no copied conversation logs.",
+  "cases": [
+    {"prompt": "深入分析评估一下上述内容对当前项目的意义，出一份改进plan", "agent": "orchestrator"},
+    {"prompt": "参照上述内容对当前项目进行改进优化", "agent": "orchestrator"},
+    {"prompt": "继续进行任务推进", "agent": "orchestrator"},
+    {"prompt": "一次性完成上述所有问题的解决后再向我汇报", "agent": "orchestrator"}
+  ]
+}

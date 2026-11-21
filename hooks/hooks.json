@@ -103,7 +103,7 @@
       "port-check-hook.py": "PreToolUse(Bash) - 检查 Docker 端口冲突",
       "agent-tracker.sh": "PreToolUse(Agent|Task) - 跟踪当前活动的子代理",
       "post-edit.sh": "PostToolUse(Edit) - 编辑后运行 lint 检查",
-      "intent-detector.sh": "UserPromptSubmit - 意图识别，写入 ~/.claude/intent-state.json",
+      "intent-detector.sh": "UserPromptSubmit - 输出本轮路由建议，按会话存储；全局快照仅供旧 HUD",
       "notify.sh": "Notification - 发送通知到外部系统",
       "ralph-stop-interceptor.sh": "Stop - Ralph Loop 停止拦截器，决定是否继续下一轮",
       "on-stop.sh": "SessionEnd - 会话结束时保存统计与未提交改动备份",
