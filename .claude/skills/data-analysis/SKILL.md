@@ -1,6 +1,6 @@
 ---
 name: data-analysis
-description: 通用数据分析参考库 - 提供 EDA 流程、统计检验、可视化的惯用写法，输出可解释的洞察而非纯数字
+description: "Analyze CSV, survey, sales-table or DataFrame data using EDA, descriptive statistics, statistical tests and explanatory charts. Use for data distributions, missing values and trends; use frontend-design for application/page layout and visual UI design. 数据探索、统计和洞察。"
 license: MIT
 metadata:
   category: data-analysis

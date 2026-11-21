@@ -16,7 +16,10 @@ def header(path):
     match = re.match(r"^---\n(.*?)\n---", text, re.S)
     if not match:
         raise ValueError(f"frontmatter missing: {path}")
-    data = yaml.safe_load(match[1])
+    try:
+        data = yaml.safe_load(match[1])
+    except yaml.YAMLError as exc:
+        raise ValueError(f"invalid YAML frontmatter: {path}") from exc
     if not isinstance(data, dict):
         raise ValueError(f"frontmatter not a mapping: {path}")
     return data
@@ -27,6 +30,12 @@ def inspect(root):
     skills = {p.parent.name: header(p) for p in (root / ".claude/skills").glob("*/SKILL.md")}
     agents = {p.relative_to(root / "agents").as_posix() for p in (root / "agents").rglob("*.md")
               if p.read_text(encoding="utf-8-sig").startswith("---\n")}
+    for name in agents:
+        data = header(root / "agents" / name)
+        if not isinstance(data.get("description"), str) or not data["description"].strip():
+            raise ValueError(f"agent description missing: {name}")
+        if not isinstance(data.get("name"), str) or data["name"] != Path(name).stem:
+            raise ValueError(f"agent name mismatch: {name}")
     commands = [p for p in (root / "commands").rglob("*.md") if p.name != "INDEX.md"]
     for path in commands:
         data = header(path)

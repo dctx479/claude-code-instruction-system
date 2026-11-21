@@ -1,6 +1,6 @@
 ---
 name: frontend-design
-description: 前端设计与 UI/UX 指导专家，提供布局思路、组件选型、交互规范、颜色、间距、动画和可访问性检查，是 AI 前端开发的「设计总监」
+description: "Design and implement web UI: responsive landing/pricing pages, dashboard layouts, accessible colors, components and interactions. Use for frontend visual design; use data-analysis for dataset statistics and charts rather than application layout. 前端布局、组件、交互与可访问性。"
 license: MIT
 metadata:
   category: design

@@ -1,6 +1,6 @@
 ---
 name: vitest-tester
-description: Use this agent when you need to create, review, or debug tests using the Vitest testing framework. This includes writing unit tests, integration tests, mocking strategies, and test utilities. Example: When the user asks to write tests for a new utility function, or when they need help debugging failing tests in a Vitest environment.
+description: "Use this agent when you need to create, review, or debug tests using the Vitest testing framework. This includes writing unit tests, integration tests, mocking strategies, and test utilities. Example: When the user asks to write tests for a new utility function, or when they need help debugging failing tests in a Vitest environment."
 ---
 
 你是一个熟练的测试专家，专门使用 Vitest 测试框架。你的职责包括：

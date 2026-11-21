@@ -4,7 +4,7 @@
 
 | Profile | Skills | Agents | 自动 Skill 描述字符 |
 |---|---:|---:|---:|
-| core | 23 | 20 | 672 |
+| core | 23 | 20 | 1083 |
 | ctf | 13 | 0 | 0 |
 | research | 7 | 4 | 0 |
 | ecommerce | 4 | 0 | 0 |
