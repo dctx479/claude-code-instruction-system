@@ -1,0 +1,17 @@
+{
+  "sha": "775ea3b28369399c9366e5c7b4d71533fb2ad8a9",
+  "jobs": {
+    "rules (ubuntu-latest, 3.10)": "This job succeeded",
+    "rules (ubuntu-latest, 3.11)": "This job succeeded",
+    "rules (ubuntu-latest, 3.12)": "This job succeeded",
+    "rules (windows-latest, 3.10)": "This job succeeded",
+    "rules (windows-latest, 3.11)": "This job succeeded",
+    "rules (windows-latest, 3.12)": "This job succeeded"
+  },
+  "run": "https://github.com/dctx479/claude-code-instruction-system/actions/runs/44928956411",
+  "all_green": true,
+  "earlier_failure": {
+    "run": 44928670890,
+    "reason": "migration eagerly required historical objects unavailable in shallow checkout; fixed by lazy history lookup, preserving unknown files"
+  }
+}

@@ -77,7 +77,7 @@
         "scripts/ci-tests.py"
       ],
       "exit": 0,
-      "output_tail": "ge_privacy_retention_and_contention) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 74 tests in 38.931s\r\n\r\nOK\r\n"
+      "output_tail": "ge_privacy_retention_and_contention) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 75 tests in 43.636s\r\n\r\nOK\r\n"
     }
   ]
 }

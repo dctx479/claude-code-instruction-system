@@ -39,4 +39,5 @@ plan-review 初测返回 CHANGES_REQUIRED 和真实阻塞发现，旧 harness �
 
 ## 验证
 
-本轮[本地证据](evidence/vnext-closure-checks-2026-11-22.json)：74 项测试通过；规则 0 findings、Skill 59/59、索引/profile/Agent YAML/配置检查通过；全局真实安装与已安装 Hook 烟测通过，profile 无残留。远端矩阵结果在最终交付中列出；原始证据保留在本目录 evidence，未执行的项目不标通过。
+本轮[本地证据](evidence/vnext-closure-checks-2026-11-22.json)：75 项测试通过；规则 0 findings、Skill 59/59、索引/profile/Agent YAML/配置检查通过；全局真实安装与已安装 Hook 烟测通过，profile 无残留。
+首次远端运行暴露浅克隆缺少历史 commit 的迁移问题；修正为当前文件先匹配、历史对象按需加载，新增无历史对象回归。修复提交 `775ea3b` 的[远端矩阵](https://github.com/dctx479/claude-code-instruction-system/actions/runs/44928956411) 6/6 success；[CI 证据](evidence/vnext-closure-ci-2026-11-22.json) 保留初次失败与根因。
