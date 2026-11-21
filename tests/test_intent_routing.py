@@ -33,8 +33,13 @@ class RoutingTests(unittest.TestCase):
         self.assertEqual(0, proc.returncode, proc.stderr)
         if raw is not None:
             return proc
-        self.assertTrue(proc.stdout.startswith("Advisory routing"), proc.stdout + proc.stderr)
-        context = json.loads(proc.stdout.split(": ", 1)[1])
+        if proc.stdout:
+            self.assertTrue(proc.stdout.startswith("Advisory routing"), proc.stdout + proc.stderr)
+            context = json.loads(proc.stdout.split(": ", 1)[1])
+        else:
+            context = json.loads((self.home / ".claude/intent-state.json").read_text(encoding="utf-8"))
+            self.assertEqual("none", context["intent"])
+            self.assertEqual("", context["agent"])
         return context, proc
 
     def test_all_roles(self):
@@ -59,6 +64,9 @@ class RoutingTests(unittest.TestCase):
         for prompt, expected in cases:
             with self.subTest(prompt=prompt):
                 data, proc = self.invoke(prompt)
+                self.assertEqual("", data["agent"])
+                self.assertEqual("", proc.stdout)
+                data, proc = self.invoke("@" + expected + " " + prompt)
                 self.assertEqual(expected, data["agent"])
                 self.assertEqual("", proc.stderr)
 
@@ -69,13 +77,13 @@ class RoutingTests(unittest.TestCase):
                        "```text\n/autopilot 质量审查验收\n```\n继续推进任务"]:
             with self.subTest(prompt=prompt[-50:]):
                 data, _ = self.invoke(prompt)
-                self.assertEqual("orchestrator", data["agent"])
+                self.assertEqual("", data["agent"])
 
     def test_explicit_override_and_empty_input(self):
         data, _ = self.invoke("@architect\n" + "qa /autopilot " * 300)
         self.assertEqual("architect", data["agent"])
         data, _ = self.invoke("")
-        self.assertEqual("orchestrator", data["agent"])
+        self.assertEqual("", data["agent"])
 
     def test_invalid_input_warns_without_stale_context(self):
         for raw in ["{bad", "[]", '{"prompt": 42}', '{"prompt":"hi","cwd":{}}']:
@@ -86,7 +94,7 @@ class RoutingTests(unittest.TestCase):
 
     def test_session_paths_are_isolated_and_traversal_safe(self):
         for session, prompt in [("session-a", "帮我调试错误"), ("../../evil", "设计微服务架构")]:
-            self.invoke(prompt, session=session)
+            self.invoke("@debugger " + prompt, session=session)
         base = self.home / ".claude/intent-sessions"
         self.assertEqual(2, len(list(base.glob("*.json"))))
         key = hashlib.sha256((str(ROOT) + "\0session-a").encode()).hexdigest()
@@ -94,20 +102,19 @@ class RoutingTests(unittest.TestCase):
         self.assertEqual("debugger", saved["agent"])
         self.assertFalse((self.home / "evil").exists())
 
-    def test_broken_optional_config_warns_but_keeps_routing(self):
-        bad = self.home / "keywords.json"
-        bad.write_text("{bad", encoding="utf-8")
-        data, proc = self.invoke("帮我调试错误", KEYWORDS_FILE=str(bad))
-        self.assertEqual("debugger", data["agent"])
+    def test_explicit_command_and_utf8_protocol(self):
+        data, proc = self.invoke("/spec-flow 中文需求", PYTHONIOENCODING="cp1252")
+        self.assertEqual("command", data["intent"])
+        self.assertEqual("spec-flow", data["skill"])
+        self.assertEqual("", data["agent"])
         self.assertIsNone(data["tool_recommendation"])
-        self.assertIn("WARNING", proc.stderr)
-
-    def test_utf8_protocol_under_non_utf8_windows_defaults(self):
-        data, proc = self.invoke("帮我调试错误，token消耗太多", PYTHONIOENCODING="cp1252")
-        self.assertEqual("debugger", data["agent"])
-        self.assertEqual("context-mode", data["tool_recommendation"]["tool"])
-        self.assertIn("出现", data["tool_recommendation"]["expected"])
         self.assertEqual("", proc.stderr)
+
+    def test_ordinary_turn_clears_previous_advice(self):
+        self.invoke("@debugger debug")
+        data, proc = self.invoke("continue")
+        self.assertEqual("", proc.stdout)
+        self.assertEqual("none", data["intent"])
 
     def test_real_governance_requests_are_not_data_analysis(self):
         fixture = json.loads((ROOT / "tests/fixtures/governance-intents.json").read_text(encoding="utf-8"))

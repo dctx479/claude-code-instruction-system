@@ -34,11 +34,16 @@
 ```bash
 python scripts/audit-rules.py --strict
 python scripts/audit-skills.py
+python scripts/build-agent-index.py --check
+python scripts/check-doc-facts.py
+python scripts/eval-skills.py
+python scripts/validate-issues.py issues/worktree-checkpoint.csv
 python -m unittest discover -s tests -p "test_*.py"
 bash scripts/test-all-intents.sh
 python scripts/validate/validate-config.py
 python -m json.tool hooks/hooks.json
 python -m json.tool config/keywords.json
+python -m json.tool config/settings-guardrails.json
 python scripts/install-global.py --dry-run
 ```
 

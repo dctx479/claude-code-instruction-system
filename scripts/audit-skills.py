@@ -13,7 +13,12 @@ def audit(root):
     except ImportError as exc:
         raise RuntimeError("PyYAML unavailable; install scripts/requirements-validation.txt in a validation venv") from exc
     records, problems, names = [], [], {}
-    allowed = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
+    warnings = []
+    allowed = {"name", "description", "license", "compatibility", "metadata", "allowed-tools",
+               "disable-model-invocation", "user-invocable", "argument-hint", "model", "context", "agent", "hooks"}
+    for directory in sorted((Path(root) / ".claude/skills").glob("*")):
+        if directory.is_dir() and not directory.name.startswith(".") and not (directory / "SKILL.md").is_file():
+            problems.append(dict(path=directory.relative_to(root).as_posix(), detail="missing top-level SKILL.md; nested skills are not discoverable"))
     for path in sorted((Path(root) / ".claude/skills").glob("*/SKILL.md")):
         rel = path.relative_to(root).as_posix()
         try:
@@ -25,7 +30,12 @@ def audit(root):
             if not isinstance(data, dict):
                 raise ValueError("frontmatter must be a mapping")
             if set(data) - allowed:
-                raise ValueError("nonportable fields: " + ", ".join(sorted(set(data) - allowed)))
+                raise ValueError("unsupported fields: " + ", ".join(sorted(set(data) - allowed)))
+            for field in ("disable-model-invocation", "user-invocable"):
+                if field in data and not isinstance(data[field], bool):
+                    raise ValueError(field + " must be a boolean")
+                if isinstance(data.get("metadata"), dict) and field in data["metadata"]:
+                    raise ValueError(field + " belongs at top level, not metadata")
             name, description = data.get("name"), data.get("description")
             if not isinstance(name, str) or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", name) or len(name) > 64:
                 raise ValueError("name must be a nonempty kebab-case string of at most 64 characters")
@@ -43,13 +53,16 @@ def audit(root):
             if not text[match.end():].strip():
                 raise ValueError("skill instructions are empty")
             records.append(dict(path=rel, name=name, description_chars=len(description),
+                                automatic=not data.get("disable-model-invocation", False),
                                 lines=len(text.splitlines()), body_lines=len(text[match.end():].splitlines())))
+            if len(text.splitlines()) > 500:
+                warnings.append(dict(path=rel, detail="SKILL.md exceeds 500 lines; move conditional detail into references/"))
         except (OSError, ValueError, yaml.YAMLError) as exc:
             problems.append(dict(path=rel, detail=str(exc)))
     if not records and not problems:
         problems.append(dict(path=".claude/skills", detail="no SKILL.md files found"))
     return dict(skills_checked=len(records) + len(problems), valid=len(records), skills=records,
-                problems=problems, passed=not problems)
+                problems=problems, warnings=warnings, passed=not problems)
 
 
 def main():
@@ -68,6 +81,8 @@ def main():
         print(f"Skills: {result['valid']}/{result['skills_checked']} valid")
         for problem in result["problems"]:
             print(f"ERROR: {problem['path']}: {problem['detail']}")
+        for warning in result["warnings"]:
+            print(f"WARNING: {warning['path']}: {warning['detail']}")
     return 0 if result["passed"] else 1
 
 

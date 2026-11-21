@@ -1,0 +1,21 @@
+{
+  "kind": "manual-model-routing",
+  "cases": [
+    {"prompt": "An intermittent crash has a stable reproducer. Find its root cause.", "owner": "debug"},
+    {"prompt": "The new hook fails on malformed JSON. Reproduce and fix it.", "owner": "debug"},
+    {"prompt": "A regression test fails after the latest change; isolate why.", "owner": "debug"},
+    {"prompt": "Audit this source code for exploitable authentication bypass.", "owner": "code-security-review"},
+    {"prompt": "Check this API implementation for injection vulnerabilities.", "owner": "code-security-review"},
+    {"prompt": "Review this patch for secrets exposure and unsafe deserialization.", "owner": "code-security-review"},
+    {"prompt": "Build a polished responsive landing page for a bookstore.", "owner": "frontend-design"},
+    {"prompt": "Design a coherent dashboard layout with accessible colors.", "owner": "frontend-design"},
+    {"prompt": "Implement a visually distinctive pricing page.", "owner": "frontend-design"},
+    {"prompt": "Explore this CSV and summarize missing values and distribution shifts.", "owner": "data-analysis"},
+    {"prompt": "Analyze the attached survey dataset and explain the observed trends.", "owner": "data-analysis"},
+    {"prompt": "Compute descriptive statistics and charts from this sales table.", "owner": "data-analysis"},
+    {"prompt": "Provide a repo improvement plan, including hook and CI design.", "owner": null},
+    {"prompt": "Summarize three workflow repositories and propose a design.", "owner": null},
+    {"prompt": "Continue the current task.", "owner": null}
+  ],
+  "negative_policy": "For each skill, cases owned by another skill (or null) are negative cases. Preserve the expected owner rather than treating every non-match as success. Explicit-only workflows are tested by their /command, not automatic routing."
+}

@@ -115,6 +115,15 @@ class AuditTests(unittest.TestCase):
         result = AUDIT.audit(self.root, global_file)
         self.assertEqual("global-duplicate", result["findings"][0]["code"])
 
+    def test_stale_sections_in_docs_and_oversized_linked_index(self):
+        self.write("CLAUDE.md", "See [agents](agents/INDEX.md).\n")
+        self.write("agents/INDEX.md", "agent\n" * 151)
+        doc = self.write("docs/guide.md", "See CLAUDE.md §八 and CLAUDE.md 第X节.\n")
+        self.assertTrue({"stale-section", "linked-entry-budget"} <= self.codes())
+        doc.write_text("See AGENTS.md.\n", encoding="utf-8")
+        self.write("agents/INDEX.md", "agent\n" * 150)
+        self.assertEqual(set(), self.codes())
+
 
 class InstallerTests(unittest.TestCase):
     def setUp(self):

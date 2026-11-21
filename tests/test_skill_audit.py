@@ -31,6 +31,16 @@ class SkillAuditTests(unittest.TestCase):
         self.write("example", "---\nname: example\ndescription: Example\ntrigger: [example]\n---\nInstructions\n")
         self.assertFalse(AUDIT.audit(self.root)["passed"])
 
+    def test_claude_fields_and_boolean_types(self):
+        path = self.write("example", "---\nname: example\ndescription: Example\ndisable-model-invocation: true\nuser-invocable: true\nargument-hint: '[task]'\n---\nInstructions\n")
+        self.assertTrue(AUDIT.audit(self.root)["passed"])
+        path.write_text(path.read_text().replace("invocation: true", "invocation: 'false'"))
+        self.assertFalse(AUDIT.audit(self.root)["passed"])
+
+    def test_nested_skill_requires_discoverable_entry(self):
+        self.write("bundle/child", "---\nname: child\ndescription: Example\n---\nInstructions\n")
+        self.assertFalse(AUDIT.audit(self.root)["passed"])
+
     def test_missing_header_and_bad_yaml_are_reported_without_writing(self):
         one = self.write("one", "# Missing header\n")
         two = self.write("two", "---\nname: [\n---\nInstructions\n")

@@ -7,13 +7,26 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
+        python: ["3.10", "3.11", "3.12"]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ matrix.python }}
       - run: python -m pip install -r scripts/requirements-validation.txt
       - run: python scripts/audit-rules.py --strict
       - run: python scripts/audit-skills.py
+      - run: python scripts/build-agent-index.py --check
+      - run: python scripts/check-doc-facts.py
+      - run: python scripts/eval-skills.py
+      - run: python scripts/validate-issues.py issues/worktree-checkpoint.csv
       - run: python -m unittest discover -s tests -p "test_*.py" -v
+      - run: bash scripts/test-all-intents.sh
+      - run: python scripts/validate/validate-config.py
+      - run: python -m json.tool hooks/hooks.json
+      - run: python -m json.tool config/keywords.json
+      - run: python -m json.tool config/settings-guardrails.json
+      - name: Isolated installer dry run
+        shell: bash
+        run: python scripts/install-global.py --dry-run --target "$RUNNER_TEMP/taiyi-dry-run"

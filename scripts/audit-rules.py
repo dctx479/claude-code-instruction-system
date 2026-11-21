@@ -12,6 +12,7 @@ NAMES = {"AGENTS.md", "AGENTS.override.md", "CLAUDE.md", "CLAUDE.local.md"}
 SKIP = {".git", "node_modules", "__pycache__", ".venv", "venv", "target", "backups"}
 IMPORT = re.compile(r"(?:^|\s)@((?:\.?\.?/)?[\w./-]+\.md)\b")
 INLINE = re.compile(r"`([^`\n]+)`")
+STALE_SECTION = re.compile(r"CLAUDE\.md[`\s]*(?:§\s*[\d一二三四五六七八九十百零〇IVXivx]+|第\s*[\d一二三四五六七八九十百零〇IVXivx]+\s*[节章])")
 
 
 def candidates(root):
@@ -82,7 +83,7 @@ def audit(root, global_file=None):
                         add("error", "missing-import", path, number, ref)
                     else:
                         read(target, True)
-                for token in INLINE.findall(line):
+                for token in INLINE.findall(line) + re.findall(r"\]\(([^)\s]+)\)", line):
                     if (("/" not in token and not re.search(r"\.(md|py|sh|json|toml|ya?ml)$", token)) or
                             " " in token or "://" in token or
                             token.startswith(("/", "~", "$", "@")) or
@@ -92,6 +93,11 @@ def audit(root, global_file=None):
                     if not target.exists():
                         add("review", "path-unresolved", path, number,
                             f"{token}: no file/root-relative match; confirm context before deletion")
+                    elif target.name == "INDEX.md":
+                        count = len(target.read_text(encoding="utf-8-sig").splitlines())
+                        if count > 150:
+                            add("warning", "linked-entry-budget", path, number,
+                                f"{token}: {count} lines > on-demand entry budget 150")
             # Check only explicit invocations, never execute commands from instructions.
             commands = INLINE.findall(line) if not fenced else [line.strip()]
             for command in commands:
@@ -134,6 +140,11 @@ def audit(root, global_file=None):
     for path in sorted(set(candidates(root))):
         if path.is_file() and is_rule(path, root):
             read(path)
+        if path.is_file() and path.suffix == ".md" and not {"reports", "archive", "hud"}.intersection(path.relative_to(root).parts) and (
+                is_rule(path, root) or path.relative_to(root).parts[0] in {"docs", "agents", "commands", "workflows"}):
+            for number, line in enumerate(path.read_text(encoding="utf-8-sig").splitlines(), 1):
+                if STALE_SECTION.search(line):
+                    add("error", "stale-section", path, number, "obsolete CLAUDE.md section reference; link to the current source")
     # Budget only root -> directory chains, not the sum of unrelated subtrees.
     agent_dirs = {p.parent for p in texts if p.name in {"AGENTS.md", "AGENTS.override.md"}}
     for directory in sorted(agent_dirs):

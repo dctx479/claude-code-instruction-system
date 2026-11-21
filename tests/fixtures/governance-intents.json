@@ -1,9 +1,33 @@
 {
   "provenance": "User requests in this task; command excerpts only, no copied conversation logs.",
   "cases": [
-    {"prompt": "深入分析评估一下上述内容对当前项目的意义，出一份改进plan", "agent": "orchestrator"},
-    {"prompt": "参照上述内容对当前项目进行改进优化", "agent": "orchestrator"},
-    {"prompt": "继续进行任务推进", "agent": "orchestrator"},
-    {"prompt": "一次性完成上述所有问题的解决后再向我汇报", "agent": "orchestrator"}
+    {
+      "prompt": "深入分析评估一下上述内容对当前项目的意义，出一份改进plan",
+      "agent": ""
+    },
+    {
+      "prompt": "参照上述内容对当前项目进行改进优化",
+      "agent": ""
+    },
+    {
+      "prompt": "继续进行任务推进",
+      "agent": ""
+    },
+    {
+      "prompt": "一次性完成上述所有问题的解决后再向我汇报",
+      "agent": ""
+    },
+    {
+      "prompt": "提供改进方案",
+      "agent": ""
+    },
+    {
+      "prompt": "输出一份结合三家的完整的问题修复与设计方案",
+      "agent": ""
+    },
+    {
+      "prompt": "还有没有其他需要优化的，一起列出来，不要我问一句说一句，还有那三个工作流",
+      "agent": ""
+    }
   ]
 }
