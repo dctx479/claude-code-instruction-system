@@ -1,0 +1,2 @@
+# Development/CI validation only; runtime hooks keep using the standard library.
+PyYAML==6.0.4
