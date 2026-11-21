@@ -25,9 +25,11 @@ import shutil
 import sys
 import time
 import uuid
+import itertools
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+BACKUP_SEQUENCE = itertools.count()
 
 # Windows 上输出被管道/重定向时默认用 GBK 编码，遇到 ✓ ⚠ 等字符会直接抛 UnicodeEncodeError
 for _stream in (sys.stdout, sys.stderr):
@@ -197,7 +199,7 @@ class Installer:
         self.with_guardrails = with_guardrails
         self.backup_retention = backup_retention
         self.backup_files = {}
-        self.created_order = (time.time_ns(), time.monotonic_ns())
+        self.created_order = (time.time_ns(), time.monotonic_ns(), next(BACKUP_SEQUENCE))
         self.backup_dir = target / "backups" / ("taiyi-install-" + time.strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex)
         self.stats = {"copied": 0, "updated": 0, "unchanged": 0, "kept": 0, "failed": 0}
         self.problems = []

@@ -71,7 +71,8 @@ class ClosureTests(unittest.TestCase):
             self.assertTrue(item.backup_dir.exists())
 
     def test_backup_identifiers_stay_unique_with_frozen_wall_clock(self):
-        with patch.object(INSTALL.time, "time_ns", return_value=123456789):
+        with patch.object(INSTALL.time, "time_ns", return_value=123456789), \
+                patch.object(INSTALL.time, "monotonic_ns", return_value=123):
             snapshots = [self.backup(str(i)) for i in range(4)]
         self.assertEqual(4, len({item.backup_dir for item in snapshots}))
         self.assertEqual(2, len(snapshots[-1].prune_backups()))
