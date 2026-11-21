@@ -17,6 +17,7 @@
 
 import argparse
 import fnmatch
+import hashlib
 import json
 import os
 import re
@@ -35,10 +36,14 @@ for _stream in (sys.stdout, sys.stderr):
 OVERWRITE = "overwrite"   # 目标不同则备份后覆盖
 KEEP = "keep"             # 目标已存在则不动（有状态文件）
 FLATTEN = "flatten"       # 覆盖，且去掉子目录层级
+GLOBAL_RULES = "global-rules"  # 仅迁移已知旧版或托管入口，保护个人指令
+MANAGED_GLOBAL = "<!-- taiyi:managed-global -->"
+# 2026-11-19 的项目 CLAUDE.md；统一换行后匹配，避免误覆盖用户编辑。
+LEGACY_CORE_SHA256 = "ecc8147313b4132581f4cb20f908305f29b705687217c00ed24feb61582684e0"
 
 # 组件 → [(源, 目标, 策略)]
 COMPONENTS = {
-    "core": [("CLAUDE.md", "CLAUDE.md", OVERWRITE)],
+    "core": [("config/claude-global.md", "CLAUDE.md", GLOBAL_RULES)],
     "agents": [("agents", "agents", OVERWRITE)],
     # 拍平安装：commands/general/ralph.md → commands/ralph.md。
     # 保留子目录的话 Claude Code 会把命令注册成 /general:ralph，而文档和 CLAUDE.md 用的是 /ralph
@@ -108,9 +113,10 @@ def same_content(a: Path, b: Path) -> bool:
 
 
 class Installer:
-    def __init__(self, target: Path, dry_run: bool):
+    def __init__(self, target: Path, dry_run: bool, replace_global_rules: bool = False):
         self.target = target
         self.dry_run = dry_run
+        self.replace_global_rules = replace_global_rules
         self.backup_dir = target / "backups" / ("taiyi-install-" + time.strftime("%Y%m%d-%H%M%S"))
         self.stats = {"copied": 0, "updated": 0, "unchanged": 0, "kept": 0, "failed": 0}
         self.problems = []
@@ -130,6 +136,14 @@ class Installer:
             if same_content(src, dest):
                 self.stats["unchanged"] += 1
                 return
+            if policy == GLOBAL_RULES and not self.replace_global_rules:
+                content = dest.read_bytes().replace(b"\r\n", b"\n")
+                known_legacy = hashlib.sha256(content).hexdigest() == LEGACY_CORE_SHA256
+                managed = content.startswith(MANAGED_GLOBAL.encode("utf-8"))
+                if not known_legacy and not managed:
+                    self.stats["kept"] += 1
+                    print("WARNING: 保留自定义 CLAUDE.md；先审阅差异，明确要替换时使用 --replace-global-rules。")
+                    return
             if policy == KEEP:
                 self.stats["kept"] += 1
                 return
@@ -265,6 +279,8 @@ def main() -> int:
     parser.add_argument("--components", default=",".join(COMPONENTS),
                         help="逗号分隔: " + ",".join(COMPONENTS))
     parser.add_argument("--dry-run", action="store_true", help="只打印计划，不写入")
+    parser.add_argument("--replace-global-rules", action="store_true",
+                        help="显式授权备份并替换自定义全局 CLAUDE.md（仅 core 组件）")
     args = parser.parse_args()
 
     components = [c.strip() for c in args.components.split(",") if c.strip()]
@@ -273,7 +289,7 @@ def main() -> int:
         parser.error(f"未知组件: {unknown}")
 
     target = Path(args.target).expanduser().resolve()
-    installer = Installer(target, args.dry_run)
+    installer = Installer(target, args.dry_run, args.replace_global_rules)
 
     print(f"源:   {REPO}")
     print(f"目标: {target}" + ("   (dry-run，不写入)" if args.dry_run else ""))

@@ -18,7 +18,7 @@
 
 | 源 | 目标 | 策略 |
 |----|------|------|
-| `CLAUDE.md` | `CLAUDE.md` | 覆盖 |
+| `config/claude-global.md` | `CLAUDE.md` | 已知旧版/托管入口先备份后覆盖；自定义内容默认保留 |
 | `agents/` `hooks/` `scripts/` `config/` `workflows/` `docs/` `specs/` | 同名目录 | 覆盖 |
 | `commands/<分类>/<名字>.md` | `commands/<名字>.md` | 覆盖，**拍平子目录**（否则注册成 `/general:ralph` 而不是 `/ralph`）；拍平后重名视为错误 |
 | `.claude/skills/` `.claude/statusline/` `.claude/reference/` `.claude/prompts/` | `skills/` `statusline/` `reference/` `prompts/` | 覆盖 |
@@ -38,13 +38,20 @@
 
 **选项**：`--dry-run`（只打印计划）、`--target DIR`、`--components a,b`（`core,agents,commands,hooks,skills,statusline,knowledge`，默认全部）。
 
+**规则分层（2026-11-21）**：项目 CLAUDE.md 引用 AGENTS.md；两者都不复制到全局。
+全局模板仅保留跨项目偏好（≤60 行）。旧版入口按内容指纹识别迁移，换行差异不影响匹配；
+内容被用户编辑过则保留并报告。显式 `--replace-global-rules` 才备份并替换自定义全局入口。
+已有托管全局模板通过首行标记识别，继续由安装器管理；个人定制请去掉标记或置于独立文件。
+
 ## 4. When done（验收标准）
 
 - [ ] `--dry-run` 不产生任何写入
 - [ ] 在沙箱目标目录安装后：hook 脚本齐全、`settings.json` 合法、原有 `env` 等键原样保留
 - [ ] 连续执行两次，第二次报告 0 个文件变更，`settings.json` 的 hooks 不重复
 - [ ] 沙箱内 `scripts/test-all-intents.sh` 全部通过
-- [ ] 沙箱内用真实 `claude -p` 验证：UserPromptSubmit 写出 `intent-state.json`；Stop hook 能让 Ralph 续跑到 `max_iterations`
+- [ ] 沙箱内用真实 `claude -p` 验证：UserPromptSubmit 将当前路由建议加入上下文；Stop hook 能让 Ralph 续跑到 `max_iterations`（需实际会话环境，单元测试不代替此项）
+- [ ] core 安装不泄漏项目约定，保护自定义全局指令，显式替换时保留备份
+- [ ] 仓库运行 `python scripts/verify-global-install.py --smoke-hook`：托管文件及设置对齐，已安装 Hook 可在临时 HOME 正常输出；发现差异时非零退出，不假报成功
 
 ## 5. What NOT（边界）
 
