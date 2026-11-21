@@ -40,10 +40,12 @@ class VNextTests(unittest.TestCase):
 
     def test_guard_parameter_variants_and_no_command_disclosure(self):
         for command in ("rm -fr /", "rm -r -f ~", "rm --force --recursive /tmp/secret",
-                        "echo ok && rm -rf /", "sudo mkfs.ext4 /dev/sda", "git -C x push -f"):
+                        "echo ok && rm -rf /", "echo ok;rm -fr /", "echo ok\nrm -r -f ~",
+                        "sudo mkfs.ext4 /dev/sda", "git -C x push -f"):
             with self.subTest(command=command):
                 self.assertTrue(GUARD.blocked(command))
-        for command in ("git status", "python scripts/audit-rules.py", "rm file.txt", "grep fdisk docs/file"):
+        for command in ("git status", "python scripts/audit-rules.py", "rm file.txt", "grep fdisk docs/file",
+                        "echo rm -rf /", "rm -rf build && cat /tmp/report"):
             self.assertEqual("", GUARD.blocked(command))
         event = json.dumps({"tool_input": {"command": "rm -fr /super-secret-token"}})
         process = subprocess.run([sys.executable, str(ROOT / "scripts/validate/command_guard.py")],
@@ -101,6 +103,12 @@ class VNextTests(unittest.TestCase):
             CHECKPOINT.verify(self.root)
         with self.assertRaises(ValueError):
             CHECKPOINT.save(self.root, dict(goal="test", done=[], next=[], evidence=[], files=["../secret"]))
+
+    def test_checkpoint_normalizes_root_before_boundary_check(self):
+        (self.root / "nested").mkdir()
+        (self.root / "artifact.txt").write_bytes(b"artifact")
+        expected = CHECKPOINT.digest(self.root.resolve(), "artifact.txt")
+        self.assertEqual(expected, CHECKPOINT.digest(self.root / "nested" / "..", "artifact.txt"))
 
     def test_checkpoint_worktrees_have_distinct_state_and_cli_exit_codes(self):
         subprocess.run(["git", "init", "-q", str(self.root)], check=True)

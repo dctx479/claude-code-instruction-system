@@ -12,6 +12,7 @@ import tempfile
 
 
 def location(root):
+    root = Path(root).resolve()
     result = subprocess.run(["git", "-C", str(root), "rev-parse", "--git-path", "taiyi/checkpoint.json"],
                             capture_output=True, text=True, encoding="utf-8", check=True)
     path = Path(result.stdout.strip())
@@ -19,6 +20,8 @@ def location(root):
 
 
 def digest(root, name):
+    # Windows TEMP may use an 8.3 alias; normalize both sides before containment.
+    root = Path(root).resolve()
     if not isinstance(name, str) or Path(name).is_absolute():
         raise ValueError("checkpoint paths must be repository relative")
     path = (root / name).resolve()

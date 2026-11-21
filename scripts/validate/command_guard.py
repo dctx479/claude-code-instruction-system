@@ -10,11 +10,34 @@ import sys
 
 def blocked(command):
     try:
-        tokens = shlex.split(command, posix=True)
+        lexer = shlex.shlex(command, posix=True, punctuation_chars="();<>|&\n")
+        lexer.whitespace = " \t\r"
+        lexer.whitespace_split = True
+        lexer.commenters = ""
+        tokens = list(lexer)
     except ValueError:
         return "unparseable shell command"
-    for index, token in enumerate(tokens):
-        word = token.rsplit("/", 1)[-1]
+    segments, current = [], []
+    for token in tokens:
+        if token and all(char in "();<>|&\n" for char in token):
+            if current:
+                segments.append(current)
+            current = []
+        else:
+            current.append(token)
+    if current:
+        segments.append(current)
+    for tokens in segments:
+        index = 0
+        while index < len(tokens) and re.match(r"^[A-Za-z_][A-Za-z_0-9]*=", tokens[index]):
+            index += 1
+        while index < len(tokens) and tokens[index] in {"sudo", "env", "command", "exec", "nohup"}:
+            index += 1
+            while index < len(tokens) and (tokens[index].startswith("-") or re.match(r"^[A-Za-z_][A-Za-z_0-9]*=", tokens[index])):
+                index += 2 if tokens[index] in {"-u", "-g", "--user", "--group", "--unset"} else 1
+        if index >= len(tokens):
+            continue
+        word = tokens[index].rsplit("/", 1)[-1]
         if word == "git":
             following = tokens[index + 1:]
             cursor = 0
@@ -25,10 +48,8 @@ def blocked(command):
                 if any(a in {"-f", "--force"} or a.startswith("--force=") or
                        (a.startswith("-") and not a.startswith("--") and "f" in a[1:]) for a in options):
                     return "forced git push"
-        # Conservative: inspect each executable-shaped occurrence, including compounds.
         if re.fullmatch(r"(?:mkfs(?:\.[\w]+)?|fdisk|parted)", word, re.I):
-            if index == 0 or tokens[index - 1] in {"sudo", ";", "&&", "||", "|"}:
-                return "disk formatting"
+            return "disk formatting"
         if word != "rm":
             continue
         args = tokens[index + 1:]
