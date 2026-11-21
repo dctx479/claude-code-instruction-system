@@ -10,7 +10,7 @@
 
 | 特性 | 说明 |
 |------|------|
-| **Agent 自动调度** | 34 种意图 → 30 个专家 Agent 自动路由 |
+| **Agent 按需选择** | 显式 @agent / 命令路由，通用与领域能力分包安装 |
 | **Ralph Loop** | 自主循环执行直到任务完成 |
 | **Autopilot** | 5 阶段端到端全自主执行（Planning→Delivery） |
 | **HUD Statusline** | 实时状态可视化（模型/Agent/进度/费用） |
@@ -140,12 +140,14 @@ cd claude-code-instruction-system
 ```bash
 python scripts/install-global.py --dry-run   # 先看会改什么
 python scripts/install-global.py             # 安装；之后每次更新仓库重跑即可
+python scripts/install-global.py --profile core,research  # 叠加领域包
 ```
 
-脚本用 `config/claude-global.md` 安装全局 CLAUDE.md，并把 agents、commands、hooks、scripts、skills、statusline、memory、docs 等同步到 `~/.claude/`，将 `hooks/hooks.json` 合并进 settings。项目 AGENTS.md 不会装到全局：
+脚本用 `config/claude-global.md` 安装全局 CLAUDE.md，默认安装 core 的 Skill/Agent；Hook 只复制运行白名单。完整能力清单见 [生成清单](docs/CAPABILITY-SUMMARY.md)。项目 AGENTS.md 不会装到全局：
 
 - 可重复执行；被覆盖的文件先备份到 `~/.claude/backups/taiyi-install-<时间戳>/`
-- 不删除任何文件，不改动 `settings.json` 里 `hooks` / `statusLine` 以外的键
+- 不删除旧安装文件；默认只更新 `hooks` / `statusLine`，显式 `--with-guardrails` 才合并权限模板
+- `lint-feedback`、`session-backup`、`usage`、`notifications` 是可选组件，默认关闭；详见 [脚本指南](scripts/README.md)
 - `memory/` 等有状态文件只在目标不存在时复制
 - 已知旧版项目入口和托管全局入口会先备份再迁移；自定义全局指令默认保留。审阅后需替换时显式使用 `--components core --replace-global-rules`
 - 安装后需重启 Claude Code 会话，hooks 才会加载（`/hooks` 可查看）
@@ -169,17 +171,17 @@ python scripts/verify-global-install.py --smoke-hook  # 安装后核对实际副
 
 ## 核心用法
 
-### Agent 自动调度
+### Agent 显式路由
 
-系统在每次用户输入时自动识别意图，加载对应 Agent 角色：
+Hook 只记录用户显式选择，不按自然语言关键词猜意图：
 
 ```
-用户输入 → intent-detector.sh → 本轮 stdout 建议 → 核对任务 → 按需加载 Agent
+@agent 或 /命令 → intent-detector.sh → 本轮 stdout 建议 → 按需加载
 ```
 
-路由使用 JSON 解析，忽略 Markdown 引用和代码块；长粘贴仅尝试最后一个短段落，无法可靠判断时保守返回默认角色。
+只有输入开头的 @agent 或 /命令生成建议，普通消息不输出建议。SessionStart 提供短流程选择卡。
 会话状态按 session_id 与 cwd 隔离保存；全局 intent-state.json 只保留给旧 HUD 显示，不参与决策。
-这仍是关键词启发式，不保证识别所有自然语言引用。规则体检用 `/rule-audit`，事故复盘用 `/evolve`，默认只交证据和 diff。
+路由建议不自动执行或授权工具。规则体检用 `/rule-audit`，事故复盘用 `/evolve`。
 
 也可手动指定：
 ```
@@ -241,7 +243,7 @@ Windows 用户配置详见 [docs/CONFIG-FILES-GUIDE.md](docs/CONFIG-FILES-GUIDE.
 | [docs/QUICK-START.md](docs/QUICK-START.md) | 新手入门指南 |
 | [docs/CONFIG-FILES-GUIDE.md](docs/CONFIG-FILES-GUIDE.md) | 配置文件完整说明 |
 | [docs/ORCHESTRATION-GUIDE.md](docs/ORCHESTRATION-GUIDE.md) | 编排系统与策略 |
-| [docs/SKILLS-CATALOG.md](docs/SKILLS-CATALOG.md) | 58 Skills 目录 |
+| [docs/CAPABILITY-SUMMARY.md](docs/CAPABILITY-SUMMARY.md) | 自动生成的能力数量与安装包清单 |
 | [docs/MEMORY-SYSTEM.md](docs/MEMORY-SYSTEM.md) | 多层记忆架构 |
 | [docs/audits/INDEX.md](docs/audits/INDEX.md) | 历次配置/知识盘点审计报告 |
 | [docs/hud/HUD-STATUSLINE-GUIDE.md](docs/hud/HUD-STATUSLINE-GUIDE.md) | HUD 状态栏配置 |

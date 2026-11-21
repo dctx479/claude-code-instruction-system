@@ -6,6 +6,8 @@ worktrees: []
 
 # 活动工作树追踪
 
+> 2026-11-21 来源说明：示例记录不计入活跃 worktree；运行前用 `git worktree list --porcelain` 核对真实状态。保留历史样例，不因日期删除。
+
 此文件追踪所有活动的Git worktrees，支持并行任务管理和状态同步。
 
 ## 数据格式说明

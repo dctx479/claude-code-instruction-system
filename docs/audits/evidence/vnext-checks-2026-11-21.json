@@ -1,0 +1,154 @@
+{
+  "checks": [
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/audit-rules.py",
+        "--strict"
+      ],
+      "exit": 0,
+      "seconds": 0.24,
+      "output_tail": "Lines  Bytes  Rule file\n   27   1825  .claude/rules/hooks.md\n   71   4297  AGENTS.md\n   20   1225  CLAUDE.md\n   14    894  config/claude-global.md\n4 files; 0 findings\nRead-only; no commands executed or files modified.\nNo semantic deletion advice; review findings require human context.\nBudgets cover repository rules only; external/global instructions may add context.\nCommand checks support explicit npm/pnpm/yarn scripts and local python/bash files only.\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/audit-skills.py"
+      ],
+      "exit": 0,
+      "seconds": 0.21,
+      "output_tail": "Skills: 59/59 valid\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/build-agent-index.py",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 0.11,
+      "output_tail": ""
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/check-doc-facts.py"
+      ],
+      "exit": 0,
+      "seconds": 0.2,
+      "output_tail": "Profile coverage, command metadata and capability facts: PASS\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/eval-skills.py"
+      ],
+      "exit": 0,
+      "seconds": 0.15,
+      "output_tail": "Checked 10 automatic descriptions; 0 overlap hints; model routing NOT_RUN\n"
+    },
+    {
+      "command": [
+        "C:/Program Files/Git/bin/bash.exe",
+        "scripts/test-all-intents.sh"
+      ],
+      "exit": 0,
+      "seconds": 18.27,
+      "output_tail": "test_all_roles (test_intent_routing.RoutingTests.test_all_roles) ... ok\ntest_explicit_command_and_utf8_protocol (test_intent_routing.RoutingTests.test_explicit_command_and_utf8_protocol) ... ok\ntest_explicit_override_and_empty_input (test_intent_routing.RoutingTests.test_explicit_override_and_empty_input) ... ok\ntest_invalid_input_warns_without_stale_context (test_intent_routing.RoutingTests.test_invalid_input_warns_without_stale_context) ... ok\ntest_ordinary_turn_clears_previous_advice (test_intent_routing.RoutingTests.test_ordinary_turn_clears_previous_advice) ... ok\ntest_pasted_article_and_quoted_commands_do_not_route (test_intent_routing.RoutingTests.test_pasted_article_and_quoted_commands_do_not_route) ... ok\ntest_real_governance_requests_are_not_data_analysis (test_intent_routing.RoutingTests.test_real_governance_requests_are_not_data_analysis) ... ok\ntest_session_paths_are_isolated_and_traversal_safe (test_intent_routing.RoutingTests.test_session_paths_are_isolated_and_traversal_safe) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 18.037s\n\nOK\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/validate/validate-config.py"
+      ],
+      "exit": 0,
+      "seconds": 0.2,
+      "output_tail": "\n\u001b[0;36m============================================================\u001b[0m\n\u001b[0;36m配置文件验证工具 v2.0.0\u001b[0m\n\u001b[0;36m============================================================\u001b[0m\n\n\n\u001b[0;36m============================================================\u001b[0m\n\u001b[0;36m验证 Hooks 配置: hooks/hooks.json\u001b[0m\n\u001b[0;36m============================================================\u001b[0m\n\n\u001b[0;34mℹ 加载配置文件: hooks/hooks.json\u001b[0m\n\u001b[0;32m✓ 配置文件加载成功\u001b[0m\n\u001b[0;34mℹ 检查 Hooks 结构...\u001b[0m\n\u001b[0;34mℹ 检查 Matcher 格式...\u001b[0m\n\u001b[0;34mℹ 检查 Hooks 数组结构...\u001b[0m\n\u001b[0;34mℹ 检查命令路径兼容性...\u001b[0m\n\u001b[0;34mℹ 检查脚本文件...\u001b[0m\n\u001b[0;32m✓ ✨ 配置完美！未发现任何问题。\u001b[0m\n\n\u001b[0;36m============================================================\u001b[0m\n\u001b[0;36m验证 Settings 配置: config/settings.json\u001b[0m\n\u001b[0;36m============================================================\u001b[0m\n\n\u001b[0;32m✓ JSON 格式正确\u001b[0m\n\u001b[0;32m✓ 配置验证通过\u001b[0m\n\n\u001b[0;36m============================================================\u001b[0m\n\u001b[0;36m验证配置: config/keywords.json\u001b[0m\n\u001b[0;36m============================================================\u001b[0m\n\n\u001b[0;32m✓ JSON 格式正确\u001b[0m\n\n\u001b[0;36m============================================================\u001b[0m\n\u001b[0;36m验证配置: config/mcp-servers.json\u001b[0m\n\u001b[0;36m============================================================\u001b[0m\n\n\u001b[0;32m✓ JSON 格式正确\u001b[0m\n\n\u001b[0;36m============================================================\u001b[0m\n\u001b[0;36m验证总结\u001b[0m\n\u001b[0;36m============================================================\u001b[0m\n\n总文件数: 4\n通过: \u001b[0;32m4\u001b[0m\n失败: \u001b[0;31m0\u001b[0m\n错误: \u001b[0;31m0\u001b[0m\n警告: \u001b[1;33m0\u001b[0m\n\n\u001b[0;32m✨ 所有配置文件都正确！\u001b[0m\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "-m",
+        "json.tool",
+        "hooks/hooks.json"
+      ],
+      "exit": 0,
+      "seconds": 0.12,
+      "output_tail": "63b\\u6b62\\u5de5\\u5177\\u6267\\u884c\\uff1bStop \\u963b\\u6b62\\u505c\\u6b62\\u5e76\\u7ee7\\u7eed\\u5bf9\\u8bdd\\u3002stderr \\u53cd\\u9988\\u7ed9 Claude\",\n            \"other\": \"\\u975e\\u963b\\u585e\\u9519\\u8bef\\uff0c\\u64cd\\u4f5c\\u7167\\u5e38\\u8fdb\\u884c\\uff08\\u5305\\u62ec exit 1 \\u548c exit 3\\uff09\"\n        },\n        \"stdin_json\": {\n            \"common\": \"session_id, transcript_path, cwd, permission_mode, hook_event_name\",\n            \"UserPromptSubmit\": \"prompt\",\n            \"PreToolUse\": \"tool_name, tool_input\",\n            \"PostToolUse\": \"tool_name, tool_input, tool_response\",\n            \"Stop\": \"stop_hook_active, last_assistant_message\",\n            \"Notification\": \"message\"\n        },\n        \"environment_variables\": {\n            \"CLAUDE_PROJECT_DIR\": \"\\u9879\\u76ee\\u6839\\u76ee\\u5f55\\uff08hook \\u7684 cwd \\u4f1a\\u8ddf\\u968f Claude \\u7684 cd \\u53d8\\u5316\\uff0c\\u5b9a\\u4f4d\\u9879\\u76ee\\u6587\\u4ef6\\u5e94\\u4f7f\\u7528\\u8be5\\u53d8\\u91cf\\uff09\"\n        },\n        \"handler_fields\": \"handler \\u5bf9\\u8c61\\u91cc\\u4e0d\\u8981\\u52a0 description \\u7b49\\u81ea\\u5b9a\\u4e49\\u5b57\\u6bb5\\uff1a\\u5b98\\u65b9 schema \\u4e0d\\u5141\\u8bb8\\u672a\\u77e5\\u5b57\\u6bb5\\u3002\\u8bf4\\u660e\\u7edf\\u4e00\\u5199\\u5728 notes.handlers\\u3002\",\n        \"platform\": {\n            \"windows\": \"\\u9700\\u8981 Git Bash\\uff0chook \\u547d\\u4ee4\\u5728 Git Bash \\u4e2d\\u6267\\u884c\\uff0c$HOME \\u5c55\\u5f00\\u4e3a /c/Users/<name>\\u3002\\u547d\\u4ee4\\u4ee5 bash \\u5f00\\u5934\\u5373\\u53ef\\uff0c\\u4e0d\\u8981\\u5199 bash.exe \\u7684\\u7edd\\u5bf9\\u8def\\u5f84\\u3002\",\n            \"macos_linux\": \"\\u76f4\\u63a5\\u4f7f\\u7528 bash \\u547d\\u4ee4\\u5373\\u53ef\"\n        }\n    }\n}\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "-m",
+        "json.tool",
+        "config/keywords.json"
+      ],
+      "exit": 0,
+      "seconds": 0.1,
+      "output_tail": "khazix/cleaner/storage \\u76f8\\u5173 skill \\u76ee\\u5f55\",\n            \"doc\": \"docs/TOOLS-ECOSYSTEM-GUIDE.md \\u00a75.2\",\n            \"priority\": \"high\"\n        },\n        \"knowledge-work-plugins\": {\n            \"keywords\": [\n                \"\\u9500\\u552e\\u534f\\u52a9\",\n                \"\\u6cd5\\u52a1\\u5ba1\\u67e5\",\n                \"hr \\u534f\\u52a9\",\n                \"\\u8d22\\u52a1\\u5206\\u6790\",\n                \"\\u8fd0\\u8425\\u652f\\u6301\",\n                \"\\u804c\\u4e1a\\u89d2\\u8272\"\n            ],\n            \"install_cmd\": \"claude plugin marketplace add anthropics/knowledge-work-plugins\",\n            \"verify_cmd\": \"claude plugin list\",\n            \"expected\": \"\\u5217\\u8868\\u4e2d\\u5305\\u542b knowledge-work-plugins\",\n            \"doc\": \"docs/TOOLS-ECOSYSTEM-GUIDE.md \\u00a73.1\",\n            \"priority\": \"low\"\n        },\n        \"yakit\": {\n            \"keywords\": [\n                \"\\u5b89\\u5168\\u6d4b\\u8bd5\",\n                \"\\u6e17\\u900f\\u6d4b\\u8bd5\",\n                \"\\u6f0f\\u6d1e\\u6316\\u6398\",\n                \"\\u89c2\\u5bdf http \\u8bf7\\u6c42\",\n                \"\\u4ee3\\u7406\\u6d4b\\u8bd5\",\n                \"yakit\",\n                \"\\u6570\\u636e\\u5305\\u9a8c\\u8bc1\"\n            ],\n            \"install_cmd\": \"\\u89c1 docs/TOOLS-ECOSYSTEM-GUIDE.md \\u00a76.1\\uff08\\u624b\\u52a8\\u4e0b\\u8f7d + \\u914d\\u7f6e\\u4ee3\\u7406\\uff09\",\n            \"verify_cmd\": \"curl -s http://127.0.0.1:8083/ -o /dev/null -w '%{http_code}'\",\n            \"expected\": \"Yakit \\u4ee3\\u7406\\u7aef\\u53e3\\u54cd\\u5e94 200/302\",\n            \"doc\": \"docs/TOOLS-ECOSYSTEM-GUIDE.md \\u00a76.1\",\n            \"priority\": \"medium\"\n        }\n    }\n}\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "-m",
+        "json.tool",
+        "config/settings-guardrails.json"
+      ],
+      "exit": 0,
+      "seconds": 0.1,
+      "output_tail": "{\n    \"permissions\": {\n        \"disableBypassPermissionsMode\": \"disable\",\n        \"deny\": [\n            \"Bash(git push --force *)\",\n            \"Bash(git push -f *)\",\n            \"Bash(rm -rf /)\",\n            \"Bash(rm -rf ~)\"\n        ],\n        \"ask\": [\n            \"Bash(git push *)\",\n            \"Bash(git commit *)\",\n            \"Bash(git reset --hard *)\",\n            \"Bash(git checkout .)\",\n            \"Bash(git checkout -- *)\",\n            \"Bash(git restore *)\",\n            \"Bash(git clean *)\",\n            \"Bash(git rebase *)\",\n            \"Bash(rm *)\",\n            \"PowerShell(git push *)\",\n            \"PowerShell(git commit *)\",\n            \"PowerShell(git reset --hard *)\",\n            \"PowerShell(git checkout *)\",\n            \"PowerShell(git restore *)\",\n            \"PowerShell(git clean *)\",\n            \"PowerShell(Remove-Item *)\"\n        ]\n    }\n}\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/install-global.py",
+        "--target",
+        "C:\\Users\\jay\\AppData\\Local\\Temp\\taiyi-vnext-final-f97kp40f\\.claude",
+        "--dry-run"
+      ],
+      "exit": 0,
+      "seconds": 0.16,
+      "output_tail": "ry/performance-reports/TEMPLATE.md\n  [copied] reference/architecture.md\n  [copied] reference/best-practices.md\n  [copied] reference/coding-standards.md\n  [copied] reference/architecture-patterns/README.md\n  [copied] reference/architecture-patterns/cases/evolution-stories.md\n  [copied] reference/architecture-patterns/templates/ai-agent-platform.md\n  [copied] reference/architecture-patterns/templates/e-commerce.md\n  [copied] reference/architecture-patterns/templates/payment-system.md\n  [copied] reference/architecture-patterns/templates/rag-system.md\n  [copied] reference/architecture-patterns/templates/realtime-communication.md\n  [copied] reference/architecture-patterns/templates/saas-multi-tenant.md\n  [copied] reference/architecture-patterns/tutorials/core-concepts.md\n  [copied] prompts/IMPLEMENTATION-SUMMARY.md\n  [copied] prompts/README.md\n  [copied] prompts/variables.yaml\n  [copied] prompts/agents/architect.txt\n  [copied] prompts/agents/code-reviewer.txt\n  [copied] prompts/agents/data-scientist.txt\n  [copied] prompts/agents/debugger.txt\n  [copied] prompts/agents/orchestrator.txt\n  [copied] prompts/agents/security-analyst.txt\n  [copied] prompts/core/apollo-principles.txt\n  [copied] prompts/core/base-system.txt\n  [copied] prompts/core/coding-standards.txt\n  [copied] prompts/templates/agent-template.txt\n  [copied] prompts/templates/workflow-template.txt\n  [copied] prompts/workflows/agent-orchestration.txt\n  [copied] prompts/workflows/spec-driven-dev.txt\n  新增 246，更新 0，未变 0，保留已有 0，失败 0\n\n[2/3] 合并 settings.json\n  settings.json: 更新键 ['hooks', 'statusLine']\n\n[3/3] 自检\n  (dry-run 跳过)\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/install-global.py",
+        "--target",
+        "C:\\Users\\jay\\AppData\\Local\\Temp\\taiyi-vnext-final-f97kp40f\\.claude"
+      ],
+      "exit": 0,
+      "seconds": 0.42,
+      "output_tail": "源:   D:\\projects\\private\\claude-code-instruction-system\n目标: C:\\Users\\jay\\AppData\\Local\\Temp\\taiyi-vnext-final-f97kp40f\\.claude\n组件: core, agents, commands, hooks, skills, statusline, knowledge\n注意: hook 命令固定指向 $HOME/.claude，非默认目标仅用于沙箱测试（需同时设置 HOME）。\n\n[1/3] 复制文件\n  新增 246，更新 0，未变 0，保留已有 0，失败 0\n\n[2/3] 合并 settings.json\n  settings.json: 更新键 ['hooks', 'statusLine']\n\n[3/3] 自检\n  ✓ 通过\n\n提示: 已运行的 Claude Code 会话不会热加载新 hooks，重启会话后生效（/hooks 可查看已加载项）。\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/verify-global-install.py",
+        "--target",
+        "C:\\Users\\jay\\AppData\\Local\\Temp\\taiyi-vnext-final-f97kp40f\\.claude",
+        "--smoke-hook"
+      ],
+      "exit": 0,
+      "seconds": 1.78,
+      "output_tail": "{\n  \"files_checked\": 233,\n  \"stateful_sources_skipped\": 1,\n  \"extra_managed_capabilities\": [],\n  \"profile_isolated\": true,\n  \"hook_smoke\": \"PASS (temporary HOME; real user state untouched)\",\n  \"problems\": [],\n  \"passed\": true\n}\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "exit": 0,
+      "output_tail": "st_vnext.VNextTests.test_us\r\nage_privacy_retention_and_contention) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 60 tests in 32.121s\r\n\r\nOK\r\n",
+      "note": "Completed before this verification batch; no implementation changes since."
+    }
+  ],
+  "passed": true
+}

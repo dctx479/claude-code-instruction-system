@@ -1,0 +1,197 @@
+{
+  "cli_version": "2.1.330 (Claude Code)",
+  "profile": "core",
+  "cases": 15,
+  "passed": 11,
+  "results": [
+    {
+      "case": 1,
+      "owner": "debug",
+      "selected": [
+        "debug"
+      ],
+      "cli_exit": 0,
+      "observed": "debug",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.061288999999999996,
+      "subtype": "success"
+    },
+    {
+      "case": 2,
+      "owner": "debug",
+      "selected": [
+        "debug"
+      ],
+      "cli_exit": 0,
+      "observed": "debug",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.051336,
+      "subtype": "success"
+    },
+    {
+      "case": 3,
+      "owner": "debug",
+      "selected": [
+        "debug"
+      ],
+      "cli_exit": 0,
+      "observed": "debug",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.0514796,
+      "subtype": "success"
+    },
+    {
+      "case": 4,
+      "owner": "code-security-review",
+      "selected": [
+        "code-security-review"
+      ],
+      "cli_exit": 0,
+      "observed": "code-security-review",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.0408298,
+      "subtype": "success"
+    },
+    {
+      "case": 5,
+      "owner": "code-security-review",
+      "selected": [
+        "code-security-review"
+      ],
+      "cli_exit": 0,
+      "observed": "code-security-review",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.0409298,
+      "subtype": "success"
+    },
+    {
+      "case": 6,
+      "owner": "code-security-review",
+      "selected": [
+        "code-security-review"
+      ],
+      "cli_exit": 0,
+      "observed": "code-security-review",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.049280599999999994,
+      "subtype": "success"
+    },
+    {
+      "case": 7,
+      "owner": "frontend-design",
+      "selected": [
+        "frontend-design",
+        "run"
+      ],
+      "cli_exit": 1,
+      "observed": "frontend-design",
+      "passed": false,
+      "evidence_complete": false,
+      "cost_usd": 0.0402598,
+      "subtype": "error_max_turns"
+    },
+    {
+      "case": 8,
+      "owner": "frontend-design",
+      "selected": [
+        "dataviz"
+      ],
+      "cli_exit": 0,
+      "observed": "dataviz",
+      "passed": false,
+      "evidence_complete": true,
+      "cost_usd": 0.07866999999999999,
+      "subtype": "success"
+    },
+    {
+      "case": 9,
+      "owner": "frontend-design",
+      "selected": [
+        "frontend-design"
+      ],
+      "cli_exit": 1,
+      "observed": "frontend-design",
+      "passed": false,
+      "evidence_complete": false,
+      "cost_usd": 0.11251419999999998,
+      "subtype": "error_max_budget_usd"
+    },
+    {
+      "case": 10,
+      "owner": "data-analysis",
+      "selected": [
+        "data-analysis"
+      ],
+      "cli_exit": 0,
+      "observed": "data-analysis",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.08492060000000001,
+      "subtype": "success"
+    },
+    {
+      "case": 11,
+      "owner": "data-analysis",
+      "selected": [
+        "data-analysis"
+      ],
+      "cli_exit": 0,
+      "observed": "data-analysis",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.0592604,
+      "subtype": "success"
+    },
+    {
+      "case": 12,
+      "owner": "data-analysis",
+      "selected": [],
+      "cli_exit": 0,
+      "observed": null,
+      "passed": false,
+      "evidence_complete": true,
+      "cost_usd": 0.028074799999999997,
+      "subtype": "success"
+    },
+    {
+      "case": 13,
+      "owner": null,
+      "selected": [],
+      "cli_exit": 0,
+      "observed": null,
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.0679198,
+      "subtype": "success"
+    },
+    {
+      "case": 14,
+      "owner": null,
+      "selected": [],
+      "cli_exit": 0,
+      "observed": null,
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.0297048,
+      "subtype": "success"
+    },
+    {
+      "case": 15,
+      "owner": null,
+      "selected": [],
+      "cli_exit": 0,
+      "observed": null,
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.0229348,
+      "subtype": "success"
+    }
+  ],
+  "scope": "First actual Skill tool call with only Skill enabled. This is routing, not workflow behavior. CLI bundled skills remain enabled, so this baseline includes their competition. Two max-turn/budget terminations are INCOMPLETE, not successful workflow runs."
+}

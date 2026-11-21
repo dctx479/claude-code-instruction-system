@@ -1,0 +1,24 @@
+{
+  "cli_version": "2.1.330 (Claude Code)",
+  "results": [
+    {
+      "case": "ask",
+      "permission_denial_observed": true,
+      "cli_exit": 0,
+      "terminal_reason": "completed",
+      "cost_usd": 0.009967199999999999
+    },
+    {
+      "case": "deny",
+      "permission_denial_observed": true,
+      "cli_exit": 0,
+      "terminal_reason": "completed",
+      "cost_usd": 0.004462
+    }
+  ],
+  "limitations": [
+    "Headless ask is denied via --permission-prompts none; no interactive prompt was tested.",
+    "Real destructive commands, compound commands, git -C and PowerShell remain unverified.",
+    "No bypass run: template disables bypass; no claim of ask safety under bypass."
+  ]
+}
