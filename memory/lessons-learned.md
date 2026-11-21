@@ -1,5 +1,7 @@
 # 经验教训库 (Lessons Learned)
 
+> 历史案例库，不是当前执行指令。保留当时的症状与修复记录不代表它们适用于当前版本；复用前查当前实现，规则优先级以 AGENTS.md 和当前 Spec 为准。
+
 > 自动维护的知识库，记录错误、解决方案和最佳实践
 > 每次遇到问题或完成复杂任务后自动更新
 
@@ -1284,6 +1286,13 @@ echo '{"model":...}' | bash ~/.claude/statusline/hud-v2.sh render | wc -l  # 应
 ---
 
 ## [2026-02-20] CLAUDE.md 超过 40k 字符阈值 #011
+
+> [!NOTE] DEPRECATED 2026-11-21（仅下方旧预算与同步建议）
+> 40,000 字符告警与当时的修复数据作为历史案例保留，不再作为当前目标。
+> 当前入口各 ≤200 行、全局模板 ≤60 行；项目 AGENTS.md/CLAUDE.md 与全局模板分离，禁止为消除差异而复制项目入口到全局。
+> 替代验证：`python scripts/audit-rules.py --strict`；安装源与迁移备份见 `specs/SPEC-global-install.md`。
+> 本轮旧入口为 26,529 字符、41,723 字节，不能称为“再次超过 40,000 字符”；当前治理依据是 806 行的入口膨胀及全局重复。
+> 本轮处理证据见 `docs/audits/RULE-GOVERNANCE-2026-11-21.md`；以下历史命令不要照搬。
 
 ### 问题描述
 Claude Code 每次启动时警告 `⚠Large CLAUDE.md will impact performance (40.4k chars > 40.0k)`。警告来自项目级 CLAUDE.md（40,446 chars），全局 CLAUDE.md 当时为 39,946 chars（恰好在阈值以下）。

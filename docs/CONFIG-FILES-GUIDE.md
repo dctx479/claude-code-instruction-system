@@ -3,7 +3,7 @@
 > [!IMPORTANT] 2026-11-19 更正（对照 Claude Code 官方 hooks 规范）
 > - **hooks 只从 `settings.json` 加载**（`~/.claude/settings.json`、`.claude/settings.json`、`.claude/settings.local.json`，或已启用的插件）。仓库根的 `hooks/hooks.json` **不会**被自动加载，它是 `scripts/install-global.py` 的输入模板，由脚本合并进 `~/.claude/settings.json`。本文中把 `hooks/hooks.json` 描述为"项目级 hooks 配置 / 参与优先级覆盖"的段落均以此为准。
 > - `timeout` 单位是**秒**；命令以 `bash` 开头即可，不要写 `bash.exe` 绝对路径；引号内的 `~` 不会展开，用 `$HOME`。
-> - Stop hook 只有 **exit 2** 才阻止停止；"会话结束"逻辑用 **SessionEnd**。完整规范见 `CLAUDE.md` §八。
+> - Stop hook 只有 **exit 2** 才阻止停止；"会话结束"逻辑用 **SessionEnd**。维护约束见 `.claude/rules/hooks.md`，状态机见 `hooks/ralph-state.py`。
 
 ## 目录
 
@@ -773,24 +773,29 @@ Hooks 配置会合并（不是覆盖）：
 
 ## 全局 vs 项目同步策略
 
-> **背景**：跨项目复用 Skills/Agents/Workflows 时，需要约定哪些资产从「项目」流向「全局」，哪些从「全局」流向「项目」，避免双向漂移。
+> **当前机制（2026-11-21）**：本仓库是托管资产的源，全局目录是安装目标；先 dry-run 再安装。
+> 旧版按“全局是事实源”回流的方案已由 `specs/SPEC-global-install.md` 替代，避免把安装副本覆盖回仓库。
 
 ### 分层归属规则
 
 | 资产类型 | 单一事实源 | 流向 | 理由 |
 |---------|-----------|------|------|
-| **Agents** (`agents/`) | 全局 `~/.claude/agents/` | 全局 → 项目（按需 import） | 系统基础设施，所有项目共用 |
-| **Commands** (`commands/`) | 全局 `~/.claude/commands/` | 全局 → 项目 | 同上 |
-| **Hooks** (`hooks/`) | 全局 `~/.claude/hooks/` | 全局 → 项目 | 同上 |
-| **基础 Skills**（CTF/数据/视频等） | 全局 `~/.claude/skills/` | 全局 → 项目 | 通用能力 |
+| **Agents** (`agents/`) | 本仓库 `agents/` | 仓库 → 全局 agents/ | 安装副本不是事实源 |
+| **Commands** (`commands/`) | 本仓库 `commands/` | 仓库 → 全局 commands/（拍平） | 保持 slash 命令名 |
+| **Hooks** (`hooks/`) | 本仓库脚本及 hooks/hooks.json | 仓库 → 全局脚本与 settings 合并 | 只替换托管 Hook，保留其他设置 |
+| **基础 Skills**（CTF/数据/视频等） | 本仓库托管的 Skill 源 | 仓库 → 全局 | 用户另行安装的 Skill 不由本仓库反向覆盖 |
 | **工作流 Skills**（neat/handoff/prime/reflection 等） | 项目 `.claude/skills/` | 项目 → 全局 | 项目孵化后回流到全局以惠及他项目 |
 | **specs/** 模板 | 项目 `specs/SPEC-TEMPLATE.md` | 项目 → 全局 | 项目主导演进 |
+| **项目指令** | 根 AGENTS.md、CLAUDE.md | 不安装到全局入口 | 避免污染其他项目 |
+| **全局指令模板** | config/claude-global.md | 模板 → 全局 CLAUDE.md | 仅跨项目偏好，自定义内容默认保留 |
 | **运行时状态** (`agent-state.json`, `context/sessions/`, `intent-state.json`) | 各自隔离 | 不同步 | 会话级状态，必须分离 |
 | **临时目录** (`.claude/worktrees/`, `.claude-tmp/`) | 各自隔离 | 不同步 | 已 gitignore |
 
 ### 已知冗余清单（待定期清理）
 
-**全局 `~/.claude/agents/` 根目录冗余**（同名文件已存在于子目录，路由表已用子目录路径）：
+以下是历史盘点，不代表当前机器仍存在这些文件；逐项重新核对再操作。
+
+**全局 `~/.claude/agents/` 根目录冗余候选**：
 - `auto-optimizer.md`（实际位于 `ops/`）
 - `autopilot-orchestrator.md`（实际位于 `ops/`）
 - `context-archivist.md`（实际位于 `ops/`）
@@ -803,20 +808,20 @@ Hooks 配置会合并（不是覆盖）：
 - `CLI-SETUP-SUMMARY.md`
 - `THIRD-PARTY-API-INVESTIGATION-SUMMARY.md`
 
-> 清理操作需逐个确认（参见 CLAUDE.md 第七章：禁止批量删除）。
+> 清理须符合用户授权并逐项核对，参见 AGENTS.md；不要按历史清单批量删除。
 
 ### 同步执行约束
 
 1. **同步前必须 diff**：用 `diff -q` 比较两边内容，若一致则跳过 cp 操作；避免覆盖更新版本
 2. **时间戳不能作为唯一判断依据**：内容相同但时间戳不同（如 `touch` 或重写）不需要同步
-3. **同步操作的 Bash 权限**应记入 `.claude/settings.local.json`，commit 时保留以备追溯
+3. **权限与执行记录分离**：不为审计自动扩大或提交个人权限；记录命令、备份位置和结果即可
 4. **大规模同步**：必须事先生成审计报告（参见 `docs/audits/`），完成后归档报告
 5. **不同步的运行时文件**：参见 `.gitignore` 中 `# Claude Code 运行时文件` 块
 
 ### 同步触发时机
 
 - 项目孵化出新的工作流 Skill（如 `/neat`、`/prime`）且经实战验证后回流全局
-- 全局新增基础 Agent/Command 后，所有项目自动获得（无需主动 pull）
+- 仓库更新托管资产后重新安装；用户单独安装的全局能力由用户自己维护
 - 每季度执行一次完整审计（参见 `memory/best-practices.md` BP-027）
 - 跨机器迁移 Claude Code 配置前
 

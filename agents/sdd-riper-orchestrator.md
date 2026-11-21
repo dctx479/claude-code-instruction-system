@@ -22,7 +22,7 @@ permissionMode: acceptEdits
 
 ## 三条铁律
 
-1. **No Spec, No Code** — 没有文档，不准写代码
+1. **No Spec, No Code（完整 SDD 流程内）** — 选择本流程后先有 Spec；普通低风险任务按 AGENTS.md 分档，不强制调用本角色
 2. **Spec is Truth** — 文档和代码冲突时，错的一定是代码
 3. **Reverse Sync** — 发现 Bug，先修文档，再修代码
 
@@ -378,9 +378,9 @@ SDD-RIPER 的每一步都可能失败。为防止中间状态污染代码库，�
 ```
 Review 完成后，可以调用现有的 QA 系统：
 
-1. 调用 qa-reviewer 进行评分（满分 100，通过线 ≥80）
-2. 如果 <80 且有 P2 问题 → 调用 qa-fixer 自动修复
-3. 修复后重新 Review
+1. 调用 qa-reviewer 对照必需验收项检查实际证据，输出 PASS / FAIL / INCOMPLETE
+2. 有授权范围内可修复的 P2 问题时调用 qa-fixer；P0/P1 或证据缺口不能被分数抵消
+3. 修复后重验，最多三轮；仍失败则明确阻塞原因，不能自动宣称发布
 ```
 
 ---

@@ -6,6 +6,24 @@
 
 > 这些脚本通过 `python scripts/install-global.py` 安装到 `~/.claude/scripts/`，对应的 hook 条目来自 `hooks/hooks.json`（合并进 `~/.claude/settings.json`）。下文的配置片段仅作格式示意：`timeout` 单位是秒；全局 hook 的脚本路径写 `$HOME/.claude/scripts/...`。
 
+## 规则治理
+
+完整验证使用独立 venv：`python -m venv .claude-tmp/validation-venv`，激活后运行
+`python -m pip install -r scripts/requirements-validation.txt`。PyYAML 仅供开发/CI 的 Skill/YAML 校验，Hook 运行时不依赖它。
+Windows 的解释器位于 `.claude-tmp/validation-venv/Scripts/python.exe`，Linux/macOS 位于 `.claude-tmp/validation-venv/bin/python`。
+
+- `python scripts/audit-rules.py --strict`：只读检查规则清单、行数/字节、@ 导入、目录链预算及可识别命令；错误或预算告警退出非零。
+- `python scripts/audit-skills.py`：验证全部 Skill 的可移植 frontmatter；版本、触发词和其他自定义字段放 metadata，compatibility 是合法的可选顶层字段。
+- 本机 Skill Creator 的旧 quick_validate 只接受五个字段；本仓库的完整检查遵循六字段标准并保留 compatibility，不能为通过旧校验器而删除合法运行环境说明。
+- `--json` 输出结构化结果；`--global-file PATH` 显式选择全局文件作重复比较，不默认扫描个人目录。
+- `review` 项表示路径/命令的上下文尚不能确定，不自动删除，也不当成过期事实；它们不导致 strict 失败，审计时仍须人工处理。
+- 不支持的命令别名、Make/Cargo/CI 语义和规则冲突由 `/rule-audit` 阅读核对，机器结果不是完整语义审查。
+- `python -m unittest discover -s tests -p "test_*.py" -v`：临时目录测试审计、core 安装和真实 Hook 输入输出。
+- `bash scripts/test-all-intents.sh`：仅运行路由回归；不修改真实 HOME，不依赖已安装的 Hook。
+- 安装后从仓库运行 `python scripts/verify-global-install.py --smoke-hook`：比较托管源文件与实际安装副本，临时 HOME 调用已安装 Hook；任何缺失、差异或烟测失败均非零退出。
+- `--target DIR` 可验证沙箱；`--repo DIR` 显式指定源仓库。校验器跳过有状态知识源，不以“必须等于仓库”为由覆盖个人记忆。
+- `bash scripts/verify-agent-dispatch.sh` 是上述已安装验证的兼容入口；不再写真实全局路由快照、不读取废弃的 intent.log。
+
 ---
 
 ## 📋 脚本清单

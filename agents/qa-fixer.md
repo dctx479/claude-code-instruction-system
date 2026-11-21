@@ -76,9 +76,9 @@ QA-REPORT.md
 ```bash
 每次修复后:
 1. git diff # 检查改动
-2. npm run lint # 代码规范
-3. npm run typecheck # 类型检查
-4. npm run test # 运行测试
+2. 读取当前项目指令与 manifest/CI，确定实际可运行的检查命令和目录
+3. 按变更运行相关检查（太一仓库见 commands/dev/check.md）
+4. 重验原失败用例；未运行的检查标为未验证，不盲跑 npm
 
 如果失败:
 - 回滚本次修复
@@ -389,30 +389,10 @@ git status
 
 ## 自动修复脚本
 
-```bash
-#!/bin/bash
-# auto-fix.sh
-
-echo "🔧 开始自动修复..."
-
-# 1. 代码格式
-echo "📝 修复代码格式..."
-npm run lint -- --fix
-
-# 2. 移除未使用的导入
-echo "🧹 清理未使用的导入..."
-npx ts-prune | xargs sed -i '/import.*from/d'
-
-# 3. 运行测试
-echo "🧪 验证修复..."
-npm run test || {
-  echo "❌ 测试失败，回滚修复"
-  git checkout .
-  exit 1
-}
-
-echo "✅ 自动修复完成"
-```
+不提供跨项目通用的 npm/批量删 import 脚本。先记录 git status 与已有 diff，
+按项目 manifest/CI 选择真实命令，只修改本次获授权的目标范围。
+检查失败时保留证据，仅撤销自己可明确定位的修改；禁止 git checkout . 覆盖用户工作区。
+上文 TypeScript 和 npm 报告只是应用项目示例，不是本仓库默认执行命令。
 
 ## 安全检查清单
 

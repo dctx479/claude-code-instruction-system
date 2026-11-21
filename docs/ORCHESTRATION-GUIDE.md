@@ -1,6 +1,6 @@
 # 编排系统详细指南
 
-> 执行指令（策略矩阵）见 `CLAUDE.md` 第二节。本文件提供详细架构和使用示例。
+> 当前执行边界见 AGENTS.md，按需加载见 CLAUDE.md，Agent 定义见 agents/INDEX.md。本文件提供架构与可选编排示例。
 
 ---
 
@@ -475,18 +475,18 @@ Specialist 调用具体 Skill/Tool 执行
 
 ### 实现方式
 
-#### 方式 1: Intent-State 文件路由（当前系统）
+#### 方式 1: 本轮 Hook 建议（当前系统）
 
 ```
-UserPromptSubmit Hook → 分析意图 → 写入 intent-state.json
+UserPromptSubmit Hook → 分析意图 → 本轮 stdout 建议
     ↓
-Claude 读取 intent-state.json → 加载对应 Agent
+Claude 核对当前请求 → 按需加载对应 Agent
     ↓
 Agent 执行任务
 ```
 
-优点：零认知负担，全自动  
-缺点：依赖 Hook 系统，调试较复杂
+状态按 session_id/cwd 隔离；全局 intent-state.json 仅供旧 HUD 展示，不参与调度。
+关键词建议仍可能误判；复杂或含糊请求保持 orchestrator，不强制扮演无关角色。
 
 #### 方式 2: 显式路由器 Agent
 
@@ -515,7 +515,7 @@ Agent 执行任务
 
 #### 方式 3: 混合模式（推荐）
 
-- 常见场景：自动路由（intent-state.json）
+- 常见场景：核对本轮 Hook 建议后按需加载
 - 复杂场景：用户显式调用 @router 让路由器做决策
 - 调试场景：直接 @{agent-id} 跳过路由
 
@@ -531,7 +531,7 @@ Agent 执行任务
 
 | 机制 | 作用 | 与路由器的关系 |
 |------|------|--------------|
-| intent-state.json | 自动意图识别 | 是路由器的输入源 |
+| 本轮 Hook stdout | 请求级路由建议 | 当前消息的输入；全局快照不作为输入 |
 | agents/INDEX.md | Agent 元数据索引 | 是路由器的查询表 |
 | Agent 工具 | 启动子 Agent | 是路由器的执行手段 |
 | Skills INDEX.md | Skill 元数据索引 | 路由器用于分配 Skill 给 Agent |
@@ -610,11 +610,11 @@ function makeKey(sessionId: string, isSubagent: boolean): string {
 
 **现状**：
 - 路由粒度：**request 级** + Hook 中间层
-- 路由机制：`intent-state.json` → Agent 定义 → 隐含模型
+- 路由机制：本轮 Hook 建议 → 核对用户请求 → 按需 Agent 定义
 - 缓存策略：依赖 Anthropic Prompt Cache（TTL 5 分钟）
 
 **潜在优化**：
-1. **session 级路由缓存**：在 `~/.claude/intent-state.json` 增加 `lastRouteDecision` 字段，同 session 复用
+1. **session 级路由缓存**：若有实际收益，再使用独立 session key；禁止往全局 HUD 快照混入调度缓存
 2. **sub-agent 路由隔离**：子 Agent 启动时写入 `intent-state-{task_id}.json`，避免污染主会话
 3. **路由决策 TTL**：设置路由缓存过期时间（建议 10-30 分钟），过期后重新评估
 
@@ -697,7 +697,7 @@ function makeKey(sessionId: string, isSubagent: boolean): string {
 
 ### 与编排策略矩阵的关系
 
-`CLAUDE.md` 第二节的编排策略矩阵（SEQUENTIAL/PARALLEL/HIERARCHICAL 等）是从**组织结构**维度描述 Agent 协作；这 5 种模式是从**任务特征**维度描述能力流程。两者互补：
+SEQUENTIAL/PARALLEL/HIERARCHICAL 等策略从**组织结构**维度描述协作；本节 5 种模式从**任务特征**维度描述流程。仅在任务和授权需要时使用，不要求小任务套完整编排：
 
 | 任务维度 | 编排策略（谁协作谁） | 设计模式（怎么串接工具） |
 |---------|-------------------|----------------------|

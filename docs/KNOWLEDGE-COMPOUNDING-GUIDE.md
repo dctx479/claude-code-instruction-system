@@ -154,7 +154,7 @@ Agent/Skill 定义 (agents/*.md / SKILL.md)
 3. 搜索 memory/best-practices.md — 是否有适用的策展型最佳实践条目？
 ```
 
-太一元系统已有此机制: CLAUDE.md 第九节的"上下文检索协议"。
+太一的检索入口是 `memory/INDEX.md`；按任务相关性检索，不强制每轮读取完整记忆或全局路由快照。
 
 ### Lint（质检）
 
@@ -239,8 +239,8 @@ Agent/Skill 定义 (agents/*.md / SKILL.md)
 
 ## 相关文档
 
-- CLAUDE.md 第一节 — 自进化协议（知识摄入的触发机制）
-- CLAUDE.md 第九节 — 记忆系统（存储结构）
+- `commands/general/evolve.md` — 证据驱动复盘与规则提案
+- `memory/INDEX.md` — 记忆检索与存储归属
 - `docs/MEMORY-SYSTEM.md` — 多层记忆架构详细说明
 - `docs/CONTEXT-ENGINEERING-GUIDE.md` — 信噪比原则（知识加载策略）
 - `memory/lessons-learned.md` — Layer 1 原始记录

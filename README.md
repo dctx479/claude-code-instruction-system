@@ -135,18 +135,19 @@ cd claude-code-instruction-system
 
 ### 3. 安装到全局（`~/.claude/`）
 
-前置条件：Python 3、bash（Windows 需要 Git Bash）。`jq` 可选。
+前置条件：Python 3.10+、bash（Windows 需要 Git Bash）。`jq` 可选。
 
 ```bash
 python scripts/install-global.py --dry-run   # 先看会改什么
 python scripts/install-global.py             # 安装；之后每次更新仓库重跑即可
 ```
 
-脚本会把 CLAUDE.md、agents、commands、hooks、scripts、skills、statusline、memory、docs 等同步到 `~/.claude/`，并把 `hooks/hooks.json` 合并进 `~/.claude/settings.json`：
+脚本用 `config/claude-global.md` 安装全局 CLAUDE.md，并把 agents、commands、hooks、scripts、skills、statusline、memory、docs 等同步到 `~/.claude/`，将 `hooks/hooks.json` 合并进 settings。项目 AGENTS.md 不会装到全局：
 
 - 可重复执行；被覆盖的文件先备份到 `~/.claude/backups/taiyi-install-<时间戳>/`
 - 不删除任何文件，不改动 `settings.json` 里 `hooks` / `statusLine` 以外的键
 - `memory/` 等有状态文件只在目标不存在时复制
+- 已知旧版项目入口和托管全局入口会先备份再迁移；自定义全局指令默认保留。审阅后需替换时显式使用 `--components core --replace-global-rules`
 - 安装后需重启 Claude Code 会话，hooks 才会加载（`/hooks` 可查看）
 
 > 为什么必须安装：Claude Code 只从 `settings.json` 加载 hooks，只在 `~/.claude/`（或项目 `.claude/`）下发现 commands 和 agents。仓库根的 `hooks/hooks.json`、`commands/`、`agents/` 本身不会生效。
@@ -154,8 +155,12 @@ python scripts/install-global.py             # 安装；之后每次更新仓库
 ### 4. 验证安装
 
 ```bash
-bash scripts/test-all-intents.sh        # 意图路由：预期 34/34 通过
+python scripts/audit-rules.py --strict  # 规则规模、引用、可静态识别的命令
+python scripts/audit-skills.py          # 需验证 venv；环境配置见 scripts/README.md
+python -m unittest discover -s tests -p "test_*.py" -v  # 审计、沙箱安装、路由回归
+bash scripts/test-all-intents.sh        # 仅路由；使用仓库代码与临时 HOME，无需全局安装
 python scripts/validate/validate-config.py   # 配置校验：预期 0 错误
+python scripts/verify-global-install.py --smoke-hook  # 安装后核对实际副本，差异/失败返回非零
 ```
 
 详细安装说明见 [docs/QUICK-START.md](docs/QUICK-START.md)。
@@ -169,8 +174,12 @@ python scripts/validate/validate-config.py   # 配置校验：预期 0 错误
 系统在每次用户输入时自动识别意图，加载对应 Agent 角色：
 
 ```
-用户输入 → intent-detector.sh → intent-state.json → 加载 agents/{agent}.md
+用户输入 → intent-detector.sh → 本轮 stdout 建议 → 核对任务 → 按需加载 Agent
 ```
+
+路由使用 JSON 解析，忽略 Markdown 引用和代码块；长粘贴仅尝试最后一个短段落，无法可靠判断时保守返回默认角色。
+会话状态按 session_id 与 cwd 隔离保存；全局 intent-state.json 只保留给旧 HUD 显示，不参与决策。
+这仍是关键词启发式，不保证识别所有自然语言引用。规则体检用 `/rule-audit`，事故复盘用 `/evolve`，默认只交证据和 diff。
 
 也可手动指定：
 ```

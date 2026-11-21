@@ -7,6 +7,9 @@
 
 | 日期 | 报告 | 主题 | 关联条目 |
 |------|------|------|---------|
+| 2026-11-21 | [MEMORY-CURATION-2026-11-21.md](./MEMORY-CURATION-2026-11-21.md) | 82 个历史条目结构盘点、57 个 Skill 与本项目使用证据 | `memory/INDEX.md` |
+| 2026-11-21 | [WORKFLOW-COMPARISON-2026-11-21.md](./WORKFLOW-COMPARISON-2026-11-21.md) | 三套外部工作流固定快照对照及不采用的部分 | `specs/SPEC-rule-governance.md` |
+| 2026-11-21 | [RULE-GOVERNANCE-2026-11-21.md](./RULE-GOVERNANCE-2026-11-21.md) | 规则入口精简、只读审计、路由隔离与按风险验收 | `specs/SPEC-rule-governance.md` |
 | 2026-05 | [CONFIG-COMPARISON-REPORT-2026-05.md](./CONFIG-COMPARISON-REPORT-2026-05.md) | 全局 vs 项目配置差异对比（Skills/Agents/Workflows/Hooks） | `memory/best-practices.md` BP-041 |
 
 ## 使用约定

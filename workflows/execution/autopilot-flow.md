@@ -229,13 +229,11 @@ while not complete and iteration < max:
   agent: qa-reviewer
   input: code_changes
   output: qa-report.md
-  scoring:
-    - functionality: 40
-    - code_quality: 30
-    - test_coverage: 20
-    - performance: 5
-    - security: 5
-  pass_threshold: 80
+  decision: PASS_or_FAIL_or_INCOMPLETE
+  pass_requires:
+    - all_required_acceptance_checks_pass
+    - evidence_recorded
+    - no_unresolved_p0_p1
 
 2_automated_testing:
   agent: automated-testing
@@ -244,7 +242,7 @@ while not complete and iteration < max:
     - test_results
     - coverage_report
 
-3_auto_fix (if score < 80 and has_p2_issues):
+3_auto_fix (if has_authorized_fixable_p2_issues):
   agent: qa-fixer
   input: qa_report.p2_issues
   output: fix-report.md

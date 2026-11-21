@@ -1,5 +1,14 @@
 # Claude Code CLI 快速参考
 
+## 本仓库规则治理
+
+- `AGENTS.md`：跨工具项目约定；`CLAUDE.md`：Claude 专用入口并引用前者。
+- `config/claude-global.md`：全局安装模板，不再复制项目入口。
+- `/rule-audit`：只读体检，输出证据和 diff；`/evolve`：重复事故先查两次证据。
+- `python scripts/audit-rules.py --strict`：机器检查；`/check` 按真实技术栈选择验证。
+- 路由建议来自 UserPromptSubmit 本轮 stdout；旧全局快照仅供 HUD 显示。
+- 更新后先 dry-run，需全局生效时再运行安装器并重启会话。
+
 ## 常用命令
 
 ### 基础命令

@@ -2,6 +2,8 @@
 
 > 从成功经验中提炼的最佳实践，持续积累和更新
 
+> 历史参考库，不是当前执行指令。条目中的版本、命令、阈值和外部实验结论对应记录时点；复用前核对当前代码与证据，冲突时以 AGENTS.md 和当前 Spec 为准。
+
 ---
 
 ## Agent 编排最佳实践
@@ -1693,6 +1695,12 @@ CLAUDE.md 的作用不是替代验证。
 ---
 
 ### BP-041: 全局/项目配置同步策略——分层归属 + diff 优先
+
+> [!NOTE] DEPRECATED 2026-11-21（局部替代）
+> 保留“diff 优先、状态隔离、备份”原则；下方旧的“全局是事实源”方向及“两个 CLAUDE.md 应相同”的验证已被替代，历史内容仅供追溯。
+> 当前本仓库是托管 Agent/Command/Hook/Skill 的源，由 `scripts/install-global.py` 单向安装；目标中的个人修改应先审阅。
+> 全局入口来自 `config/claude-global.md`，项目入口保持独立。验证应比较源模板与安装目标，不比较项目 CLAUDE.md 与全局入口。
+> 依据：`specs/SPEC-global-install.md`、`tests/test_rule_governance.py` 及 `docs/audits/RULE-GOVERNANCE-2026-11-21.md`。
 
 **实践描述**:
 跨「全局 `~/.claude/`」与「项目 `.claude/`」同步 Skills/Agents/Workflows 时，遵循「分层归属、diff 优先、临时不入库」三原则，避免双向漂移、覆盖更新版本、临时目录污染仓库。

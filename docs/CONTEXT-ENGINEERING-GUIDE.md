@@ -177,8 +177,8 @@
 ### 习惯 3: 单一事实源
 
 每个概念只在一个文件中权威定义:
-- Hooks 配置格式 → `CLAUDE.md` 第八节
-- Agent 路由表 → `CLAUDE.md` 第零节
+- Hooks 配置与维护 → `.claude/rules/hooks.md`、`hooks/hooks.json`
+- Agent 定义与加载 → `agents/INDEX.md`、`CLAUDE.md`“按需加载”
 - 经验教训 → `memory/lessons-learned.md`
 
 其他文件引用，不复制。违反此规则导致矛盾和投毒（参见 CLAUDE.md 超限事件 lessons-learned #011）。
@@ -189,13 +189,14 @@
 
 | 固定加载项 | 当前大小 | 审计问题 |
 |-----------|---------|---------|
-| CLAUDE.md | ~39K chars | 是否有可移出的内容？ |
-| intent-state.json | ~50 chars | 合理 |
-| memory/MEMORY.md | ~200 行 | 是否有过期条目？ |
+| 项目 AGENTS.md / CLAUDE.md | 用 audit-rules 实测 | 各入口是否 ≤200 行，导入是否仍必要？ |
+| 全局 CLAUDE.md | 独立模板 ≤60 行 | 是否携带项目专属约定？ |
+| 本轮 Hook stdout | 按消息提供 | 建议是否符合当前请求？不要读取全局快照代替它 |
+| 自动记忆入口 | 按宿主工具实测 | 是否有过期或无证据条目？ |
 
-**审计频率**: 每月一次，或 CLAUDE.md 接近 39K 时。
+**审计频率**: 修改规则后执行机器检查，定期按需做语义审计。
 
-**目标**: CLAUDE.md ≤39,500 chars（40K 限制减 500 余量）。
+**目标**: 用 `python scripts/audit-rules.py --strict` 检查项目预算，再用真实 /context 检查实际加载；字符、字节、token 分别记录。
 
 ### 习惯 5: 避免上下文内容重复
 
@@ -516,7 +517,7 @@ Level 3 — 上下文信息（Context）
 
 ## 相关文档
 
-- CLAUDE.md 第六.五节 — 上下文工程准则（摘要）
+- `AGENTS.md`“规则、记忆与知识维护” — 当前项目约定
 - `memory/best-practices.md` → BP-015: Context Hygiene
 - `docs/MEMORY-SYSTEM.md` → 多层记忆架构
 - `memory/lessons-learned.md` → #011 CLAUDE.md 超限、#015 批量任务上下文丢失

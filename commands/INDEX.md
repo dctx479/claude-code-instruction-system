@@ -1,6 +1,6 @@
 # Commands 索引
 
-> 31 个自定义命令，按场景分类。使用 `/command-name` 触发。
+> 自定义命令按场景分类。使用 `/command-name` 触发。
 
 ---
 
@@ -13,7 +13,8 @@
 | `/orchestrate` | general/orchestrate.md | 启动智能多 Agent 编排 | 复杂多步骤任务 |
 | `/parallel` | general/parallel.md | 强制并行策略 | 多个独立子任务 |
 | `/swarm` | general/swarm.md | 群体并行策略（批量处理 50+） | 大规模同质任务 |
-| `/evolve` | general/evolve.md | 触发自进化流程，更新配置和最佳实践 | 任务失败后复盘 |
+| `/evolve` | general/evolve.md | 证据驱动复盘，先提最小 diff | 重复事故后复盘 |
+| `/rule-audit` | general/rule-audit.md | 规则只读体检、证据与 diff | 定期审计、规则冲突 |
 | `/commit` | general/commit.md | 标准化 Git 提交（��� changelog） | 代码提交 |
 | `/fix-github-issue` | general/fix-github-issue.md | 自动修复 GitHub Issue | Bug 修复工作流 |
 | `/optimize-system` | general/optimize-system.md | 系统配置自动优化 | 性能/成本优化 |

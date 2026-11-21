@@ -1,6 +1,6 @@
 # Skills 系统完整目录
 
-> Skills 是自动激活的能力扩展单元。设计原则见 `CLAUDE.md` 第四节。
+> Skill 是按需发现或显式调用的能力包。加载约定见 `CLAUDE.md`“按需加载”，格式规范见 `.claude/skills/README.md`。
 
 ---
 
@@ -490,7 +490,7 @@ npx skills experimental_install       # 按锁文件精确还原（等价 npm ci
 
 ### 路由决策规则
 
-1. **Intent 检测结果是 Agent** → 加载 Agent 角色执行（CLAUDE.md §0）
+1. **Intent 检测建议某 Agent** → 先核对当前请求，再按需加载定义（CLAUDE.md“按需加载”）
 2. **任务匹配到 Skill** → 加载 Skill 方法论指导
 3. **两者都匹配** → Agent 角色 + Skill 方法论同时激活（如 debugger Agent + debug Skill）
 4. **冲突时** → Agent 优先（执行身份），Skill 提供补充知识

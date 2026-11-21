@@ -1,66 +1,21 @@
-运行完整的项目检查流程。
+对当前项目运行与变更相关的检查，不修改代码。
 
-## 检查步骤
+1. 先读项目指令、git diff、manifest 和 CI，确认技术栈及包管理器。
+2. 如果是太一规则仓库，从根目录按变更选择：
 
-### 1. 代码质量
 ```bash
-# Lint 检查
-npm run lint || pnpm lint || yarn lint
-
-# 类型检查
-npm run typecheck || tsc --noEmit
-
-# 格式检查
-npm run format:check || prettier --check .
+python scripts/audit-rules.py --strict
+python -m unittest discover -s tests -p "test_*.py"
+bash scripts/test-all-intents.sh
+python scripts/validate/validate-config.py
+python -m json.tool hooks/hooks.json
+python -m json.tool config/keywords.json
+python scripts/install-global.py --dry-run
 ```
 
-### 2. 测试
-```bash
-# 单元测试
-npm test
+3. 其他项目只运行其 manifest / CI 中确实存在的检查；不依次尝试 npm/pnpm/yarn。
+4. 没有配置的 lint/类型/性能检查标“不适用”；工具缺失标“未验证”，不自动安装。
+5. 输出 检查项｜命令与运行目录｜退出码/证据｜结果（通过/失败/未验证/不适用）。
+6. 区分已有失败与本次回归；任何必需检查失败均不能报告全通过。
 
-# 测试覆盖率
-npm run test:coverage
-```
-
-### 3. 构建验证
-```bash
-# 生产构建
-npm run build
-```
-
-### 4. 安全检查
-```bash
-# 依赖安全
-npm audit
-
-# 密钥扫描 (如可用)
-gitleaks detect --source . --no-git
-```
-
-### 5. 依赖检查
-```bash
-# 过时依赖
-npm outdated
-
-# 未使用依赖 (如可用)
-depcheck
-```
-
-## 输出报告
-
-### 检查结果汇总
-
-| 检查项 | 状态 | 详情 |
-|--------|------|------|
-| Lint | ✅/❌ | |
-| 类型检查 | ✅/❌ | |
-| 测试 | ✅/❌ | |
-| 构建 | ✅/❌ | |
-| 安全 | ✅/❌ | |
-
-### 问题列表
-[需要解决的问题]
-
-### 建议
-[改进建议]
+语义规则审查用 /rule-audit；机器审计不能判断所有规则是否过期。

@@ -1,0 +1,130 @@
+{
+  "date": "2026-11-21",
+  "tests": {
+    "windows": {
+      "python": "3.14.10",
+      "count": 46,
+      "passed": 46,
+      "skipped": 0,
+      "seconds": 85.122
+    },
+    "linux_wsl": {
+      "python": "3.12.3",
+      "count": 46,
+      "passed": 46,
+      "skipped": 0,
+      "seconds": 29.625
+    }
+  },
+  "rules": {
+    "files": 4,
+    "findings": 0
+  },
+  "skills": {
+    "valid": 57,
+    "total": 57,
+    "normalization_bodies_preserved_at_migration": 57,
+    "missing_header_repaired": 1,
+    "official_quick_validate_core_skills": [
+      "neat",
+      "reflection",
+      "spec-first",
+      "skill-creator"
+    ]
+  },
+  "live_cli": {
+    "passed": true,
+    "routing_agent": "debugger",
+    "real_snapshot_unchanged": true,
+    "state_status": "COMPLETED",
+    "iteration": 1,
+    "metrics": {
+      "total_iterations": 1,
+      "successful_runs": 1
+    },
+    "hooks": [
+      {
+        "type": "system",
+        "subtype": "hook_started",
+        "hook_event": "UserPromptSubmit"
+      },
+      {
+        "type": "system",
+        "subtype": "hook_response",
+        "hook_event": "UserPromptSubmit",
+        "exit_code": 0,
+        "outcome": "success"
+      },
+      {
+        "type": "system",
+        "subtype": "hook_started",
+        "hook_event": "Stop"
+      },
+      {
+        "type": "system",
+        "subtype": "hook_response",
+        "hook_event": "Stop",
+        "exit_code": 2,
+        "outcome": "error"
+      },
+      {
+        "type": "system",
+        "subtype": "hook_started",
+        "hook_event": "Stop"
+      },
+      {
+        "type": "system",
+        "subtype": "hook_response",
+        "hook_event": "Stop",
+        "exit_code": 0,
+        "outcome": "success"
+      }
+    ],
+    "stop_exit_2_is_expected_continuation": true
+  },
+  "live_cli_reported_cost_usd": 0.033712,
+  "memory_inventory": {
+    "best_practices": 57,
+    "lessons": 25,
+    "truth_revalidated_for_all_entries": false,
+    "policy": "historical reference; current rules remain authoritative"
+  },
+  "skill_usage": {
+    "project_only": true,
+    "transcripts_scanned": 11,
+    "observed_skill_tool_calls": 0,
+    "limitations": [
+      "Explicit Skill tool events only; manual role reading and slash-command expansion may be unobserved.",
+      "No cross-project logs or prompt text exported.",
+      "Zero observed calls is not evidence a skill is unused."
+    ]
+  },
+  "external_snapshots": {
+    "agent-skills": "8c99fa36d90068c82d547f7c12a9d67a3e95f4ee",
+    "pstack-claude": "97d2ba2790822939ee43db0d7856219ea96c450d",
+    "matt-skills": "abeeaf95660ba9e8b7c753eb38f441ca707a8823"
+  },
+  "remote_actions": {
+    "status": "not_run",
+    "reason": "Unpublished worktree and diverged tracking branch; no explicit Git publication authorization"
+  },
+  "docker_python_311": {
+    "status": "image_pull_failed",
+    "reason": "registry auth endpoint returned EOF; Linux validation actually ran in WSL"
+  },
+  "managed_install": {
+    "files_checked": 510,
+    "problems": [],
+    "passed": true,
+    "settings_bytes_unchanged": true
+  },
+  "context": {
+    "architecture_copilot_visible": true,
+    "memory_tokens": {
+      "user_claude": 106,
+      "project_claude": 226,
+      "project_agents": 728
+    },
+    "reported_cost_usd": 0
+  }
+}

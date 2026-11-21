@@ -212,7 +212,7 @@ def development_phase(spec_result):
 ### Phase 4: 质量保障 (QA)
 
 ```python
-def qa_phase(dev_result):
+async def qa_phase(dev_result):
     # 1. 代码审查
     review = qa_reviewer.review(
         code=dev_result.code,
@@ -222,17 +222,22 @@ def qa_phase(dev_result):
     # 2. 自动化测试
     test_results = automated_testing.run(dev_result.code)
 
-    # 3. 如果有问题，自动修复
-    while review.score < 80:
+    # 3. 验收按证据判定；分数不能掩盖失败，自动修复最多三轮
+    for attempt in range(3):
+        if review.status == "PASS" and test_results.passed:
+            return QAResult(review=review, tests=test_results)
+        if review.status == "INCOMPLETE" or review.has_p0_p1_issues():
+            return await request_human_fix(review)
         if review.has_p2_issues():
             fixes = qa_fixer.fix(review.p2_issues)
             apply_fixes(fixes)
-            review = qa_reviewer.review(code)
+            test_results = automated_testing.run(dev_result.code)
+            review = qa_reviewer.review(dev_result.code, spec=spec_result.spec)
         else:
-            # P0/P1 需要人工确认
-            await request_human_fix(review.critical_issues)
+            return await request_human_fix(review)
 
-    return QAResult(review=review, tests=test_results)
+    status = "PASS" if review.status == "PASS" and test_results.passed else "INCOMPLETE"
+    return QAResult(status=status, review=review, tests=test_results)
 ```
 
 **输出**:

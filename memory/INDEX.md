@@ -8,7 +8,7 @@
 
 | 文件 | 条目类型 | 写入时机 | 当前规模 |
 |------|---------|---------|---------|
-| [best-practices.md](#best-practicesmd) | 策展型 BP 条目 | 经验验证≥3次后晋升 | 46 个 BP（BP-001～BP-046） |
+| [best-practices.md](#best-practicesmd) | 策展型 BP 条目 | 经验验证≥3次后晋升 | 57 个 BP（BP-001～BP-057；2026-11-21 核对） |
 | [lessons-learned.md](#lessons-learnedmd) | 任务经验（UNVERIFIED） | 任务完成复盘时 | 持续增长 |
 | [error-patterns.md](#error-patternsmd) | 错误模式和修复 | 发现新错误模式时 | 持续增长 |
 | [agent-performance.md](#agent-performancemd) | Agent 性能数据 | 性能监控报告后 | 定期更新 |
@@ -43,9 +43,15 @@
 - BP-010～BP-019：Skills 系统
 - BP-020～BP-029：上下文工程
 - BP-030～BP-039：开发规范
-- BP-040～BP-046：协作与质量
+- BP-040～BP-057：协作、质量与自进化
 
-**下一个 BP**：BP-047
+**新增前检查**：先扫描现有 `BP-数字` 标题并查重，不沿用旧索引里的“下一个编号”。
+
+**规则治理检索入口**（只读相关条目，不必整库加载）：
+- 全局安装/同步：在 best-practices.md 搜索 `### BP-041:`；先读局部废弃说明，当前规范见 `specs/SPEC-global-install.md`。
+- 入口膨胀复发：在 lessons-learned.md 搜索完整标题 `CLAUDE.md 超过 40k 字符阈值`；40k 仅是历史告警。
+- 补规则前的保障层选择：BP-036、BP-037、BP-051；执行流程统一在 `commands/general/evolve.md`。
+- lessons 历史编号存在重号；引用时同时写日期和完整标题，不能只凭 #011 等编号定位。
 
 ---
 
