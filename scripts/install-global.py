@@ -24,6 +24,7 @@ import re
 import shutil
 import sys
 import time
+import uuid
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -196,7 +197,8 @@ class Installer:
         self.with_guardrails = with_guardrails
         self.backup_retention = backup_retention
         self.backup_files = {}
-        self.backup_dir = target / "backups" / ("taiyi-install-" + time.strftime("%Y%m%d-%H%M%S") + f"-{time.time_ns()}")
+        self.created_order = (time.time_ns(), time.monotonic_ns())
+        self.backup_dir = target / "backups" / ("taiyi-install-" + time.strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex)
         self.stats = {"copied": 0, "updated": 0, "unchanged": 0, "kept": 0, "failed": 0}
         self.problems = []
 
@@ -212,7 +214,7 @@ class Installer:
     def write_backup_manifest(self, completed):
         if not self.backup_files or self.dry_run:
             return
-        data = dict(version=1, owner="taiyi-install", target=str(self.target), completed=completed,
+        data = dict(version=1, owner="taiyi-install", target=str(self.target), completed=completed, created_order=self.created_order,
                     files=self.backup_files)
         (self.backup_dir / ".taiyi-backup.json").write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 
@@ -248,11 +250,13 @@ class Installer:
                     file = (candidate / rel).resolve()
                     if not file.is_relative_to(candidate.resolve()) or hashlib.sha256(file.read_bytes()).hexdigest() != digest:
                         raise ValueError("backup integrity mismatch")
-                snapshots.append((candidate, files))
+                order = data.get("created_order", [candidate.stat().st_mtime_ns, 0])
+                snapshots.append((order, candidate, files))
             except (OSError, ValueError, KeyError, TypeError) as exc:
                 print(f"WARNING: backup retained without expiry: {candidate.name}: {exc}", file=sys.stderr)
         expired = []
-        for candidate, files in snapshots[:-self.backup_retention]:
+        snapshots.sort(key=lambda item: item[0])
+        for _, candidate, files in snapshots[:-self.backup_retention]:
             # Exact verified files only; no recursive delete, globs, personal files, or linked directories.
             for file in files:
                 file.unlink()
