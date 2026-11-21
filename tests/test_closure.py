@@ -70,6 +70,14 @@ class ClosureTests(unittest.TestCase):
         for item in (old, changed, incomplete, newest):
             self.assertTrue(item.backup_dir.exists())
 
+    def test_backup_identifiers_stay_unique_with_frozen_wall_clock(self):
+        with patch.object(INSTALL.time, "time_ns", return_value=123456789):
+            snapshots = [self.backup(str(i)) for i in range(4)]
+        self.assertEqual(4, len({item.backup_dir for item in snapshots}))
+        self.assertEqual(2, len(snapshots[-1].prune_backups()))
+        self.assertTrue(snapshots[-1].backup_dir.exists())
+        self.assertTrue(snapshots[-2].backup_dir.exists())
+
     def test_optional_component_only_replacement_preserves_other_managed_hooks(self):
         installer = INSTALL.Installer(self.target, True)
         initial = installer.merge_settings({}, ["hooks", "usage", "lint-feedback"])
