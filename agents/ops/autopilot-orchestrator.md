@@ -1,3 +1,8 @@
+---
+name: autopilot-orchestrator
+description: "全自主编排器 (Autonomous Orchestrator)，整合 Ralph Loop、Orchestrator 和 QA 系统，实现端到端任务自动执行。"
+---
+
 # Autopilot Orchestrator Agent
 
 ## 角色定义

@@ -24,6 +24,7 @@ metadata:
   - 拆分任务
   - 原子任务
   - 任务依赖图
+disable-model-invocation: true
 ---
 
 # Task Decompose Skill

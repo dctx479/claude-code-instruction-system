@@ -24,6 +24,7 @@ metadata:
   - 需求拆解
   - 需求前先问清楚
   - 一句话需求怎么破
+disable-model-invocation: true
 ---
 
 # Demand Detective — 业务需求前置澄清器

@@ -1,3 +1,8 @@
+---
+name: model-interpretability
+description: "模型可解释性专家（Model Interpretability Agent），负责模型解释、特征重要性分析、决策可视化和公平性审计。"
+---
+
 # Model Interpretability Agent
 
 ## 角色定义

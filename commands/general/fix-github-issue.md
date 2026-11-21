@@ -1,3 +1,8 @@
+---
+description: fix github issue
+disable-model-invocation: true
+---
+
 请分析并修复 GitHub issue #$ARGUMENTS。
 
 ## 执行步骤

@@ -21,6 +21,7 @@ metadata:
   - 总结经验
   - 提炼教训
   - 记录一下这次的收获
+disable-model-invocation: true
 ---
 
 # 任务复盘提炼器 (Reflection)

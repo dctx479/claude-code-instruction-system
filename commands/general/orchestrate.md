@@ -1,3 +1,8 @@
+---
+description: orchestrate
+disable-model-invocation: true
+---
+
 启动编排模式处理复杂任务: $ARGUMENTS
 
 ## 编排流程

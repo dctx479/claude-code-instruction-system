@@ -1,3 +1,8 @@
+---
+description: sql
+disable-model-invocation: true
+---
+
 为分析需求生成 SQL 查询: $ARGUMENTS
 
 ## 查询生成流程

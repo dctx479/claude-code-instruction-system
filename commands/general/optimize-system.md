@@ -1,3 +1,8 @@
+---
+description: optimize system
+disable-model-invocation: true
+---
+
 # 系统优化分析
 
 调用 auto-optimizer Agent 分析系统性能，识别优化机会，生成优化方案。

@@ -19,6 +19,7 @@ metadata:
   - 让 Gemini 分析
   - 超长上下文分析
   - 整个代码库扫描
+disable-model-invocation: true
 ---
 
 # Collaborating with Gemini Skill

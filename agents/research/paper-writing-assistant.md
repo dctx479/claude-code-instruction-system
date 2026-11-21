@@ -1,3 +1,8 @@
+---
+name: paper-writing-assistant
+description: "论文写作助手（Paper Writing Assistant），基于 Vibe Researching 理念，辅助完成文献综述和研究论文的写作。"
+---
+
 # Paper Writing Assistant Agent
 
 ## 角色定义

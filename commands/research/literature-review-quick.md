@@ -1,3 +1,8 @@
+---
+description: literature review quick
+disable-model-invocation: true
+---
+
 # /literature-review-quick - 快速文献精读
 
 ## 功能描述

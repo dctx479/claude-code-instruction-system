@@ -1,3 +1,8 @@
+---
+description: convert openapi
+disable-model-invocation: true
+---
+
 # OpenAPI → Skill 转换工具
 
 > **设计理念**: 自动将 OpenAPI 规范转换为 Claude Code Skill，支持大规模 API（400+ 端点）

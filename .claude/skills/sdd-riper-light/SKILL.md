@@ -10,6 +10,7 @@ metadata:
   - 简单 bug 修复
   - 小功能开发
   - 快速迭代
+disable-model-invocation: true
 ---
 
 # SDD-RIPER Light

@@ -20,6 +20,7 @@ metadata:
   - 治理审议
   - 异常检测
   - 高风险操作审批
+disable-model-invocation: true
 ---
 
 # God Committee Oversight Skill

@@ -1,3 +1,13 @@
+---
+description: plan to issues
+disable-model-invocation: true
+---
+
+## vNext contract
+
+Follow `docs/VNEXT-WORKFLOW.md`. Local CSV remains the single task source. Each new ticket is a vertical behavior slice with executable acceptance criteria and `blocked_by` (pipe-separated local IDs, empty when independent). Old CSV without this field is legacy and must be reviewed for implicit dependencies before execution. Do not bind requirements to implementation paths; put evidence in refs/notes. Select only tickets whose blockers are DONE. Keep per-ticket context and record playbook steps/skips. Commit/push only under existing user authorization; otherwise mark git_state SKIPPED. Do not create GitHub issues or new agents implicitly.
+
+
 # /plan-to-issues - 计划转 Issues CSV 命令
 
 > 读取最新的 `plan/*.md` 计划文件，将所有阶段和任务转换为结构化的 Issues CSV，
@@ -47,6 +57,8 @@ issues/YYYY-MM-DD_HH-mm-ss-<slug>.csv
 | 字段名 | 类型 | 必填 | 说明 |
 |--------|------|------|------|
 | `id` | string | ✅ | 格式：`PHASE-NNN`，如 `P1-001`、`P2-003` |
+| `blocked_by` | string | 新票必填，可空 | 依赖的本地 ID，以竖线分隔；空值表示独立 |
+| `blocked_by` | string | optional for legacy | Local dependency IDs separated by `|`; blank means independent |
 | `priority` | enum | ✅ | `P0`/`P1`/`P2`/`P3` |
 | `phase` | string | ✅ | 阶段名称，如 `1-setup`、`2-core`、`3-testing` |
 | `area` | string | ✅ | 功能域，如 `auth`、`api`、`frontend`、`db` |

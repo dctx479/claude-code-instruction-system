@@ -1,3 +1,8 @@
+---
+description: review
+disable-model-invocation: true
+---
+
 对 $ARGUMENTS 进行全面的代码审查。
 
 ## 审查范围

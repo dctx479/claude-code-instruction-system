@@ -5,13 +5,13 @@ license: MIT
 compatibility: Requires filesystem-based agent (Claude Code or similar) with bash, Python 3, and internet access for tool installation.
 allowed-tools: Bash Read Write Edit Glob Grep Task WebFetch WebSearch
 metadata:
-  user-invocable: 'false'
   trigger:
   - /ctf-pwn
   - CTF PWN
   - 二进制漏洞利用
   - 栈溢出
   - 堆利用
+disable-model-invocation: true
 ---
 
 # CTF Binary Exploitation (Pwn)

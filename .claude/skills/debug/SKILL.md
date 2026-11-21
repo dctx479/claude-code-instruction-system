@@ -27,6 +27,10 @@ metadata:
 
 > 把"随机尝试"变成"系统排查"：五步工作流确保每次调试都有迹可循，不走回头路。
 
+## Reproduction gate
+
+Before changing implementation, capture a command that reliably fails, its environment, output and exit code. If no stable reproducer exists, report the missing evidence and continue diagnosis without speculative implementation changes. After the fix, run the same command and relevant regression tests. See `docs/VNEXT-WORKFLOW.md`.
+
 ## 设计动机
 
 调试失败的根因通常不是技术能力不足，而是**流程混乱**：

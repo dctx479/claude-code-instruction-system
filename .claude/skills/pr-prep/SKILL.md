@@ -23,6 +23,7 @@ metadata:
   - 提交 PR 前
   - PR 检查清单
   - 准备合并
+disable-model-invocation: true
 ---
 
 # PR Prep Skill

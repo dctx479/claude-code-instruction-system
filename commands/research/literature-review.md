@@ -1,3 +1,8 @@
+---
+description: literature review
+disable-model-invocation: true
+---
+
 # /literature-review - 文献综述生成
 
 ## 功能描述

@@ -1,3 +1,8 @@
+---
+name: reinforcement-learning
+description: "强化学习专家（Reinforcement Learning Agent），负责环境建模、策略设计、训练优化和智能体部署。"
+---
+
 # Reinforcement Learning Agent
 
 ## 角色定义

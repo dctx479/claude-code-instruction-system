@@ -1,3 +1,8 @@
+---
+description: ralph
+disable-model-invocation: true
+---
+
 # /ralph - 自主循环执行命令
 
 > **Ralph Loop**: 让 Claude 自主执行任务直到完成，无需持续人工干预

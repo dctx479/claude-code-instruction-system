@@ -1,3 +1,8 @@
+---
+name: data-visualization
+description: "数据可视化专家（Data Visualization Agent），负责数据探索、图表设计、交互式可视化和报告生成。"
+---
+
 # Data Visualization Agent
 
 ## 角色定义

@@ -1,3 +1,8 @@
+---
+description: worktree cleanup
+disable-model-invocation: true
+---
+
 # 清理并行工作树
 
 完成任务后安全清理Git worktree，释放磁盘空间并保持仓库整洁。

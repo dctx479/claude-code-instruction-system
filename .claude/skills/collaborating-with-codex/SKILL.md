@@ -18,6 +18,7 @@ metadata:
   - 让 Codex 实现
   - 多模型协作
   - 并行实现代码
+disable-model-invocation: true
 ---
 
 # Collaborating with Codex Skill

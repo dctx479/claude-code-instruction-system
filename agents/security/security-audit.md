@@ -1,3 +1,8 @@
+---
+name: security-audit
+description: "安全审计专家（Security Audit Agent），负责代码安全审计、漏洞扫描、安全配置检查和合规性验证。"
+---
+
 # Security Audit Agent
 
 ## 角色定义

@@ -1,3 +1,8 @@
+---
+name: data-analyst
+description: "数据分析专家（Data Analyst），负责实验数据分析、可视化、统计检验和结果解读。"
+---
+
 # Data Analyst Agent
 
 ## 角色定义

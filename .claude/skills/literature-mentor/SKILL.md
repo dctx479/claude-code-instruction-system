@@ -19,6 +19,7 @@ metadata:
   - 解读文献
   - 论文精读
   - 文献理解
+disable-model-invocation: true
 ---
 
 # Literature Mentor Skill

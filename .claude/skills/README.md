@@ -156,6 +156,8 @@ metadata:
 3. **结构化内容**：使用 Markdown 标题组织，便于 Claude 快速定位
 
 可移植顶层字段为 name、description、license、compatibility、metadata、allowed-tools。
+Claude 扩展字段包括 disable-model-invocation、user-invocable、argument-hint、model、context、agent、hooks，由审计单独支持。调用控制字段写在顶层；工作流和领域 Skill 默认显式调用。
+SKILL.md 超过 500 行报 WARNING；条件细节放 references。安装分组与数量只维护 `config/profiles.json`，生成结果见 `docs/CAPABILITY-SUMMARY.md`。
 version、trigger、type 等目录信息放 metadata；metadata.trigger 是检索提示，不是 Claude 自动执行的触发器。
 自动选择依靠 description（或显式 slash 调用）；新增后在验证 venv 中运行 `python scripts/audit-skills.py`。
 

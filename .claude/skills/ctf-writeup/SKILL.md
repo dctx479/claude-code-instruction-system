@@ -5,13 +5,13 @@ license: MIT
 compatibility: Requires filesystem-based agent (Claude Code or similar) with bash and Python 3.
 allowed-tools: Bash Read Write Edit Glob Grep Task WebFetch WebSearch
 metadata:
-  user-invocable: 'true'
   argument-hint: '[challenge-name]'
   trigger:
   - /ctf-writeup
   - CTF writeup
   - 生成解题报告
   - CTF 解题记录
+disable-model-invocation: true
 ---
 
 # CTF Write-up Generator

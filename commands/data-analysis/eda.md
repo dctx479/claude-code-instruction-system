@@ -1,3 +1,8 @@
+---
+description: eda
+disable-model-invocation: true
+---
+
 对数据文件 $ARGUMENTS 进行探索性数据分析 (EDA)。
 
 ## 分析流程

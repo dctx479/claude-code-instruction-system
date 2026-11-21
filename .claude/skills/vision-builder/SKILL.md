@@ -21,6 +21,7 @@ metadata:
   - 不知道要做什么
   - 帮我梳理需求
   - 项目愿景
+disable-model-invocation: true
 ---
 
 # Vision Builder Skill

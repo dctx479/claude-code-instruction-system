@@ -26,6 +26,7 @@ metadata:
   - 生成静态知识站
   - 把资料整理成知识库
   - Quartz 知识站
+disable-model-invocation: true
 ---
 
 # LLM Wiki Skill

@@ -1,3 +1,8 @@
+---
+name: deep-learning
+description: "深度学习专家（Deep Learning Agent），负责神经网络设计、模型训练、超参数优化和模型部署。"
+---
+
 # Deep Learning Agent
 
 ## 角色定义

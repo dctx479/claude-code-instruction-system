@@ -30,6 +30,7 @@ metadata:
   - 方案发散
   - 假设验证
   - 做个头脑风暴
+disable-model-invocation: true
 ---
 
 # Brainstorming — PM 探索性思考伙伴

@@ -17,6 +17,7 @@ metadata:
   - 研究问题太模糊
   - 不知道怎么搜
   - 帮我精炼查询
+disable-model-invocation: true
 ---
 
 # Question Refiner Skill

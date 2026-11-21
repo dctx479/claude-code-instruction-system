@@ -24,6 +24,7 @@ metadata:
   - Review 策略
   - Agent PR 怎么审
   - 人类拥有合并按钮
+disable-model-invocation: true
 ---
 
 # AI-PR-Review — AI 时代的 PR Review 策略器

@@ -1,3 +1,8 @@
+---
+description: literature batch review
+disable-model-invocation: true
+---
+
 # /literature-batch-review - 批量文献精读
 
 ## 功能描述

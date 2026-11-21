@@ -1,3 +1,8 @@
+---
+description: autopilot
+disable-model-invocation: true
+---
+
 # /autopilot - 全自主执行命令
 
 > 端到端任务自动执行，从需求到交付全程自动化

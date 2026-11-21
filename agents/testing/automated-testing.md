@@ -1,3 +1,8 @@
+---
+name: automated-testing
+description: "自动化测试专家（Automated Testing Agent），负责测试策略设计、测试用例生成、测试执行和覆盖率分析。"
+---
+
 # Automated Testing Agent
 
 ## 角色定义

@@ -2,6 +2,8 @@
 
 > 轻量索引，仅供任务匹配。详细文档: `docs/SKILLS-CATALOG.md` | 设计规范: `.claude/skills/README.md`
 
+当前安装分组、数量和描述体积以 `docs/CAPABILITY-SUMMARY.md` 的生成结果为准。工作流/领域 Skill 显式调用；只在需要时读取此处的详细分类，不把估算 token 当实测。
+
 ## 加载协议
 
 1. 读本文件匹配 Skill（~140 行，~1600 tokens）

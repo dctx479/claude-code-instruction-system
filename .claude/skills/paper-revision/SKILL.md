@@ -21,6 +21,7 @@ metadata:
   - 论文修改
   - 学术写作
   - 技术文档润色
+disable-model-invocation: true
 ---
 
 # Paper Revision Skill

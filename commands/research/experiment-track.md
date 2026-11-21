@@ -1,3 +1,8 @@
+---
+description: experiment track
+disable-model-invocation: true
+---
+
 # /experiment-track - 实验追踪
 
 ## 功能描述

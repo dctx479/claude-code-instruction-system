@@ -1,3 +1,8 @@
+---
+description: worktree list
+disable-model-invocation: true
+---
+
 # 列出并行工作树
 
 列出所有活动的Git worktrees，提供状态概览和管理建议。

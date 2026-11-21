@@ -18,6 +18,7 @@ metadata:
   - 用户画像
   - 市场机会
   - 产品验证
+disable-model-invocation: true
 ---
 
 # Market Insight Skill

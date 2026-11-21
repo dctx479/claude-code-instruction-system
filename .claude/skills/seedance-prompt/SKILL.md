@@ -22,6 +22,7 @@ metadata:
   - Seedance 视频生成
   - AI 视频提示词
   - 分镜脚本
+disable-model-invocation: true
 ---
 
 # Seedance 2.0 分镜提示词生成专家

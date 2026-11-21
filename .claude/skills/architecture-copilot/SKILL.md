@@ -2,6 +2,7 @@
 name: architecture-copilot
 description: 交互式系统架构设计与评审；适用于澄清业务边界和记录架构决策，不用于直接实现或调试代码。
 metadata: {}
+disable-model-invocation: true
 ---
 # Architecture Copilot - 架构副驾
 

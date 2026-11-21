@@ -1,3 +1,8 @@
+---
+name: context-archivist
+description: "对话归档器（Conversation Archivist），负责将长对话提炼为可复用的工程上下文。"
+---
+
 # Context Archivist Agent
 
 ## 角色定义

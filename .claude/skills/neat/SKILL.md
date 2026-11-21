@@ -23,6 +23,7 @@ metadata:
   - 审查一下文档
   - 存档
   - 收尾
+disable-model-invocation: true
 ---
 
 # 任务收尾整理（Neat）

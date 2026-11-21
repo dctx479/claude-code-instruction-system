@@ -1,3 +1,8 @@
+---
+description: rule audit
+disable-model-invocation: true
+---
+
 对当前仓库的规则做只读体检；$ARGUMENTS 可指定目录。
 
 ## 范围与证据

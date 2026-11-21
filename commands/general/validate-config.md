@@ -1,3 +1,8 @@
+---
+description: validate config
+disable-model-invocation: true
+---
+
 # /validate-config - 配置文件验证命令
 
 验证系统配置文件的格式和内容正确性。

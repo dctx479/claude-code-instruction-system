@@ -10,6 +10,7 @@ metadata:
   - 中大型需求开发
   - 需要写规范文档
   - 复杂功能实现
+disable-model-invocation: true
 ---
 
 # SDD-RIPER Skill

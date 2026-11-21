@@ -1,3 +1,8 @@
+---
+description: check
+disable-model-invocation: true
+---
+
 对当前项目运行与变更相关的检查，不修改代码。
 
 1. 先读项目指令、git diff、manifest 和 CI，确认技术栈及包管理器。

@@ -1,3 +1,8 @@
+---
+description: worktree create
+disable-model-invocation: true
+---
+
 # 创建并行工作树
 
 为并行任务开发创建一个新的Git worktree，实现零冲突的多任务同时进行。

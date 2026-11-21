@@ -23,6 +23,7 @@ metadata:
   - 短剧脚本
   - 多集视频剧本
   - 故事转分镜
+disable-model-invocation: true
 ---
 
 # Seedance 2.0 剧本分镜生成器

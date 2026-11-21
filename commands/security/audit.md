@@ -1,3 +1,8 @@
+---
+description: audit
+disable-model-invocation: true
+---
+
 对 $ARGUMENTS 执行安全审计。
 
 ## 审计范围

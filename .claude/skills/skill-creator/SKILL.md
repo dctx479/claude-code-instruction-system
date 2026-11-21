@@ -22,6 +22,7 @@ metadata:
   - 创建一个 Skill
   - 把这个流程封装成 Skill
   - 提炼成 Skill
+disable-model-invocation: true
 ---
 
 # Skill 元创建器 (Skill Creator)
@@ -335,3 +336,7 @@ Step 6 注册:
 ## 版本历史
 
 - **v1.0.0** (2026-04-30): 初版，沉淀自项目内 plan-review/neat/sdd-riper-light 共享的契约范式
+
+## Project verify mode
+
+When asked to create a project verification skill, follow the project verify section in `docs/VNEXT-WORKFLOW.md`. Derive real commands from manifest/CI, include startup, self-check, driving the artifact, evidence and cleanup. Run the complete procedure before delivery; report clean/changed/blocked with evidence. Do not invent thresholds or send real notifications.

@@ -21,6 +21,7 @@ metadata:
   - 这个值得学吗
   - 判断学习价值
   - 信息源质量
+disable-model-invocation: true
 ---
 
 # Source Evaluator Skill（伯乐）

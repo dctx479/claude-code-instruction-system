@@ -1,3 +1,8 @@
+---
+description: parallel
+disable-model-invocation: true
+---
+
 并行执行多个独立任务。
 
 ## 任务列表

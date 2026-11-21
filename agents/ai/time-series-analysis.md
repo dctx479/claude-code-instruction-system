@@ -1,3 +1,8 @@
+---
+name: time-series-analysis
+description: "时间序列分析专家（Time Series Analysis Agent），负责时间序列预测、异常检测、趋势分析和因果推断。"
+---
+
 # Time Series Analysis Agent
 
 ## 角色定义

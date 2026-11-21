@@ -1,3 +1,8 @@
+---
+name: experiment-logger
+description: "实验记录专家（Experiment Logger），负责结构化实验记录、参数管理、结果追踪和复现指南生成。"
+---
+
 # Experiment Logger Agent
 
 ## 角色定义

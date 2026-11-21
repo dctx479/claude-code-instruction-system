@@ -1,3 +1,8 @@
+---
+description: swarm
+disable-model-invocation: true
+---
+
 启动Agent群体模式处理大规模任务: $ARGUMENTS
 
 ## 群体模式适用场景

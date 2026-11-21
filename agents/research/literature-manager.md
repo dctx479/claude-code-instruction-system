@@ -1,3 +1,8 @@
+---
+name: literature-manager
+description: "文献管理专家（Literature Manager），负责文献导入、分类、摘要、推荐和引用图谱构建。"
+---
+
 # Literature Manager Agent
 
 ## 角色定义

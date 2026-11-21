@@ -1,3 +1,8 @@
+---
+description: ctf
+disable-model-invocation: true
+---
+
 分析 CTF 挑战: $ARGUMENTS
 
 ## 分析流程

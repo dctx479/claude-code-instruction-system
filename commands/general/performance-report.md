@@ -1,3 +1,8 @@
+---
+description: performance report
+disable-model-invocation: true
+---
+
 # 生成性能报告
 
 调用 performance-monitor Agent 生成指定时期的性能分析报告。

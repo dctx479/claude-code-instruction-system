@@ -1,4 +1,14 @@
+---
+description: evolve
+disable-model-invocation: true
+---
+
 针对 $ARGUMENTS 做事故复盘，默认只提建议与 diff，不修改规则文件。
+
+## 先分流
+
+先查 `docs/out-of-scope/` 和已有决定。机械问题优先做 lint、测试、Hook 或 CI，用坏样例证明检查会失败；需要判断的约束才进入文字规则提议。
+两次独立事故证据门槛用于新增规则，不阻止修复一次已稳定复现的代码缺陷。
 
 ## 证据门槛
 

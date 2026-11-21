@@ -22,7 +22,10 @@ metadata:
   - 帮我回顾一下项目状态
   - 我们上次做到哪了
   - 先了解一下项目
+disable-model-invocation: true
 ---
+
+Before loading historical context, run `python scripts/checkpoint.py show` when available (global install: `$HOME/.claude/scripts/checkpoint.py`). Exit 0 is valid, 2 is absent, 1 is corrupted/stale and requires reconciliation. Prefer this worktree-local state over unverified handoff prose.
 
 # 会话预热 (Prime)
 

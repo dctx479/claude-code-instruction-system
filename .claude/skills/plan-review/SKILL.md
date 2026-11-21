@@ -21,6 +21,7 @@ metadata:
   - 审查一下计划
   - 检查计划有没有漏洞
   - 计划评审
+disable-model-invocation: true
 ---
 
 # 计划审查 Skill (Plan Review)

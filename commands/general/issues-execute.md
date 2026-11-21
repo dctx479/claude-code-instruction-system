@@ -1,3 +1,13 @@
+---
+description: issues execute
+disable-model-invocation: true
+---
+
+## vNext contract
+
+Follow `docs/VNEXT-WORKFLOW.md`. Local CSV remains the single task source. Each new ticket is a vertical behavior slice with executable acceptance criteria and `blocked_by` (pipe-separated local IDs, empty when independent). Old CSV without this field is legacy and must be reviewed for implicit dependencies before execution. Do not bind requirements to implementation paths; put evidence in refs/notes. Select only tickets whose blockers are DONE. Keep per-ticket context and record playbook steps/skips. Commit/push only under existing user authorization; otherwise mark git_state SKIPPED. Do not create GitHub issues or new agents implicitly.
+
+
 # /issues-execute - Issues 闭环执行命令
 
 > 以 Issues CSV 文件为唯一数据源，逐条执行每个 Issue，通过开发→审核→提交的闭环流程
@@ -143,8 +153,8 @@ Git 提交 (git_commit) ←── 与 CSV 更新同一个提交
 ```markdown
 目标：将 Issue 变更（含 CSV 更新）一起提交
 
-提交步骤：
-1. 更新 CSV：dev_state=DONE, git_state=COMMITTED
+提交步骤（仅在本会话已有提交授权时；否则 git_state=SKIPPED）：
+1. 验收通过后更新 CSV：dev_state=DONE；提交成功前不标 COMMITTED
 2. git add <修改的文件> <CSV文件>
 3. git commit -m "<type>(<area>): <title>
 
@@ -157,8 +167,7 @@ Acceptance:
 - <criteria 1>
 - <criteria 2>"
 
-4. 将 commit hash 写入 CSV git_state 字段
-   格式：COMMITTED:<hash>
+4. 提交成功后记录 COMMITTED；hash 放后续 notes 或交付说明，不编造当前提交自身的 hash
 
 注意：CSV 文件必须在同一个 commit 中
 ```

@@ -1,3 +1,8 @@
+---
+description: create agent
+disable-model-invocation: true
+---
+
 创建一个新的智能体: $ARGUMENTS
 
 ## 智能体设计流程

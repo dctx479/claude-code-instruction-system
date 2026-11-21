@@ -1,3 +1,8 @@
+---
+description: commit
+disable-model-invocation: true
+---
+
 基于当前已暂存和未暂存的更改创建一个规范的 Git 提交。
 
 ## 执行步骤

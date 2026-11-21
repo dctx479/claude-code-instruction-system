@@ -1,0 +1,145 @@
+{
+  "version": 1,
+  "profiles": {
+    "core": {
+      "skills": [
+        "ai-pr-review",
+        "architecture-copilot",
+        "brainstorming",
+        "code-security-review",
+        "data-analysis",
+        "debug",
+        "demand-detective",
+        "frontend-design",
+        "handoff",
+        "neat",
+        "observability",
+        "parallel-explore",
+        "plan-review",
+        "pr-prep",
+        "prime",
+        "question-refiner",
+        "reflection",
+        "sdd-riper",
+        "sdd-riper-light",
+        "skill-creator",
+        "spec-first",
+        "task-decompose",
+        "vision-builder"
+      ],
+      "agents": [
+        "architect.md",
+        "code-reviewer.md",
+        "codemap-builder.md",
+        "debugger.md",
+        "orchestrator.md",
+        "qa-fixer.md",
+        "qa-reviewer.md",
+        "requirements-analyst.md",
+        "router.md",
+        "sdd-riper-orchestrator.md",
+        "spec-writer.md",
+        "tech-mentor.md",
+        "ops/auto-optimizer.md",
+        "ops/autopilot-orchestrator.md",
+        "ops/context-archivist.md",
+        "ops/performance-monitor.md",
+        "ops/strategy-selector.md",
+        "security/security-analyst.md",
+        "security/security-audit.md",
+        "testing/automated-testing.md"
+      ]
+    },
+    "ctf": {
+      "skills": [
+        "ctf-ai-ml",
+        "ctf-crypto",
+        "ctf-forensics",
+        "ctf-malware",
+        "ctf-misc",
+        "ctf-osint",
+        "ctf-pwn",
+        "ctf-reverse",
+        "ctf-web",
+        "ctf-writeup",
+        "wxmini-security-audit",
+        "java-audit",
+        "php-audit"
+      ],
+      "agents": []
+    },
+    "research": {
+      "skills": [
+        "deep-research",
+        "exa-research",
+        "literature-mentor",
+        "paper-revision",
+        "source-evaluator",
+        "hv-analysis-enhanced",
+        "llm-wiki"
+      ],
+      "agents": [
+        "research/data-analyst.md",
+        "research/experiment-logger.md",
+        "research/literature-manager.md",
+        "research/paper-writing-assistant.md"
+      ]
+    },
+    "ecommerce": {
+      "skills": [
+        "amazon-analyse",
+        "brightdata-research",
+        "social-media-research",
+        "market-insight"
+      ],
+      "agents": []
+    },
+    "media": {
+      "skills": [
+        "seedance-prompt",
+        "seedance-storyboard"
+      ],
+      "agents": []
+    },
+    "data": {
+      "skills": [
+        "pandas",
+        "pytorch",
+        "schedule-analyzer"
+      ],
+      "agents": [
+        "data-scientist.md",
+        "ai/deep-learning.md",
+        "ai/model-interpretability.md",
+        "ai/reinforcement-learning.md",
+        "ai/time-series-analysis.md",
+        "data/data-warehouse-analyst.md",
+        "visualization/data-visualization.md"
+      ]
+    },
+    "frontend": {
+      "skills": [
+        "react-best-practices",
+        "ui-ux-pro-max",
+        "web-artifacts-builder"
+      ],
+      "agents": [
+        "senior-code-architect.md",
+        "vitest-tester.md"
+      ]
+    },
+    "multi-model": {
+      "skills": [
+        "collaborating-with-codex",
+        "collaborating-with-gemini",
+        "claude-agent-sdk",
+        "god-oversight"
+      ],
+      "agents": [
+        "god-committee/god-consensus.md",
+        "god-committee/god-intervention.md",
+        "god-committee/god-member.md"
+      ]
+    }
+  }
+}
