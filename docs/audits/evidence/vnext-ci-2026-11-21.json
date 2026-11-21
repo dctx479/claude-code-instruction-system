@@ -1,0 +1,45 @@
+{
+  "sha": "46f6d3d2a13933842da48a85927c3cace7320c6c",
+  "run_id": 44921111015,
+  "url": "https://github.com/dctx479/claude-code-instruction-system/actions/runs/44921111015",
+  "checks_url": "https://github.com/dctx479/claude-code-instruction-system/commit/46f6d3d2a13933842da48a85927c3cace7320c6c/checks",
+  "conclusion": "success",
+  "observed_at": "2026-11-21T15:53:04.860399+00:00",
+  "jobs": [
+    {
+      "name": "rules (ubuntu-latest, 3.10)",
+      "conclusion": "success"
+    },
+    {
+      "name": "rules (ubuntu-latest, 3.11)",
+      "conclusion": "success"
+    },
+    {
+      "name": "rules (ubuntu-latest, 3.12)",
+      "conclusion": "success"
+    },
+    {
+      "name": "rules (windows-latest, 3.10)",
+      "conclusion": "success"
+    },
+    {
+      "name": "rules (windows-latest, 3.11)",
+      "conclusion": "success"
+    },
+    {
+      "name": "rules (windows-latest, 3.12)",
+      "conclusion": "success"
+    }
+  ],
+  "source": "Public GitHub check page: each job reports This job succeeded; run summary reports Success. REST quota exhausted, so HTML check records were read.",
+  "earlier_failures": [
+    {
+      "run_id": 44920596287,
+      "result": "Windows unittest failure; fail-fast cancelled remaining Windows jobs; Ubuntu passed."
+    },
+    {
+      "run_id": 44920840557,
+      "result": "Failure annotations exposed unnormalized Windows TEMP short-path root in checkpoint.digest."
+    }
+  ]
+}

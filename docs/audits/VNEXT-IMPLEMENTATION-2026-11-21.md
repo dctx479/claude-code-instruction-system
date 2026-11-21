@@ -62,4 +62,11 @@
 
 ## 远端 CI
 
-等待本批主题提交推送后追加真实 GitHub Actions 结果。
+首轮 [44920596287](https://github.com/dctx479/claude-code-instruction-system/actions/runs/44920596287)：Ubuntu 三组通过，Windows 单元测试失败，其余 Windows 被 fail-fast 取消。
+补充公开失败注释后，确认 Windows TEMP 短路径别名使 checkpoint 根目录与已规范化文件路径比较不一致。新增回归先红后绿，并统一规范化根目录；同时补测相邻 shell 分隔符与 echo/后续命令误拦问题。
+
+修复提交 `46f6d3d` 的 [远端运行 44921111015](https://github.com/dctx479/claude-code-instruction-system/actions/runs/44921111015) **6/6 success**：Ubuntu/Windows × Python 3.10/3.11/3.12，含全部检查和安装 dry-run。
+[远端证据](evidence/vnext-ci-2026-11-21.json) 与 [修复后本地 61 项回归](evidence/vnext-ci-local-2026-11-21.json) 单独保存，早期失败与 60 项基线没有覆盖或改写。
+
+CI 保留完整矩阵（fail-fast=false），失败输出 Actions 注释。远端还暴露旧 Action 的 Node 20 告警，已使用官方发布的 [checkout v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1) 和 [setup-python v7.1.0](https://github.com/actions/setup-python/releases/tag/v7.1.0) 复跑通过。
+本节后的证据文档提交不改变上述已验证实现；对应新运行状态以最终交付链接为准。

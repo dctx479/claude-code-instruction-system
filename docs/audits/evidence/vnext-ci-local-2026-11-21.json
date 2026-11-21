@@ -1,0 +1,7 @@
+{
+  "command": "python scripts/ci-tests.py",
+  "exit": 0,
+  "output_tail": "age_privacy_retention_and_contention (test_vnext.VNextTests.test_us\r\nage_privacy_retention_and_contention) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 61 tests in 34.423s\r\n\r\nOK\r\n",
+  "tests": 61,
+  "post_fix": "Normalize checkpoint root aliases before containment checks; tokenize adjacent shell separators and avoid inspecting echo arguments as executables."
+}
