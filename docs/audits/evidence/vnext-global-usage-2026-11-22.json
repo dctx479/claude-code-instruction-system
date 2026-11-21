@@ -1,0 +1,15 @@
+{
+  "cli_exit": 0,
+  "completed": true,
+  "tool_denials": [],
+  "usage_records_added": [
+    {
+      "ts": "2026-11-21T16:48:47.586634+00:00",
+      "tool": "Skill",
+      "name": "debug"
+    }
+  ],
+  "only_public_fields": true,
+  "cost_usd": 0.0643712,
+  "stderr_present": false
+}

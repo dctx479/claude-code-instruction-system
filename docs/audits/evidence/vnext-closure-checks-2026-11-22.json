@@ -1,0 +1,83 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/audit-rules.py",
+        "--strict"
+      ],
+      "exit": 0,
+      "output_tail": "Lines  Bytes  Rule file\n   27   1825  .claude/rules/hooks.md\n   72   4362  AGENTS.md\n   20   1225  CLAUDE.md\n   14    894  config/claude-global.md\n4 files; 0 findings\nRead-only; no commands executed or files modified.\nNo semantic deletion advice; review findings require human context.\nBudgets cover repository rules only; external/global instructions may add context.\nCommand checks support explicit npm/pnpm/yarn scripts and local python/bash files only.\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/audit-skills.py"
+      ],
+      "exit": 0,
+      "output_tail": "Skills: 59/59 valid\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/build-agent-index.py",
+        "--check"
+      ],
+      "exit": 0,
+      "output_tail": ""
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/check-doc-facts.py"
+      ],
+      "exit": 0,
+      "output_tail": "Profile coverage, command metadata and capability facts: PASS\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/validate-issues.py",
+        "issues/worktree-checkpoint.csv"
+      ],
+      "exit": 0,
+      "output_tail": "PASS: 2 local issues\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "scripts/validate/validate-config.py"
+      ],
+      "exit": 0,
+      "output_tail": "===================================================\u001b[0m\n\n\u001b[0;34mℹ 加载配置文件: hooks/hooks.json\u001b[0m\n\u001b[0;32m✓ 配置文件加载成功\u001b[0m\n\u001b[0;34mℹ 检查 Hooks 结构...\u001b[0m\n\u001b[0;34mℹ 检查 Matcher 格式...\u001b[0m\n\u001b[0;34mℹ 检查 Hooks 数组结构...\u001b[0m\n\u001b[0;34mℹ 检查命令路径兼容性...\u001b[0m\n\u001b[0;34mℹ 检查脚本文件...\u001b[0m\n\u001b[0;32m✓ ✨ 配置完美！未发现任何问题。\u001b[0m\n\n\u001b[0;36m============================================================\u001b[0m\n\u001b[0;36m验证 Settings 配置: config/settings.json\u001b[0m\n\u001b[0;36m============================================================\u001b[0m\n\n\u001b[0;32m✓ JSON 格式正确\u001b[0m\n\u001b[0;32m✓ 配置验证通过\u001b[0m\n\n\u001b[0;36m============================================================\u001b[0m\n\u001b[0;36m验证配置: config/keywords.json\u001b[0m\n\u001b[0;36m============================================================\u001b[0m\n\n\u001b[0;32m✓ JSON 格式正确\u001b[0m\n\n\u001b[0;36m============================================================\u001b[0m\n\u001b[0;36m验证配置: config/mcp-servers.json\u001b[0m\n\u001b[0;36m============================================================\u001b[0m\n\n\u001b[0;32m✓ JSON 格式正确\u001b[0m\n\n\u001b[0;36m============================================================\u001b[0m\n\u001b[0;36m验证总结\u001b[0m\n\u001b[0;36m============================================================\u001b[0m\n\n总文件数: 4\n通过: \u001b[0;32m4\u001b[0m\n失败: \u001b[0;31m0\u001b[0m\n错误: \u001b[0;31m0\u001b[0m\n警告: \u001b[1;33m0\u001b[0m\n\n\u001b[0;32m✨ 所有配置文件都正确！\u001b[0m\n"
+    },
+    {
+      "command": [
+        "D:\\projects\\private\\claude-code-instruction-system\\.claude-tmp\\validation-venv\\Scripts\\python.exe",
+        "-m",
+        "json.tool",
+        "config/settings-guardrails.json"
+      ],
+      "exit": 0,
+      "output_tail": "store *)\",\n            \"PowerShell(git clean *)\",\n            \"PowerShell(Remove-Item *)\",\n            \"Bash(git * push *)\",\n            \"Bash(git * commit *)\",\n            \"Bash(git * reset --hard *)\",\n            \"Bash(git * checkout *)\",\n            \"Bash(git * restore *)\",\n            \"Bash(git * clean *)\",\n            \"Bash(git * rebase *)\",\n            \"PowerShell(git * push *)\",\n            \"PowerShell(git * commit *)\",\n            \"PowerShell(git * reset --hard *)\",\n            \"PowerShell(git * checkout *)\",\n            \"PowerShell(git * restore *)\",\n            \"PowerShell(git * clean *)\",\n            \"PowerShell(git * rebase *)\",\n            \"Bash(git * push)\",\n            \"Bash(git * commit)\",\n            \"Bash(git * reset --hard)\",\n            \"Bash(git * checkout .)\",\n            \"Bash(git * restore)\",\n            \"Bash(git * clean)\",\n            \"Bash(git * rebase)\",\n            \"PowerShell(git * push)\",\n            \"PowerShell(git * commit)\",\n            \"PowerShell(git * reset --hard)\",\n            \"PowerShell(git * checkout .)\",\n            \"PowerShell(git * restore)\",\n            \"PowerShell(git * clean)\",\n            \"PowerShell(git * rebase)\"\n        ]\n    }\n}\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "output_tail": ""
+    },
+    {
+      "command": [
+        "python",
+        "scripts/ci-tests.py"
+      ],
+      "exit": 0,
+      "output_tail": "ge_privacy_retention_and_contention) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 74 tests in 38.931s\r\n\r\nOK\r\n"
+    }
+  ]
+}

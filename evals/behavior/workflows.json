@@ -1,5 +1,5 @@
 {
-  "status": "NOT_RUN",
+  "status": "See dated runs in LEDGER.md; the fixture catalog itself is not an execution result",
   "fixture": "Create a disposable git repository containing a small Python function, one failing unittest, and a local issue CSV. No external services or real user data.",
   "contracts": {
     "spec-first": ["reuses risk-appropriate spec", "verifies actual artifact", "reports failed criteria without aggregate-score override"],

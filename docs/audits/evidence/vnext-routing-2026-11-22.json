@@ -1,0 +1,214 @@
+{
+  "cli_version": "2.1.330 (Claude Code)",
+  "profile": "core",
+  "cases": 15,
+  "passed": 15,
+  "results": [
+    {
+      "case": 1,
+      "owner": "debug",
+      "selected": [
+        "debug"
+      ],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": "debug",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.0774194,
+      "subtype": "success"
+    },
+    {
+      "case": 2,
+      "owner": "debug",
+      "selected": [
+        "debug"
+      ],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": "debug",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.082895,
+      "subtype": "success"
+    },
+    {
+      "case": 3,
+      "owner": "debug",
+      "selected": [
+        "debug"
+      ],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": "debug",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.07631059999999999,
+      "subtype": "success"
+    },
+    {
+      "case": 4,
+      "owner": "code-security-review",
+      "selected": [
+        "code-security-review"
+      ],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": "code-security-review",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.12503419999999998,
+      "subtype": "success"
+    },
+    {
+      "case": 5,
+      "owner": "code-security-review",
+      "selected": [
+        "code-security-review"
+      ],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": "code-security-review",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.1076538,
+      "subtype": "success"
+    },
+    {
+      "case": 6,
+      "owner": "code-security-review",
+      "selected": [
+        "code-security-review"
+      ],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": "code-security-review",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.10445259999999999,
+      "subtype": "success"
+    },
+    {
+      "case": 7,
+      "owner": "frontend-design",
+      "selected": [
+        "frontend-design"
+      ],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": "frontend-design",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.2048126,
+      "subtype": "success"
+    },
+    {
+      "case": 8,
+      "owner": "frontend-design",
+      "selected": [
+        "frontend-design"
+      ],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": "frontend-design",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.1474328,
+      "subtype": "success"
+    },
+    {
+      "case": 9,
+      "owner": "frontend-design",
+      "selected": [
+        "frontend-design"
+      ],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": "frontend-design",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.1698356,
+      "subtype": "success"
+    },
+    {
+      "case": 10,
+      "owner": "data-analysis",
+      "selected": [
+        "data-analysis"
+      ],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": "data-analysis",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.063444,
+      "subtype": "success"
+    },
+    {
+      "case": 11,
+      "owner": "data-analysis",
+      "selected": [
+        "data-analysis"
+      ],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": "data-analysis",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.0563832,
+      "subtype": "success"
+    },
+    {
+      "case": 12,
+      "owner": "data-analysis",
+      "selected": [
+        "data-analysis"
+      ],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": "data-analysis",
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.0881934,
+      "subtype": "success"
+    },
+    {
+      "case": 13,
+      "owner": null,
+      "selected": [],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": null,
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.0863118,
+      "subtype": "success"
+    },
+    {
+      "case": 14,
+      "owner": null,
+      "selected": [],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": null,
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.0412232,
+      "subtype": "success"
+    },
+    {
+      "case": 15,
+      "owner": null,
+      "selected": [],
+      "cli_exit": 0,
+      "timeout": false,
+      "observed": null,
+      "passed": true,
+      "evidence_complete": true,
+      "cost_usd": 0.0281854,
+      "subtype": "success"
+    }
+  ],
+  "completed": true,
+  "scope": "First actual Skill call with Read/Skill enabled, real small CSV fixtures, and CLI bundled skills competing. Terminal failures remain incomplete; this is not workflow behavior."
+}

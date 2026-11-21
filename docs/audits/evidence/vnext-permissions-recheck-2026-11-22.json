@@ -1,0 +1,48 @@
+{
+  "cli_version": "2.1.330 (Claude Code)",
+  "results": [
+    {
+      "case": "powershell-git",
+      "tool": "PowerShell",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.012717000000000001
+    },
+    {
+      "case": "powershell-git-C",
+      "tool": "PowerShell",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.0084656
+    },
+    {
+      "case": "powershell-remove",
+      "tool": "PowerShell",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.0087798
+    },
+    {
+      "case": "bypass-disabled",
+      "cli_exit": 0,
+      "rejected": true,
+      "passed": true,
+      "downgraded_with_denial": true,
+      "diagnostic": "ask remains denied under requested bypass"
+    }
+  ],
+  "completed": true,
+  "passed": true
+}

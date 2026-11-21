@@ -1,0 +1,82 @@
+{
+  "passed": true,
+  "workflows": {
+    "spec-first": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "sdd-riper": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "sdd-riper-light": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "neat": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "reflection": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "handoff": {
+      "passed": true,
+      "evidence": "vnext-behavior-final-2026-11-22.json"
+    },
+    "prime": {
+      "passed": true,
+      "evidence": "vnext-behavior-final-2026-11-22.json"
+    },
+    "pr-prep": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "task-decompose": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "parallel-explore": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "brainstorming": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "demand-detective": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "vision-builder": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "question-refiner": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "architecture-copilot": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "ai-pr-review": {
+      "passed": true,
+      "evidence": "vnext-behavior-initial-2026-11-22.json"
+    },
+    "plan-review": {
+      "passed": true,
+      "evidence": "vnext-behavior-harness-recheck-2026-11-22.json"
+    },
+    "observability": {
+      "passed": true,
+      "evidence": "vnext-behavior-permission-recheck-2026-11-22.json"
+    },
+    "skill-creator": {
+      "passed": true,
+      "evidence": "vnext-behavior-final-2026-11-22.json"
+    }
+  },
+  "scope": "19 bounded artifact scenarios, not a guarantee across arbitrary projects; failed and blocked prior attempts retained."
+}

@@ -1,0 +1,785 @@
+{
+  "migration_count": 52,
+  "retained": [],
+  "restore_manifest": "C:\\Users\\jay\\.claude\\.taiyi-migrations\\20261121-164533-1795279533077482300\\manifest.json",
+  "before": {
+    "skills": [
+      {
+        "name": "ai-pr-review",
+        "path": "skills/ai-pr-review/SKILL.md",
+        "description_chars": 156,
+        "automatic": true
+      },
+      {
+        "name": "amazon-analyse",
+        "path": "skills/amazon-analyse/SKILL.md",
+        "description_chars": 81,
+        "automatic": true
+      },
+      {
+        "name": "architecture-copilot",
+        "path": "skills/architecture-copilot/SKILL.md",
+        "description_chars": 43,
+        "automatic": true
+      },
+      {
+        "name": "brainstorming",
+        "path": "skills/brainstorming/SKILL.md",
+        "description_chars": 140,
+        "automatic": true
+      },
+      {
+        "name": "brightdata-research",
+        "path": "skills/brightdata-research/SKILL.md",
+        "description_chars": 75,
+        "automatic": true
+      },
+      {
+        "name": "claude-agent-sdk",
+        "path": "skills/claude-agent-sdk/SKILL.md",
+        "description_chars": 101,
+        "automatic": true
+      },
+      {
+        "name": "code-security-review",
+        "path": "skills/code-security-review/SKILL.md",
+        "description_chars": 489,
+        "automatic": true
+      },
+      {
+        "name": "collaborating-with-codex",
+        "path": "skills/collaborating-with-codex/SKILL.md",
+        "description_chars": 83,
+        "automatic": true
+      },
+      {
+        "name": "collaborating-with-gemini",
+        "path": "skills/collaborating-with-gemini/SKILL.md",
+        "description_chars": 96,
+        "automatic": true
+      },
+      {
+        "name": "ctf-ai-ml",
+        "path": "skills/ctf-ai-ml/SKILL.md",
+        "description_chars": 345,
+        "automatic": true
+      },
+      {
+        "name": "ctf-crypto",
+        "path": "skills/ctf-crypto/SKILL.md",
+        "description_chars": 316,
+        "automatic": true
+      },
+      {
+        "name": "ctf-forensics",
+        "path": "skills/ctf-forensics/SKILL.md",
+        "description_chars": 416,
+        "automatic": true
+      },
+      {
+        "name": "ctf-malware",
+        "path": "skills/ctf-malware/SKILL.md",
+        "description_chars": 520,
+        "automatic": true
+      },
+      {
+        "name": "ctf-misc",
+        "path": "skills/ctf-misc/SKILL.md",
+        "description_chars": 392,
+        "automatic": true
+      },
+      {
+        "name": "ctf-osint",
+        "path": "skills/ctf-osint/SKILL.md",
+        "description_chars": 315,
+        "automatic": true
+      },
+      {
+        "name": "ctf-pwn",
+        "path": "skills/ctf-pwn/SKILL.md",
+        "description_chars": 549,
+        "automatic": true
+      },
+      {
+        "name": "ctf-reverse",
+        "path": "skills/ctf-reverse/SKILL.md",
+        "description_chars": 515,
+        "automatic": true
+      },
+      {
+        "name": "ctf-web",
+        "path": "skills/ctf-web/SKILL.md",
+        "description_chars": 424,
+        "automatic": true
+      },
+      {
+        "name": "ctf-writeup",
+        "path": "skills/ctf-writeup/SKILL.md",
+        "description_chars": 228,
+        "automatic": true
+      },
+      {
+        "name": "data-analysis",
+        "path": "skills/data-analysis/SKILL.md",
+        "description_chars": 49,
+        "automatic": true
+      },
+      {
+        "name": "debug",
+        "path": "skills/debug/SKILL.md",
+        "description_chars": 68,
+        "automatic": true
+      },
+      {
+        "name": "deep-research",
+        "path": "skills/deep-research/SKILL.md",
+        "description_chars": 60,
+        "automatic": true
+      },
+      {
+        "name": "demand-detective",
+        "path": "skills/demand-detective/SKILL.md",
+        "description_chars": 115,
+        "automatic": true
+      },
+      {
+        "name": "exa-research",
+        "path": "skills/exa-research/SKILL.md",
+        "description_chars": 65,
+        "automatic": true
+      },
+      {
+        "name": "frontend-design",
+        "path": "skills/frontend-design/SKILL.md",
+        "description_chars": 66,
+        "automatic": true
+      },
+      {
+        "name": "god-oversight",
+        "path": "skills/god-oversight/SKILL.md",
+        "description_chars": 106,
+        "automatic": true
+      },
+      {
+        "name": "handoff",
+        "path": "skills/handoff/SKILL.md",
+        "description_chars": 77,
+        "automatic": true
+      },
+      {
+        "name": "hv-analysis-enhanced",
+        "path": "skills/hv-analysis-enhanced/SKILL.md",
+        "description_chars": 41,
+        "automatic": true
+      },
+      {
+        "name": "literature-mentor",
+        "path": "skills/literature-mentor/SKILL.md",
+        "description_chars": 46,
+        "automatic": true
+      },
+      {
+        "name": "llm-wiki",
+        "path": "skills/llm-wiki/SKILL.md",
+        "description_chars": 120,
+        "automatic": true
+      },
+      {
+        "name": "market-insight",
+        "path": "skills/market-insight/SKILL.md",
+        "description_chars": 43,
+        "automatic": true
+      },
+      {
+        "name": "neat",
+        "path": "skills/neat/SKILL.md",
+        "description_chars": 31,
+        "automatic": true
+      },
+      {
+        "name": "observability",
+        "path": "skills/observability/SKILL.md",
+        "description_chars": 67,
+        "automatic": true
+      },
+      {
+        "name": "pandas",
+        "path": "skills/pandas/SKILL.md",
+        "description_chars": 57,
+        "automatic": true
+      },
+      {
+        "name": "paper-revision",
+        "path": "skills/paper-revision/SKILL.md",
+        "description_chars": 60,
+        "automatic": true
+      },
+      {
+        "name": "parallel-explore",
+        "path": "skills/parallel-explore/SKILL.md",
+        "description_chars": 52,
+        "automatic": true
+      },
+      {
+        "name": "plan-review",
+        "path": "skills/plan-review/SKILL.md",
+        "description_chars": 38,
+        "automatic": true
+      },
+      {
+        "name": "pr-prep",
+        "path": "skills/pr-prep/SKILL.md",
+        "description_chars": 69,
+        "automatic": true
+      },
+      {
+        "name": "prime",
+        "path": "skills/prime/SKILL.md",
+        "description_chars": 67,
+        "automatic": true
+      },
+      {
+        "name": "pytorch",
+        "path": "skills/pytorch/SKILL.md",
+        "description_chars": 49,
+        "automatic": true
+      },
+      {
+        "name": "question-refiner",
+        "path": "skills/question-refiner/SKILL.md",
+        "description_chars": 57,
+        "automatic": true
+      },
+      {
+        "name": "react-best-practices",
+        "path": "skills/react-best-practices/SKILL.md",
+        "description_chars": 99,
+        "automatic": true
+      },
+      {
+        "name": "reflection",
+        "path": "skills/reflection/SKILL.md",
+        "description_chars": 77,
+        "automatic": true
+      },
+      {
+        "name": "schedule-analyzer",
+        "path": "skills/schedule-analyzer/SKILL.md",
+        "description_chars": 42,
+        "automatic": true
+      },
+      {
+        "name": "sdd-riper",
+        "path": "skills/sdd-riper/SKILL.md",
+        "description_chars": 49,
+        "automatic": true
+      },
+      {
+        "name": "sdd-riper-light",
+        "path": "skills/sdd-riper-light/SKILL.md",
+        "description_chars": 35,
+        "automatic": true
+      },
+      {
+        "name": "seedance-prompt",
+        "path": "skills/seedance-prompt/SKILL.md",
+        "description_chars": 72,
+        "automatic": true
+      },
+      {
+        "name": "seedance-storyboard",
+        "path": "skills/seedance-storyboard/SKILL.md",
+        "description_chars": 63,
+        "automatic": true
+      },
+      {
+        "name": "skill-creator",
+        "path": "skills/skill-creator/SKILL.md",
+        "description_chars": 101,
+        "automatic": true
+      },
+      {
+        "name": "social-media-research",
+        "path": "skills/social-media-research/SKILL.md",
+        "description_chars": 62,
+        "automatic": true
+      },
+      {
+        "name": "source-evaluator",
+        "path": "skills/source-evaluator/SKILL.md",
+        "description_chars": 45,
+        "automatic": true
+      },
+      {
+        "name": "spec-first",
+        "path": "skills/spec-first/SKILL.md",
+        "description_chars": 75,
+        "automatic": true
+      },
+      {
+        "name": "task-decompose",
+        "path": "skills/task-decompose/SKILL.md",
+        "description_chars": 55,
+        "automatic": true
+      },
+      {
+        "name": "ui-ux-pro-max",
+        "path": "skills/ui-ux-pro-max/SKILL.md",
+        "description_chars": 76,
+        "automatic": true
+      },
+      {
+        "name": "vision-builder",
+        "path": "skills/vision-builder/SKILL.md",
+        "description_chars": 41,
+        "automatic": true
+      },
+      {
+        "name": "web-artifacts-builder",
+        "path": "skills/web-artifacts-builder/SKILL.md",
+        "description_chars": 111,
+        "automatic": true
+      },
+      {
+        "name": "wxmini-security-audit",
+        "path": "skills/wxmini-security-audit/SKILL.md",
+        "description_chars": 143,
+        "automatic": true
+      }
+    ],
+    "agents": [
+      {
+        "name": "architect",
+        "path": "agents/architect.md",
+        "description_chars": 39,
+        "automatic": true
+      },
+      {
+        "name": "code-reviewer",
+        "path": "agents/code-reviewer.md",
+        "description_chars": 31,
+        "automatic": true
+      },
+      {
+        "name": "codemap-builder",
+        "path": "agents/codemap-builder.md",
+        "description_chars": 20,
+        "automatic": true
+      },
+      {
+        "name": "data-warehouse-analyst",
+        "path": "agents/data/data-warehouse-analyst.md",
+        "description_chars": 85,
+        "automatic": true
+      },
+      {
+        "name": "data-scientist",
+        "path": "agents/data-scientist.md",
+        "description_chars": 39,
+        "automatic": true
+      },
+      {
+        "name": "debugger",
+        "path": "agents/debugger.md",
+        "description_chars": 37,
+        "automatic": true
+      },
+      {
+        "name": "god-consensus",
+        "path": "agents/god-committee/god-consensus.md",
+        "description_chars": 96,
+        "automatic": true
+      },
+      {
+        "name": "god-intervention",
+        "path": "agents/god-committee/god-intervention.md",
+        "description_chars": 112,
+        "automatic": true
+      },
+      {
+        "name": "god-member",
+        "path": "agents/god-committee/god-member.md",
+        "description_chars": 125,
+        "automatic": true
+      },
+      {
+        "name": "auto-optimizer",
+        "path": "agents/ops/auto-optimizer.md",
+        "description_chars": 22,
+        "automatic": true
+      },
+      {
+        "name": "performance-monitor",
+        "path": "agents/ops/performance-monitor.md",
+        "description_chars": 21,
+        "automatic": true
+      },
+      {
+        "name": "strategy-selector",
+        "path": "agents/ops/strategy-selector.md",
+        "description_chars": 20,
+        "automatic": true
+      },
+      {
+        "name": "orchestrator",
+        "path": "agents/orchestrator.md",
+        "description_chars": 47,
+        "automatic": true
+      },
+      {
+        "name": "qa-fixer",
+        "path": "agents/qa-fixer.md",
+        "description_chars": 20,
+        "automatic": true
+      },
+      {
+        "name": "qa-reviewer",
+        "path": "agents/qa-reviewer.md",
+        "description_chars": 21,
+        "automatic": true
+      },
+      {
+        "name": "sdd-riper-orchestrator",
+        "path": "agents/sdd-riper-orchestrator.md",
+        "description_chars": 78,
+        "automatic": true
+      },
+      {
+        "name": "security-analyst",
+        "path": "agents/security/security-analyst.md",
+        "description_chars": 40,
+        "automatic": true
+      },
+      {
+        "name": "spec-writer",
+        "path": "agents/spec-writer.md",
+        "description_chars": 11,
+        "automatic": true
+      }
+    ],
+    "warnings": [
+      {
+        "path": "agents/requirements-analyst.md",
+        "reason": "invalid YAML frontmatter"
+      },
+      {
+        "path": "agents/senior-code-architect.md",
+        "reason": "invalid YAML frontmatter"
+      },
+      {
+        "path": "agents/tech-mentor.md",
+        "reason": "invalid YAML frontmatter"
+      },
+      {
+        "path": "agents/vitest-tester.md",
+        "reason": "invalid YAML frontmatter"
+      }
+    ],
+    "skill_count": 57,
+    "agent_count": 18,
+    "automatic_description_chars": 7833
+  },
+  "after": {
+    "skills": [
+      {
+        "name": "ai-pr-review",
+        "path": "skills/ai-pr-review/SKILL.md",
+        "description_chars": 156,
+        "automatic": false
+      },
+      {
+        "name": "architecture-copilot",
+        "path": "skills/architecture-copilot/SKILL.md",
+        "description_chars": 43,
+        "automatic": false
+      },
+      {
+        "name": "brainstorming",
+        "path": "skills/brainstorming/SKILL.md",
+        "description_chars": 140,
+        "automatic": false
+      },
+      {
+        "name": "code-security-review",
+        "path": "skills/code-security-review/SKILL.md",
+        "description_chars": 489,
+        "automatic": true
+      },
+      {
+        "name": "data-analysis",
+        "path": "skills/data-analysis/SKILL.md",
+        "description_chars": 264,
+        "automatic": true
+      },
+      {
+        "name": "debug",
+        "path": "skills/debug/SKILL.md",
+        "description_chars": 68,
+        "automatic": true
+      },
+      {
+        "name": "demand-detective",
+        "path": "skills/demand-detective/SKILL.md",
+        "description_chars": 115,
+        "automatic": false
+      },
+      {
+        "name": "frontend-design",
+        "path": "skills/frontend-design/SKILL.md",
+        "description_chars": 262,
+        "automatic": true
+      },
+      {
+        "name": "handoff",
+        "path": "skills/handoff/SKILL.md",
+        "description_chars": 77,
+        "automatic": false
+      },
+      {
+        "name": "neat",
+        "path": "skills/neat/SKILL.md",
+        "description_chars": 31,
+        "automatic": false
+      },
+      {
+        "name": "observability",
+        "path": "skills/observability/SKILL.md",
+        "description_chars": 55,
+        "automatic": false
+      },
+      {
+        "name": "parallel-explore",
+        "path": "skills/parallel-explore/SKILL.md",
+        "description_chars": 52,
+        "automatic": false
+      },
+      {
+        "name": "plan-review",
+        "path": "skills/plan-review/SKILL.md",
+        "description_chars": 38,
+        "automatic": false
+      },
+      {
+        "name": "pr-prep",
+        "path": "skills/pr-prep/SKILL.md",
+        "description_chars": 69,
+        "automatic": false
+      },
+      {
+        "name": "prime",
+        "path": "skills/prime/SKILL.md",
+        "description_chars": 67,
+        "automatic": false
+      },
+      {
+        "name": "question-refiner",
+        "path": "skills/question-refiner/SKILL.md",
+        "description_chars": 57,
+        "automatic": false
+      },
+      {
+        "name": "reflection",
+        "path": "skills/reflection/SKILL.md",
+        "description_chars": 44,
+        "automatic": false
+      },
+      {
+        "name": "sdd-riper",
+        "path": "skills/sdd-riper/SKILL.md",
+        "description_chars": 49,
+        "automatic": false
+      },
+      {
+        "name": "sdd-riper-light",
+        "path": "skills/sdd-riper-light/SKILL.md",
+        "description_chars": 35,
+        "automatic": false
+      },
+      {
+        "name": "skill-creator",
+        "path": "skills/skill-creator/SKILL.md",
+        "description_chars": 101,
+        "automatic": false
+      },
+      {
+        "name": "spec-first",
+        "path": "skills/spec-first/SKILL.md",
+        "description_chars": 75,
+        "automatic": false
+      },
+      {
+        "name": "task-decompose",
+        "path": "skills/task-decompose/SKILL.md",
+        "description_chars": 67,
+        "automatic": false
+      },
+      {
+        "name": "vision-builder",
+        "path": "skills/vision-builder/SKILL.md",
+        "description_chars": 41,
+        "automatic": false
+      }
+    ],
+    "agents": [
+      {
+        "name": "architect",
+        "path": "agents/architect.md",
+        "description_chars": 39,
+        "automatic": true
+      },
+      {
+        "name": "code-reviewer",
+        "path": "agents/code-reviewer.md",
+        "description_chars": 31,
+        "automatic": true
+      },
+      {
+        "name": "codemap-builder",
+        "path": "agents/codemap-builder.md",
+        "description_chars": 20,
+        "automatic": true
+      },
+      {
+        "name": "debugger",
+        "path": "agents/debugger.md",
+        "description_chars": 37,
+        "automatic": true
+      },
+      {
+        "name": "auto-optimizer",
+        "path": "agents/ops/auto-optimizer.md",
+        "description_chars": 22,
+        "automatic": true
+      },
+      {
+        "name": "autopilot-orchestrator",
+        "path": "agents/ops/autopilot-orchestrator.md",
+        "description_chars": 80,
+        "automatic": true
+      },
+      {
+        "name": "context-archivist",
+        "path": "agents/ops/context-archivist.md",
+        "description_chars": 49,
+        "automatic": true
+      },
+      {
+        "name": "performance-monitor",
+        "path": "agents/ops/performance-monitor.md",
+        "description_chars": 21,
+        "automatic": true
+      },
+      {
+        "name": "strategy-selector",
+        "path": "agents/ops/strategy-selector.md",
+        "description_chars": 20,
+        "automatic": true
+      },
+      {
+        "name": "orchestrator",
+        "path": "agents/orchestrator.md",
+        "description_chars": 47,
+        "automatic": true
+      },
+      {
+        "name": "qa-fixer",
+        "path": "agents/qa-fixer.md",
+        "description_chars": 20,
+        "automatic": true
+      },
+      {
+        "name": "qa-reviewer",
+        "path": "agents/qa-reviewer.md",
+        "description_chars": 21,
+        "automatic": true
+      },
+      {
+        "name": "requirements-analyst",
+        "path": "agents/requirements-analyst.md",
+        "description_chars": 395,
+        "automatic": true
+      },
+      {
+        "name": "router",
+        "path": "agents/router.md",
+        "description_chars": 79,
+        "automatic": true
+      },
+      {
+        "name": "sdd-riper-orchestrator",
+        "path": "agents/sdd-riper-orchestrator.md",
+        "description_chars": 78,
+        "automatic": true
+      },
+      {
+        "name": "security-analyst",
+        "path": "agents/security/security-analyst.md",
+        "description_chars": 40,
+        "automatic": true
+      },
+      {
+        "name": "security-audit",
+        "path": "agents/security/security-audit.md",
+        "description_chars": 56,
+        "automatic": true
+      },
+      {
+        "name": "spec-writer",
+        "path": "agents/spec-writer.md",
+        "description_chars": 11,
+        "automatic": true
+      },
+      {
+        "name": "tech-mentor",
+        "path": "agents/tech-mentor.md",
+        "description_chars": 1450,
+        "automatic": true
+      },
+      {
+        "name": "automated-testing",
+        "path": "agents/testing/automated-testing.md",
+        "description_chars": 60,
+        "automatic": true
+      }
+    ],
+    "warnings": [],
+    "skill_count": 23,
+    "agent_count": 20,
+    "automatic_description_chars": 1083
+  },
+  "verification": {
+    "files_checked": 241,
+    "stateful_sources_skipped": 2,
+    "extra_managed_capabilities": [],
+    "profile_isolated": true,
+    "hook_smoke": "PASS (temporary HOME; real user state untouched)",
+    "problems": [],
+    "passed": true
+  },
+  "settings_backup": "~/.claude/backups/taiyi-install-20261122-004533-1795279533314538400/settings.json",
+  "usage_observation": {
+    "started": "2026-11-22 Asia/Shanghai",
+    "review_due": "2026-12-20 Asia/Shanghai",
+    "retention_days": 90,
+    "four_week_observation_complete": false
+  },
+  "interactive_discovery": {
+    "cli_version": "2.1.330",
+    "profile": "core,ctf",
+    "outside_repository": true,
+    "skills_menu_total_including_commands": 69,
+    "java-audit": "visible, user-only, ~30 tokens",
+    "php-audit": "visible, user-only, ~30 tokens",
+    "context": {
+      "total": "4.9k/1m",
+      "skills_total_including_builtins": "2.5k tokens",
+      "automatic_user_skills": [
+        "code-security-review ~170 tokens",
+        "data-analysis ~90 tokens",
+        "frontend-design ~90 tokens",
+        "debug ~30 tokens"
+      ],
+      "note": "Interactive context is a snapshot, not a before/after percentage. Domain skills are visible in menu but do not enter automatic user skill list."
+    }
+  }
+}

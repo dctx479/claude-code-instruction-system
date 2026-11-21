@@ -1,0 +1,37 @@
+{
+  "cli_version": "2.1.330 (Claude Code)",
+  "results": [
+    {
+      "case": "git-C-bare-push",
+      "tool": "Bash",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.0110156
+    },
+    {
+      "case": "git-C-bare-reset",
+      "tool": "Bash",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.008051599999999999
+    },
+    {
+      "case": "bypass-disabled",
+      "cli_exit": 0,
+      "rejected": true,
+      "passed": true,
+      "downgraded_with_denial": true,
+      "diagnostic": "ask remains denied under requested bypass"
+    }
+  ],
+  "completed": true,
+  "passed": true
+}

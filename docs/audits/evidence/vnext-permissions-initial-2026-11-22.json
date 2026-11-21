@@ -1,0 +1,157 @@
+{
+  "cli_version": "2.1.330 (Claude Code)",
+  "results": [
+    {
+      "case": "ordinary",
+      "tool": "Bash",
+      "denied": false,
+      "stub_executed": false,
+      "expected_denial": false,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.009180999999999998
+    },
+    {
+      "case": "git-push",
+      "tool": "Bash",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.0063908
+    },
+    {
+      "case": "git-C-push",
+      "tool": "Bash",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.006586399999999999
+    },
+    {
+      "case": "compound-git",
+      "tool": "Bash",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.0067772
+    },
+    {
+      "case": "git-force",
+      "tool": "Bash",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.0047312
+    },
+    {
+      "case": "git-C-force",
+      "tool": "Bash",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.004736799999999999
+    },
+    {
+      "case": "rm-options",
+      "tool": "Bash",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.0061378000000000005
+    },
+    {
+      "case": "reset-hard",
+      "tool": "Bash",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.0074906
+    },
+    {
+      "case": "checkout-dot",
+      "tool": "Bash",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.0087004
+    },
+    {
+      "case": "git-clean",
+      "tool": "Bash",
+      "denied": true,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": true,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.0087106
+    },
+    {
+      "case": "powershell-git",
+      "tool": "PowerShell",
+      "denied": false,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": false,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.008516
+    },
+    {
+      "case": "powershell-git-C",
+      "tool": "PowerShell",
+      "denied": false,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": false,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.0066879999999999995
+    },
+    {
+      "case": "powershell-remove",
+      "tool": "PowerShell",
+      "denied": false,
+      "stub_executed": false,
+      "expected_denial": true,
+      "passed": false,
+      "cli_exit": 0,
+      "terminal": "success",
+      "cost_usd": 0.007592
+    },
+    {
+      "case": "bypass-disabled",
+      "cli_exit": 0,
+      "rejected": false,
+      "passed": false,
+      "diagnostic": "bypass rejection was not observed"
+    }
+  ],
+  "completed": true,
+  "passed": false
+}
