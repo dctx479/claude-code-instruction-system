@@ -1,20 +1,21 @@
 ---
 name: claude-agent-sdk
 description: 将任何 Skill 封装为 Claude Agent SDK Web 应用的五步法，包含项目架构、代码模板、安全部署、SessionStore 会话持久化和 Multi-Agent 子 Agent 编排
-type: skill
-version: v1.1
-date: 2026-05-25
-trigger:
-  - "用 claude-agent-sdk 建立 webapp"
-  - "把 skill 转为 web 应用"
-  - "构建 claude agent sdk 项目"
-  - "claude-agent-sdk web"
-  - "agent sdk 项目"
-集成:
+metadata:
+  type: skill
+  version: v1.1
+  date: 2026-05-25
+  trigger:
+  - 用 claude-agent-sdk 建立 webapp
+  - 把 skill 转为 web 应用
+  - 构建 claude agent sdk 项目
+  - claude-agent-sdk web
+  - agent sdk 项目
+  集成:
   - skill-creator
   - sdd-riper
   - code-security-review
-来源: liangdabiao/claudesdk-skill (开源实验项目)
+  来源: liangdabiao/claudesdk-skill (开源实验项目)
 ---
 
 # Claude Agent SDK Skill

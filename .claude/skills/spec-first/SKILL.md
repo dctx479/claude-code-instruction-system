@@ -1,18 +1,28 @@
 ---
 name: spec-first
 description: 完整 QA 工作流编排器 - 串联 spec-writer → qa-reviewer → qa-fixer 三步流程，确保功能从规范到验收的质量闭环
-version: 1.0.0
 license: MIT
 metadata:
   category: development
-  tags: [qa, spec, quality, workflow, automation, spec-first]
-  integration: [spec-writer, qa-reviewer, qa-fixer, sdd-riper]
-trigger:
-  - "/spec-first"
-  - "完整 QA 流程"
-  - "先写规范再开发"
-  - "需要质量保障"
-  - "spec first"
+  tags:
+  - qa
+  - spec
+  - quality
+  - workflow
+  - automation
+  - spec-first
+  integration:
+  - spec-writer
+  - qa-reviewer
+  - qa-fixer
+  - sdd-riper
+  version: 1.0.0
+  trigger:
+  - /spec-first
+  - 完整 QA 流程
+  - 先写规范再开发
+  - 需要质量保障
+  - spec first
 ---
 
 # Spec-First QA 工作流 (Spec-First)
@@ -41,7 +51,7 @@ trigger:
 **输出**：
 - `specs/SPEC-{feature}.md` — 功能规范文档
 - 实现代码（符合规范）
-- QA 审查报告（评分 ≥80 通过）
+- QA 审查报告（逐项验收证据，结论 PASS / FAIL / INCOMPLETE）
 - 自动修复记录（P2 问题）
 
 ---
@@ -82,23 +92,20 @@ trigger:
 开发完成
     │
     ↓
-qa-reviewer 评分（总分100，通过线≥80）
+qa-reviewer 对照验收项检查证据
     │
-    ├── ≥80 → 通过，发布
+    ├── 必需项通过且无阻塞缺陷 → PASS，交付用户决定发布
     │
-    └── <80 → 分析问题
+    └── 验收失败或缺少证据 → FAIL / INCOMPLETE，分析问题
                 │
-                ├── 有 P2 问题 → qa-fixer 自动修复 → 重新评分
+                ├── 有授权范围内的 P2 问题 → qa-fixer 修复 → 重验
                 │
-                └── 只有 P0/P1 → 人工修复 → 重新评分
+                └── 有 P0/P1 → 人工审查修复方案 → 重验
 ```
 
-**评分体系**：
-- 功能完整性: 40分（最重要，对齐 Spec 验收标准）
-- 代码质量: 30分
-- 测试覆盖: 20分
-- 性能: 5分
-- 安全: 5分
+**验收依据**：当前项目需求、Spec 和真实验证输出。性能及覆盖率阈值由需求确定，
+不适用项说明原因，必需项未验证判 INCOMPLETE；分数不能抵消验收失败。
+风险分档及命令选择见 `docs/QA-SYSTEM.md`。
 
 **问题分级**：
 - 🔴 P0: 阻塞发布，必须人工修复（功能缺失/安全漏洞）
@@ -112,13 +119,13 @@ qa-reviewer 评分（总分100，通过线≥80）
 ### 必须满足
 
 1. **Spec 文档存在** — `specs/SPEC-{feature}.md` 已创建且用户已确认
-2. **QA 评分 ≥80** — qa-reviewer 最终评分通过
+2. **验收证据齐全** — 必需项全部通过，qa-reviewer 结论 PASS
 3. **P0/P1 问题已处理** — 无遗留阻塞问题
 
 ### 建议满足
 
 - P2 问题已由 qa-fixer 自动修复
-- 测试覆盖率 ≥80%
+- 满足当前项目实际要求的测试覆盖目标
 - Spec 与实现保持同步（如有变更，Spec 已更新）
 
 ---
@@ -127,7 +134,7 @@ qa-reviewer 评分（总分100，通过线≥80）
 
 🚫 **不做的事**：
 
-1. **不跳过 Spec 直接开发** — 没有 Spec 就没有验收标准，QA 无从评分
+1. **显式调用本流程时保留 Spec** — 普通低风险任务无需强制触发本 Skill
 2. **不在 Spec 未确认时开始实现** — 用户确认是门禁，不是可选步骤
 3. **不替代 `sdd-riper`** — sdd-riper 是完整的 RIPER 五阶段流程，spec-first 只是 QA 闭环；复杂需求用 sdd-riper
 4. **不自动修复 P0/P1** — P0/P1 需要人工判断，qa-fixer 只处理 P2
@@ -163,7 +170,7 @@ qa-reviewer 评分（总分100，通过线≥80）
     │
     ├── Step 2: 开发实现（按 Spec）
     │
-    └── Step 3: qa-reviewer → 评分 → qa-fixer（P2）→ 重新评分
+    └── Step 3: qa-reviewer → 验收证据 → qa-fixer（P2）→ 重验
     │
     ↓
 发布
@@ -174,7 +181,7 @@ qa-reviewer 评分（总分100，通过线≥80）
 
 **协同 Agent**：
 - `agents/spec-writer.md` — Step 1 规范编写
-- `agents/qa-reviewer.md` — Step 3 质量评分
+- `agents/qa-reviewer.md` — Step 3 验收证据核对
 - `agents/qa-fixer.md` — Step 3 自动修复 P2
 
 **升级路径**：

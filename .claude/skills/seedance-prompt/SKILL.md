@@ -1,19 +1,27 @@
 ---
 name: seedance-prompt
 description: Seedance 2.0 分镜提示词生成专家，将用户想法/图片转化为专业的 AI 视频结构化分镜提示词，支持时间轴格式、镜头语言和多模态素材编排
-version: 1.0.0
 license: MIT
 metadata:
   category: creative
-  tags: [seedance, video, prompt, storyboard, ai-video, 分镜, 提示词]
+  tags:
+  - seedance
+  - video
+  - prompt
+  - storyboard
+  - ai-video
+  - 分镜
+  - 提示词
   requires: []
-  optional: [vision]
-trigger:
-  - "/seedance-prompt"
-  - "视频分镜提示词"
-  - "Seedance 视频生成"
-  - "AI 视频提示词"
-  - "分镜脚本"
+  optional:
+  - vision
+  version: 1.0.0
+  trigger:
+  - /seedance-prompt
+  - 视频分镜提示词
+  - Seedance 视频生成
+  - AI 视频提示词
+  - 分镜脚本
 ---
 
 # Seedance 2.0 分镜提示词生成专家

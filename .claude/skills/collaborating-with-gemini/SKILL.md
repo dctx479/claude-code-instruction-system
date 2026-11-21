@@ -1,18 +1,24 @@
 ---
 name: collaborating-with-gemini
 description: 多模型协作技能，通过后台 Bash 子进程调用 Google Gemini CLI，将分析、写作或代码任务并行委托给 Gemini，Claude 读取结果后融合分析，适合需要长上下文窗口的场景
-version: 1.0.0
 license: MIT
 metadata:
   category: development
-  tags: [multi-model, gemini, parallel, collaboration, cli, long-context]
+  tags:
+  - multi-model
+  - gemini
+  - parallel
+  - collaboration
+  - cli
+  - long-context
   source: linux.do community workflow
-trigger:
-  - "/collab-gemini"
-  - "调用 Gemini"
-  - "让 Gemini 分析"
-  - "超长上下文分析"
-  - "整个代码库扫描"
+  version: 1.0.0
+  trigger:
+  - /collab-gemini
+  - 调用 Gemini
+  - 让 Gemini 分析
+  - 超长上下文分析
+  - 整个代码库扫描
 ---
 
 # Collaborating with Gemini Skill

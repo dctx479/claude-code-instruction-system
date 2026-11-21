@@ -1,18 +1,22 @@
 ---
 name: pytorch
 description: PyTorch 深度学习参考库 - 提供模型定义、训练循环、迁移学习、设备管理的惯用写法和常见陷阱
-version: 1.1.0
 license: MIT
 metadata:
   category: ai-ml
-  tags: [pytorch, deep-learning, neural-networks, ai]
+  tags:
+  - pytorch
+  - deep-learning
+  - neural-networks
+  - ai
   python_package: torch
-trigger:
-  - "pytorch"
-  - "torch"
-  - "神经网络"
-  - "深度学习"
-  - "训练模型"
+  version: 1.1.0
+  trigger:
+  - pytorch
+  - torch
+  - 神经网络
+  - 深度学习
+  - 训练模型
 ---
 
 # PyTorch Skill

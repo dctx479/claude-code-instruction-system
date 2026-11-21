@@ -14,7 +14,7 @@
 
 | Skill | 描述 | 路径 | 协作 Agent |
 |-------|------|------|-----------|
-| neat | 任务收尾五步法，同步 docs/CLAUDE.md/memory 三层知识 | neat/ | — |
+| neat | 按当前任务影响范围同步文档、规则和记忆 | neat/ | — |
 | reflection | 任务复盘提炼器，萃取经验 + Ingest 去重写入 | reflection/ | — |
 | skill-creator | Skill 元创建器，契约四要素 + 单一职责 | skill-creator/ | — |
 | prime | 会话预热仪式，git 状态 + 记忆检索 + 状态摘要 | prime/ | — |

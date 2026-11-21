@@ -1,17 +1,23 @@
 ---
 name: market-insight
 description: 市场洞察分析助手，三段式框架快速识别用户画像、情绪动机和产品机会，输出可验证的产品方向
-version: 1.0.0
 license: MIT
 metadata:
   category: product
-  tags: [market, insight, user-research, product, strategy, pmf]
-trigger:
-  - "/market-insight"
-  - "产品方向分析"
-  - "用户画像"
-  - "市场机会"
-  - "产品验证"
+  tags:
+  - market
+  - insight
+  - user-research
+  - product
+  - strategy
+  - pmf
+  version: 1.0.0
+  trigger:
+  - /market-insight
+  - 产品方向分析
+  - 用户画像
+  - 市场机会
+  - 产品验证
 ---
 
 # Market Insight Skill

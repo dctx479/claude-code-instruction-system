@@ -1,19 +1,28 @@
 ---
 name: pr-prep
 description: PR 提交前结构化检查仪式，确保测试通过、文档更新、无调试代码、commit 规范、影响范围清晰，让每个 PR 都能一次通过 Review
-version: 1.0.0
 license: MIT
 metadata:
   category: development
-  tags: [pr, git, review, checklist, quality, commit, ci]
-  requires: [bash]
-  optional: [code-reviewer]
-trigger:
-  - "/pr-prep"
-  - "PR 准备"
-  - "提交 PR 前"
-  - "PR 检查清单"
-  - "准备合并"
+  tags:
+  - pr
+  - git
+  - review
+  - checklist
+  - quality
+  - commit
+  - ci
+  requires:
+  - bash
+  optional:
+  - code-reviewer
+  version: 1.0.0
+  trigger:
+  - /pr-prep
+  - PR 准备
+  - 提交 PR 前
+  - PR 检查清单
+  - 准备合并
 ---
 
 # PR Prep Skill

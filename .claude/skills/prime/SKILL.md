@@ -1,18 +1,27 @@
 ---
 name: prime
 description: 会话预热仪式 - 新会话开始时快速建立项目上下文：读取 git 状态、检索相关记忆、加载项目状态，让 AI 从"知道自己在哪"开始工作
-version: 1.0.0
 license: MIT
 metadata:
   category: system
-  tags: [session-init, context-priming, memory-retrieval, onboarding, aha-loop]
-  integration: [neat, reflection, knowledge-compounding, context-engineering]
-trigger:
-  - "/prime"
-  - "新会话开始"
-  - "帮我回顾一下项目状态"
-  - "我们上次做到哪了"
-  - "先了解一下项目"
+  tags:
+  - session-init
+  - context-priming
+  - memory-retrieval
+  - onboarding
+  - aha-loop
+  integration:
+  - neat
+  - reflection
+  - knowledge-compounding
+  - context-engineering
+  version: 1.0.0
+  trigger:
+  - /prime
+  - 新会话开始
+  - 帮我回顾一下项目状态
+  - 我们上次做到哪了
+  - 先了解一下项目
 ---
 
 # 会话预热 (Prime)
@@ -92,7 +101,7 @@ git branch --show-current      # 当前分支
 状态确认清单：
   [ ] 我知道当前在哪个分支上（不是 main 默认）
   [ ] 最近提交与当前任务相关（不是完全不相关的冷门变更）
-  [ ] 检入的上下文（intent-state.json / memory index）与用户需求匹配
+  [ ] 本轮 Hook 建议和相关 memory 检索与用户需求匹配；不把全局快照当本会话输入
   [ ] 没有混淆上一次的会话状态（当前会话 vs 上一次会话）
 
 如发现不匹配 → 在摘要中显式说明：
@@ -198,7 +207,7 @@ git branch --show-current      # 当前分支
 - `.claude/skills/neat/SKILL.md` — 对称的会话结束仪式
 - `.claude/skills/reflection/SKILL.md` — 经验提炼，/prime 的知识来源
 - `docs/CONTEXT-ENGINEERING-GUIDE.md` — 精准加载原则（本 Skill 的设计依据）
-- `CLAUDE.md` 第九节 — 上下文检索协议（本 Skill 是其 Skill 化实现）
+- `memory/INDEX.md` — 当前记忆检索入口；项目约定见 AGENTS.md
 
 ---
 

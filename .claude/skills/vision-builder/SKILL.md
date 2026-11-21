@@ -1,18 +1,26 @@
 ---
 name: vision-builder
 description: 愿景构建器，将模糊需求转化为清晰的项目愿景文档，包含目标、范围、成功标准和风险评估
-version: 1.0.0
 license: MIT
 metadata:
   category: planning
-  tags: [vision, planning, requirements, strategy, 5w1h]
-  integration: [autopilot, architect, spec-writer]
-trigger:
-  - "/vision-builder"
-  - "需求很模糊"
-  - "不知道要做什么"
-  - "帮我梳理需求"
-  - "项目愿景"
+  tags:
+  - vision
+  - planning
+  - requirements
+  - strategy
+  - 5w1h
+  integration:
+  - autopilot
+  - architect
+  - spec-writer
+  version: 1.0.0
+  trigger:
+  - /vision-builder
+  - 需求很模糊
+  - 不知道要做什么
+  - 帮我梳理需求
+  - 项目愿景
 ---
 
 # Vision Builder Skill

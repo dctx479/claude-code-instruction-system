@@ -1,18 +1,24 @@
 ---
 name: literature-mentor
 description: 文献深度解读助手，像研究生导师一样交互式解读学术论文。支持 Zotero MCP 获取全文。
-version: 1.0.0
 license: MIT
 metadata:
   category: research
-  tags: [literature, paper, research, zotero, academic]
-  requires: [zotero-mcp]
-trigger:
-  - "/literature-mentor"
-  - "帮我读这篇论文"
-  - "解读文献"
-  - "论文精读"
-  - "文献理解"
+  tags:
+  - literature
+  - paper
+  - research
+  - zotero
+  - academic
+  requires:
+  - zotero-mcp
+  version: 1.0.0
+  trigger:
+  - /literature-mentor
+  - 帮我读这篇论文
+  - 解读文献
+  - 论文精读
+  - 文献理解
 ---
 
 # Literature Mentor Skill

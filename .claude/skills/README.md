@@ -123,10 +123,10 @@ metadata:
 ---
 name: skill-name
 description: 简洁的单行描述，用于自动发现匹配
-version: 1.0.0
 license: MIT
 compatibility: claude-code-2.0+
 metadata:
+  version: 1.0.0
   category: development
   tags: [tdd, testing, automation]
   maturity: stable
@@ -154,6 +154,10 @@ metadata:
 1. **YAML frontmatter**：必须包含 `name` 和 `description`
 2. **description**：决定自动发现的准确性（最重要）
 3. **结构化内容**：使用 Markdown 标题组织，便于 Claude 快速定位
+
+可移植顶层字段为 name、description、license、compatibility、metadata、allowed-tools。
+version、trigger、type 等目录信息放 metadata；metadata.trigger 是检索提示，不是 Claude 自动执行的触发器。
+自动选择依靠 description（或显式 slash 调用）；新增后在验证 venv 中运行 `python scripts/audit-skills.py`。
 
 ---
 
@@ -251,9 +255,9 @@ rm -rf .claude/skills/skill-name
 - **分层文档**：核心内容在 SKILL.md，详细内容在 REFERENCE.md
 
 ### 加载速度优化
-- **限制 Skills 数量**：建议 ≤50 个
+- **以观测决定目录规模**：依据实际加载预算、触发冲突与使用证据调整，不用固定数量阈值删 Skill
 - **分类管理**：使用子目录组织（如 `ai/`, `research/`, `tools/`）
-- **定期清理**：移除未使用的 Skills
+- **定期复核**：有证据证明无用或冲突时再迁移/停用；缺少调用记录不等于未使用
 
 ---
 
@@ -399,18 +403,18 @@ Step 5: 注册 — 更新 INDEX.md，添加新 Skill 条目
 ---
 name: [skill-name]
 description: [Agent 核心能力的一句话描述，作为触发器]
-version: 1.0.0
 license: MIT
 metadata:
+  version: 1.0.0
   category: [development|planning|research|security|...]
   tags: [标签1, 标签2, 标签3]
   maturity: draft  # 转换后从 draft 开始
   agent_source: [source-agent-name]  # 标注来源 Agent
   integration: [协作 Agent 列表]
-trigger:
-  - "[触发词1]"
-  - "[触发词2]"
-  - "[用户典型表述]"
+  trigger:
+    - "[触发词1]"
+    - "[触发词2]"
+    - "[用户典型表述]"
 ---
 
 # [Skill 名称]

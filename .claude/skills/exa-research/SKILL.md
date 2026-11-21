@@ -1,19 +1,25 @@
 ---
 name: exa-research
 description: 企业与市场研究技能，基于 Exa 搜索引擎进行公司情报、竞争对手分析和市场研究，通过 Task Agent 隔离搜索并返回精炼结果
-version: 1.0.0
 license: MIT
 metadata:
   category: research
-  tags: [exa, company-research, competitive-analysis, market-research, intelligence]
-  requires: [web_search_advanced]
+  tags:
+  - exa
+  - company-research
+  - competitive-analysis
+  - market-research
+  - intelligence
+  requires:
+  - web_search_advanced
   mcp: exa-mcp
-trigger:
-  - "/exa-research"
-  - "企业调研"
-  - "竞品分析"
-  - "公司情报"
-  - "市场研究"
+  version: 1.0.0
+  trigger:
+  - /exa-research
+  - 企业调研
+  - 竞品分析
+  - 公司情报
+  - 市场研究
 ---
 
 # Exa Research Skill

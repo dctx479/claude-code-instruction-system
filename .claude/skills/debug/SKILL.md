@@ -1,18 +1,26 @@
 ---
 name: debug
 description: 结构化调试 Skill - 五步调试工作流（复现→隔离→假设→验证→防复发），把 debugger Agent 的方法论封装为可复用流程
-version: 1.0.0
 license: MIT
 metadata:
   category: development
-  tags: [debugging, bug-fix, root-cause, systematic, error-analysis]
-  integration: [reflection, neat, observability]
-trigger:
-  - "/debug"
-  - "帮我调试"
-  - "这个报错怎么回事"
-  - "找一下 bug"
-  - "为什么不工作"
+  tags:
+  - debugging
+  - bug-fix
+  - root-cause
+  - systematic
+  - error-analysis
+  integration:
+  - reflection
+  - neat
+  - observability
+  version: 1.0.0
+  trigger:
+  - /debug
+  - 帮我调试
+  - 这个报错怎么回事
+  - 找一下 bug
+  - 为什么不工作
 ---
 
 # 结构化调试 (Debug)

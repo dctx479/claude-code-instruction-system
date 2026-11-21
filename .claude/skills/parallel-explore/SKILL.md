@@ -1,18 +1,23 @@
 ---
 name: parallel-explore
 description: Git Worktree 并行探索技能，为多方案决策创建独立工作树，完整实现后通过标准化评估选择最优方案
-version: 1.0.0
 license: MIT
 metadata:
   category: development
-  tags: [git-worktree, exploration, parallel, decision-making, architecture]
+  tags:
+  - git-worktree
+  - exploration
+  - parallel
+  - decision-making
+  - architecture
   source: Aha-Loop methodology
-trigger:
-  - "/parallel-explore"
-  - "对比多个方案"
-  - "技术选型"
-  - "不知道选哪个方案"
-  - "并行探索"
+  version: 1.0.0
+  trigger:
+  - /parallel-explore
+  - 对比多个方案
+  - 技术选型
+  - 不知道选哪个方案
+  - 并行探索
 ---
 
 # Parallel Explore Skill

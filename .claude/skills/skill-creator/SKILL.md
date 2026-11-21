@@ -1,17 +1,27 @@
 ---
 name: skill-creator
 description: Skill 元创建器 - 按本项目契约（What/How/When done/What NOT）+ 第五要素 Extractable + 单一职责 + 方法论优于规则三原则，生成高质量 SKILL.md
-version: 1.1.0
 license: MIT
 metadata:
   category: system
-  tags: [meta-skill, skill-authoring, contract, template, quality-control, extractable]
-  integration: [neat, reflection, knowledge-compounding, claude-agent-sdk]
-trigger:
-  - "/skill-creator"
-  - "创建一个 Skill"
-  - "把这个流程封装成 Skill"
-  - "提炼成 Skill"
+  tags:
+  - meta-skill
+  - skill-authoring
+  - contract
+  - template
+  - quality-control
+  - extractable
+  integration:
+  - neat
+  - reflection
+  - knowledge-compounding
+  - claude-agent-sdk
+  version: 1.1.0
+  trigger:
+  - /skill-creator
+  - 创建一个 Skill
+  - 把这个流程封装成 Skill
+  - 提炼成 Skill
 ---
 
 # Skill 元创建器 (Skill Creator)
@@ -56,7 +66,7 @@ trigger:
 
 ## 第五契约要素：Extractable（可提取性评估）
 
-> 适用于目标包含"转为 Web SaaS"、"对外服务"、"发布 Agent" 的 Skill。新增时在 frontmatter 加 `extractable: true`。
+> 适用于目标包含"转为 Web SaaS"、"对外服务"、"发布 Agent" 的 Skill。新增时在 frontmatter 的 metadata 中加 `extractable: true`。
 
 ### 评估维度
 
@@ -68,7 +78,7 @@ trigger:
 | **工具表面可审计** | 每个 MCP 工具映射一个 Skill 操作 | ❌ → 需重构 |
 | **多轮上下文可显式管理** | 需要会话的 Skill 有 session 设计 | ❌ → 需加会话层 |
 
-全部满足 → frontmatter 标记 `extractable: true`，可直接用 `claude-agent-sdk` Skill 五步法转为 Web SaaS。
+全部满足 → metadata 标记 `extractable: true`，可用 `claude-agent-sdk` Skill 五步法转为 Web SaaS。
 
 ### 反模式检查
 
@@ -141,22 +151,26 @@ Step 2 — ...
 
 ### Step 4 — 生成 SKILL.md 骨架
 
+只用可移植顶层字段 name、description、license、compatibility、metadata、allowed-tools。
+version、trigger、extractable 等自定义信息放 metadata，不能假设 metadata.trigger 会自动触发执行。
+生成后用验证环境运行 `python scripts/audit-skills.py`，保留合法的 compatibility 环境要求。
+
 按本项目格式（参考 `.claude/skills/plan-review/SKILL.md`、`.claude/skills/neat/SKILL.md`）：
 
 ```markdown
 ---
 name: <slug>
 description: <一句话描述，在 INDEX 中可见>
-version: 1.0.0
 license: MIT
 metadata:
+  version: 1.0.0
   category: <system|planning|development|design|research|...>
   tags: [tag1, tag2, ...]
   integration: [其他相关 Skill/Agent]
-trigger:
-  - "/<slug>"
-  - "<中文触发词1>"
-  - "<中文触发词2>"
+  trigger:
+    - "/<slug>"
+    - "<中文触发词1>"
+    - "<中文触发词2>"
 ---
 
 # <Skill 中文名> (<English Name>)

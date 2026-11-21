@@ -1,21 +1,30 @@
 ---
 name: handoff
 description: 上下文交接仪式 - /compact 之前写交接文档（compact模式），或生成可复制的续接 prompt 用于开新对话窗口（new-window模式）
-version: 1.1.0
 license: MIT
 metadata:
   category: system
-  tags: [handoff, context-engineering, compact, session-management, continuity]
-  integration: [prime, neat, reflection, context-engineering]
-trigger:
-  - "/handoff"
-  - "准备 compact"
-  - "上下文快满了"
-  - "交接一下"
-  - "记录当前进度"
-  - "开新窗口继续"
-  - "生成续接 prompt"
-  - "context is getting full"
+  tags:
+  - handoff
+  - context-engineering
+  - compact
+  - session-management
+  - continuity
+  integration:
+  - prime
+  - neat
+  - reflection
+  - context-engineering
+  version: 1.1.0
+  trigger:
+  - /handoff
+  - 准备 compact
+  - 上下文快满了
+  - 交接一下
+  - 记录当前进度
+  - 开新窗口继续
+  - 生成续接 prompt
+  - context is getting full
 ---
 
 # 上下文交接 (Handoff)

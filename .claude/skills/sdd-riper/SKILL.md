@@ -1,17 +1,20 @@
 ---
 name: sdd-riper
 description: Spec-Driven Development + RIPER 五阶段流程，确保大模型编程质量可控
-type: Heavy（重量级）
-version: 1.1.0
-trigger:
-  - "/riper"
-  - "/sdd-riper"
-  - "中大型需求开发"
-  - "需要写规范文档"
-  - "复杂功能实现"
+metadata:
+  type: Heavy（重量级）
+  version: 1.1.0
+  trigger:
+  - /riper
+  - /sdd-riper
+  - 中大型需求开发
+  - 需要写规范文档
+  - 复杂功能实现
 ---
 
 # SDD-RIPER Skill
+
+本 Skill 用于显式选择完整 SDD 流程的任务；普通低风险改动按 AGENTS.md 分档，不强制套本流程。
 
 ## What（输入/输出）
 

@@ -1,20 +1,29 @@
 ---
 name: react-best-practices
 description: Vercel 官方 React + Next.js 性能优化宝典，包含 45+ 条规则（按影响力排序），消除 waterfall 请求、减少 bundle 体积、优化 Core Web Vitals
-version: 1.0.0
 license: MIT
 metadata:
   category: development
-  tags: [react, nextjs, performance, optimization, vercel, bundle-size, waterfall, core-web-vitals]
+  tags:
+  - react
+  - nextjs
+  - performance
+  - optimization
+  - vercel
+  - bundle-size
+  - waterfall
+  - core-web-vitals
   requires: []
-  optional: [frontend-design]
+  optional:
+  - frontend-design
   source: vercel-labs/agent-skills
-trigger:
-  - "/react-best-practices"
-  - "React 性能优化"
-  - "Next.js 最佳实践"
-  - "消除 waterfall"
-  - "减少 bundle 体积"
+  version: 1.0.0
+  trigger:
+  - /react-best-practices
+  - React 性能优化
+  - Next.js 最佳实践
+  - 消除 waterfall
+  - 减少 bundle 体积
 ---
 
 # React Best Practices Skill

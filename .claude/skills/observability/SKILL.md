@@ -1,19 +1,24 @@
 ---
 name: observability
 description: AI 思维日志可观测性系统，实时记录推理过程、决策点和执行状态到 logs/ai-thoughts.md，帮助人类理解 AI 决策过程
-version: 1.1.0
 license: MIT
 metadata:
   category: system
-  tags: [observability, logging, transparency, decision-tracking, aha-loop]
+  tags:
+  - observability
+  - logging
+  - transparency
+  - decision-tracking
+  - aha-loop
   inspired_by: Aha-Loop
-trigger:
-  - "/observe"
-  - "/thought"
-  - "/log-decision"
-  - "记录思考过程"
-  - "思维日志"
-  - "决策理由"
+  version: 1.1.0
+  trigger:
+  - /observe
+  - /thought
+  - /log-decision
+  - 记录思考过程
+  - 思维日志
+  - 决策理由
 ---
 
 # Observability Skill - AI 思维日志

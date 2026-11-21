@@ -1,20 +1,33 @@
 ---
 name: social-media-research
 description: 跨平台社交媒体数据研究技能，基于 TikHub MCP 实现 12+ 社媒平台数据采集、舆情监控、KOL 分析和内容趋势洞察
-version: 1.0.0
 license: MIT
 metadata:
   category: research
-  tags: [social-media, research, tiktok, douyin, xiaohongshu, kol, sentiment, tikhub, mcp]
-  requires: [tikhub-mcp]
-  optional: [deep-research, market-insight, brightdata-research]
-trigger:
-  - "/social-media-research"
-  - "社交媒体数据分析"
-  - "KOL 分析"
-  - "舆情监控"
-  - "TikTok 数据"
-  - "小红书数据"
+  tags:
+  - social-media
+  - research
+  - tiktok
+  - douyin
+  - xiaohongshu
+  - kol
+  - sentiment
+  - tikhub
+  - mcp
+  requires:
+  - tikhub-mcp
+  optional:
+  - deep-research
+  - market-insight
+  - brightdata-research
+  version: 1.0.0
+  trigger:
+  - /social-media-research
+  - 社交媒体数据分析
+  - KOL 分析
+  - 舆情监控
+  - TikTok 数据
+  - 小红书数据
 ---
 
 # Social Media Research Skill

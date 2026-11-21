@@ -1,19 +1,29 @@
 ---
 name: demand-detective
 description: 业务需求前置澄清器——把模糊的、一句话的"做个功能"拆成一组 A/B 业务决策题，反讲场景 → 决策题清单 → 分级开发任务单。填补 vision-builder（愿景层）和 spec-writer（规范层）之间的"业务决策"空白
-version: 1.0.0
 license: MIT
 metadata:
   category: planning
-  tags: [requirements, clarification, ab-decision, business-rules, prereq, demand-analysis]
-  integration: [vision-builder, spec-writer, spec-first, plan-review]
-trigger:
-  - "/demand-detective"
-  - "需求侦探"
-  - "需求澄清"
-  - "需求拆解"
-  - "需求前先问清楚"
-  - "一句话需求怎么破"
+  tags:
+  - requirements
+  - clarification
+  - ab-decision
+  - business-rules
+  - prereq
+  - demand-analysis
+  integration:
+  - vision-builder
+  - spec-writer
+  - spec-first
+  - plan-review
+  version: 1.0.0
+  trigger:
+  - /demand-detective
+  - 需求侦探
+  - 需求澄清
+  - 需求拆解
+  - 需求前先问清楚
+  - 一句话需求怎么破
 ---
 
 # Demand Detective — 业务需求前置澄清器

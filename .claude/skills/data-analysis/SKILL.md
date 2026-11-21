@@ -1,18 +1,27 @@
 ---
 name: data-analysis
 description: 通用数据分析参考库 - 提供 EDA 流程、统计检验、可视化的惯用写法，输出可解释的洞察而非纯数字
-version: 1.1.0
 license: MIT
 metadata:
   category: data-analysis
-  tags: [data-analysis, statistics, visualization, insights]
-  python_packages: [pandas, numpy, matplotlib, seaborn, scipy]
-trigger:
-  - "数据分析"
-  - "EDA"
-  - "统计分析"
-  - "数据可视化"
-  - "假设检验"
+  tags:
+  - data-analysis
+  - statistics
+  - visualization
+  - insights
+  python_packages:
+  - pandas
+  - numpy
+  - matplotlib
+  - seaborn
+  - scipy
+  version: 1.1.0
+  trigger:
+  - 数据分析
+  - EDA
+  - 统计分析
+  - 数据可视化
+  - 假设检验
 ---
 
 # 数据分析 Skill

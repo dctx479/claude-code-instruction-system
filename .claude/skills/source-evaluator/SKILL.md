@@ -1,19 +1,26 @@
 ---
 name: source-evaluator
 description: 信息源评估器（伯乐），五维度评估学习材料质量，识别知识垃圾与珍宝，防止低质量内容污染知识库
-version: 1.0.0
 license: MIT
 metadata:
   category: knowledge
-  tags: [information-quality, learning, curation, knowledge-management]
+  tags:
+  - information-quality
+  - learning
+  - curation
+  - knowledge-management
   maturity: beta
-  integration: [reflection, neat, literature-mentor]
-trigger:
-  - "/evaluate-source"
-  - "评估这个材料"
-  - "这个值得学吗"
-  - "判断学习价值"
-  - "信息源质量"
+  integration:
+  - reflection
+  - neat
+  - literature-mentor
+  version: 1.0.0
+  trigger:
+  - /evaluate-source
+  - 评估这个材料
+  - 这个值得学吗
+  - 判断学习价值
+  - 信息源质量
 ---
 
 # Source Evaluator Skill（伯乐）

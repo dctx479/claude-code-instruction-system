@@ -1,17 +1,22 @@
 ---
 name: schedule-analyzer
 description: 课表空课查找统计分析，批量OCR提取课表→数据解析→分组统计→周次差异分析→报告生成
-version: 1.0.0
 metadata:
   category: data-analysis
-  tags: [schedule, timetable, free-slot, group-analysis, ocr]
-  python_version: ">=3.9"
-trigger:
-  - "/schedule-analyzer"
-  - "课表分析"
-  - "空课查找"
-  - "排课统计"
-  - "课表空课时间"
+  tags:
+  - schedule
+  - timetable
+  - free-slot
+  - group-analysis
+  - ocr
+  python_version: '>=3.9'
+  version: 1.0.0
+  trigger:
+  - /schedule-analyzer
+  - 课表分析
+  - 空课查找
+  - 排课统计
+  - 课表空课时间
 ---
 
 # 课表空课查找统计 Skill

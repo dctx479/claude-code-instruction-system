@@ -1,18 +1,27 @@
 ---
 name: hv-analysis-enhanced
 description: 增强版横纵分析法，延迟收敛式多视角决策支持，通过提供相互矛盾的框架帮助用户发现盲点
-version: 1.0.0
 license: MIT
 metadata:
   category: planning
-  tags: [analysis, decision-making, multi-perspective, contradictory-thinking, delayed-convergence]
-  integration: [plan-review, architecture-copilot, vision-builder, spec-writer]
-trigger:
-  - "/hv-analysis"
-  - "帮我分析一下"
-  - "有哪些可能性"
-  - "给我几个角度"
-  - "帮我看看有什么盲点"
+  tags:
+  - analysis
+  - decision-making
+  - multi-perspective
+  - contradictory-thinking
+  - delayed-convergence
+  integration:
+  - plan-review
+  - architecture-copilot
+  - vision-builder
+  - spec-writer
+  version: 1.0.0
+  trigger:
+  - /hv-analysis
+  - 帮我分析一下
+  - 有哪些可能性
+  - 给我几个角度
+  - 帮我看看有什么盲点
 ---
 
 # 横纵分析法 (Horizontal-Vertical Analysis) - Enhanced

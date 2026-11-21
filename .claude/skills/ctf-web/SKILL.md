@@ -5,13 +5,13 @@ license: MIT
 compatibility: Requires filesystem-based agent (Claude Code or similar) with bash, Python 3, and internet access for tool installation.
 allowed-tools: Bash Read Write Edit Glob Grep Task WebFetch WebSearch
 metadata:
-  user-invocable: "false"
-trigger:
-  - "/ctf-web"
-  - "CTF Web"
-  - "Web 漏洞利用"
-  - "SQL 注入 CTF"
-  - "XSS CTF"
+  user-invocable: 'false'
+  trigger:
+  - /ctf-web
+  - CTF Web
+  - Web 漏洞利用
+  - SQL 注入 CTF
+  - XSS CTF
 ---
 
 # CTF Web Exploitation

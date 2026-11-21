@@ -1,19 +1,28 @@
 ---
 name: seedance-storyboard
 description: Seedance 2.0 剧本分镜生成器，将小说/故事/主题转化为多集视频剧本，生成完整的素材清单、分镜脚本和视频延长链式方案
-version: 1.0.0
 license: MIT
 metadata:
   category: creative
-  tags: [seedance, storyboard, script, drama, video-production, 剧本, 分镜, 短剧]
+  tags:
+  - seedance
+  - storyboard
+  - script
+  - drama
+  - video-production
+  - 剧本
+  - 分镜
+  - 短剧
   requires: []
-  optional: [seedance-prompt]
-trigger:
-  - "/seedance-storyboard"
-  - "剧本分镜生成"
-  - "短剧脚本"
-  - "多集视频剧本"
-  - "故事转分镜"
+  optional:
+  - seedance-prompt
+  version: 1.0.0
+  trigger:
+  - /seedance-storyboard
+  - 剧本分镜生成
+  - 短剧脚本
+  - 多集视频剧本
+  - 故事转分镜
 ---
 
 # Seedance 2.0 剧本分镜生成器

@@ -1,19 +1,29 @@
 ---
 name: ai-pr-review
 description: AI 时代的 PR Review 策略器——按风险分层（核心交易路径 / 通用业务 / 样板代码）、强制 5 条 Review 规则（证据优先、PR 小、测试更细读、人类拥有合并按钮）、Human-on-the-loop 协议（分诊 + 抽检 + 审计），让 Agent 输出的 PR 真正可被人类 Review
-version: 1.0.0
 license: MIT
 metadata:
   category: development
-  tags: [review, ai-coding, pr, risk-tiered, human-on-the-loop, quality]
-  integration: [pr-prep, code-reviewer, sdd-riper-light, sdd-riper]
-trigger:
-  - "/ai-pr-review"
-  - "AI 时代怎么 Review"
-  - "PR 风险分层"
-  - "Review 策略"
-  - "Agent PR 怎么审"
-  - "人类拥有合并按钮"
+  tags:
+  - review
+  - ai-coding
+  - pr
+  - risk-tiered
+  - human-on-the-loop
+  - quality
+  integration:
+  - pr-prep
+  - code-reviewer
+  - sdd-riper-light
+  - sdd-riper
+  version: 1.0.0
+  trigger:
+  - /ai-pr-review
+  - AI 时代怎么 Review
+  - PR 风险分层
+  - Review 策略
+  - Agent PR 怎么审
+  - 人类拥有合并按钮
 ---
 
 # AI-PR-Review — AI 时代的 PR Review 策略器

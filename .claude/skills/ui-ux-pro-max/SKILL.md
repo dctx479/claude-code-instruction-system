@@ -1,21 +1,31 @@
 ---
 name: ui-ux-pro-max
 description: 最强前端设计知识库，包含 57+ UI 风格、97 配色方案、57 字体搭配、25+ 图表类型和 98 UX 规范，让 AI 生成「能见客户」的专业界面
-version: 1.0.0
 license: MIT
 metadata:
   category: design
-  tags: [ui, ux, design-system, styles, colors, fonts, charts, glassmorphism, brutalism]
+  tags:
+  - ui
+  - ux
+  - design-system
+  - styles
+  - colors
+  - fonts
+  - charts
+  - glassmorphism
+  - brutalism
   requires: []
-  optional: [frontend-design]
+  optional:
+  - frontend-design
   source: nextlevelbuilder/ui-ux-pro-max-skill
-trigger:
-  - "/ui-ux-pro-max"
-  - "专业 UI 设计"
-  - "精确风格控制"
-  - "配色方案"
-  - "Glassmorphism"
-  - "设计系统"
+  version: 1.0.0
+  trigger:
+  - /ui-ux-pro-max
+  - 专业 UI 设计
+  - 精确风格控制
+  - 配色方案
+  - Glassmorphism
+  - 设计系统
 ---
 
 # UI/UX Pro Max Skill

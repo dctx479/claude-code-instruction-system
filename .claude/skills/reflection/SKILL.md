@@ -1,18 +1,26 @@
 ---
 name: reflection
 description: 任务复盘提炼器 - 从完成的任务中萃取 3-5 条可复用经验，应用两步链 Ingest 写入知识库，评估 Skill 提取价值，链式触发 /neat 收尾
-version: 1.0.0
 license: MIT
 metadata:
   category: system
-  tags: [reflection, lessons-learned, knowledge-compounding, ingest, self-evolution]
-  integration: [neat, skill-creator, knowledge-compounding]
-trigger:
-  - "/reflection"
-  - "复盘一下"
-  - "总结经验"
-  - "提炼教训"
-  - "记录一下这次的收获"
+  tags:
+  - reflection
+  - lessons-learned
+  - knowledge-compounding
+  - ingest
+  - self-evolution
+  integration:
+  - neat
+  - skill-creator
+  - knowledge-compounding
+  version: 1.0.0
+  trigger:
+  - /reflection
+  - 复盘一下
+  - 总结经验
+  - 提炼教训
+  - 记录一下这次的收获
 ---
 
 # 任务复盘提炼器 (Reflection)
@@ -111,6 +119,11 @@ trigger:
 
 ### Step 3 — Skill 提取评估
 
+**先做规则升级门槛检查**：若复盘准备新增或强化规则，按 `commands/general/evolve.md`
+提供两次独立事故证据，先比较测试/lint/hook/权限等硬保障，给最小 diff 并评估误伤、冲突、过期风险。
+没有第二次证据时不提议补规则；仍可记录本次有案例支撑的经验，不能虚构复发。
+不自动改规则或新增 Skill；已有用户授权适用时沿用授权，否则先展示提案。
+
 对本次任务整体评估是否值得提取为 Skill：
 
 | 评估维度 | 阈值 | 本次情况 |
@@ -138,6 +151,9 @@ trigger:
 ```
 
 健康度评分（5 项各 20 分，满分 100）。低于 60 分输出修复建议。
+
+其中规则体检调用 `/rule-audit`；没有激活记录或验证证据时标“未知”，不能仅凭年龄删除规则，
+不能批量给历史经验补上推测的置信度。无需为了凑满 3-5 条而制造候选经验。
 
 > 参考: `memory/best-practices.md` BP-035
 
@@ -225,7 +241,7 @@ trigger:
 - `.claude/skills/skill-creator/SKILL.md` — 可选下游，把经验封装成 Skill
 - `docs/KNOWLEDGE-COMPOUNDING-GUIDE.md` — 两步链 Ingest 协议的详细说明
 - `memory/lessons-learned.md` — 写入目标文件
-- `CLAUDE.md` 第一节 — 自进化协议（本 Skill 是其"半自动复盘流程"的执行载体）
+- `commands/general/evolve.md` — 规则升级的证据门槛；本 Skill 负责经验复盘
 
 ---
 

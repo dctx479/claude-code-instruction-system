@@ -1,19 +1,32 @@
 ---
 name: deep-research
 description: 深度研究技能，使用 Lead Agent + Subagent 架构并行执行多维度网络调研，自动生成带数据点的结构化报告
-version: 1.2.0
 license: MIT
 metadata:
   category: research
-  tags: [research, web-search, analysis, report, parallel, reflection, citation-validation, synthesis, extension-protocol]
-  requires: [web_search, web_fetch]
-  optional: [playwright-mcp, tavily-mcp]
-trigger:
-  - "/deep-research"
-  - "深度调研"
-  - "全面研究"
-  - "帮我研究一下"
-  - "需要深入了解"
+  tags:
+  - research
+  - web-search
+  - analysis
+  - report
+  - parallel
+  - reflection
+  - citation-validation
+  - synthesis
+  - extension-protocol
+  requires:
+  - web_search
+  - web_fetch
+  optional:
+  - playwright-mcp
+  - tavily-mcp
+  version: 1.2.0
+  trigger:
+  - /deep-research
+  - 深度调研
+  - 全面研究
+  - 帮我研究一下
+  - 需要深入了解
 ---
 
 # Deep Research Skill

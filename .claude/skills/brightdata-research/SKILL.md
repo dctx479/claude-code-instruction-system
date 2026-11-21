@@ -1,19 +1,27 @@
 ---
 name: brightdata-research
 description: 电商平台深度调研技能，基于 Bright Data MCP 实现反反爬虫的电商市场情报收集，支持三种研究模式（Quick/Standard/Deep）
-version: 1.0.0
 license: MIT
 metadata:
   category: research
-  tags: [ecommerce, research, market-intelligence, web-scraping, bright-data, mcp]
-  requires: [bright-data-mcp]
-  optional: [playwright-mcp]
-trigger:
-  - "/brightdata-research"
-  - "电商市场调研"
-  - "Bright Data 爬取"
-  - "竞品数据采集"
-  - "电商情报收集"
+  tags:
+  - ecommerce
+  - research
+  - market-intelligence
+  - web-scraping
+  - bright-data
+  - mcp
+  requires:
+  - bright-data-mcp
+  optional:
+  - playwright-mcp
+  version: 1.0.0
+  trigger:
+  - /brightdata-research
+  - 电商市场调研
+  - Bright Data 爬取
+  - 竞品数据采集
+  - 电商情报收集
 ---
 
 # Bright Data Research Skill

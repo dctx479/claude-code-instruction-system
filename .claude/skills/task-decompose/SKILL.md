@@ -1,20 +1,29 @@
 ---
 name: task-decompose
 description: 任务分解器，将模糊需求拆成原子任务列表，每个任务可独立执行、可验收、有明确输入输出，支持依赖图生成和并行化建议
-version: 1.0.0
 license: MIT
 metadata:
   category: planning
-  tags: [task, decompose, planning, atomic, dependency, parallel, agile]
+  tags:
+  - task
+  - decompose
+  - planning
+  - atomic
+  - dependency
+  - parallel
+  - agile
   requires: []
-  optional: [sdd-riper, spec-first]
-trigger:
-  - "/task-decompose"
-  - "任务拆解"
-  - "需求分解"
-  - "拆分任务"
-  - "原子任务"
-  - "任务依赖图"
+  optional:
+  - sdd-riper
+  - spec-first
+  version: 1.0.0
+  trigger:
+  - /task-decompose
+  - 任务拆解
+  - 需求分解
+  - 拆分任务
+  - 原子任务
+  - 任务依赖图
 ---
 
 # Task Decompose Skill

@@ -1,21 +1,28 @@
 ---
 name: frontend-design
 description: 前端设计与 UI/UX 指导专家，提供布局思路、组件选型、交互规范、颜色、间距、动画和可访问性检查，是 AI 前端开发的「设计总监」
-version: 1.0.0
 license: MIT
 metadata:
   category: design
-  tags: [frontend, design, ui, ux, accessibility, layout, interaction]
+  tags:
+  - frontend
+  - design
+  - ui
+  - ux
+  - accessibility
+  - layout
+  - interaction
   requires: []
   optional: []
   source: anthropics/skills
-trigger:
-  - "/frontend-design"
-  - "UI 设计建议"
-  - "前端布局"
-  - "组件选型"
-  - "可访问性检查"
-  - "交互规范"
+  version: 1.0.0
+  trigger:
+  - /frontend-design
+  - UI 设计建议
+  - 前端布局
+  - 组件选型
+  - 可访问性检查
+  - 交互规范
 ---
 
 # Frontend Design Skill

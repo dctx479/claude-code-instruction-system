@@ -1,19 +1,30 @@
 ---
 name: amazon-analyse
 description: 亚马逊选品全维度分析工具集，基于 Sorftime MCP 获取官方数据，覆盖 Listing 穿透分析、关键词深度调研（2000+ 词库）、差评 6 维痛点分析
-version: 1.1.0
 license: MIT
 metadata:
   category: research
-  tags: [amazon, ecommerce, product-selection, competitor-analysis, sorftime, mcp, listing, keyword-research, review-analysis, pain-point]
-  requires: [sorftime-mcp]
+  tags:
+  - amazon
+  - ecommerce
+  - product-selection
+  - competitor-analysis
+  - sorftime
+  - mcp
+  - listing
+  - keyword-research
+  - review-analysis
+  - pain-point
+  requires:
+  - sorftime-mcp
   source: https://github.com/liangdabiao/amazon-sorftime-research-MCP-skill
-trigger:
-  - "/amazon-analyse"
-  - "亚马逊选品分析"
-  - "Listing 分析"
-  - "亚马逊关键词调研"
-  - "差评痛点分析"
+  version: 1.1.0
+  trigger:
+  - /amazon-analyse
+  - 亚马逊选品分析
+  - Listing 分析
+  - 亚马逊关键词调研
+  - 差评痛点分析
 ---
 
 # Amazon Analyse Skill

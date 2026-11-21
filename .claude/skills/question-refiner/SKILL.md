@@ -1,18 +1,22 @@
 ---
 name: question-refiner
 description: 研究查询精炼器，在研究执行前验证和结构化用户查询，输出标准化 Structured Research Prompt
-version: 1.0.0
 license: MIT
 metadata:
   category: research
-  tags: [research, query-refinement, preprocessing, gateway]
+  tags:
+  - research
+  - query-refinement
+  - preprocessing
+  - gateway
   requires: []
   optional: []
-trigger:
-  - "/question-refiner"
-  - "研究问题太模糊"
-  - "不知道怎么搜"
-  - "帮我精炼查询"
+  version: 1.0.0
+  trigger:
+  - /question-refiner
+  - 研究问题太模糊
+  - 不知道怎么搜
+  - 帮我精炼查询
 ---
 
 # Question Refiner Skill

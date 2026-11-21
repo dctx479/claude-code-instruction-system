@@ -1,20 +1,26 @@
 ---
 name: wxmini-security-audit
 description: 微信小程序全自动安全审计 Skill。使用 Agent Teams 编排 Agent，分阶段完成从反编译到报告生成的全流程静态安全分析。覆盖敏感信息泄露、API接口提取、加解密算法分析、漏洞分析四大维度。采用"脚本预扫描 + LLM智能分析"双层架构，脚本保证覆盖率，LLM保证准确率。
-version: 1.0.0
-tags: [security, wechat, miniprogram, audit, static-analysis]
-platform: windows
-tools_required:
+metadata:
+  version: 1.0.0
+  tags:
+  - security
+  - wechat
+  - miniprogram
+  - audit
+  - static-analysis
+  platform: windows
+  tools_required:
   - unveilr.exe (内置于 tools/ 目录)
   - Python 3.x (系统环境，仅使用标准库)
   - grep / glob / view (CLI 内置)
   - create / edit (CLI 内置)
-trigger:
-  - "/wxmini-security-audit"
-  - "微信小程序安全审计"
-  - "小程序漏洞分析"
-  - "wxapkg 审计"
-  - "小程序安全检查"
+  trigger:
+  - /wxmini-security-audit
+  - 微信小程序安全审计
+  - 小程序漏洞分析
+  - wxapkg 审计
+  - 小程序安全检查
 ---
 
 # Skill: wxmini-security-audit — 微信小程序安全审计

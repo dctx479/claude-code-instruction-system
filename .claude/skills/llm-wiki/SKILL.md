@@ -1,21 +1,31 @@
 ---
 name: llm-wiki
 description: 多源内容 → 结构化 Wiki → 静态知识库站点。将网页/PDF/本地文件/RSS 等素材自动整理成带索引的 Markdown Wiki，可选生成 Quartz 静态站点，可选通过 claude-agent-sdk 暴露为 RAG API
-version: 1.0.0
 license: MIT
 metadata:
   category: research
-  tags: [wiki, knowledge-base, static-site, quartz, rag, content-pipeline, llm-wiki]
+  tags:
+  - wiki
+  - knowledge-base
+  - static-site
+  - quartz
+  - rag
+  - content-pipeline
+  - llm-wiki
   requires: []
-  optional: [claude-agent-sdk, deep-research, literature-mentor]
-trigger:
-  - "/llm-wiki"
-  - "建知识库"
-  - "wiki化"
-  - "整理成 wiki"
-  - "生成静态知识站"
-  - "把资料整理成知识库"
-  - "Quartz 知识站"
+  optional:
+  - claude-agent-sdk
+  - deep-research
+  - literature-mentor
+  version: 1.0.0
+  trigger:
+  - /llm-wiki
+  - 建知识库
+  - wiki化
+  - 整理成 wiki
+  - 生成静态知识站
+  - 把资料整理成知识库
+  - Quartz 知识站
 ---
 
 # LLM Wiki Skill

@@ -1,17 +1,21 @@
 ---
 name: pandas
 description: pandas 数据处理参考库 - 提供 DataFrame 操作、数据清洗、分组聚合、时间序列的惯用写法和性能陷阱
-version: 1.1.0
 license: MIT
 metadata:
   category: data-analysis
-  tags: [pandas, data-analysis, dataframe, data-processing]
+  tags:
+  - pandas
+  - data-analysis
+  - dataframe
+  - data-processing
   python_package: pandas
-trigger:
-  - "pandas"
-  - "DataFrame"
-  - "数据清洗"
-  - "数据处理"
+  version: 1.1.0
+  trigger:
+  - pandas
+  - DataFrame
+  - 数据清洗
+  - 数据处理
 ---
 
 # pandas Skill

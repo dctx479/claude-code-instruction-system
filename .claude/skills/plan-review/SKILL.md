@@ -1,17 +1,26 @@
 ---
 name: plan-review
 description: 计划审查器，对实现计划进行多维度评估，识别风险和改进点，确保计划可执行且完整
-version: 1.0.0
 license: MIT
 metadata:
   category: planning
-  tags: [review, planning, quality, validation, risk-assessment]
-  integration: [autopilot, spec-writer, qa-reviewer, god-committee]
-trigger:
-  - "/plan-review"
-  - "审查一下计划"
-  - "检查计划有没有漏洞"
-  - "计划评审"
+  tags:
+  - review
+  - planning
+  - quality
+  - validation
+  - risk-assessment
+  integration:
+  - autopilot
+  - spec-writer
+  - qa-reviewer
+  - god-committee
+  version: 1.0.0
+  trigger:
+  - /plan-review
+  - 审查一下计划
+  - 检查计划有没有漏洞
+  - 计划评审
 ---
 
 # 计划审查 Skill (Plan Review)

@@ -1,21 +1,35 @@
 ---
 name: brainstorming
 description: PM 头脑风暴 Skill——作为思考伙伴，4 模式（问题探索/方案发散/假设验证/策略探索）+ 4 框架（HMW/JTBD/SCAMPER/OODA）+ 5 步会话结构（框定→发散→激发→收敛→记录），在收敛方向前把想法想透。与 demand-detective（收敛决策）互补
-version: 1.0.0
 license: MIT
 metadata:
   category: planning
-  tags: [brainstorming, pm, ideation, frameworks, divergent-thinking, hmw, jtbd, scamper, ooda]
-  integration: [vision-builder, demand-detective, plan-review, spec-writer, hv-analysis-enhanced]
-trigger:
-  - "/brainstorming"
-  - "头脑风暴"
-  - "一起想想"
-  - "想不清楚"
-  - "问题空间"
-  - "方案发散"
-  - "假设验证"
-  - "做个头脑风暴"
+  tags:
+  - brainstorming
+  - pm
+  - ideation
+  - frameworks
+  - divergent-thinking
+  - hmw
+  - jtbd
+  - scamper
+  - ooda
+  integration:
+  - vision-builder
+  - demand-detective
+  - plan-review
+  - spec-writer
+  - hv-analysis-enhanced
+  version: 1.0.0
+  trigger:
+  - /brainstorming
+  - 头脑风暴
+  - 一起想想
+  - 想不清楚
+  - 问题空间
+  - 方案发散
+  - 假设验证
+  - 做个头脑风暴
 ---
 
 # Brainstorming — PM 探索性思考伙伴

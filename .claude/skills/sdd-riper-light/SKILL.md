@@ -1,14 +1,15 @@
 ---
 name: sdd-riper-light
 description: SDD-RIPER 轻量版 - 适用于熟练用户和简单任务的快速开发流程
-type: Light（轻量级）
-version: 1.1.0
-trigger:
-  - "/riper-light"
-  - "/sdd-light"
-  - "简单 bug 修复"
-  - "小功能开发"
-  - "快速迭代"
+metadata:
+  type: Light（轻量级）
+  version: 1.1.0
+  trigger:
+  - /riper-light
+  - /sdd-light
+  - 简单 bug 修复
+  - 小功能开发
+  - 快速迭代
 ---
 
 # SDD-RIPER Light

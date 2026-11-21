@@ -1,18 +1,23 @@
 ---
 name: collaborating-with-codex
 description: 多模型协作技能，通过后台 Bash 子进程调用 OpenAI Codex CLI，将代码实现任务并行委托给 Codex，Claude 读取结果后融合分析，实现优势互补
-version: 1.0.0
 license: MIT
 metadata:
   category: development
-  tags: [multi-model, codex, parallel, collaboration, cli]
+  tags:
+  - multi-model
+  - codex
+  - parallel
+  - collaboration
+  - cli
   source: linux.do community workflow
-trigger:
-  - "/collab-codex"
-  - "调用 Codex"
-  - "让 Codex 实现"
-  - "多模型协作"
-  - "并行实现代码"
+  version: 1.0.0
+  trigger:
+  - /collab-codex
+  - 调用 Codex
+  - 让 Codex 实现
+  - 多模型协作
+  - 并行实现代码
 ---
 
 # Collaborating with Codex Skill
