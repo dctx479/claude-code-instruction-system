@@ -26,6 +26,7 @@ CHECKPOINT = module("closure_checkpoint", "scripts/checkpoint.py")
 FACTS = module("closure_facts", "scripts/check-doc-facts.py")
 sys.path.insert(0, str(ROOT / "scripts"))
 from eval_support import parse_events
+from unittest.mock import patch
 
 
 class ClosureTests(unittest.TestCase):
@@ -190,6 +191,13 @@ class ClosureTests(unittest.TestCase):
             FACTS.header(path)
         path.write_text('---\nname: example\ndescription: "Example: valid YAML"\n---\nBody\n')
         self.assertEqual("Example: valid YAML", FACTS.header(path)["description"])
+
+    def test_migration_current_files_need_no_historical_git_objects(self):
+        self.seed_domain()
+        with patch.object(MIGRATE, "historical_files", side_effect=AssertionError("must not read missing shallow history")):
+            proposed = MIGRATE.plan(self.target, "core", "c9473b8")
+        self.assertEqual(1, len(proposed["moves"]))
+        self.assertEqual([], proposed["retained"])
 
 
 if __name__ == "__main__":

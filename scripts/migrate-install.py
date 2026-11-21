@@ -41,15 +41,18 @@ def canonical(data):
 def historical_files(baseline):
     if not re.fullmatch(r"[0-9a-fA-F]{7,40}", baseline):
         raise ValueError("baseline must be a commit hash")
-    result = subprocess.run(["git", "-C", str(ROOT), "archive", baseline, ".claude/skills", "agents"],
-                            capture_output=True, check=True)
+    try:
+        result = subprocess.run(["git", "-C", str(ROOT), "archive", baseline, ".claude/skills", "agents"],
+                                capture_output=True, check=True)
+    except subprocess.CalledProcessError as exc:
+        raise ValueError("historical baseline unavailable; retain unmatched files or fetch the explicit baseline") from exc
     with tarfile.open(fileobj=io.BytesIO(result.stdout)) as archive:
         return {item.name: archive.extractfile(item).read() for item in archive.getmembers() if item.isfile()}
 
 
 def plan(target, profiles, baseline):
     selected, all_names = INSTALL.profile_names(profiles), INSTALL.profile_names("all")
-    historic = historical_files(baseline)
+    historic = None
     moves, retained = [], []
     for kind in ("skills", "agents"):
         for name in sorted(all_names[kind] - selected[kind]):
@@ -71,7 +74,11 @@ def plan(target, profiles, baseline):
                     source = ROOT / source_name
                     data = canonical(dest_file.read_bytes())
                     matches_current = source.is_file() and data == canonical(source.read_bytes())
-                    matches_history = source_name in historic and data == canonical(historic[source_name])
+                    matches_history = False
+                    if not matches_current:
+                        if historic is None:
+                            historic = historical_files(baseline)
+                        matches_history = source_name in historic and data == canonical(historic[source_name])
                     if not matches_current and not matches_history:
                         raise ValueError("customized/unknown file: " + child)
                 moves.append(dict(path=rel, files=digests))
