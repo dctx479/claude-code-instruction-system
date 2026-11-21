@@ -5,6 +5,7 @@ permissions:
 jobs:
   rules:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
         python: ["3.10", "3.11", "3.12"]
@@ -21,7 +22,7 @@ jobs:
       - run: python scripts/check-doc-facts.py
       - run: python scripts/eval-skills.py
       - run: python scripts/validate-issues.py issues/worktree-checkpoint.csv
-      - run: python -m unittest discover -s tests -p "test_*.py" -v
+      - run: python scripts/ci-tests.py
       - run: bash scripts/test-all-intents.sh
       - run: python scripts/validate/validate-config.py
       - run: python -m json.tool hooks/hooks.json
