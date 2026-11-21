@@ -85,31 +85,8 @@ apply_theme() {
 
 # 安装 hooks
 install_hooks() {
-    log_info "Installing Taiyi hooks..."
-
-    local hooks_json="$TAIYI_ROOT/hooks/hooks.json"
-    local cc_settings="$CC_CONFIG_DIR/settings.json"
-
-    if [[ ! -f "$hooks_json" ]]; then
-        log_error "Hooks config not found: $hooks_json"
-        exit 1
-    fi
-
-    # 备份现有配置
-    backup_config "$cc_settings" "settings"
-
-    # 创建或更新 settings
-    mkdir -p "$CC_CONFIG_DIR"
-
-    if [[ ! -f "$cc_settings" ]]; then
-        echo '{}' > "$cc_settings"
-    fi
-
-    # 添加 hooks 配置 (简单合并)
-    log_info "Hooks installation complete"
-    log_warn "Please manually verify hooks in Claude Code settings"
-
-    log_success "Hooks installed"
+    log_warn "WARNING: hooks installation delegates to scripts/install-global.py"
+    python "$TAIYI_ROOT/scripts/install-global.py" --target "$CC_CONFIG_DIR" --components hooks
 }
 
 # 同步 CLAUDE.md

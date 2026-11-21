@@ -47,12 +47,29 @@ COMPONENTS = {
     "agents": [("agents", "agents", OVERWRITE)],
     # 拍平安装：commands/general/ralph.md → commands/ralph.md。
     # 保留子目录的话 Claude Code 会把命令注册成 /general:ralph，而文档和 CLAUDE.md 用的是 /ralph
-    "commands": [("commands", "commands", FLATTEN)],
-    "hooks": [
-        ("hooks", "hooks", OVERWRITE),
-        ("scripts", "scripts", OVERWRITE),
-        ("config", "config", OVERWRITE),
+    "commands": [
+        ("commands", "commands", FLATTEN),
+        ("scripts/checkpoint.py", "scripts/checkpoint.py", OVERWRITE),
+        ("scripts/validate-issues.py", "scripts/validate-issues.py", OVERWRITE),
+        ("scripts/usage-report.py", "scripts/usage-report.py", OVERWRITE),
     ],
+    "hooks": [
+        ("hooks/agent-tracker.sh", "hooks/agent-tracker.sh", OVERWRITE),
+        ("hooks/agent-state.py", "hooks/agent-state.py", OVERWRITE),
+        ("hooks/intent-detector.sh", "hooks/intent-detector.sh", OVERWRITE),
+        ("hooks/intent-context.py", "hooks/intent-context.py", OVERWRITE),
+        ("hooks/ralph-stop-interceptor.sh", "hooks/ralph-stop-interceptor.sh", OVERWRITE),
+        ("hooks/ralph-state.py", "hooks/ralph-state.py", OVERWRITE),
+        ("hooks/session-start.py", "hooks/session-start.py", OVERWRITE),
+        ("scripts/validate/validate-command.sh", "scripts/validate/validate-command.sh", OVERWRITE),
+        ("scripts/validate/command_guard.py", "scripts/validate/command_guard.py", OVERWRITE),
+        ("scripts/port-management/port-check-hook.py", "scripts/port-management/port-check-hook.py", OVERWRITE),
+        ("config/flow-card.md", "config/flow-card.md", OVERWRITE),
+    ],
+    "lint-feedback": [("scripts/hooks/lint-feedback.py", "scripts/hooks/lint-feedback.py", OVERWRITE)],
+    "session-backup": [("scripts/hooks/session-backup.py", "scripts/hooks/session-backup.py", OVERWRITE)],
+    "usage": [("hooks/usage-tracker.py", "hooks/usage-tracker.py", OVERWRITE)],
+    "notifications": [("scripts/hooks/notify.sh", "scripts/hooks/notify.sh", OVERWRITE)],
     "skills": [(".claude/skills", "skills", OVERWRITE)],
     "statusline": [
         (".claude/statusline", "statusline", OVERWRITE),
@@ -67,6 +84,40 @@ COMPONENTS = {
         (".claude/prompts", "prompts", OVERWRITE),
     ],
 }
+DEFAULT_COMPONENTS = "core,agents,commands,hooks,skills,statusline,knowledge"
+OPTIONAL_HOOKS = {
+    "lint-feedback": ("PostToolUse", "Edit|Write|MultiEdit", "scripts/hooks/lint-feedback.py", 25),
+    "session-backup": ("SessionEnd", "", "scripts/hooks/session-backup.py", 12),
+    "usage": ("PostToolUse", "Skill|Agent|Task", "hooks/usage-tracker.py", 5),
+    "notifications": ("Notification", "", "scripts/hooks/notify.sh", 15),
+}
+
+
+def profile_names(profiles="core"):
+    manifest = json.loads((REPO / "config/profiles.json").read_text(encoding="utf-8"))["profiles"]
+    selected = profiles.split(",") if isinstance(profiles, str) else profiles
+    if selected == ["all"]:
+        selected = list(manifest)
+    unknown = set(selected) - set(manifest)
+    if unknown:
+        raise ValueError(f"unknown profiles: {sorted(unknown)}")
+    return {kind: {item for name in selected for item in manifest[name][kind]} for kind in ("skills", "agents")}
+
+
+def selected_file(component, rel, selected):
+    if component == "skills":
+        return len(Path(rel).parts) > 1 and Path(rel).parts[1] in selected["skills"]
+    if component == "agents":
+        return Path(rel).relative_to("agents").as_posix() in selected["agents"]
+    return True
+
+
+def profile_extras(target, selected):
+    all_names = profile_names("all")
+    return sorted(["skills/" + name for name in all_names["skills"] - selected["skills"]
+                   if (target / "skills" / name / "SKILL.md").is_file()] +
+                  ["agents/" + name for name in all_names["agents"] - selected["agents"]
+                   if (target / "agents" / name).is_file()])
 
 # 任何位置都排除
 EXCLUDE_NAMES = ["__pycache__", "*.pyc", "*.pyo", "*.log", "*.tmp", ".DS_Store", "Thumbs.db"]
@@ -81,6 +132,13 @@ KEEP_DEST = ["config/port-registry.json"]
 
 # settings.json 中属于本系统的 hook 条目标记
 OWN_HOOK_MARKERS = ("/.claude/hooks/", "/.claude/scripts/")
+OWN_HOOK_FILES = (
+    "hooks/intent-detector.sh", "hooks/agent-tracker.sh", "hooks/ralph-stop-interceptor.sh",
+    "hooks/pre-compact.sh", "hooks/session-start.py", "hooks/usage-tracker.py",
+    "scripts/validate/validate-command.sh", "scripts/port-management/port-check-hook.py",
+    "scripts/hooks/post-edit.sh", "scripts/hooks/on-stop.sh", "scripts/hooks/notify.sh",
+    "scripts/hooks/lint-feedback.py", "scripts/hooks/session-backup.py",
+)
 STATUSLINE_COMMAND = 'bash "$HOME/.claude/statusline/hud.sh" render'
 STATUSLINE_MARKER = "/.claude/statusline/hud.sh"
 
@@ -113,11 +171,14 @@ def same_content(a: Path, b: Path) -> bool:
 
 
 class Installer:
-    def __init__(self, target: Path, dry_run: bool, replace_global_rules: bool = False):
+    def __init__(self, target: Path, dry_run: bool, replace_global_rules: bool = False,
+                 profiles="core", with_guardrails=False):
         self.target = target
         self.dry_run = dry_run
         self.replace_global_rules = replace_global_rules
-        self.backup_dir = target / "backups" / ("taiyi-install-" + time.strftime("%Y%m%d-%H%M%S"))
+        self.selected = profile_names(profiles)
+        self.with_guardrails = with_guardrails
+        self.backup_dir = target / "backups" / ("taiyi-install-" + time.strftime("%Y%m%d-%H%M%S") + f"-{time.time_ns()}")
         self.stats = {"copied": 0, "updated": 0, "unchanged": 0, "kept": 0, "failed": 0}
         self.problems = []
 
@@ -177,6 +238,8 @@ class Installer:
                     continue
                 seen = {}
                 for path, rel in iter_files(src, dest_rel):
+                    if not selected_file(comp, rel, self.selected):
+                        continue
                     if policy == FLATTEN:
                         rel = f"{dest_rel}/{path.name}"
                         if rel in seen:
@@ -203,9 +266,15 @@ class Installer:
     def is_own_group(group) -> bool:
         handlers = group.get("hooks", []) if isinstance(group, dict) else []
         return any(
-            isinstance(h, dict) and any(m in str(h.get("command", "")) for m in OWN_HOOK_MARKERS)
+            isinstance(h, dict) and Installer.is_own_handler(h)
             for h in handlers
         )
+
+    @staticmethod
+    def is_own_handler(handler):
+        command = str(handler.get("command", ""))
+        return any("/.claude/" + path + '"' in command or
+                   command.endswith("/.claude/" + path) for path in OWN_HOOK_FILES)
 
     def merge_settings(self, settings: dict, components) -> dict:
         merged = json.loads(json.dumps(settings))  # 深拷贝
@@ -218,7 +287,14 @@ class Installer:
             # 先移除所有事件里本系统的旧条目（事件迁移时不留残余），再写入当前版本
             for event in list(hooks):
                 groups = hooks[event] if isinstance(hooks[event], list) else []
-                remaining = [g for g in groups if not self.is_own_group(g)]
+                remaining = []
+                for group in groups:
+                    if not isinstance(group, dict) or not self.is_own_group(group):
+                        remaining.append(group)
+                        continue
+                    kept = [h for h in group.get("hooks", []) if not self.is_own_handler(h)]
+                    if kept:
+                        remaining.append(dict(group, hooks=kept))
                 if remaining:
                     hooks[event] = remaining
                 else:
@@ -226,6 +302,33 @@ class Installer:
             for event, groups in ours.items():
                 hooks.setdefault(event, []).extend(groups)
             merged["hooks"] = hooks
+
+        for component, (event, matcher, script, timeout) in OPTIONAL_HOOKS.items():
+            if component not in components:
+                continue
+            command = f'python "$HOME/.claude/{script}"' if script.endswith(".py") else f'bash "$HOME/.claude/{script}"'
+            group = {"hooks": [{"type": "command", "command": command, "timeout": timeout}]}
+            if matcher:
+                group["matcher"] = matcher
+            groups = merged.setdefault("hooks", {}).setdefault(event, [])
+            groups[:] = [g for g in groups if not any(h.get("command") == command for h in g.get("hooks", []))]
+            groups.append(group)
+
+        if self.with_guardrails:
+            template = json.loads((REPO / "config/settings-guardrails.json").read_text(encoding="utf-8"))["permissions"]
+            permissions = merged.setdefault("permissions", {})
+            if not isinstance(permissions, dict):
+                raise ValueError("existing permissions must be an object")
+            for key, value in template.items():
+                if isinstance(value, list):
+                    existing = permissions.setdefault(key, [])
+                    if not isinstance(existing, list):
+                        raise ValueError(f"permissions.{key} must be a list")
+                    existing.extend(item for item in value if item not in existing)
+                elif key not in permissions:
+                    permissions[key] = value
+                elif permissions[key] != value:
+                    raise ValueError(f"permissions.{key} conflicts with guardrails; review before installing")
 
         if "statusline" in components:
             current = merged.get("statusLine")
@@ -276,9 +379,11 @@ class Installer:
 def main() -> int:
     parser = argparse.ArgumentParser(description="把太一元系统安装/同步到全局 ~/.claude")
     parser.add_argument("--target", default=str(Path.home() / ".claude"), help="目标目录（默认 ~/.claude）")
-    parser.add_argument("--components", default=",".join(COMPONENTS),
+    parser.add_argument("--components", default=DEFAULT_COMPONENTS,
                         help="逗号分隔: " + ",".join(COMPONENTS))
     parser.add_argument("--dry-run", action="store_true", help="只打印计划，不写入")
+    parser.add_argument("--profile", default="core", help="core,ctf,research,ecommerce,media,data,frontend,multi-model or all")
+    parser.add_argument("--with-guardrails", action="store_true", help="opt-in permissions template (disables bypass)")
     parser.add_argument("--replace-global-rules", action="store_true",
                         help="显式授权备份并替换自定义全局 CLAUDE.md（仅 core 组件）")
     args = parser.parse_args()
@@ -289,7 +394,10 @@ def main() -> int:
         parser.error(f"未知组件: {unknown}")
 
     target = Path(args.target).expanduser().resolve()
-    installer = Installer(target, args.dry_run, args.replace_global_rules)
+    try:
+        installer = Installer(target, args.dry_run, args.replace_global_rules, args.profile, args.with_guardrails)
+    except ValueError as exc:
+        parser.error(str(exc))
 
     print(f"源:   {REPO}")
     print(f"目标: {target}" + ("   (dry-run，不写入)" if args.dry_run else ""))
@@ -300,6 +408,10 @@ def main() -> int:
         print("⚠️ WARNING: PATH 中找不到 bash，hooks 无法运行（Windows 需要安装 Git Bash）。", file=sys.stderr)
 
     old_settings = installer.load_settings()   # 先校验，非法则在任何写入之前中止
+    try:
+        new_settings = installer.merge_settings(old_settings, components)
+    except (ValueError, TypeError, AttributeError) as exc:
+        parser.error(f"settings merge aborted before writing: {exc}")
 
     print("\n[1/3] 复制文件")
     installer.install_files(components)
@@ -308,12 +420,15 @@ def main() -> int:
           f"保留已有 {s['kept']}，失败 {s['failed']}")
 
     print("\n[2/3] 合并 settings.json")
-    new_settings = installer.merge_settings(old_settings, components)
     installer.write_settings(old_settings, new_settings)
 
     print("\n[3/3] 自检")
     if not args.dry_run:
         installer.verify(installer.load_settings())
+        if {"skills", "agents"}.intersection(components):
+            extras = profile_extras(target, installer.selected)
+            if extras:
+                print("WARNING: 旧目标仍含当前 profile 外的托管能力（未删除）: " + ", ".join(extras), file=sys.stderr)
     if installer.problems:
         for problem in installer.problems:
             print(f"  ❌ {problem}")

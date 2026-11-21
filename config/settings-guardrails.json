@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "disableBypassPermissionsMode": "disable",
+    "deny": [
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git commit *)",
+      "Bash(git reset --hard *)",
+      "Bash(git checkout .)",
+      "Bash(git checkout -- *)",
+      "Bash(git restore *)",
+      "Bash(git clean *)",
+      "Bash(git rebase *)",
+      "Bash(rm *)",
+      "PowerShell(git push *)",
+      "PowerShell(git commit *)",
+      "PowerShell(git reset --hard *)",
+      "PowerShell(git checkout *)",
+      "PowerShell(git restore *)",
+      "PowerShell(git clean *)",
+      "PowerShell(Remove-Item *)"
+    ]
+  }
+}

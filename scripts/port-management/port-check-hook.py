@@ -52,6 +52,7 @@ def check_port_conflicts(ports: list) -> list:
 
     if not registry_file:
         # 没有找到注册表文件，不检查（允许通过）
+        print("WARNING: port registry unavailable; conflict check skipped", file=sys.stderr)
         return conflicts
 
     try:
@@ -79,10 +80,18 @@ def main():
     # 读取标准输入 (Claude Code 传入的工具输入)
     try:
         input_data = json.load(sys.stdin)
-    except (json.JSONDecodeError, ValueError):
-        input_data = {}
+    except (json.JSONDecodeError, ValueError) as exc:
+        print(f"WARNING: port check input invalid: {exc}", file=sys.stderr)
+        return 0
+
+    if not isinstance(input_data, dict) or not isinstance(input_data.get('tool_input'), dict):
+        print("WARNING: port check expects tool_input object", file=sys.stderr)
+        return 0
 
     command = input_data.get('tool_input', {}).get('command', '')
+    if not isinstance(command, str):
+        print("WARNING: port check expects string command", file=sys.stderr)
+        return 0
 
     # 检查是否是 Docker 相关命令
     if not any(k in command.lower() for k in ['docker', 'compose']):
@@ -102,11 +111,14 @@ def main():
         for c in conflicts:
             print(f"  Port {c['port']}: used by {c['project']}/{c['service']}", file=sys.stderr)
             print(f"  Registry: {c['registry']}", file=sys.stderr)
-        print("\nRun: python scripts/port-management/port-manager.py conflicts", file=sys.stderr)
+        print("\nReview the port registry before selecting another port.", file=sys.stderr)
         # 返回 1 表示警告但继续
         sys.exit(1)
 
     sys.exit(0)
 
 if __name__ == '__main__':
+    if hasattr(sys.stdin, 'reconfigure'):
+        sys.stdin.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
     main()

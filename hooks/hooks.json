@@ -1,6 +1,6 @@
 {
   "version": "4.0.0",
-  "description": "Taiyi System global hooks. scripts/install-global.py copies the scripts to ~/.claude/ and merges the `hooks` block below into ~/.claude/settings.json. Claude Code does NOT auto-load this file: hooks only take effect from a settings.json (or an enabled plugin).",
+  "description": "Taiyi managed hooks; optional components are merged only by install-global.py.",
   "hooks": {
     "PreToolUse": [
       {
@@ -9,11 +9,6 @@
           {
             "type": "command",
             "command": "bash \"$HOME/.claude/scripts/validate/validate-command.sh\"",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "python \"$HOME/.claude/scripts/port-management/port-check-hook.py\"",
             "timeout": 5
           }
         ]
@@ -29,18 +24,6 @@
         ]
       }
     ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$HOME/.claude/scripts/hooks/post-edit.sh\"",
-            "timeout": 30
-          }
-        ]
-      }
-    ],
     "UserPromptSubmit": [
       {
         "hooks": [
@@ -48,17 +31,6 @@
             "type": "command",
             "command": "bash \"$HOME/.claude/hooks/intent-detector.sh\"",
             "timeout": 10
-          }
-        ]
-      }
-    ],
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$HOME/.claude/scripts/hooks/notify.sh\"",
-            "timeout": 15
           }
         ]
       }
@@ -74,24 +46,13 @@
         ]
       }
     ],
-    "SessionEnd": [
+    "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.claude/scripts/hooks/on-stop.sh\"",
-            "timeout": 15
-          }
-        ]
-      }
-    ],
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/pre-compact.sh\"",
-            "timeout": 10
+            "command": "python \"$HOME/.claude/hooks/session-start.py\"",
+            "timeout": 5
           }
         ]
       }
@@ -100,14 +61,10 @@
   "notes": {
     "handlers": {
       "validate-command.sh": "PreToolUse(Bash) - 验证 Bash 命令安全性",
-      "port-check-hook.py": "PreToolUse(Bash) - 检查 Docker 端口冲突",
       "agent-tracker.sh": "PreToolUse(Agent|Task) - 跟踪当前活动的子代理",
-      "post-edit.sh": "PostToolUse(Edit) - 编辑后运行 lint 检查",
-      "intent-detector.sh": "UserPromptSubmit - 输出本轮路由建议，按会话存储；全局快照仅供旧 HUD",
-      "notify.sh": "Notification - 发送通知到外部系统",
+      "intent-detector.sh": "UserPromptSubmit - explicit @agent and /command only; no heuristic advice",
       "ralph-stop-interceptor.sh": "Stop - Ralph Loop 停止拦截器，决定是否继续下一轮",
-      "on-stop.sh": "SessionEnd - 会话结束时保存统计与未提交改动备份",
-      "pre-compact.sh": "PreCompact - 上下文压缩前提示归档"
+      "session-start.py": "SessionStart - short risk-based flow card"
     },
     "timeout_unit": "秒（不是毫秒）。command hook 默认 600；SessionEnd 默认共用 1.5 秒预算，需显式 timeout 才能跑更久",
     "exit_codes": {

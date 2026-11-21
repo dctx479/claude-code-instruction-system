@@ -54,7 +54,7 @@ def atomic_json(path, data):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=("select", "publish"))
+    parser.add_argument("mode", choices=("select", "publish", "route"))
     parser.add_argument("--state-dir", type=Path)
     parser.add_argument("--intent", default="general")
     parser.add_argument("--agent", default="orchestrator")
@@ -74,6 +74,15 @@ def main():
         print(routing_text(event["prompt"]))
         return 0
 
+    if args.mode == "route":
+        # Only the actual first line is eligible, never a tail extracted from a paste.
+        text = event["prompt"].strip()
+        manual = re.match(r"^@([a-z][a-z0-9-]*)(?=\s|$)", text)
+        command = re.match(r"^/([a-z][a-z0-9-]*)(?=\s|$)", text)
+        args.intent = "manual" if manual else "command" if command else "none"
+        args.agent = manual[1] if manual else ""
+        args.skill = command[1] if command else ""
+
     tool = None
     if args.tool:
         try:
@@ -87,8 +96,9 @@ def main():
             "tool_recommendation": tool, "session_id": event.get("session_id", ""),
             "cwd": event.get("cwd", "")}
     # Context comes from this invocation, independent of disk/HUD failures.
-    print("Advisory routing (verify against the current request): " +
-          json.dumps(data, ensure_ascii=False))
+    if args.intent != "none":
+        print("Advisory routing (verify against the current request): " +
+              json.dumps(data, ensure_ascii=False))
     if args.state_dir:
         if data["session_id"]:
             key = hashlib.sha256((data["cwd"] + "\0" + data["session_id"]).encode()).hexdigest()

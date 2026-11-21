@@ -21,9 +21,10 @@ def load_installer(repo):
     return module
 
 
-def verify(repo, target, components, smoke_hook=False, bash=None):
+def verify(repo, target, components, smoke_hook=False, bash=None, profiles="core", with_guardrails=False):
     repo, target = Path(repo).resolve(), Path(target).resolve()
     installer = load_installer(repo)
+    selected = installer.profile_names(profiles)
     problems, seen, skipped = [], {}, 0
     for component in components:
         if component not in installer.COMPONENTS:
@@ -37,6 +38,8 @@ def verify(repo, target, components, smoke_hook=False, bash=None):
                 problems.append(f"source missing: {source}")
                 continue
             for path, rel in installer.iter_files(src, destination):
+                if not installer.selected_file(component, rel, selected):
+                    continue
                 if policy == installer.FLATTEN:
                     rel = f"{destination}/{path.name}"
                 if any(fnmatch.fnmatch(rel, pattern) for pattern in installer.KEEP_DEST):
@@ -56,7 +59,7 @@ def verify(repo, target, components, smoke_hook=False, bash=None):
         settings = json.loads(settings_file.read_text(encoding="utf-8-sig")) if settings_file.exists() else {}
         if not isinstance(settings, dict):
             raise ValueError("settings must be an object")
-        expected = installer.Installer(target, True).merge_settings(settings, components)
+        expected = installer.Installer(target, True, profiles=profiles, with_guardrails=with_guardrails).merge_settings(settings, components)
         if expected != settings:
             problems.append("managed settings are not synchronized")
     except (OSError, ValueError, TypeError, AttributeError) as exc:
@@ -75,7 +78,7 @@ def verify(repo, target, components, smoke_hook=False, bash=None):
                 with tempfile.TemporaryDirectory(prefix="taiyi-installed-smoke-") as directory:
                     env = dict(os.environ, HOME=Path(directory).as_posix(),
                                KEYWORDS_FILE=str(target / "config/keywords.json"), PYTHONIOENCODING="cp1252")
-                    event = dict(prompt="Please debug this bug", session_id="installed-smoke", cwd=str(repo))
+                    event = dict(prompt="@debugger Please debug this bug", session_id="installed-smoke", cwd=str(repo))
                     process = subprocess.run([bash, str(target / "hooks/intent-detector.sh")],
                                              input=json.dumps(event), env=env, cwd=repo, capture_output=True,
                                              text=True, encoding="utf-8", timeout=20)
@@ -93,7 +96,9 @@ def verify(repo, target, components, smoke_hook=False, bash=None):
                 smoke = f"FAIL: {exc}"
         if smoke.startswith("FAIL"):
             problems.append("installed Hook smoke: " + smoke)
+    extras = installer.profile_extras(target, selected) if {"skills", "agents"}.intersection(components) else []
     return dict(files_checked=len(seen), stateful_sources_skipped=skipped,
+                extra_managed_capabilities=extras, profile_isolated=not extras,
                 hook_smoke=smoke, problems=problems, passed=not problems)
 
 
@@ -102,6 +107,8 @@ def main():
     parser.add_argument("--repo", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--target", type=Path, default=Path.home() / ".claude")
     parser.add_argument("--components", default=DEFAULT_COMPONENTS)
+    parser.add_argument("--profile", default="core")
+    parser.add_argument("--with-guardrails", action="store_true")
     parser.add_argument("--smoke-hook", action="store_true", help="run installed Hook with temporary HOME")
     args = parser.parse_args()
     if not (args.repo / "AGENTS.md").is_file():
@@ -110,7 +117,8 @@ def main():
     if not components:
         parser.error("select at least one component")
     try:
-        result = verify(args.repo, args.target, components, args.smoke_hook)
+        result = verify(args.repo, args.target, components, args.smoke_hook,
+                        profiles=args.profile, with_guardrails=args.with_guardrails)
     except (OSError, ValueError) as exc:
         parser.error(str(exc))
     print(json.dumps(result, ensure_ascii=False, indent=2))
