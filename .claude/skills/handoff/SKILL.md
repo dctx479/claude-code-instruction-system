@@ -37,3 +37,107 @@ Feed JSON to `python scripts/checkpoint.py save`; the script computes hashes. Ne
 On continuation run `python scripts/checkpoint.py show`: 0 valid, 2 absent, 1 corrupted/stale. If stale, inspect the changes and preserve the original evidence before updating.
 For a new-window handoff, produce a short continuation prompt pointing to the same checkpoint; do not duplicate the full state in memory/handoff.md.
 Legacy memory/handoff.md may be read as historical context only, with a WARNING that it lacks integrity verification.
+
+---
+
+## Integration: Session Notes and Annotations
+
+**New in v1.2.0**: Handoff now checks for unarchived session notes and includes annotation summaries.
+
+### Pre-Handoff Checklist
+
+Before generating handoff document:
+
+1. **Check for unarchived session notes**:
+   ```bash
+   # Check if session notes exist
+   ls .claude/scratch/session-*.md 2>/dev/null
+   ```
+   
+   If found:
+   - **Option 1**: Archive now → `python scripts/note-manager.py archive`
+   - **Option 2**: Include in handoff → Content added to handoff document
+   - **Option 3**: Discard → User confirms, then clear
+
+2. **Check annotations**:
+   ```bash
+   python scripts/annotation-manager.py summary
+   ```
+   
+   If annotations exist:
+   - Include summary in handoff document
+   - Export full list → `python scripts/annotation-manager.py export handoff-annotations.md`
+
+3. **Review checkpoint**:
+   ```bash
+   python scripts/checkpoint.py review
+   ```
+   
+   Report any ⚠️ (missing) or ⛔ (modified) files in handoff.
+
+### Handoff Document Structure
+
+```markdown
+# Handoff - {session-id} - {timestamp}
+
+## Checkpoint
+- Status: [checkpoint.py review summary]
+- Changed files: [list]
+
+## Session Notes Summary
+### Ideas (3)
+- Try method B after A failed
+- Docker exec bypasses routing
+- ...
+
+### Decisions (2)
+- Use JWT for auth
+- ...
+
+### TODOs (1)
+- Verify token refresh logic
+
+## Annotations Summary
+- key-insight: 2
+- todo: 3
+- decision: 1
+
+[Full annotation export: handoff-annotations.md]
+
+## Next Actions
+- ...
+```
+
+### Automatic Actions
+
+On `/handoff` execution:
+
+1. ✅ Create checkpoint
+2. ✅ Check for session notes → Prompt user
+3. ✅ Check for annotations → Include summary
+4. ✅ Archive session notes (if user confirms)
+5. ✅ Generate handoff document
+6. ✅ Report status
+
+### Commands
+
+```bash
+# Standard handoff (compact mode)
+/handoff
+
+# Check session notes before handoff
+/note show session
+
+# Check annotations before handoff
+python scripts/annotation-manager.py summary
+
+# Manual archive
+python scripts/note-manager.py archive
+```
+
+### Benefits
+
+- **No information loss**: Session notes preserved or archived
+- **Context continuity**: Annotations carry over to next session
+- **Explicit decisions**: User controls what to keep/discard
+- **Audit trail**: Archived notes provide history

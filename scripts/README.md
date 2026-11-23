@@ -21,6 +21,8 @@ python scripts/install-global.py --profile all
 默认只安装 core 能力；清单唯一来源为 `config/profiles.json`。安装不会删除旧目标中的领域能力，不能以重新安装 core 宣称旧全量安装已精简。
 默认 Hook 是命令补充检查、Agent 状态、显式路由、流程选择卡和 Ralph Stop。只有命令含 docker/compose/podman 才启动独立端口检查。
 
+statusline 默认直调 Python 标准库入口 `python -S "$HOME/.claude/statusline/hud.py" render`，保留 hud.sh 兼容调用。安装器识别两种托管入口并保留自定义 statusLine 与 hud-config。使用和当前检查结果见 [Statusline](../docs/STATUSLINE.md)。
+
 可选组件显式加入 `--components`（该参数是完整组件集合，不是追加）：
 
 ```bash

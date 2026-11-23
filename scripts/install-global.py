@@ -162,8 +162,9 @@ OWN_HOOK_FILES = (
     "scripts/hooks/lint-feedback.py", "scripts/hooks/session-backup.py",
     "hooks/context-optimizer.py",
 )
-STATUSLINE_COMMAND = 'bash "$HOME/.claude/statusline/hud.sh" render'
+STATUSLINE_COMMAND = 'python -S "$HOME/.claude/statusline/hud.py" render'
 STATUSLINE_MARKER = "/.claude/statusline/hud.sh"
+STATUSLINE_MARKERS = (STATUSLINE_MARKER, "/.claude/statusline/hud.py")
 
 
 def excluded(rel_dest: str, name: str) -> bool:
@@ -450,7 +451,7 @@ class Installer:
         if "statusline" in components:
             current = merged.get("statusLine")
             current_cmd = current.get("command", "") if isinstance(current, dict) else ""
-            if not current or STATUSLINE_MARKER in current_cmd:
+            if not current or any(marker in current_cmd for marker in STATUSLINE_MARKERS):
                 merged["statusLine"] = {"type": "command", "command": STATUSLINE_COMMAND}
             else:
                 print(f"  [保留] 已有自定义 statusLine，未改动: {current_cmd}")
@@ -489,8 +490,9 @@ class Installer:
                     if isinstance(timeout, (int, float)) and timeout > 600:
                         self.problems.append(f"{event}: timeout={timeout} 看起来是毫秒，单位应为秒")
         status_cmd = (settings.get("statusLine") or {}).get("command", "")
-        if STATUSLINE_MARKER in status_cmd and not (self.target / "statusline" / "hud.sh").is_file():
-            self.problems.append("statusLine 指向的 statusline/hud.sh 缺失")
+        for filename in ("hud.sh", "hud.py"):
+            if f"/.claude/statusline/{filename}" in status_cmd and not (self.target / "statusline" / filename).is_file():
+                self.problems.append(f"statusLine 指向的 statusline/{filename} 缺失")
 
 
 def main() -> int:

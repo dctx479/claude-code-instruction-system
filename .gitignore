@@ -51,3 +51,11 @@ Desktop.ini
 .env.local
 .env.*.local
 credentials.json
+
+# Session Notes - 临时笔记（不提交到 git）
+.claude/scratch/
+!.claude/scratch/.gitkeep
+
+# 对话标注（包含会话专属信息，不提交）
+.claude/context/annotations.jsonl
+.claude/context/session-summary.md

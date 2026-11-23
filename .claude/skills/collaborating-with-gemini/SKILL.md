@@ -400,3 +400,166 @@ collaborating_with_gemini:
 - 实现后台进程调用模式
 - 明确与 Codex Skill 的分工
 - 添加与太一元系统各组件的集成说明
+
+---
+
+## 集成：分层笔记和标注系统
+
+**New in v1.1.0**: Gemini 协作现在可以使用分层笔记和标注系统。
+
+### 使用场景
+
+#### 场景 1: 记录 Gemini 长上下文分析
+
+```bash
+# 调用 Gemini 分析大型代码库
+/collab-gemini "analyze entire codebase"
+
+# Gemini 完成后，记录关键发现
+python scripts/note-manager.py add session "Gemini found 3 architectural issues"
+
+# 标注具体问题
+python scripts/annotation-manager.py add "Gemini: Circular dependency in modules A-B" --tag key-insight
+```
+
+#### 场景 2: 多模型对比分析
+
+```python
+import sys
+sys.path.insert(0, 'scripts')
+from note_manager import SessionNotesManager
+from annotation_manager import AnnotationManager
+
+note_mgr = SessionNotesManager()
+ann_mgr = AnnotationManager()
+
+# Claude 分析（短上下文）
+note_mgr.add_note('session', 'Claude: Focus on module X', tag='idea')
+
+# Gemini 分析（长上下文）
+note_mgr.add_note('session', 'Gemini: Global pattern across all modules', tag='insight')
+
+# 对比标注
+ann_mgr.add_annotation('Gemini sees broader patterns', tag='key-insight')
+```
+
+#### 场景 3: 超长文档处理
+
+```bash
+# 记录 Gemini 的文档分析
+python scripts/note-manager.py add workspace "Gemini analyzed 500 page specification"
+python scripts/annotation-manager.py add "Gemini: Inconsistency on page 234" --tag question
+```
+
+### Python API 集成
+
+```python
+import sys
+sys.path.insert(0, 'scripts')
+import google.generativeai as genai
+
+from note_manager import SessionNotesManager
+from annotation_manager import AnnotationManager
+
+class GeminiCollaborator:
+    def __init__(self):
+        self.note_mgr = SessionNotesManager()
+        self.ann_mgr = AnnotationManager()
+        self.model = genai.GenerativeModel('gemini-pro')
+    
+    def analyze_long_context(self, text):
+        # 调用 Gemini（支持超长上下文）
+        response = self.model.generate_content(text)
+        
+        # 记录分析结果
+        self.note_mgr.add_note(
+            'session', 
+            f'Gemini analyzed {len(text)} chars: {response.text[:100]}...', 
+            tag='insight'
+        )
+        
+        # 标注关键发现
+        if 'issue' in response.text.lower():
+            self.ann_mgr.add_annotation(
+                f'Gemini found issue: {response.text[:50]}',
+                tag='key-insight'
+            )
+        
+        return response.text
+```
+
+### 命令行集成
+
+```bash
+# Gemini 工作流
+/collab-gemini "analyze large codebase"
+
+# 记录 Gemini 输出
+python scripts/note-manager.py add session "Gemini analysis: [summary]"
+
+# 标注关键发现
+python scripts/annotation-manager.py add "Gemini pattern: [pattern]" --tag key-insight
+
+# 查看汇总
+python scripts/note-manager.py show session
+python scripts/annotation-manager.py summary
+```
+
+### 与 /reflection 集成
+
+```bash
+# Gemini 协作会话结束后
+/reflection
+
+# /reflection 会自动：
+# 1. 读取 Gemini 相关的笔记
+# 2. 读取 Gemini 相关的标注
+# 3. 对比 Claude 和 Gemini 的见解
+# 4. 提炼协作经验
+```
+
+### 多工具协作示例
+
+```python
+import sys
+sys.path.insert(0, 'scripts')
+from note_manager import SessionNotesManager
+from annotation_manager import AnnotationManager
+
+note_mgr = SessionNotesManager()
+ann_mgr = AnnotationManager()
+
+# Claude 负责规划
+note_mgr.add_note('session', '[Claude] Plan: Analyze architecture', tag='decision')
+
+# Gemini 负责全局分析（长上下文）
+note_mgr.add_note('session', '[Gemini] Found 5 global patterns', tag='insight')
+
+# Codex 负责实现
+note_mgr.add_note('session', '[Codex] Implemented fixes', tag='idea')
+
+# 统一复盘
+print(note_mgr.show_notes('session'))
+print(ann_mgr.get_summary())
+```
+
+### 最佳实践
+
+1. **标注格式**: 使用 `[Gemini]` 前缀标识来源
+   ```bash
+   python scripts/annotation-manager.py add "[Gemini] Long-range dependency detected" --tag key-insight
+   ```
+
+2. **利用长上下文优势**: 记录 Gemini 独特的全局视角
+   ```bash
+   python scripts/note-manager.py add session "[Gemini] Global pattern across 100 files"
+   ```
+
+3. **对比标注**: 标记 Claude 和 Gemini 的不同见解
+   ```bash
+   python scripts/annotation-manager.py add "[Claude vs Gemini] Different optimization strategies" --tag decision
+   ```
+
+---
+
+**版本**: v1.1.0 (2025-01-23)

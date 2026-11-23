@@ -22,7 +22,11 @@ def main():
         directory = root / ".claude"
         if not directory.is_dir():
             return 0  # A project without HUD state does not need a new directory.
-        data = dict(current_agent=name, last_updated=datetime.now(timezone.utc).isoformat(), agent_history=[])
+        session = event.get("session_id", "")
+        if not isinstance(session, str):
+            raise ValueError("session_id must be a string")
+        data = dict(current_agent=name, last_updated=datetime.now(timezone.utc).isoformat(), agent_history=[],
+                    session_id=session, project_dir=str(root))
         with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=directory, suffix=".tmp", delete=False) as stream:
             temporary = Path(stream.name)
             json.dump(data, stream, ensure_ascii=False)

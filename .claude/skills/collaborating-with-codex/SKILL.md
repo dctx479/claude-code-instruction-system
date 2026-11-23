@@ -341,3 +341,137 @@ collaborating_with_codex:
 - 定义契约化设计框架
 - 实现后台进程调用模式
 - 添加与太一元系统各组件的集成说明
+
+---
+
+## 集成：分层笔记和标注系统
+
+**New in v1.1.0**: Codex 协作现在可以使用分层笔记和标注系统。
+
+### 使用场景
+
+#### 场景 1: 记录 Codex 建议
+
+```bash
+# 调用 Codex
+/collab-codex "implement authentication"
+
+# Codex 完成后，记录关键建议
+python scripts/note-manager.py add session "Codex suggests OAuth2 flow"
+
+# 标注重要决策
+python scripts/annotation-manager.py add "Codex: Use JWT tokens" --tag decision
+```
+
+#### 场景 2: 多轮协作追踪
+
+```python
+import sys
+sys.path.insert(0, 'scripts')
+from note_manager import SessionNotesManager
+from annotation_manager import AnnotationManager
+
+note_mgr = SessionNotesManager()
+ann_mgr = AnnotationManager()
+
+# 第 1 轮：Codex 实现
+note_mgr.add_note('session', 'Codex round 1: Basic auth implemented', tag='idea')
+
+# 第 2 轮：Claude 审查
+note_mgr.add_note('session', 'Claude review: Security needs improvement', tag='decision')
+
+# 第 3 轮：Codex 修复
+ann_mgr.add_annotation('Codex fixed security issues', tag='key-insight')
+```
+
+#### 场景 3: 跨会话决策追踪
+
+```bash
+# 记录 Codex 的项目级决策
+python scripts/note-manager.py add workspace "Codex recommends microservices architecture"
+
+# 下次会话查看
+python scripts/note-manager.py show workspace
+```
+
+### Python API 集成
+
+```python
+import sys
+sys.path.insert(0, 'scripts')
+
+from note_manager import SessionNotesManager
+from annotation_manager import AnnotationManager
+
+class CodexCollaborator:
+    def __init__(self):
+        self.note_mgr = SessionNotesManager()
+        self.ann_mgr = AnnotationManager()
+    
+    def run_codex(self, task):
+        # 调用 Codex
+        result = self._call_codex_cli(task)
+        
+        # 记录结果
+        self.note_mgr.add_note('session', f'Codex: {result[:100]}...', tag='idea')
+        
+        # 标注关键点
+        if 'important' in result.lower():
+            self.ann_mgr.add_annotation(
+                f'Codex highlighted: {result[:50]}',
+                tag='key-insight'
+            )
+        
+        return result
+```
+
+### 命令行集成
+
+```bash
+# Codex 工作流
+/collab-codex "task description"
+
+# 记录 Codex 输出
+python scripts/note-manager.py add session "Codex completed: [summary]"
+
+# 标注关键发现
+python scripts/annotation-manager.py add "Codex found bug" --tag key-insight
+
+# 查看汇总
+python scripts/note-manager.py show session
+python scripts/annotation-manager.py summary
+```
+
+### 与 /reflection 集成
+
+```bash
+# Codex 协作会话结束后
+/reflection
+
+# /reflection 会自动：
+# 1. 读取 Codex 相关的笔记
+# 2. 读取 Codex 相关的标注
+# 3. 提炼 Codex 协作经验
+# 4. 写入 memory/lessons-learned.md
+```
+
+### 最佳实践
+
+1. **标注格式**: 使用 `[Codex]` 前缀标识来源
+   ```bash
+   python scripts/annotation-manager.py add "[Codex] Use design pattern X" --tag decision
+   ```
+
+2. **工作区笔记**: 记录 Codex 的项目级建议
+   ```bash
+   python scripts/note-manager.py add workspace "[Codex] Architecture decision: microservices"
+   ```
+
+3. **全局笔记**: 记录 Codex 的通用经验
+   ```bash
+   python scripts/note-manager.py add global "[Codex] Always validate input before processing"
+   ```
+
+---
+
+**版本**: v1.1.0 (2025-01-23)

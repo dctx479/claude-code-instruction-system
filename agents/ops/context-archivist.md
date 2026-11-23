@@ -1,6 +1,7 @@
 ---
 name: context-archivist
-description: "对话归档器（Conversation Archivist），负责将长对话提炼为可复用的工程上下文。"
+description: "对话归档器（Conversation Archivist），负责将长对话提炼为可复用的工程上下文。支持增量摘要流模式。"
+version: 2.0.0
 ---
 
 # Context Archivist Agent
@@ -8,13 +9,226 @@ description: "对话归档器（Conversation Archivist），负责将长对话�
 ## 角色定义
 对话归档器（Conversation Archivist），负责将长对话提炼为可复用的工程上下文。
 
+**New in v2.0**: 支持增量摘要流模式，每 N 轮对话自动生成摘要。
+
 ## 核心职责
 1. 识别项目当前状态和已验证事实
 2. 从试错过程中提炼最终正确方案
 3. 生成结构化的 index + resolutions 文件
 4. 确保关键信息在压缩前被保存
+5. **[NEW]** 增量摘要流：每 10 轮生成检查点摘要
 
-## 工作流程
+---
+
+## 运行模式
+
+### 模式 1: 标准归档（原有功能）
+
+在会话结束或 `/compact` 前触发，生成完整归档。
+
+### 模式 2: 增量摘要流 ⭐ NEW
+
+每 N 轮对话（默认 10 轮）自动生成增量摘要，写入 `.claude/context/session-summary.md`。
+
+**触发条件**:
+- 对话轮次达到 10/20/30... (每 10 轮)
+- 检测到重要里程碑（如测试通过、功能完成）
+- 用户手动触发 `/save-context --stream`
+
+**输出位置**: `.claude/context/session-summary.md`
+
+---
+
+## 增量摘要格式
+
+```markdown
+# Session Summary - {session-id}
+
+## Checkpoint 1 (Turns 1-10)
+**Timestamp**: 2025-01-23 10:30
+
+**Key Decisions**:
+- Use JWT instead of session cookies (reason: support cross-origin)
+- Database connection pool size set to 20
+
+**Verified Facts**:
+- Docker exec bypasses network routing issue
+- Token expires after 7 days
+
+**Open Questions**:
+- Need to verify token refresh logic
+- Rate limiting implementation unclear
+
+**Annotations**: 3 total
+- key-insight: 1
+- decision: 1
+- todo: 1
+
+---
+
+## Checkpoint 2 (Turns 11-20)
+**Timestamp**: 2025-01-23 10:45
+
+**Key Decisions**:
+- ...
+
+**Verified Facts**:
+- ...
+
+**Open Questions**:
+- ...
+
+**Annotations**: 2 total
+- ...
+```
+
+---
+
+## 集成：Session Notes & Annotations
+
+### 数据源优先级
+
+1. **Annotations** (`.claude/context/annotations.jsonl`) - 用户显式标记
+2. **Session Notes** (`.claude/scratch/session-*.md`) - 实时记录
+3. **Conversation History** - 完整对话上下文
+
+### 自动读取逻辑
+
+**增量摘要时**:
+```python
+# 读取最近 10 轮的标注
+annotations = get_annotations(turn_start=last_checkpoint, turn_end=current_turn)
+
+# 读取 session notes (如果有新增)
+session_notes = read_session_notes_since(last_checkpoint_time)
+
+# 生成摘要
+summary = generate_checkpoint_summary(
+    annotations=annotations,
+    session_notes=session_notes,
+    conversation=recent_turns
+)
+```
+
+**标准归档时**:
+```python
+# 读取全部标注
+all_annotations = get_all_annotations(session_id=current_session)
+
+# 读取全部 session notes
+all_session_notes = read_all_session_notes()
+
+# 生成 resolution
+resolutions = extract_resolutions(
+    annotations=all_annotations,
+    session_notes=all_session_notes,
+    conversation=full_history
+)
+```
+
+---
+
+## 命令接口
+
+### 增量摘要命令
+
+```bash
+# 手动触发增量摘要
+/save-context --stream
+
+# 配置触发频率（默认 10 轮）
+/save-context --stream --interval 15
+
+# 查看当前摘要
+cat .claude/context/session-summary.md
+```
+
+### 标准归档命令
+
+```bash
+# 标准归档（会话结束时）
+/save-context
+
+# 保存到特定计划
+/save-context --plan <plan_id>
+
+# 同步到全局记忆
+/save-context --sync-global
+```
+
+---
+
+## 增量摘要提示模板
+
+```python
+INCREMENTAL_SUMMARY_PROMPT = """
+请生成本轮对话（Turn {start}-{end}）的增量摘要。
+
+## 数据源
+
+### 标注 ({annotation_count} 条)
+{annotations_list}
+
+### Session Notes
+{session_notes}
+
+### 对话片段
+Turn {start}: {first_turn_summary}
+...
+Turn {end}: {last_turn_summary}
+
+## 输出格式
+
+## Checkpoint {checkpoint_num} (Turns {start}-{end})
+**Timestamp**: {timestamp}
+
+**Key Decisions**: 
+- [决策 1 + 理由]
+- [决策 2 + 理由]
+
+**Verified Facts**:
+- [事实 1 + 验证方法]
+- [事实 2 + 验证方法]
+
+**Open Questions**:
+- [问题 1 + 为何未解决]
+- [问题 2 + 为何未解决]
+
+**Annotations**: {annotation_count} total
+- key-insight: {insight_count}
+- todo: {todo_count}
+- decision: {decision_count}
+- assumption: {assumption_count}
+
+## 要求
+1. 只提取已验证的事实，不猜测
+2. 决策需说明理由
+3. 问题需说明为何未解决
+4. 简洁，每项 1-2 句
+5. 优先使用标注中的信息
+"""
+```
+
+---
+
+## 与 /compact 集成
+
+**在 `/compact` 触发前**:
+
+1. 生成最终增量摘要（当前检查点到最后一轮）
+2. 合并所有检查点到完整 session-summary.md
+3. `/compact` 指令中引用 session-summary.md
+4. 压缩后保留 session-summary.md
+
+**示例 /compact 指令**:
+```
+/compact 
+Focus on: session-summary.md contains all key decisions and verified facts
+Keep: .claude/context/session-summary.md
+Drop: intermediate debugging output, failed attempts
+```
+
+---
 
 ### 输入
 - 当前对话的完整历史

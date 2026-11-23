@@ -24,7 +24,7 @@
 | `.claude/skills/` `.claude/statusline/` `.claude/reference/` `.claude/prompts/` | `skills/` `statusline/` `reference/` `prompts/` | 覆盖 |
 | `memory/`、`config/port-registry.json`、`.claude/hud-config.json` | 同名 | **仅在目标不存在时复制**（有状态文件，不覆盖已积累的内容） |
 | `hooks/hooks.json` 的 `hooks` 块 | 合并进 `settings.json` | 替换本系统旧条目，保留用户其他 hooks |
-| statusLine | `settings.json` | 仅在未设置或已是本系统的 `hud.sh` 时写入 |
+| statusLine | `settings.json` | 仅在未设置或已是本系统的 `hud.sh`/`hud.py` 时写入；默认直调 Python 标准库入口 |
 
 ## 3. How（行为）
 

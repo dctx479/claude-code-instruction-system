@@ -110,16 +110,183 @@ def verify(root):
     return 0
 
 
+def review(root, checkpoint_path=None):
+    """
+    交互式审查检查点状态
+
+    返回四种状态的文件列表:
+    - verified: 验证通过 (✅)
+    - missing: 文件缺失 (⚠️)
+    - modified: hash 不匹配 (⛔)
+    - new: 新文件未在检查点中 (🆕)
+    """
+    root = worktree_root(root)
+    path = checkpoint_path or location(root)
+
+    if not path.exists():
+        print("ERROR: No checkpoint found", file=sys.stderr)
+        return 1
+
+    data = json.loads(path.read_text(encoding="utf-8"))
+    validate(data)
+
+    # 收集状态
+    verified = []
+    missing = []
+    modified = []
+
+    for name, expected_hash in data["files_sha256"].items():
+        file_path = root / name
+
+        if not file_path.exists():
+            missing.append(name)
+        else:
+            try:
+                actual_hash = digest(root, name)
+                if actual_hash == expected_hash:
+                    verified.append(name)
+                else:
+                    modified.append((name, expected_hash, actual_hash))
+            except Exception as e:
+                missing.append(name)
+
+    # 查找新文件（git status 中的新文件）
+    new_files = []
+    try:
+        result = git(root, "status", "--porcelain=v1", "--untracked-files=all")
+        for line in result.stdout.splitlines():
+            if line.startswith("??"):
+                file_name = line[3:].strip()
+                if file_name not in data["files_sha256"]:
+                    new_files.append(file_name)
+    except:
+        pass
+
+    # 输出报告
+    print(f"Checkpoint Review: {path.name}")
+    print(f"Created: {data.get('created_at', 'unknown')}")
+    print(f"Goal: {data.get('goal', 'N/A')}")
+    print()
+    print("Files Status:")
+
+    for name in verified:
+        print(f"  ✅ {name} (verified)")
+
+    for name in missing:
+        print(f"  ⚠️  {name} (missing)")
+
+    for name, expected, actual in modified:
+        print(f"  ⛔ {name} (modified)")
+        if os.getenv("CHECKPOINT_VERBOSE"):
+            print(f"     Expected: {expected}")
+            print(f"     Actual:   {actual}")
+
+    for name in new_files[:10]:  # 限制显示数量
+        print(f"  🆕 {name} (new, not in checkpoint)")
+
+    if len(new_files) > 10:
+        print(f"  ... and {len(new_files) - 10} more new files")
+
+    # 摘要
+    print()
+    print("Summary:")
+    print(f"  Total tracked: {len(data['files_sha256'])} files")
+    print(f"  Verified: {len(verified)}")
+    print(f"  Missing: {len(missing)}")
+    print(f"  Modified: {len(modified)}")
+    print(f"  New (untracked): {len(new_files)}")
+
+    if missing or modified:
+        print()
+        print("⚠️  Actions:")
+        if modified:
+            print("  - Review modified files before continuing")
+            print("  - Consider updating checkpoint if changes are intentional")
+        if missing:
+            print("  - Restore missing files or update checkpoint")
+
+    return 0 if not missing and not modified else 1
+
+
+def diff_checkpoints(root, checkpoint1_path, checkpoint2_path):
+    """
+    比较两个检查点的差异
+    """
+    root = worktree_root(root)
+
+    if not checkpoint1_path.exists() or not checkpoint2_path.exists():
+        print("ERROR: One or both checkpoints not found", file=sys.stderr)
+        return 1
+
+    data1 = json.loads(checkpoint1_path.read_text(encoding="utf-8"))
+    data2 = json.loads(checkpoint2_path.read_text(encoding="utf-8"))
+
+    files1 = set(data1["files_sha256"].keys())
+    files2 = set(data2["files_sha256"].keys())
+
+    added = files2 - files1
+    removed = files1 - files2
+    common = files1 & files2
+    modified = [f for f in common if data1["files_sha256"][f] != data2["files_sha256"][f]]
+    unchanged = [f for f in common if data1["files_sha256"][f] == data2["files_sha256"][f]]
+
+    print(f"Checkpoint Diff:")
+    print(f"  From: {checkpoint1_path.name} ({data1.get('created_at', 'unknown')})")
+    print(f"  To:   {checkpoint2_path.name} ({data2.get('created_at', 'unknown')})")
+    print()
+
+    if added:
+        print(f"Added files ({len(added)}):")
+        for name in sorted(added):
+            print(f"  + {name}")
+        print()
+
+    if removed:
+        print(f"Removed files ({len(removed)}):")
+        for name in sorted(removed):
+            print(f"  - {name}")
+        print()
+
+    if modified:
+        print(f"Modified files ({len(modified)}):")
+        for name in sorted(modified):
+            print(f"  M {name}")
+        print()
+
+    print(f"Unchanged: {len(unchanged)} files")
+
+    # 比较元数据
+    print()
+    print("Metadata changes:")
+    if data1.get("goal") != data2.get("goal"):
+        print(f"  Goal:")
+        print(f"    - {data1.get('goal', 'N/A')}")
+        print(f"    + {data2.get('goal', 'N/A')}")
+
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=("save", "verify", "show"))
+    parser.add_argument("mode", choices=("save", "verify", "show", "review", "diff"))
     parser.add_argument("--root", type=Path, default=Path.cwd())
+    parser.add_argument("--checkpoint", type=Path, help="Checkpoint file (for review)")
+    parser.add_argument("--from", dest="checkpoint1", type=Path, help="First checkpoint (for diff)")
+    parser.add_argument("--to", dest="checkpoint2", type=Path, help="Second checkpoint (for diff)")
     args = parser.parse_args()
     root = args.root.resolve()
     try:
         if args.mode == "save":
             print(save(root, json.load(sys.stdin)))
             return 0
+        elif args.mode == "review":
+            return review(root, args.checkpoint)
+        elif args.mode == "diff":
+            if not args.checkpoint1 or not args.checkpoint2:
+                print("ERROR: diff requires --from and --to arguments", file=sys.stderr)
+                return 1
+            return diff_checkpoints(root, args.checkpoint1, args.checkpoint2)
+
         code = verify(root)
         if code == 2:
             print("WARNING: no checkpoint", file=sys.stderr)

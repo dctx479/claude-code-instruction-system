@@ -1,5 +1,7 @@
 # StatusLine stdin JSON 格式参考
 
+> 下文保留历史观测与调试假设。当前官方接口和实现见 [Statusline 检查记录](../STATUSLINE.md)：费用为 0 不表示初始化，statusline 更新不是 Stop Hook，不能再据此过滤合法输入。
+
 > 记录 Claude Code 通过 stdin 传给 statusLine 命令的所有已观测 JSON 格式。
 > 每个格式标注 Claude Code 版本、json_len 和观测时间，供后续调试参考。
 

@@ -522,3 +522,97 @@ Level 3 — 上下文信息（Context）
 - `docs/MEMORY-SYSTEM.md` → 多层记忆架构
 - `memory/lessons-learned.md` → #011 CLAUDE.md 超限、#015 批量任务上下文丢失
 - `docs/TOOLS-ECOSYSTEM-GUIDE.md` → Token 优化工具安装与组合策略
+
+---
+
+## 分层笔记系统 (Layered Notes System)
+
+> New in 2025-01: 基于 DeepSeek 笔记生态启发的分层临时笔记系统
+
+### 核心理念
+
+**持久化是"分层衰减"而非"全有或全无"**
+
+```
+会话级 (session)   → 临时想法，/compact 后归档
+     ↓
+工作区级 (workspace) → 项目相关，跨会话保留
+     ↓
+全局级 (global)    → 通用经验，跨项目复用
+     ↓
+结构化记忆 (memory/*.md) → 持久、溯源、验证
+```
+
+### 命令接口
+
+```bash
+# 分层笔记
+/note session <内容>      # 会话级笔记
+/note workspace <内容>    # 工作区级笔记
+/note global <内容>       # 全局笔记
+
+# 对话标注
+!mark key-insight         # 标记关键洞察
+!mark todo <text>         # 标记待办事项
+!mark decision <text>     # 标记重要决策
+```
+
+### 信噪比提升
+
+**传统方式**: 对话历史 (100 轮) → 全量扫描 → 高 token 消耗  
+**分层笔记方式**: 实时标注 (5 个) + 笔记 (10 条) → 直接读取 → 低 token 消耗
+
+**SNR 提升**: 约 40-60%（需实测验证）
+
+### 相关文档
+
+- 完整指南: `docs/SESSION-NOTES-GUIDE.md`
+- 技术规格: `specs/SPEC-deepseek-inspired-enhancements.md`
+
+
+---
+
+## 分层笔记系统 (Layered Notes System)
+
+> New in 2025-01: 基于 DeepSeek 笔记生态启发的分层临时笔记系统
+
+### 核心理念
+
+**持久化是"分层衰减"而非"全有或全无"**
+
+```
+会话级 (session)   → 临时想法，/compact 后归档
+     ↓
+工作区级 (workspace) → 项目相关，跨会话保留
+     ↓
+全局级 (global)    → 通用经验，跨项目复用
+     ↓
+结构化记忆 (memory/*.md) → 持久、溯源、验证
+```
+
+### 命令接口
+
+```bash
+# 分层笔记
+/note session <内容>      # 会话级笔记
+/note workspace <内容>    # 工作区级笔记
+/note global <内容>       # 全局笔记
+
+# 对话标注
+!mark key-insight         # 标记关键洞察
+!mark todo <text>         # 标记待办事项
+!mark decision <text>     # 标记重要决策
+```
+
+### 信噪比提升
+
+**传统方式**: 对话历史 (100 轮) → 全量扫描 → 高 token 消耗  
+**分层笔记方式**: 实时标注 (5 个) + 笔记 (10 条) → 直接读取 → 低 token 消耗
+
+**SNR 提升**: 约 40-60%（需实测验证）
+
+### 相关文档
+
+- 完整指南: `docs/SESSION-NOTES-GUIDE.md`
+- 技术规格: `specs/SPEC-deepseek-inspired-enhancements.md`
+- Skill 定义: `.claude/skills/session-notes/SKILL.md`

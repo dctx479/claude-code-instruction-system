@@ -24,6 +24,7 @@
 | debug | 结构化调试五步工作流（复现→隔离→假设→验证→防复发） | debug/ | debugger |
 | observability | AI 思维日志，记录推理过程和决策点 | observability/ | context-archivist |
 | handoff | 上下文交接：compact模式写入 memory/handoff.md；new-window模式生成可复制续接prompt用于开新对话 | handoff/ | — |
+| session-notes | 分层临时笔记系统，管理 session/workspace/global 三级作用域笔记 | session-notes/ | handoff, reflection, context-archivist |
 | source-evaluator | 信息源评估器（伯乐），五维度评估学习材料质量 | source-evaluator/ | reflection, neat, literature-mentor |
 
 ## 开发类 (Development)

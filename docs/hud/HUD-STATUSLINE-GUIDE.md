@@ -1,5 +1,7 @@
 # HUD StatusLine v2.0 - User Guide
 
+> 历史 v2.0 说明。当前接口、配置与实测结果以 [docs/STATUSLINE.md](../STATUSLINE.md) 为准；旧 cost>0 门禁与历史性能数字不作为当前验收结论。
+
 **Version**: 2.0.0
 **Last Updated**: 2026-02-14
 **Status**: Production Ready

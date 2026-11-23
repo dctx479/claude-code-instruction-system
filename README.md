@@ -247,7 +247,7 @@ Windows 用户配置详见 [docs/CONFIG-FILES-GUIDE.md](docs/CONFIG-FILES-GUIDE.
 | [docs/CAPABILITY-SUMMARY.md](docs/CAPABILITY-SUMMARY.md) | 自动生成的能力数量与安装包清单 |
 | [docs/MEMORY-SYSTEM.md](docs/MEMORY-SYSTEM.md) | 多层记忆架构 |
 | [docs/audits/INDEX.md](docs/audits/INDEX.md) | 历次配置/知识盘点审计报告 |
-| [docs/hud/HUD-STATUSLINE-GUIDE.md](docs/hud/HUD-STATUSLINE-GUIDE.md) | HUD 状态栏配置 |
+| [docs/STATUSLINE.md](docs/STATUSLINE.md) | 当前 HUD 状态栏实现、配置与验证 |
 | [agents/INDEX.md](agents/INDEX.md) | 所有 Agent 索引 |
 
 ---

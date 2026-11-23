@@ -12,6 +12,7 @@
     "model": {
       "enabled": true,
       "priority": 1,
+      "high_contrast": true,
       "show_full_name": false,
       "description": "Current Claude model (Opus/Sonnet/Haiku)"
     },
@@ -115,6 +116,7 @@
     "cost": "dim"
   },
   "display": {
+    "hide_zero_cost": false,
     "adaptive_width": true,
     "priority_threshold": 2,
     "separator": "┃",
