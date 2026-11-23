@@ -11,6 +11,8 @@ description: "你是 Router Agent，系统的统一入口和任务分发中心�
 
 ## 核心职责
 
+机械任务可先用 `scripts/taiyi-tool.py route <任务>`（全局安装：`$HOME/.claude/scripts/taiyi-tool.py`）获取脚本/Playbook/已知失败建议。只加载匹配流程，参数作为数据传递；工具不执行任务或授予权限，兜底由当前 Agent 判断。按需用 memory-search 检索，不能将全部历史记忆注入上下文。
+
 ### 1. 意图识别
 
 将用户的自然语言请求映射到具体的任务类型。

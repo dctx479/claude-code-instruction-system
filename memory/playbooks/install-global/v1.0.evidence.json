@@ -1,0 +1,28 @@
+{
+  "name": "playbooks/install-global/v1.0",
+  "description": "现有流程或失败处理建议的来源",
+  "metadata": {
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "id": "source-1",
+        "type": "documentation",
+        "source": "specs/SPEC-global-install.md",
+        "method": "来源核对，测试执行另见实施报告",
+        "confidence": 0.8,
+        "date": "2026-11-23",
+        "verified_by": "tool"
+      },
+      {
+        "id": "source-2",
+        "type": "test",
+        "source": "tests/test_rule_governance.py:test_full_install_preserves_settings_and_is_idempotent",
+        "method": "来源核对，测试执行另见实施报告",
+        "confidence": 0.8,
+        "date": "2026-11-23",
+        "verified_by": "tool"
+      }
+    ],
+    "related": []
+  }
+}

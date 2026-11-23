@@ -20,6 +20,7 @@
 | reflection | 任务复盘提炼器，萃取经验 + Ingest 去重写入 | reflection/ | — |
 | skill-creator | Skill 元创建器，契约四要素 + 单一职责 | skill-creator/ | — |
 | prime | 会话预热仪式，git 状态 + 记忆检索 + 状态摘要 | prime/ | — |
+| evidence-trace | 追溯记忆来源和验证状态，区分引用存在与测试通过 | evidence-trace/ | — |
 | debug | 结构化调试五步工作流（复现→隔离→假设→验证→防复发） | debug/ | debugger |
 | observability | AI 思维日志，记录推理过程和决策点 | observability/ | context-archivist |
 | handoff | 上下文交接：compact模式写入 memory/handoff.md；new-window模式生成可复制续接prompt用于开新对话 | handoff/ | — |

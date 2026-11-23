@@ -20,3 +20,11 @@
 Detailed write formats and historical audit guidance: [../docs/MEMORY-INDEX-DETAILS.md](../docs/MEMORY-INDEX-DETAILS.md).
 
 Historical records are evidence only; do not delete or relabel them based on age. Search the target file before adding an entry. New decisions include a date, evidence pointer and active/superseded status.
+
+## 可执行检索与策展索引
+
+- `python scripts/taiyi-tool.py search <查询>` 返回最多 3 个有来源片段；索引在 `memory/.cache/`，内容变化自动重建。
+- [curated/](curated/) 是 10 条当前仓库来源的证据索引；不替换上表中的历史记忆。新结构化记录使用 JSON frontmatter 或相邻 `.evidence.json` 台账，先查重再验证。
+- [playbooks/REGISTRY.json](playbooks/REGISTRY.json) 注册 3 个版本化流程；latest 由 JSON 选择，成功率来自真实反馈。
+- [failures/REGISTRY.json](failures/REGISTRY.json) 是错误特征和处理建议，不自动阻断任务。
+- 格式与验证状态见 [证据指南](../docs/EVIDENCE-GUIDE.md)；运行时不会把来源存在写成测试通过。

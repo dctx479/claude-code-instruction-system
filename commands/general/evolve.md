@@ -12,6 +12,8 @@ disable-model-invocation: true
 
 ## 证据门槛
 
+可用 `scripts/taiyi-tool.py evidence trace` 追溯相关记忆，用 analyze 查看显式记录的失败复盘；全局安装使用 `$HOME/.claude/scripts/taiyi-tool.py`。工具只给候选，不自动写规则；来源文件数量不等于独立事故次数。
+
 1. 一句话说明偏差，分别引用本次与上次独立事件的会话、提交、PR 或日志证据。
 2. 找不到第二次证据：停止新增规则提议，说明缺少什么；不能把同一事故的两份记录当两次。
 3. 按 docs/RULE-EVOLUTION.md 的 R1-R6 归因。代码 bug 或外部故障优先修实现，不据此扩张规范。

@@ -23,6 +23,8 @@ jobs:
       - run: python scripts/eval-skills.py
       - run: python scripts/validate-issues.py issues/worktree-checkpoint.csv
       - run: python scripts/ci-tests.py
+      - run: python scripts/test-decision-scenarios.py
+      - run: python scripts/audit-evidence.py --memory memory/curated --strict
       - run: bash scripts/test-all-intents.sh
       - run: python scripts/validate/validate-config.py
       - run: python -m json.tool hooks/hooks.json

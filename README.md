@@ -18,6 +18,7 @@
 | **Research Parallel** | 多 Agent 并行科研工作流（3-10x 加速） |
 | **Port Management** | 跨项目端口冲突自动检测与管理 |
 | **多层记忆系统** | 上下文归档 + 文件记忆 + 知识图谱协同 |
+| **上下文优化与证据追溯** | 可选 Hook、脚本聚合、SQLite 检索和版本化 Playbook；[使用指南](docs/CONTEXT-OPTIMIZATION.md) |
 
 ---
 

@@ -1,0 +1,20 @@
+[
+  {
+    "name": "backup-collision",
+    "pattern": "FileExistsError.*backup|backup.*collision|备份.*冲突",
+    "solution": "检查目标和备份命名；保留已存在文件，使用当前安装器的唯一标识，并运行冻结时钟回归。",
+    "source": "curated/fix-backup-collision"
+  },
+  {
+    "name": "windows-path-encoding",
+    "pattern": "UnicodeEncodeError|UnicodeDecodeError|路径.*编码",
+    "solution": "核对 UTF-8 编解码和 JSON stdin/stdout；保留原路径，不能以换英文目录代替修复。",
+    "source": "curated/windows-path-encoding"
+  },
+  {
+    "name": "permission-denied",
+    "pattern": "PermissionError|permission denied|权限不足",
+    "solution": "检查目标所有者和用户授权，避免自动提权；保留错误证据，授权范围内修复后重试。",
+    "source": "curated/hook-execution-safety"
+  }
+]

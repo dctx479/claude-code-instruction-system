@@ -1,0 +1,43 @@
+{
+  "install-global": {
+    "latest": "v1.0",
+    "versions": {
+      "v1.0": "playbooks/install-global/v1.0.md"
+    },
+    "keywords": [
+      "install",
+      "global",
+      "全局",
+      "安装"
+    ],
+    "min_matches": 2
+  },
+  "backup-strategy": {
+    "latest": "v1.0",
+    "versions": {
+      "v1.0": "playbooks/backup-strategy/v1.0.md"
+    },
+    "keywords": [
+      "backup",
+      "备份",
+      "collision",
+      "冲突",
+      "strategy",
+      "策略"
+    ],
+    "min_matches": 2
+  },
+  "rule-audit": {
+    "latest": "v1.0",
+    "versions": {
+      "v1.0": "playbooks/rule-audit/v1.0.md"
+    },
+    "keywords": [
+      "rule",
+      "audit",
+      "规则",
+      "审计"
+    ],
+    "min_matches": 2
+  }
+}

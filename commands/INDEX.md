@@ -15,6 +15,8 @@
 | `/swarm` | general/swarm.md | 群体并行策略（批量处理 50+） | 大规模同质任务 |
 | `/evolve` | general/evolve.md | 证据驱动复盘，先提最小 diff | 重复事故后复盘 |
 | `/rule-audit` | general/rule-audit.md | 规则只读体检、证据与 diff | 定期审计、规则冲突 |
+| `/route` | general/route.md | 轻量建议路由和版本化 Playbook | 机械操作与流程复用 |
+| `/memory-search` | general/memory-search.md | 有来源的本地记忆片段检索 | 按需查找经验 |
 | `/commit` | general/commit.md | 标准化 Git 提交（��� changelog） | 代码提交 |
 | `/fix-github-issue` | general/fix-github-issue.md | 自动修复 GitHub Issue | Bug 修复工作流 |
 | `/optimize-system` | general/optimize-system.md | 系统配置自动优化 | 性能/成本优化 |

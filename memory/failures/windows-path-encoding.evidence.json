@@ -1,0 +1,28 @@
+{
+  "name": "failures/windows-path-encoding",
+  "description": "现有流程或失败处理建议的来源",
+  "metadata": {
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "id": "source-1",
+        "type": "documentation",
+        "source": "hooks/intent-context.py",
+        "method": "来源核对，测试执行另见实施报告",
+        "confidence": 0.8,
+        "date": "2026-11-23",
+        "verified_by": "tool"
+      },
+      {
+        "id": "source-2",
+        "type": "test",
+        "source": "tests/test_intent_routing.py:test_explicit_command_and_utf8_protocol",
+        "method": "来源核对，测试执行另见实施报告",
+        "confidence": 0.8,
+        "date": "2026-11-23",
+        "verified_by": "tool"
+      }
+    ],
+    "related": []
+  }
+}

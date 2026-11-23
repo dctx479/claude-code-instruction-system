@@ -1,0 +1,12 @@
+[
+  {"task": "统计目录文件行数", "expected": "use_script"},
+  {"task": "count file lines", "expected": "use_script"},
+  {"task": "查找包含警告的文件", "expected": "use_script"},
+  {"task": "validate JSON", "expected": "use_script"},
+  {"task": "列出最近修改文件", "expected": "use_script"},
+  {"task": "全局安装", "expected": "use_playbook"},
+  {"task": "rule audit", "expected": "use_playbook"},
+  {"task": "PermissionError 安装全局配置", "expected": "avoid_known_failure"},
+  {"task": "统计文件行数然后部署", "expected": "delegate_to_llm"},
+  {"task": "设计新的跨工具编排架构", "expected": "delegate_to_llm"}
+]

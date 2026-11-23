@@ -55,6 +55,13 @@ COMPONENTS = {
         ("scripts/checkpoint.py", "scripts/checkpoint.py", OVERWRITE),
         ("scripts/validate-issues.py", "scripts/validate-issues.py", OVERWRITE),
         ("scripts/usage-report.py", "scripts/usage-report.py", OVERWRITE),
+        ("scripts/taiyi-tool.py", "scripts/taiyi-tool.py", OVERWRITE),
+        ("scripts/taiyi", "scripts/taiyi", OVERWRITE),
+        ("scripts/audit-evidence.py", "scripts/audit-evidence.py", OVERWRITE),
+        ("scripts/rebuild-memory-index.py", "scripts/rebuild-memory-index.py", OVERWRITE),
+        ("memory/playbooks", "memory/playbooks", KEEP),
+        ("memory/failures", "memory/failures", KEEP),
+        ("memory/curated", "memory/curated", KEEP),
     ],
     "hooks": [
         ("hooks/agent-tracker.sh", "hooks/agent-tracker.sh", OVERWRITE),
@@ -72,6 +79,17 @@ COMPONENTS = {
     "lint-feedback": [("scripts/hooks/lint-feedback.py", "scripts/hooks/lint-feedback.py", OVERWRITE)],
     "session-backup": [("scripts/hooks/session-backup.py", "scripts/hooks/session-backup.py", OVERWRITE)],
     "usage": [("hooks/usage-tracker.py", "hooks/usage-tracker.py", OVERWRITE)],
+    "context-optimization": [
+        ("hooks/context-optimizer.py", "hooks/context-optimizer.py", OVERWRITE),
+        ("scripts/taiyi-tool.py", "scripts/taiyi-tool.py", OVERWRITE),
+        ("scripts/taiyi", "scripts/taiyi", OVERWRITE),
+        ("scripts/audit-evidence.py", "scripts/audit-evidence.py", OVERWRITE),
+        ("scripts/rebuild-memory-index.py", "scripts/rebuild-memory-index.py", OVERWRITE),
+        ("memory/playbooks", "memory/playbooks", KEEP),
+        ("memory/failures", "memory/failures", KEEP),
+        ("memory/curated", "memory/curated", KEEP),
+        ("memory/schemas", "memory/schemas", KEEP),
+    ],
     "notifications": [("scripts/hooks/notify.sh", "scripts/hooks/notify.sh", OVERWRITE)],
     "skills": [(".claude/skills", "skills", OVERWRITE)],
     "statusline": [
@@ -92,6 +110,7 @@ OPTIONAL_HOOKS = {
     "lint-feedback": ("PostToolUse", "Edit|Write|MultiEdit", "scripts/hooks/lint-feedback.py", 25),
     "session-backup": ("SessionEnd", "", "scripts/hooks/session-backup.py", 12),
     "usage": ("PostToolUse", "Skill|Agent|Task", "hooks/usage-tracker.py", 5),
+    "context-optimization": ("PreToolUse", ".*", "hooks/context-optimizer.py", 5),
     "notifications": ("Notification", "", "scripts/hooks/notify.sh", 15),
 }
 
@@ -141,6 +160,7 @@ OWN_HOOK_FILES = (
     "scripts/validate/validate-command.sh", "scripts/port-management/port-check-hook.py",
     "scripts/hooks/post-edit.sh", "scripts/hooks/on-stop.sh", "scripts/hooks/notify.sh",
     "scripts/hooks/lint-feedback.py", "scripts/hooks/session-backup.py",
+    "hooks/context-optimizer.py",
 )
 STATUSLINE_COMMAND = 'bash "$HOME/.claude/statusline/hud.sh" render'
 STATUSLINE_MARKER = "/.claude/statusline/hud.sh"
@@ -401,6 +421,15 @@ class Installer:
                 prompt_groups = merged.setdefault("hooks", {}).setdefault("UserPromptSubmit", [])
                 prompt_groups[:] = [g for g in prompt_groups if not any(h.get("command") == command for h in g.get("hooks", []))]
                 prompt_groups.append({"hooks": [{"type": "command", "command": command, "timeout": timeout}]})
+            if component == "context-optimization":
+                for extra_event in ("PostToolUse", "PostToolUseFailure", "PreCompact", "SessionStart"):
+                    extra_groups = merged.setdefault("hooks", {}).setdefault(extra_event, [])
+                    extra_groups[:] = [g for g in extra_groups if not any(
+                        h.get("command") == command for h in g.get("hooks", []))]
+                    extra = {"hooks": [{"type": "command", "command": command, "timeout": timeout}]}
+                    if extra_event in {"PostToolUse", "PostToolUseFailure"}:
+                        extra["matcher"] = ".*"
+                    extra_groups.append(extra)
 
         if self.with_guardrails:
             template = json.loads((REPO / "config/settings-guardrails.json").read_text(encoding="utf-8"))["permissions"]

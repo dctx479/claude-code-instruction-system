@@ -32,6 +32,7 @@ python scripts/install-global.py --components hooks,notifications
 - lint-feedback：Edit/Write/MultiEdit 后只运行本地 ESLint 或 Ruff，显式禁止 fix；不运行 npm scripts、npx、Black 或 Prettier。
 - session-backup：只备份受跟踪文件相对 HEAD 的 diff，不含未跟踪文件；保留 14 天、总量 50 MiB，只轮转自有补丁。补丁可能包含敏感内容，按需启用。
 - usage：只记 `{ts, tool, name}`，保留 90 天；包括 Skill/Agent 工具调用，以及注册 Skill/命令的显式 slash 展开；不记提示词、参数、响应或项目路径。`python scripts/usage-report.py --days 28` 统计。锁冲突/损坏输出 WARNING，不冒充成功。
+- context-optimization：可选连续 Read/Grep 建议和会话事件恢复，不阻断工具或替换原始输出。`scripts/taiyi-tool.py` 提供聚合、检索、Playbook 和证据 CLI；说明与回滚见 [上下文优化](../docs/CONTEXT-OPTIMIZATION.md)。运行态位于项目 `.claude/taiyi/`，不写真实用户状态用于测试。
 - notifications：只有明确启用才发送通知；测试不得启用真实通知。
 
 `--with-guardrails` 单独合并 `config/settings-guardrails.json`，保留个人 allow/ask/deny。冲突在复制前报错，不覆盖个人权限。
@@ -71,3 +72,5 @@ python scripts/verify-global-install.py --target <已安装临时目录> --profi
 `python scripts/checkpoint.py save|verify|show` 使用 worktree 本地检查点；0 有效、2 缺失、1 损坏或过期。
 `python scripts/validate-issues.py issues/<name>.csv` 检查依赖存在性、环路和启动顺序，不执行 CSV 中的命令。
 流程单一来源为 `docs/VNEXT-WORKFLOW.md`，历史记忆数据不会因本次迁移删除。
+
+推荐方案 A 的标准库实现、任务映射及验收状态见 [改进实施状态](../docs/IMPROVEMENT-IMPLEMENTATION.md)。`scripts/ci-tests.py` 已通过 unittest discover 自动纳入新增回归；`scripts/test-decision-scenarios.py` 使用 10 条标签 fixture，`scripts/benchmark.py` 输出本地延迟和合成字节压缩，`scripts/measure-token-savings.py` 只计算显式提供的测量。

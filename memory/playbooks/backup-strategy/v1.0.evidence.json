@@ -1,0 +1,28 @@
+{
+  "name": "playbooks/backup-strategy/v1.0",
+  "description": "现有流程或失败处理建议的来源",
+  "metadata": {
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "id": "source-1",
+        "type": "documentation",
+        "source": "scripts/install-global.py",
+        "method": "来源核对，测试执行另见实施报告",
+        "confidence": 0.8,
+        "date": "2026-11-23",
+        "verified_by": "tool"
+      },
+      {
+        "id": "source-2",
+        "type": "test",
+        "source": "tests/test_closure.py:test_backup_identifiers_stay_unique_with_frozen_wall_clock",
+        "method": "来源核对，测试执行另见实施报告",
+        "confidence": 0.8,
+        "date": "2026-11-23",
+        "verified_by": "tool"
+      }
+    ],
+    "related": []
+  }
+}

@@ -22,6 +22,8 @@ dist/
 .claude/context/sessions/
 .claude/intent-state.json
 .claude/worktrees/
+.claude/taiyi/
+memory/.cache/
 
 # Rust 编译产物
 tools/hud-render-rust/target/

@@ -1,0 +1,28 @@
+{
+  "name": "failures/permission-denied",
+  "description": "现有流程或失败处理建议的来源",
+  "metadata": {
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "id": "source-1",
+        "type": "documentation",
+        "source": "docs/SECURITY.md",
+        "method": "来源核对，测试执行另见实施报告",
+        "confidence": 0.8,
+        "date": "2026-11-23",
+        "verified_by": "tool"
+      },
+      {
+        "id": "source-2",
+        "type": "documentation",
+        "source": "scripts/validate/command_guard.py",
+        "method": "来源核对，测试执行另见实施报告",
+        "confidence": 0.8,
+        "date": "2026-11-23",
+        "verified_by": "tool"
+      }
+    ],
+    "related": []
+  }
+}
